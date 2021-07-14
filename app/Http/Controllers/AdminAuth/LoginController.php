@@ -15,9 +15,20 @@ class LoginController extends Controller
 {
     //Where to redirect admin after login.
     protected $redirectTo = '/admin/home';
-
+    
     //Trait
     use AuthenticatesUsers;
+    
+   /**
+   * Create a new controller instance.
+   *
+   * @return void
+   */
+    public function __construct()
+    {
+        $this->middleware('guest')->except('logout');
+    }
+
 
     //Custom guard for admin
     protected function guard()
@@ -30,4 +41,6 @@ class LoginController extends Controller
     {
        return view('admin.auth.login');
     }
+
+    
 }

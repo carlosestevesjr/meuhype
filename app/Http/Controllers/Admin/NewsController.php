@@ -13,7 +13,9 @@ use File;
 use Session;
 
 use App\News;
+use App\Tags;
 use App\Channels;
+use App\NewsTags;
 use App\Upload;
 
 use DB;
@@ -76,7 +78,8 @@ class NewsController extends Controller
     public function create()
     {
         $canais  = Channels::orderBy('name', 'Asc')->get();
-        return view($this->page_dados['prefix_auth'].'.pages.'. $this->page_dados['route_view'] .'.create', compact('canais') )
+        $tags = Tags::where( 'status',  '=','active')->orderBy('title', 'Asc')->get();
+        return view($this->page_dados['prefix_auth'].'.pages.'. $this->page_dados['route_view'] .'.create', compact('canais','tags') )
                 ->with('page_dados', $this->page_dados);
     }
 
@@ -104,7 +107,7 @@ class NewsController extends Controller
 		$validator = Validator::make( $campos , [
 				'title' => 'required|max:255',
                 'hash' => 'required|unique:news',
-                'id_channel' => 'require',
+                'id_channel' => 'required',
                 // 'link' => 'require',
                 // 'order' => 'required',
 				// 'image' => 'file|required|max:500|dimensions:max_width=1366,max_height=768',
@@ -173,15 +176,17 @@ class NewsController extends Controller
     public function store(Request $request)
     {
         $canais  = Channels::find($request->input('channels_id'));
+        $tag  = Tags::find($request->input('tags_id'));
         $campos = [];
-        if($canais){
-            
+        // dd($request->all());
+        if($canais && $tag){
             $campos = $request->all();
             $campos['hash'] = Str::slug($request->input('title').'-'.$canais->hash);
+          
             // dd($campos);
         }else{
             return redirect('/'. $this->page_dados['prefix_auth'].'/'. $this->page_dados['route_controler'] .'/create')
-                            ->withErrors(['O campo canal deve ser preenchido'])
+                            ->withErrors(['O campo canal e tag deve ser preenchido '])
                             ->withInput();
         }
        
@@ -189,7 +194,8 @@ class NewsController extends Controller
 		$validator = Validator::make( $campos , [
 				'title' => 'required|max:255',
                 'hash' => 'required|unique:news',
-                'id_channel' => 'require',
+                'channels_id' => 'required',
+                'tags_id' => 'required'
                 // 'link' => 'require',
                 // 'order' => 'required',
 				// 'image' => 'file|required|max:500|dimensions:max_width=1366,max_height=768',
@@ -198,14 +204,36 @@ class NewsController extends Controller
 				// 'dimensions' => 'A imagem não esta nas dimenssões especificadas abaixo do campo.',
 				'max'    => 'A imagem :attribute não tem o tamanho correto - :max kb.', // Peso da imagem em KB
                 'title.required' => 'O campo title deve ser preenchido.',
-                'id_channel.required' => 'O campo canal deve ser preenchido.',
+                'channels_id.required' => 'O campo canal deve ser preenchido.',
+                'tags_id.required' => 'O campo Tag deve ser preenchido.',
                 'hash.required' => 'O campo hash deve ser preenchido.',
                 'hash.unique' => 'Essa noticia já foi cadastrada.',
-                'link.required' => 'O campo link deve ser preenchido.',
+                'link.required' => 'O campo link deve ser preenchido.'
                 // 'order.required' => 'O campo ordem deve ser preenchido.',
 			]
 		);
+
         if ($validator->fails()) {
+           
+            $news = News::where( 'hash',  '=',  $campos['hash'] )->first();
+                            
+            if($news){
+               
+                $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $request->input('tags_id') )->first();
+                if(!$news_tags){
+                    $insert_news_tags = new NewsTags;
+                    $insert_news_tags->news_id = $news->id;
+                    $insert_news_tags->tags_id =  $request->input('tags_id');
+                    $condition_insert_news_tags = $insert_news_tags->save();
+
+                    if($condition_insert_news_tags){
+                        return redirect('/'. $this->page_dados['prefix_auth'].'/'. $this->page_dados['route_controler'] .'/create')
+                        ->withErrors(['Essa noticia já foi cadastrada porem a tag '.$tag->title.' foi vinculada a mesma.'])
+                        ->withInput();
+                    }
+                }
+            }
+            
             return redirect('/'. $this->page_dados['prefix_auth'].'/'. $this->page_dados['route_controler'] .'/create')
             ->withErrors($validator)
             ->withInput();
@@ -235,6 +263,16 @@ class NewsController extends Controller
 
             $condition = $insert->save();
             if($condition){
+
+                $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $request->input('tags_id') )->first();
+                            
+                if(!$news_tags){
+                    $insert_news_tags = new NewsTags;
+                    $insert_news_tags->news_id = $insert->id;
+                    $insert_news_tags->tags_id = $request->input('tags_id');
+                    $insert_news_tags->save();
+                }
+
                 $request->session()->flash('message','Cadastrado com sucesso !');
             }
             return redirect('/'. $this->page_dados['prefix_auth'].'/'. $this->page_dados['route_controler']);
@@ -254,7 +292,8 @@ class NewsController extends Controller
     {
         $item = News::find($id);
         $canais  = Channels::orderBy('name', 'Asc')->get();
-        return view($this->page_dados['prefix_auth'].'.pages.'. $this->page_dados['route_view'] .'.edit', compact('item','canais'))
+        $tags = Tags::where( 'status',  '=','active')->orderBy('title', 'Asc')->get();
+        return view($this->page_dados['prefix_auth'].'.pages.'. $this->page_dados['route_view'] .'.edit', compact('item','canais','tags'))
                 ->with('page_dados', $this->page_dados);
     }
 

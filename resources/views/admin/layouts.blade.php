@@ -179,6 +179,9 @@
                                 <a class="dropdown-item" href="pages-settings.html"><i class="align-middle mr-1" data-feather="settings"></i> Settings & Privacy</a>
                                 <a class="dropdown-item" href="#"><i class="align-middle mr-1" data-feather="help-circle"></i> Help Center</a>
                                 <div class="dropdown-divider"></div>
+                                <form id="logout-form" action="{{ url($prefix_admin.'/logout') }}" method="POST" style="display: none;">
+                                    {{ csrf_field() }}
+                                </form>
                                 <a href="{{ url($prefix_admin.'/logout') }}" class="dropdown-item"
                                     onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                       <i class="fa fa-power-off icon"></i>

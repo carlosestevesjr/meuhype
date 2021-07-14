@@ -9,12 +9,12 @@ use File;
 use Session;
 use DB;
 
-use App\Channels;
-use App\UserChannels;
+use App\Tags;
+use App\UserTags;
 
 use Illuminate\Http\Request;
 
-class ChannelController extends Controller
+class TagsController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -22,14 +22,16 @@ class ChannelController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function listaCanais(Request $request)
+    public function listaTags(Request $request)
     {
         // $lista = DB::table('channels')->orderBy('name', 'Asc')->get();
         
-        $lista = Channels::query()
-                            ->where('name', 'LIKE', "%{$request->busca}%") 
-                            ->orderBy('name', 'Asc')
-                            ->get();
+        $lista = Tags::query()
+                        // ->where('title', 'LIKE', "%{$request->busca}%") 
+                        ->where('status', '=', "active") 
+                        ->orderBy('title', 'Asc')
+                        // ->limit(15)
+                        ->get();
 
         if($lista){
             $retorno =  [
@@ -52,24 +54,26 @@ class ChannelController extends Controller
             ];
             return response()->json($retorno , 200);
         }
+        // dd( $lista);
     }
 
-    public function listaCanaisUser(Request $request)
+    public function listaTagsUser(Request $request)
     {
-      
+        
         if($request->token){
             $user = DB::table('users')->where('api_token', '=',$request->token)->first();
-            
             if($user){
-                $user_channels = DB::table('user_channels')->where('users_id', '=', $user->id)->get();
-                $array_user_channels = [];
-                foreach($user_channels as $key => $item) {
-                    $array_user_channels[$key] = $item->channels_id;
+                $user_tags = DB::table('user_tags')->where('users_id', '=', $user->id)->get();
+                $array_user_tags = [];
+                foreach($user_tags as $key => $item) {
+                    $array_user_tags[$key] = $item->tags_id;
                 }
-                $lista = Channels::query()
-                            ->where('name', 'LIKE', "%{$request->busca}%") 
-                            ->orderBy('name', 'Asc');
-                           
+               
+                $lista = Tags::query()
+                            ->where('title', 'LIKE', "%{$request->busca}%") 
+                            ->where('status', '=', "active") 
+                            ->orderBy('title', 'Asc');
+                          
                 $lista = $lista->get();
               
             }else{
@@ -85,9 +89,8 @@ class ChannelController extends Controller
             }
         }
 
-        // dd($array_user_channels);
         foreach($lista as $key => $item) {
-            $select = in_array($item->id, $array_user_channels);
+            $select = in_array($item->id, $array_user_tags);
             
             if($select){
                 $item['select'] = 1;
@@ -95,7 +98,7 @@ class ChannelController extends Controller
                 $item['select'] = 0;
             }
         }
-
+      
         if($lista){
             $retorno =  [
                 'code'  => '000',
@@ -119,22 +122,22 @@ class ChannelController extends Controller
         }
     }
 
-    public function postSetCanal(Request $request)
+    public function postSetTag(Request $request)
     {
         $user = DB::table('users')->where('api_token', '=',$request->input('api_token'))->first();
         if($user){
-            $user_channles = DB::table('user_channels')->where('users_id', '=',$user->id)->where('channels_id', '=',$request->input('channels_id'))->first();
+            $user_tags = DB::table('user_tags')->where('users_id', '=',$user->id)->where('tags_id', '=',$request->input('tags_id'))->first();
           
-            if(!$user_channles){
-                $insert = new UserChannels;
+            if(!$user_tags){
+                $insert = new UserTags;
                 $insert->users_id = $user->id;
-                $insert->channels_id = $request->input('channels_id');
+                $insert->tags_id = $request->input('tags_id');
                 $condition = $insert->save();
                 if($condition){
                     $retorno = [
                         'code'  => '001',
                         'content' => [
-                                        'message' => 'Cannal selecionado com sucesso.',
+                                        'message' => 'Tag selecionado com sucesso.',
                                     ],
                         'date'         => date("Y-m-d"),
                         'hour'         => date("H:i:s"),
@@ -145,7 +148,7 @@ class ChannelController extends Controller
                 $retorno =  [
                     'code'  => '002',
                     'content' => [
-                                    'message' => 'Cannal já selecionado anteriormente.',
+                                    'message' => 'Tag já selecionado anteriormente.',
                                 ],
                     'date'         => date("Y-m-d"),
                     'hour'         => date("H:i:s"),
@@ -165,14 +168,14 @@ class ChannelController extends Controller
         return response()->json($retorno , 200);
     }
 
-    public function postUnsetCanal(Request $request)
+    public function postUnsetTag(Request $request)
     {
         $user = DB::table('users')->where('api_token', '=',$request->input('api_token'))->first();
         
         if($user){
-            $item = UserChannels::where('channels_id', '=', $request->channels_id)->first();
+            $item = UserTags::where('tags_id', '=', $request->tags_id)->first();
             if( $item ){
-                $item_delete = UserChannels::find($item->id);
+                $item_delete = UserTags::find($item->id);
                 $condition_delete = $item_delete->delete();
                 if($condition_delete){
                     $retorno =  [
@@ -190,7 +193,7 @@ class ChannelController extends Controller
             $retorno =  [
                 'code'  => '999',
                 'content' => [
-                                'message' => 'Cannal não encontrado.',
+                                'message' => 'Tag não encontrado.',
                             ],
                 'date'         => date("Y-m-d"),
                 'hour'         => date("H:i:s"),
@@ -211,6 +214,16 @@ class ChannelController extends Controller
         return response()->json($retorno , 200);
     }
 
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        //
+    }
 
     /**
      * Store a newly created resource in storage.

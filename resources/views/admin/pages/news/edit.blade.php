@@ -51,15 +51,16 @@
                     <form method="post" action="{{ URL::asset($prefix_admin.'/'.$page_dados['route_controler'].'/'.$item->id ) }}" role="form" class="form" enctype="multipart/form-data">
                         <div class="card-header">
                             <h2><strong>Hash: {{ $item->hash }}</strong></h2>
+                            <input type="hidden" name="hash" class="form-control"  value="{{ $item->hash }}" >
                         </div>
                         <div class="form-row">
                             <div class="form-group col-12 col-lg-6">
                                 <label>Titulo</label>
-                                <input type="text" name="title" class="form-control" placeholder="" value="{{ $item->title }}" >
+                                <input type="text" name="title" class="form-control" placeholder="" readonly value="{{ $item->title }}" >
                             </div>
                             <div class="form-group col-12 col-lg-6">
                                 <label>Slug</label>
-                                <input type="text" name="title" class="form-control" placeholder="" value="{{ $item->slug }}" >
+                                <input type="text" name="slug" class="form-control" placeholder="" value="{{ $item->slug }}" >
                             </div>
                         </div>
                         <div class="form-row">
@@ -107,22 +108,33 @@
                                 </select>
                             </div>
                             <div class="form-group col-12 col-lg-6">
-                                <label>Data</label>
-                                <input type="text" name="data" class="form-control" placeholder="" value="{{ $item->data }}" >
+                                <label>Tag Crawler</label>
+                                <select name="tags_id" class="form-control">
+                                    <option value="0" >Nenhum</option>
+                                    @foreach($tags as $tag)
+                                        <option value="{{ $tag->id }}" <?php if($tag->id == $item->tags_id){ echo 'selected';}?>>{{ $tag->title }}</option>
+                                    @endforeach
+                                </select>
                             </div>
+                           
                       
                         </div>
                         <div class="form-row">
                             <div class="form-group col-12 col-lg-6">
+                                <label>Data</label>
+                                <input type="text" name="data" class="form-control" placeholder="" value="{{ $item->data }}" >
+                            </div>
+                            <div class="form-group col-12 col-lg-6">
                                 <label>Keywords</label>
                                 <input type="text" name="keywords" class="form-control" placeholder="" value="{{ $item->keywords }}" >
                             </div>
+                            
+                        </div>
+                        <div class="form-row">
                             <div class="form-group col-12 col-lg-6">
                                 <label>Ordem</label>
                                 <input type="text" name="order" class="form-control boxed" placeholder="" value="{{ $item->order }}">
                             </div>
-                        </div>
-                        <div class="form-row">
                             <div class="form-group col-12 col-lg-6">
                                 <label>Status</label>
                                 <select name="status" id="status" class="form-control">

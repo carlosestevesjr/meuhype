@@ -19,7 +19,7 @@ class APIToken
     public function handle($request, Closure $next)
     {
         if($request->header('Authorization')){
-
+         
             $user = DB::table('users')->where('api_token', '=', $request->header('Authorization'))->first();
             if($user){
                 return $next($request);

@@ -46,7 +46,6 @@ class CronJobController extends Controller
                             'Quatro_Coisas_Youtube'  => $this->buscaQuatroCoisasYoutube(),
                             'Operacao_Cinema_Youtube'  =>  $this->buscaOperacaoCinemaYoutube(),
                             'Nerd_Rabugento_Youtube'  =>  $this->buscaNerdRabugentoYoutube(),
-                            'Heranca_Nerd_Youtube'  => $this->buscaHerancaNerdYoutube(),
                             'Cris_Panda_Youtube'  => $this->buscaCrisPandaYoutube(),
                             'Nerd_Experience_Youtube'  => $this->buscaNerdExperienceYoutube(),
                             'Caldeirao_Nerd_Youtube'  => $this->buscaCaldeiraoNerdYoutube(),
@@ -57,8 +56,9 @@ class CronJobController extends Controller
                             'Gustavo_Cunha_Youtube'  => $this->buscaGustavoCunhaYoutube(),
                             'Miguel_Lokia_Youtube'  => $this->buscaMiguelLokiaYoutube(),
                             'Entre_Migas_Youtube'  => $this->buscaEntreMigasYoutube(),
-                            'Jovem_Nerd_Spotify' => $this->buscaNewsJovemNerdSpotify(),
-                            'Cinema_Com_Rapadura_Spotify' => $this->buscaNewsCinemaComRapaduraSpotify(),
+                            // 'Jovem_Nerd_Spotify' => $this->buscaNewsJovemNerdSpotify(),
+                            // 'Cinema_Com_Rapadura_Spotify' => $this->buscaNewsCinemaComRapaduraSpotify(),
+                            
                             
                         ];
         
@@ -70,6 +70,7 @@ class CronJobController extends Controller
     }
 
     public function buscaThiagoRomarizYoutube(){
+
         // Search only videos in a given channel, return an array of PHP objects
         $channel = Channels::where( 'hash',  '=', 'thiagoromarizyoutube' )->firstOrFail();
         $url = "";
@@ -96,7 +97,7 @@ class CronJobController extends Controller
                 if($count == 1){
                     $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
                     if($tag ){
-                        $url = $tag->title ;
+                        $url = $channel->url_crawler .str_replace(" ","+",$tag->title) ;
                         // echo $url;
                     }
                 }
@@ -105,6 +106,7 @@ class CronJobController extends Controller
             // dd($url);
         }
         // echo 'url:'.$url;
+        
         if($url == ""){
             $retorno = [
                 'code'         => '003',
@@ -116,131 +118,178 @@ class CronJobController extends Controller
             ];
             return $retorno;
         }
-        $activities = Youtube::searchChannelVideos($url, 'UC-_T97zvbTtXSQI9nVlOFrQ', 5);
-        // $activities = Youtube::getActivitiesByChannelId('UCmEClzCBDx-vrt0GuSKBd9g');
-       
-        $array_adicionados = [];
-        $array_existentes = [];
-        $array_erros = [];
-        if($activities){
-            foreach($activities as $item){
-    
-                //Validando os campos
-                $validator = Validator::make(['hash' => Str::slug($item->snippet->title.'-thiago-romariz-youtube')], [
-                        'hash' => 'required|unique:news',
-                    ],
-                    $messages = [
-                        'unique'    => 'Notícia já existe.',
-                    ]
-                );
-               
-                if ($validator->fails()) {
-
-                    $news = News::where( 'hash',  '=', Str::slug($item->snippet->title.'-thiago-romariz-youtube') )->first();
-                            
-                    if($news){
-                        $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
-                        
-                        if(!$news_tags){
-                            $insert_news_tags = new NewsTags;
-                            $insert_news_tags->news_id = $news->id;
-                            $insert_news_tags->tags_id = $tag->id;
-                            $insert_news_tags->save();
-                        }
-                    }
-    
-                    // Validation 
-                    array_push(
-                        $array_existentes,
-                        Str::slug($item->snippet->title.'-thiago-romariz-youtube')
-                    );
-                   
-                }else{
-    
-                    $img = "";
-                    $link ="";
-    
-                    if(!empty($item->snippet->thumbnails)){
-                        if(!empty($item->snippet->thumbnails->maxres->url)){
-                            $img = $item->snippet->thumbnails->maxres->url;
-                        }else if(!empty($item->snippet->thumbnails->standard->url)){
-                            $img = $item->snippet->thumbnails->standard->url;
-                        }else if(!empty($item->snippet->thumbnails->high->url)){
-                            $img = $item->snippet->thumbnails->high->url;
-                        }else if(!empty($item->snippet->thumbnails->medium->url)){
-                            $img = $item->snippet->thumbnails->medium->url;
-                        }else{
-                            $img = $item->snippet->thumbnails->default->url;
-                        }
-                    }
-    
-                    if(!empty($item->id->videoId)){
-                        $link = 'https://www.youtube.com/watch?v='.$item->id->videoId;
-                    }
-                   
-                    if($img != "" && $link != ""){
-                      
-                        
-                        if($this->validaNoticia( $tag->title, $this->removeEmoji($item->snippet->title) )){
-                            $file =$img;
-                            $filename =  date('Ymdhis'). '_' . Str::slug($this->removeEmoji($item->snippet->title)).'-thiago-romariz-youtube'.'.jpg';
-                            $destinationPath = public_path().'/uploads/news/';
-                            $upload = $this->downloadFile($filename, $file , $destinationPath);
-    
-                            $insert = new News;
-                            $insert->title = $this->removeEmoji($item->snippet->title);
-                            $insert->channels_id = $channel->id;
-                            $insert->slug = Str::slug($item->snippet->title);
-                            $insert->hash = Str::slug($item->snippet->title.'-thiago-romariz-youtube');
-                            $insert->link = $link;
-                            $insert->image = '/uploads/news/' . $filename;
-                            $insert->status = "show";
-                            $insert->order = 0;
-                    
-                            $insert->data = $this->formata_data(3, $item->snippet->publishedAt);
         
-                            $condition = $insert->save();
-                            if($condition){
+        //Busca crawler
+        $data = $this->getCurl($url);
+        
+        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)[;]/', $data, $matches);
+        
+        preg_match_all('/"sectionListRenderer":{"contents":\[(?P<artigo>[\s\S]*?)(,{"continuationItemRenderer")/', $matches['json'][0], $matches);
+        
+        if(isset($matches['artigo'][0])){
+            $dados = json_decode('['.$matches['artigo'][0].']');
+        }else{
+            $dados = [];
+        }
+        $return['content'] = [];
+        foreach ($dados as $key => $value) {
+            if($key < 11){
+                $result['noticia'] = "";
+                $result['img'] = "";
+                $result['link'] = "";
+                $result['data'] = "";
 
-                                $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
-                            
-                                if(!$news_tags){
-                                    $insert_news_tags = new NewsTags;
-                                    $insert_news_tags->news_id = $insert->id;
-                                    $insert_news_tags->tags_id = $tag->id;
-                                    $insert_news_tags->save();
-                                }
+                if(isset($value->itemSectionRenderer->contents[0]->videoRenderer)){
 
-                                array_push(
-                                    $array_adicionados,
-                                    $insert->id.' '.Str::slug($item->snippet->title.'-thiago-romariz-youtube')
-                                );
+                    $result['noticia'] = $value->itemSectionRenderer->contents[0]->videoRenderer->title->runs[0]->text;
+                    //Verifica se a noticia tem relação com as tags
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($result['noticia']) )){
+                    
+                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails)){
+                            if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url;
+                            }else{
+                                $result['img'] = "";
                             }
-    
                         }
-                    }else{
-                        array_push(
-                            $array_erros,
-                            Str::slug($item->snippet->title.'-thiago-romariz-youtube')
-                        );
+            
+                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->videoId)){
+                            $result['url'] = 'https://www.youtube.com/watch?v='.$value->itemSectionRenderer->contents[0]->videoRenderer->videoId;
+                        }
+                        
+                        if(isset($result['url']) && $result['url'] != ""){
+                            $url_date = $result['url'];
+                            $data2 = $this->getCurl($url_date);
+                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
+                            $dados2 = json_encode($matches['json'][0]);
+                            $dados2 = str_replace('"','',$dados2);
+                            // echo '<pre>'; print_r($dados2); echo '</pre>';
+                            $result['data'] =  $this->formata_data(4,$dados2);
+                        }
+
+                        $return['content'][] = $result;
+            
                     }
                 }
+            }else{
+                break;
             }
         }
         
+        // echo '<pre>'; print_r($return['content']); echo '</pre>';/
+        foreach($return['content'] as $item){
+
+            //Validando os campos
+            $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-thiagoromarizyoutube')], [
+                    'hash' => 'required|unique:news',
+                ],
+                $messages = [
+                    'unique'    => 'Notícia já existe.',
+                ]
+            );
+
+            if ($validator->fails()) {
+
+                $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-thiagoromarizyoutube') )->first();
+                            
+                if($news){
+                    $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
+                    
+                    if(!$news_tags){
+                        $insert_news_tags = new NewsTags;
+                        $insert_news_tags->news_id = $news->id;
+                        $insert_news_tags->tags_id = $tag->id;
+                        $insert_news_tags->save();
+                    }
+                }
+
+                // Validation 
+                array_push(
+                    $array_existentes,
+                    Str::slug($item['noticia'].'-thiagoromarizyoutube')
+                );
+            }else{
+
+                $img = "";
+                $link = "";
+                $data = "";
+
+                if($item['img']){
+                    $img = $item['img'];
+                }
+
+                if($item['url']){
+                    $link = $item['url'];
+                }
+
+                if($item['data']){
+                    $data = $item['data'];
+                }
+                if($img != "" && $link != ""){
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        //Baixa imagem
+                        $file =$img;
+                        $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-thiagoromarizyoutube'.'.jpg';
+                        $destinationPath = public_path().'/uploads/news/';
+                        $upload = $this->downloadFile($filename, $file , $destinationPath);
+
+                        $insert = new News;
+                        $insert->title = $this->removeEmoji($item['noticia']);
+                        $insert->channels_id = $channel->id;
+                        $insert->slug = Str::slug($item['noticia']);
+                        $insert->hash = Str::slug($item['noticia'].'-thiagoromarizyoutube');
+                        $insert->link = $link;
+                        $insert->image = '/uploads/news/' . $filename;
+                        $insert->status = "show";
+                        $insert->order = 0;
+                        
+                        $insert->data = $data;
+                        $condition = $insert->save();
+                        if($condition){
+                            
+                            $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
+                            
+                            if(!$news_tags){
+                                $insert_news_tags = new NewsTags;
+                                $insert_news_tags->news_id = $insert->id;
+                                $insert_news_tags->tags_id = $tag->id;
+                                $insert_news_tags->save();
+                            }
+
+                            array_push(
+                                $array_adicionados,
+                                $insert->id.' '.Str::slug($item['noticia'].'-thiagoromarizyoutube')
+                            );
+                        }
+                    }
+                }else{
+                    array_push(
+                        $array_erros,
+                        Str::slug($item['noticia'].'-thiagoromarizyoutube')
+                    );
+                }
+            }
+        }
+
         $retorno = [
             'code'         => '000',
             'adicionados'  => $array_adicionados, 
             'existentes'   => $array_existentes, 
-            'erros'        => $array_erros,
+            'erros'        => $array_erros, 
             'date'         => date("Y-m-d"),
             'hour'         => date("H:i:s"),
         ];
-
         return $retorno;
     }
 
     public function buscaEntreMigasYoutube(){
+
         // Search only videos in a given channel, return an array of PHP objects
         $channel = Channels::where( 'hash',  '=', 'entremigasyoutube' )->firstOrFail();
         $url = "";
@@ -267,7 +316,7 @@ class CronJobController extends Controller
                 if($count == 1){
                     $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
                     if($tag ){
-                        $url = $tag->title ;
+                        $url = $channel->url_crawler .str_replace(" ","+",$tag->title) ;
                         // echo $url;
                     }
                 }
@@ -276,6 +325,7 @@ class CronJobController extends Controller
             // dd($url);
         }
         // echo 'url:'.$url;
+        
         if($url == ""){
             $retorno = [
                 'code'         => '003',
@@ -287,131 +337,179 @@ class CronJobController extends Controller
             ];
             return $retorno;
         }
-        $activities = Youtube::searchChannelVideos($url, 'UCX9AkKp_kixtLvIILx2EewA', 5);
-        // $activities = Youtube::getActivitiesByChannelId('UCmEClzCBDx-vrt0GuSKBd9g');
-       
-        $array_adicionados = [];
-        $array_existentes = [];
-        $array_erros = [];
-        if($activities){
-            foreach($activities as $item){
-    
-                //Validando os campos
-                $validator = Validator::make(['hash' => Str::slug($item->snippet->title.'-entre-migas-youtube')], [
-                        'hash' => 'required|unique:news',
-                    ],
-                    $messages = [
-                        'unique'    => 'Notícia já existe.',
-                    ]
-                );
-               
-                if ($validator->fails()) {
-
-                    $news = News::where( 'hash',  '=', Str::slug($item->snippet->title.'-entre-migas-youtube') )->first();
-                            
-                    if($news){
-                        $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
-                        
-                        if(!$news_tags){
-                            $insert_news_tags = new NewsTags;
-                            $insert_news_tags->news_id = $news->id;
-                            $insert_news_tags->tags_id = $tag->id;
-                            $insert_news_tags->save();
-                        }
-                    }
-    
-                    // Validation 
-                    array_push(
-                        $array_existentes,
-                        Str::slug($item->snippet->title.'-entre-migas-youtube')
-                    );
-                   
-                }else{
-    
-                    $img = "";
-                    $link ="";
-    
-                    if(!empty($item->snippet->thumbnails)){
-                        if(!empty($item->snippet->thumbnails->maxres->url)){
-                            $img = $item->snippet->thumbnails->maxres->url;
-                        }else if(!empty($item->snippet->thumbnails->standard->url)){
-                            $img = $item->snippet->thumbnails->standard->url;
-                        }else if(!empty($item->snippet->thumbnails->high->url)){
-                            $img = $item->snippet->thumbnails->high->url;
-                        }else if(!empty($item->snippet->thumbnails->medium->url)){
-                            $img = $item->snippet->thumbnails->medium->url;
-                        }else{
-                            $img = $item->snippet->thumbnails->default->url;
-                        }
-                    }
-    
-                    if(!empty($item->id->videoId)){
-                        $link = 'https://www.youtube.com/watch?v='.$item->id->videoId;
-                    }
-                   
-                    if($img != "" && $link != ""){
-                      
-                        
-                        if($this->validaNoticia( $tag->title, $this->removeEmoji($item->snippet->title) )){
-                            $file =$img;
-                            $filename =  date('Ymdhis'). '_' . Str::slug($this->removeEmoji($item->snippet->title)).'-entre-migas-youtube'.'.jpg';
-                            $destinationPath = public_path().'/uploads/news/';
-                            $upload = $this->downloadFile($filename, $file , $destinationPath);
-    
-                            $insert = new News;
-                            $insert->title = $this->removeEmoji($item->snippet->title);
-                            $insert->channels_id = $channel->id;
-                            $insert->slug = Str::slug($item->snippet->title);
-                            $insert->hash = Str::slug($item->snippet->title.'-entre-migas-youtube');
-                            $insert->link = $link;
-                            $insert->image = '/uploads/news/' . $filename;
-                            $insert->status = "show";
-                            $insert->order = 0;
-                    
-                            $insert->data = $this->formata_data(3, $item->snippet->publishedAt);
         
-                            $condition = $insert->save();
-                            if($condition){
+        //Busca crawler
+        $data = $this->getCurl($url);
+        
+        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)[;]/', $data, $matches);
+        
+        preg_match_all('/"sectionListRenderer":{"contents":\[(?P<artigo>[\s\S]*?)(,{"continuationItemRenderer")/', $matches['json'][0], $matches);
+       
+        if(isset($matches['artigo'][0])){
+            $dados = json_decode('['.$matches['artigo'][0].']');
+        }else{
+            $dados = [];
+        }
+        $return['content'] = [];
+        foreach ($dados as $key => $value) {
+            if($key < 11){
+                $result['noticia'] = "";
+                $result['img'] = "";
+                $result['link'] = "";
+                $result['data'] = "";
 
-                                $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
-                            
-                                if(!$news_tags){
-                                    $insert_news_tags = new NewsTags;
-                                    $insert_news_tags->news_id = $insert->id;
-                                    $insert_news_tags->tags_id = $tag->id;
-                                    $insert_news_tags->save();
-                                }
+                if(isset($value->itemSectionRenderer->contents[0]->videoRenderer)){
 
-                                array_push(
-                                    $array_adicionados,
-                                    $insert->id.' '.Str::slug($item->snippet->title.'-entre-migas-youtube')
-                                );
+                    $result['noticia'] = $value->itemSectionRenderer->contents[0]->videoRenderer->title->runs[0]->text;
+                    //Verifica se a noticia tem relação com as tags
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($result['noticia']) )){
+                    
+                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails)){
+                            if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url;
+                            }else{
+                                $result['img'] = "";
                             }
-    
                         }
-                    }else{
-                        array_push(
-                            $array_erros,
-                            Str::slug($item->snippet->title.'-entre-migas-youtube')
-                        );
+            
+                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->videoId)){
+                            $result['url'] = 'https://www.youtube.com/watch?v='.$value->itemSectionRenderer->contents[0]->videoRenderer->videoId;
+                        }
+                        
+                        if(isset($result['url']) && $result['url'] != ""){
+                            $url_date = $result['url'];
+                            $data2 = $this->getCurl($url_date);
+                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
+                            $dados2 = json_encode($matches['json'][0]);
+                            $dados2 = str_replace('"','',$dados2);
+                            // echo '<pre>'; print_r($dados2); echo '</pre>';
+                            $result['data'] =  $this->formata_data(4,$dados2);
+                        }
+
+                        $return['content'][] = $result;
+            
                     }
                 }
+            }else{
+                break;
             }
         }
         
+        // echo '<pre>'; print_r($return['content']); echo '</pre>';
+        // die;
+        foreach($return['content'] as $item){
+
+            //Validando os campos
+            $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-entremigasyoutube')], [
+                    'hash' => 'required|unique:news',
+                ],
+                $messages = [
+                    'unique'    => 'Notícia já existe.',
+                ]
+            );
+
+            if ($validator->fails()) {
+
+                $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-entremigasyoutube') )->first();
+                            
+                if($news){
+                    $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
+                    
+                    if(!$news_tags){
+                        $insert_news_tags = new NewsTags;
+                        $insert_news_tags->news_id = $news->id;
+                        $insert_news_tags->tags_id = $tag->id;
+                        $insert_news_tags->save();
+                    }
+                }
+
+                // Validation 
+                array_push(
+                    $array_existentes,
+                    Str::slug($item['noticia'].'-entremigasyoutube')
+                );
+            }else{
+
+                $img = "";
+                $link = "";
+                $data = "";
+
+                if($item['img']){
+                    $img = $item['img'];
+                }
+
+                if($item['url']){
+                    $link = $item['url'];
+                }
+
+                if($item['data']){
+                    $data = $item['data'];
+                }
+                if($img != "" && $link != ""){
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        //Baixa imagem
+                        $file =$img;
+                        $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-entremigasyoutube'.'.jpg';
+                        $destinationPath = public_path().'/uploads/news/';
+                        $upload = $this->downloadFile($filename, $file , $destinationPath);
+
+                        $insert = new News;
+                        $insert->title = $this->removeEmoji($item['noticia']);
+                        $insert->channels_id = $channel->id;
+                        $insert->slug = Str::slug($item['noticia']);
+                        $insert->hash = Str::slug($item['noticia'].'-entremigasyoutube');
+                        $insert->link = $link;
+                        $insert->image = '/uploads/news/' . $filename;
+                        $insert->status = "show";
+                        $insert->order = 0;
+                        
+                        $insert->data = $data;
+                        $condition = $insert->save();
+                        if($condition){
+                            
+                            $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
+                            
+                            if(!$news_tags){
+                                $insert_news_tags = new NewsTags;
+                                $insert_news_tags->news_id = $insert->id;
+                                $insert_news_tags->tags_id = $tag->id;
+                                $insert_news_tags->save();
+                            }
+
+                            array_push(
+                                $array_adicionados,
+                                $insert->id.' '.Str::slug($item['noticia'].'-entremigasyoutube')
+                            );
+                        }
+                    }
+                }else{
+                    array_push(
+                        $array_erros,
+                        Str::slug($item['noticia'].'-entremigasyoutube')
+                    );
+                }
+            }
+        }
+
         $retorno = [
             'code'         => '000',
             'adicionados'  => $array_adicionados, 
             'existentes'   => $array_existentes, 
-            'erros'        => $array_erros,
+            'erros'        => $array_erros, 
             'date'         => date("Y-m-d"),
             'hour'         => date("H:i:s"),
         ];
-
         return $retorno;
     }
 
     public function buscaMiguelLokiaYoutube(){
+
         // Search only videos in a given channel, return an array of PHP objects
         $channel = Channels::where( 'hash',  '=', 'miguellokiayoutube' )->firstOrFail();
         $url = "";
@@ -438,7 +536,7 @@ class CronJobController extends Controller
                 if($count == 1){
                     $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
                     if($tag ){
-                        $url = $tag->title ;
+                        $url = $channel->url_crawler .str_replace(" ","+",$tag->title) ;
                         // echo $url;
                     }
                 }
@@ -447,6 +545,7 @@ class CronJobController extends Controller
             // dd($url);
         }
         // echo 'url:'.$url;
+        
         if($url == ""){
             $retorno = [
                 'code'         => '003',
@@ -458,131 +557,179 @@ class CronJobController extends Controller
             ];
             return $retorno;
         }
-        $activities = Youtube::searchChannelVideos($url, 'UCP_Hxwf6ajGjPsMw0a8rnLQ', 5);
-        // $activities = Youtube::getActivitiesByChannelId('UCmEClzCBDx-vrt0GuSKBd9g');
-       
-        $array_adicionados = [];
-        $array_existentes = [];
-        $array_erros = [];
-        if($activities){
-            foreach($activities as $item){
-    
-                //Validando os campos
-                $validator = Validator::make(['hash' => Str::slug($item->snippet->title.'-miguel-lokia-youtube')], [
-                        'hash' => 'required|unique:news',
-                    ],
-                    $messages = [
-                        'unique'    => 'Notícia já existe.',
-                    ]
-                );
-               
-                if ($validator->fails()) {
-
-                    $news = News::where( 'hash',  '=', Str::slug($item->snippet->title.'-miguel-lokia-youtube') )->first();
-                            
-                    if($news){
-                        $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
-                        
-                        if(!$news_tags){
-                            $insert_news_tags = new NewsTags;
-                            $insert_news_tags->news_id = $news->id;
-                            $insert_news_tags->tags_id = $tag->id;
-                            $insert_news_tags->save();
-                        }
-                    }
-    
-                    // Validation 
-                    array_push(
-                        $array_existentes,
-                        Str::slug($item->snippet->title.'-miguel-lokia-youtube')
-                    );
-                   
-                }else{
-    
-                    $img = "";
-                    $link ="";
-    
-                    if(!empty($item->snippet->thumbnails)){
-                        if(!empty($item->snippet->thumbnails->maxres->url)){
-                            $img = $item->snippet->thumbnails->maxres->url;
-                        }else if(!empty($item->snippet->thumbnails->standard->url)){
-                            $img = $item->snippet->thumbnails->standard->url;
-                        }else if(!empty($item->snippet->thumbnails->high->url)){
-                            $img = $item->snippet->thumbnails->high->url;
-                        }else if(!empty($item->snippet->thumbnails->medium->url)){
-                            $img = $item->snippet->thumbnails->medium->url;
-                        }else{
-                            $img = $item->snippet->thumbnails->default->url;
-                        }
-                    }
-    
-                    if(!empty($item->id->videoId)){
-                        $link = 'https://www.youtube.com/watch?v='.$item->id->videoId;
-                    }
-                   
-                    if($img != "" && $link != ""){
-                      
-                        
-                        if($this->validaNoticia( $tag->title, $this->removeEmoji($item->snippet->title) )){
-                            $file =$img;
-                            $filename =  date('Ymdhis'). '_' . Str::slug($this->removeEmoji($item->snippet->title)).'-miguel-lokia-youtube'.'.jpg';
-                            $destinationPath = public_path().'/uploads/news/';
-                            $upload = $this->downloadFile($filename, $file , $destinationPath);
-    
-                            $insert = new News;
-                            $insert->title = $this->removeEmoji($item->snippet->title);
-                            $insert->channels_id = $channel->id;
-                            $insert->slug = Str::slug($item->snippet->title);
-                            $insert->hash = Str::slug($item->snippet->title.'-miguel-lokia-youtube');
-                            $insert->link = $link;
-                            $insert->image = '/uploads/news/' . $filename;
-                            $insert->status = "show";
-                            $insert->order = 0;
-                    
-                            $insert->data = $this->formata_data(3, $item->snippet->publishedAt);
         
-                            $condition = $insert->save();
-                            if($condition){
+        //Busca crawler
+        $data = $this->getCurl($url);
+        
+        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)[;]/', $data, $matches);
+        
+        preg_match_all('/"sectionListRenderer":{"contents":\[(?P<artigo>[\s\S]*?)(,{"continuationItemRenderer")/', $matches['json'][0], $matches);
+       
+        if(isset($matches['artigo'][0])){
+            $dados = json_decode('['.$matches['artigo'][0].']');
+        }else{
+            $dados = [];
+        }
+        $return['content'] = [];
+        foreach ($dados as $key => $value) {
+            if($key < 11){
+                $result['noticia'] = "";
+                $result['img'] = "";
+                $result['link'] = "";
+                $result['data'] = "";
 
-                                $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
-                            
-                                if(!$news_tags){
-                                    $insert_news_tags = new NewsTags;
-                                    $insert_news_tags->news_id = $insert->id;
-                                    $insert_news_tags->tags_id = $tag->id;
-                                    $insert_news_tags->save();
-                                }
+                if(isset($value->itemSectionRenderer->contents[0]->videoRenderer)){
 
-                                array_push(
-                                    $array_adicionados,
-                                    $insert->id.' '.Str::slug($item->snippet->title.'-miguel-lokia-youtube')
-                                );
+                    $result['noticia'] = $value->itemSectionRenderer->contents[0]->videoRenderer->title->runs[0]->text;
+                    //Verifica se a noticia tem relação com as tags
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($result['noticia']) )){
+                    
+                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails)){
+                            if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url;
+                            }else{
+                                $result['img'] = "";
                             }
-    
                         }
-                    }else{
-                        array_push(
-                            $array_erros,
-                            Str::slug($item->snippet->title.'-miguel-lokia-youtube')
-                        );
+            
+                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->videoId)){
+                            $result['url'] = 'https://www.youtube.com/watch?v='.$value->itemSectionRenderer->contents[0]->videoRenderer->videoId;
+                        }
+                        
+                        if(isset($result['url']) && $result['url'] != ""){
+                            $url_date = $result['url'];
+                            $data2 = $this->getCurl($url_date);
+                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
+                            $dados2 = json_encode($matches['json'][0]);
+                            $dados2 = str_replace('"','',$dados2);
+                            // echo '<pre>'; print_r($dados2); echo '</pre>';
+                            $result['data'] =  $this->formata_data(4,$dados2);
+                        }
+
+                        $return['content'][] = $result;
+            
                     }
                 }
+            }else{
+                break;
             }
         }
         
+        // echo '<pre>'; print_r($return['content']); echo '</pre>';
+        // die;
+        foreach($return['content'] as $item){
+
+            //Validando os campos
+            $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-miguellokiayoutube')], [
+                    'hash' => 'required|unique:news',
+                ],
+                $messages = [
+                    'unique'    => 'Notícia já existe.',
+                ]
+            );
+
+            if ($validator->fails()) {
+
+                $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-miguellokiayoutube') )->first();
+                            
+                if($news){
+                    $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
+                    
+                    if(!$news_tags){
+                        $insert_news_tags = new NewsTags;
+                        $insert_news_tags->news_id = $news->id;
+                        $insert_news_tags->tags_id = $tag->id;
+                        $insert_news_tags->save();
+                    }
+                }
+
+                // Validation 
+                array_push(
+                    $array_existentes,
+                    Str::slug($item['noticia'].'-miguellokiayoutube')
+                );
+            }else{
+
+                $img = "";
+                $link = "";
+                $data = "";
+
+                if($item['img']){
+                    $img = $item['img'];
+                }
+
+                if($item['url']){
+                    $link = $item['url'];
+                }
+
+                if($item['data']){
+                    $data = $item['data'];
+                }
+                if($img != "" && $link != ""){
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        //Baixa imagem
+                        $file =$img;
+                        $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-miguellokiayoutube'.'.jpg';
+                        $destinationPath = public_path().'/uploads/news/';
+                        $upload = $this->downloadFile($filename, $file , $destinationPath);
+
+                        $insert = new News;
+                        $insert->title = $this->removeEmoji($item['noticia']);
+                        $insert->channels_id = $channel->id;
+                        $insert->slug = Str::slug($item['noticia']);
+                        $insert->hash = Str::slug($item['noticia'].'-miguellokiayoutube');
+                        $insert->link = $link;
+                        $insert->image = '/uploads/news/' . $filename;
+                        $insert->status = "show";
+                        $insert->order = 0;
+                        
+                        $insert->data = $data;
+                        $condition = $insert->save();
+                        if($condition){
+                            
+                            $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
+                            
+                            if(!$news_tags){
+                                $insert_news_tags = new NewsTags;
+                                $insert_news_tags->news_id = $insert->id;
+                                $insert_news_tags->tags_id = $tag->id;
+                                $insert_news_tags->save();
+                            }
+
+                            array_push(
+                                $array_adicionados,
+                                $insert->id.' '.Str::slug($item['noticia'].'-miguellokiayoutube')
+                            );
+                        }
+                    }
+                }else{
+                    array_push(
+                        $array_erros,
+                        Str::slug($item['noticia'].'-miguellokiayoutube')
+                    );
+                }
+            }
+        }
+
         $retorno = [
             'code'         => '000',
             'adicionados'  => $array_adicionados, 
             'existentes'   => $array_existentes, 
-            'erros'        => $array_erros,
+            'erros'        => $array_erros, 
             'date'         => date("Y-m-d"),
             'hour'         => date("H:i:s"),
         ];
-
         return $retorno;
     }
 
     public function buscaGustavoCunhaYoutube(){
+
         // Search only videos in a given channel, return an array of PHP objects
         $channel = Channels::where( 'hash',  '=', 'gustavocunhayoutube' )->firstOrFail();
         $url = "";
@@ -609,7 +756,7 @@ class CronJobController extends Controller
                 if($count == 1){
                     $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
                     if($tag ){
-                        $url = $tag->title ;
+                        $url = $channel->url_crawler .str_replace(" ","+",$tag->title) ;
                         // echo $url;
                     }
                 }
@@ -618,6 +765,7 @@ class CronJobController extends Controller
             // dd($url);
         }
         // echo 'url:'.$url;
+        
         if($url == ""){
             $retorno = [
                 'code'         => '003',
@@ -629,131 +777,179 @@ class CronJobController extends Controller
             ];
             return $retorno;
         }
-        $activities = Youtube::searchChannelVideos($url, 'UCfUE4aSsJSOmeGcnwue9TnQ', 5);
-        // $activities = Youtube::getActivitiesByChannelId('UCmEClzCBDx-vrt0GuSKBd9g');
-       
-        $array_adicionados = [];
-        $array_existentes = [];
-        $array_erros = [];
-        if($activities){
-            foreach($activities as $item){
-    
-                //Validando os campos
-                $validator = Validator::make(['hash' => Str::slug($item->snippet->title.'-gustavo-cunha-youtube')], [
-                        'hash' => 'required|unique:news',
-                    ],
-                    $messages = [
-                        'unique'    => 'Notícia já existe.',
-                    ]
-                );
-               
-                if ($validator->fails()) {
-
-                    $news = News::where( 'hash',  '=', Str::slug($item->snippet->title.'-gustavo-cunha-youtube') )->first();
-                            
-                    if($news){
-                        $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
-                        
-                        if(!$news_tags){
-                            $insert_news_tags = new NewsTags;
-                            $insert_news_tags->news_id = $news->id;
-                            $insert_news_tags->tags_id = $tag->id;
-                            $insert_news_tags->save();
-                        }
-                    }
-    
-                    // Validation 
-                    array_push(
-                        $array_existentes,
-                        Str::slug($item->snippet->title.'-gustavo-cunha-youtube')
-                    );
-                   
-                }else{
-    
-                    $img = "";
-                    $link ="";
-    
-                    if(!empty($item->snippet->thumbnails)){
-                        if(!empty($item->snippet->thumbnails->maxres->url)){
-                            $img = $item->snippet->thumbnails->maxres->url;
-                        }else if(!empty($item->snippet->thumbnails->standard->url)){
-                            $img = $item->snippet->thumbnails->standard->url;
-                        }else if(!empty($item->snippet->thumbnails->high->url)){
-                            $img = $item->snippet->thumbnails->high->url;
-                        }else if(!empty($item->snippet->thumbnails->medium->url)){
-                            $img = $item->snippet->thumbnails->medium->url;
-                        }else{
-                            $img = $item->snippet->thumbnails->default->url;
-                        }
-                    }
-    
-                    if(!empty($item->id->videoId)){
-                        $link = 'https://www.youtube.com/watch?v='.$item->id->videoId;
-                    }
-                   
-                    if($img != "" && $link != ""){
-                      
-                        
-                        if($this->validaNoticia( $tag->title, $this->removeEmoji($item->snippet->title) )){
-                            $file =$img;
-                            $filename =  date('Ymdhis'). '_' . Str::slug($this->removeEmoji($item->snippet->title)).'-gustavo-cunha-youtube'.'.jpg';
-                            $destinationPath = public_path().'/uploads/news/';
-                            $upload = $this->downloadFile($filename, $file , $destinationPath);
-    
-                            $insert = new News;
-                            $insert->title = $this->removeEmoji($item->snippet->title);
-                            $insert->channels_id = $channel->id;
-                            $insert->slug = Str::slug($item->snippet->title);
-                            $insert->hash = Str::slug($item->snippet->title.'-gustavo-cunha-youtube');
-                            $insert->link = $link;
-                            $insert->image = '/uploads/news/' . $filename;
-                            $insert->status = "show";
-                            $insert->order = 0;
-                    
-                            $insert->data = $this->formata_data(3, $item->snippet->publishedAt);
         
-                            $condition = $insert->save();
-                            if($condition){
+        //Busca crawler
+        $data = $this->getCurl($url);
+        
+        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)[;]/', $data, $matches);
+        
+        preg_match_all('/"sectionListRenderer":{"contents":\[(?P<artigo>[\s\S]*?)(,{"continuationItemRenderer")/', $matches['json'][0], $matches);
+       
+        if(isset($matches['artigo'][0])){
+            $dados = json_decode('['.$matches['artigo'][0].']');
+        }else{
+            $dados = [];
+        }
+        $return['content'] = [];
+        foreach ($dados as $key => $value) {
+            if($key < 11){
+                $result['noticia'] = "";
+                $result['img'] = "";
+                $result['link'] = "";
+                $result['data'] = "";
 
-                                $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
-                            
-                                if(!$news_tags){
-                                    $insert_news_tags = new NewsTags;
-                                    $insert_news_tags->news_id = $insert->id;
-                                    $insert_news_tags->tags_id = $tag->id;
-                                    $insert_news_tags->save();
-                                }
+                if(isset($value->itemSectionRenderer->contents[0]->videoRenderer)){
 
-                                array_push(
-                                    $array_adicionados,
-                                    $insert->id.' '.Str::slug($item->snippet->title.'-gustavo-cunha-youtube')
-                                );
+                    $result['noticia'] = $value->itemSectionRenderer->contents[0]->videoRenderer->title->runs[0]->text;
+                    //Verifica se a noticia tem relação com as tags
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($result['noticia']) )){
+                    
+                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails)){
+                            if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url;
+                            }else{
+                                $result['img'] = "";
                             }
-    
                         }
-                    }else{
-                        array_push(
-                            $array_erros,
-                            Str::slug($item->snippet->title.'-gustavo-cunha-youtube')
-                        );
+            
+                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->videoId)){
+                            $result['url'] = 'https://www.youtube.com/watch?v='.$value->itemSectionRenderer->contents[0]->videoRenderer->videoId;
+                        }
+                        
+                        if(isset($result['url']) && $result['url'] != ""){
+                            $url_date = $result['url'];
+                            $data2 = $this->getCurl($url_date);
+                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
+                            $dados2 = json_encode($matches['json'][0]);
+                            $dados2 = str_replace('"','',$dados2);
+                            // echo '<pre>'; print_r($dados2); echo '</pre>';
+                            $result['data'] =  $this->formata_data(4,$dados2);
+                        }
+
+                        $return['content'][] = $result;
+            
                     }
                 }
+            }else{
+                break;
             }
         }
         
+        // echo '<pre>'; print_r($return['content']); echo '</pre>';
+        // die;
+        foreach($return['content'] as $item){
+
+            //Validando os campos
+            $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-gustavocunhayoutube')], [
+                    'hash' => 'required|unique:news',
+                ],
+                $messages = [
+                    'unique'    => 'Notícia já existe.',
+                ]
+            );
+
+            if ($validator->fails()) {
+
+                $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-gustavocunhayoutube') )->first();
+                            
+                if($news){
+                    $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
+                    
+                    if(!$news_tags){
+                        $insert_news_tags = new NewsTags;
+                        $insert_news_tags->news_id = $news->id;
+                        $insert_news_tags->tags_id = $tag->id;
+                        $insert_news_tags->save();
+                    }
+                }
+
+                // Validation 
+                array_push(
+                    $array_existentes,
+                    Str::slug($item['noticia'].'-gustavocunhayoutube')
+                );
+            }else{
+
+                $img = "";
+                $link = "";
+                $data = "";
+
+                if($item['img']){
+                    $img = $item['img'];
+                }
+
+                if($item['url']){
+                    $link = $item['url'];
+                }
+
+                if($item['data']){
+                    $data = $item['data'];
+                }
+                if($img != "" && $link != ""){
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        //Baixa imagem
+                        $file =$img;
+                        $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-gustavocunhayoutube'.'.jpg';
+                        $destinationPath = public_path().'/uploads/news/';
+                        $upload = $this->downloadFile($filename, $file , $destinationPath);
+
+                        $insert = new News;
+                        $insert->title = $this->removeEmoji($item['noticia']);
+                        $insert->channels_id = $channel->id;
+                        $insert->slug = Str::slug($item['noticia']);
+                        $insert->hash = Str::slug($item['noticia'].'-gustavocunhayoutube');
+                        $insert->link = $link;
+                        $insert->image = '/uploads/news/' . $filename;
+                        $insert->status = "show";
+                        $insert->order = 0;
+                        
+                        $insert->data = $data;
+                        $condition = $insert->save();
+                        if($condition){
+                            
+                            $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
+                            
+                            if(!$news_tags){
+                                $insert_news_tags = new NewsTags;
+                                $insert_news_tags->news_id = $insert->id;
+                                $insert_news_tags->tags_id = $tag->id;
+                                $insert_news_tags->save();
+                            }
+
+                            array_push(
+                                $array_adicionados,
+                                $insert->id.' '.Str::slug($item['noticia'].'-gustavocunhayoutube')
+                            );
+                        }
+                    }
+                }else{
+                    array_push(
+                        $array_erros,
+                        Str::slug($item['noticia'].'-gustavocunhayoutube')
+                    );
+                }
+            }
+        }
+
         $retorno = [
             'code'         => '000',
             'adicionados'  => $array_adicionados, 
             'existentes'   => $array_existentes, 
-            'erros'        => $array_erros,
+            'erros'        => $array_erros, 
             'date'         => date("Y-m-d"),
             'hour'         => date("H:i:s"),
         ];
-
         return $retorno;
     }
-    
+
     public function buscaNerdNewsYoutube(){
+
         // Search only videos in a given channel, return an array of PHP objects
         $channel = Channels::where( 'hash',  '=', 'nerdnewsyoutube' )->firstOrFail();
         $url = "";
@@ -780,7 +976,7 @@ class CronJobController extends Controller
                 if($count == 1){
                     $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
                     if($tag ){
-                        $url = $tag->title ;
+                        $url = $channel->url_crawler .str_replace(" ","+",$tag->title) ;
                         // echo $url;
                     }
                 }
@@ -789,6 +985,7 @@ class CronJobController extends Controller
             // dd($url);
         }
         // echo 'url:'.$url;
+        
         if($url == ""){
             $retorno = [
                 'code'         => '003',
@@ -800,130 +997,179 @@ class CronJobController extends Controller
             ];
             return $retorno;
         }
-        $activities = Youtube::searchChannelVideos($url, 'UCSozvJtG0HiPFuVyaIty2rw', 5);
-        // $activities = Youtube::getActivitiesByChannelId('UCmEClzCBDx-vrt0GuSKBd9g');
-        $array_adicionados = [];
-        $array_existentes = [];
-        $array_erros = [];
-        if($activities){
-            foreach($activities as $item){
-    
-                //Validando os campos
-                $validator = Validator::make(['hash' => Str::slug($item->snippet->title.'-nerd-news-youtube')], [
-                        'hash' => 'required|unique:news',
-                    ],
-                    $messages = [
-                        'unique'    => 'Notícia já existe.',
-                    ]
-                );
-               
-                if ($validator->fails()) {
-
-                    $news = News::where( 'hash',  '=', Str::slug($item->snippet->title.'-nerd-news-youtube') )->first();
-                            
-                    if($news){
-                        $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
-                        
-                        if(!$news_tags){
-                            $insert_news_tags = new NewsTags;
-                            $insert_news_tags->news_id = $news->id;
-                            $insert_news_tags->tags_id = $tag->id;
-                            $insert_news_tags->save();
-                        }
-                    }
-    
-                    // Validation 
-                    array_push(
-                        $array_existentes,
-                        Str::slug($item->snippet->title.'-nerd-news-youtube')
-                    );
-                   
-                }else{
-    
-                    $img = "";
-                    $link ="";
-    
-                    if(!empty($item->snippet->thumbnails)){
-                        if(!empty($item->snippet->thumbnails->maxres->url)){
-                            $img = $item->snippet->thumbnails->maxres->url;
-                        }else if(!empty($item->snippet->thumbnails->standard->url)){
-                            $img = $item->snippet->thumbnails->standard->url;
-                        }else if(!empty($item->snippet->thumbnails->high->url)){
-                            $img = $item->snippet->thumbnails->high->url;
-                        }else if(!empty($item->snippet->thumbnails->medium->url)){
-                            $img = $item->snippet->thumbnails->medium->url;
-                        }else{
-                            $img = $item->snippet->thumbnails->default->url;
-                        }
-                    }
-    
-                    if(!empty($item->id->videoId)){
-                        $link = 'https://www.youtube.com/watch?v='.$item->id->videoId;
-                    }
-                   
-                    if($img != "" && $link != ""){
-                      
-                        
-                        if($this->validaNoticia( $tag->title, $this->removeEmoji($item->snippet->title) )){
-                            $file =$img;
-                            $filename =  date('Ymdhis'). '_' . Str::slug($this->removeEmoji($item->snippet->title)).'-nerd-news-youtube'.'.jpg';
-                            $destinationPath = public_path().'/uploads/news/';
-                            $upload = $this->downloadFile($filename, $file , $destinationPath);
-    
-                            $insert = new News;
-                            $insert->title = $this->removeEmoji($item->snippet->title);
-                            $insert->channels_id = $channel->id;
-                            $insert->slug = Str::slug($item->snippet->title);
-                            $insert->hash = Str::slug($item->snippet->title.'-nerd-news-youtube');
-                            $insert->link = $link;
-                            $insert->image = '/uploads/news/' . $filename;
-                            $insert->status = "show";
-                            $insert->order = 0;
-                    
-                            $insert->data = $this->formata_data(3, $item->snippet->publishedAt);
         
-                            $condition = $insert->save();
-                            if($condition){
+        //Busca crawler
+        $data = $this->getCurl($url);
+        
+        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)[;]/', $data, $matches);
+        
+        preg_match_all('/"sectionListRenderer":{"contents":\[(?P<artigo>[\s\S]*?)(,{"continuationItemRenderer")/', $matches['json'][0], $matches);
+       
+        if(isset($matches['artigo'][0])){
+            $dados = json_decode('['.$matches['artigo'][0].']');
+        }else{
+            $dados = [];
+        }
+        $return['content'] = [];
+        foreach ($dados as $key => $value) {
+            if($key < 11){
+                $result['noticia'] = "";
+                $result['img'] = "";
+                $result['link'] = "";
+                $result['data'] = "";
 
-                                $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
-                            
-                                if(!$news_tags){
-                                    $insert_news_tags = new NewsTags;
-                                    $insert_news_tags->news_id = $insert->id;
-                                    $insert_news_tags->tags_id = $tag->id;
-                                    $insert_news_tags->save();
-                                }
+                if(isset($value->itemSectionRenderer->contents[0]->videoRenderer)){
 
-                                array_push(
-                                    $array_adicionados,
-                                    $insert->id.' '.Str::slug($item->snippet->title.'-nerd-news-youtube')
-                                );
+                    $result['noticia'] = $value->itemSectionRenderer->contents[0]->videoRenderer->title->runs[0]->text;
+                    //Verifica se a noticia tem relação com as tags
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($result['noticia']) )){
+                    
+                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails)){
+                            if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url;
+                            }else{
+                                $result['img'] = "";
                             }
-    
                         }
-                    }else{
-                        array_push(
-                            $array_erros,
-                            Str::slug($item->snippet->title.'-nerd-news-youtube')
-                        );
+            
+                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->videoId)){
+                            $result['url'] = 'https://www.youtube.com/watch?v='.$value->itemSectionRenderer->contents[0]->videoRenderer->videoId;
+                        }
+                        
+                        if(isset($result['url']) && $result['url'] != ""){
+                            $url_date = $result['url'];
+                            $data2 = $this->getCurl($url_date);
+                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
+                            $dados2 = json_encode($matches['json'][0]);
+                            $dados2 = str_replace('"','',$dados2);
+                            // echo '<pre>'; print_r($dados2); echo '</pre>';
+                            $result['data'] =  $this->formata_data(4,$dados2);
+                        }
+
+                        $return['content'][] = $result;
+            
                     }
                 }
+            }else{
+                break;
             }
         }
         
+        // echo '<pre>'; print_r($return['content']); echo '</pre>';
+        // die;
+        foreach($return['content'] as $item){
+
+            //Validando os campos
+            $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-nerdnewsyoutube')], [
+                    'hash' => 'required|unique:news',
+                ],
+                $messages = [
+                    'unique'    => 'Notícia já existe.',
+                ]
+            );
+
+            if ($validator->fails()) {
+
+                $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-nerdnewsyoutube') )->first();
+                            
+                if($news){
+                    $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
+                    
+                    if(!$news_tags){
+                        $insert_news_tags = new NewsTags;
+                        $insert_news_tags->news_id = $news->id;
+                        $insert_news_tags->tags_id = $tag->id;
+                        $insert_news_tags->save();
+                    }
+                }
+
+                // Validation 
+                array_push(
+                    $array_existentes,
+                    Str::slug($item['noticia'].'-nerdnewsyoutube')
+                );
+            }else{
+
+                $img = "";
+                $link = "";
+                $data = "";
+
+                if($item['img']){
+                    $img = $item['img'];
+                }
+
+                if($item['url']){
+                    $link = $item['url'];
+                }
+
+                if($item['data']){
+                    $data = $item['data'];
+                }
+                if($img != "" && $link != ""){
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        //Baixa imagem
+                        $file =$img;
+                        $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-nerdnewsyoutube'.'.jpg';
+                        $destinationPath = public_path().'/uploads/news/';
+                        $upload = $this->downloadFile($filename, $file , $destinationPath);
+
+                        $insert = new News;
+                        $insert->title = $this->removeEmoji($item['noticia']);
+                        $insert->channels_id = $channel->id;
+                        $insert->slug = Str::slug($item['noticia']);
+                        $insert->hash = Str::slug($item['noticia'].'-nerdnewsyoutube');
+                        $insert->link = $link;
+                        $insert->image = '/uploads/news/' . $filename;
+                        $insert->status = "show";
+                        $insert->order = 0;
+                        
+                        $insert->data = $data;
+                        $condition = $insert->save();
+                        if($condition){
+                            
+                            $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
+                            
+                            if(!$news_tags){
+                                $insert_news_tags = new NewsTags;
+                                $insert_news_tags->news_id = $insert->id;
+                                $insert_news_tags->tags_id = $tag->id;
+                                $insert_news_tags->save();
+                            }
+
+                            array_push(
+                                $array_adicionados,
+                                $insert->id.' '.Str::slug($item['noticia'].'-nerdnewsyoutube')
+                            );
+                        }
+                    }
+                }else{
+                    array_push(
+                        $array_erros,
+                        Str::slug($item['noticia'].'-nerdnewsyoutube')
+                    );
+                }
+            }
+        }
+
         $retorno = [
             'code'         => '000',
             'adicionados'  => $array_adicionados, 
             'existentes'   => $array_existentes, 
-            'erros'        => $array_erros,
+            'erros'        => $array_erros, 
             'date'         => date("Y-m-d"),
             'hour'         => date("H:i:s"),
         ];
-
         return $retorno;
     }
 
     public function buscaSessaoNerdYoutube(){
+
         // Search only videos in a given channel, return an array of PHP objects
         $channel = Channels::where( 'hash',  '=', 'sessaonerdyoutube' )->firstOrFail();
         $url = "";
@@ -950,7 +1196,7 @@ class CronJobController extends Controller
                 if($count == 1){
                     $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
                     if($tag ){
-                        $url = $tag->title ;
+                        $url = $channel->url_crawler .str_replace(" ","+",$tag->title) ;
                         // echo $url;
                     }
                 }
@@ -959,6 +1205,7 @@ class CronJobController extends Controller
             // dd($url);
         }
         // echo 'url:'.$url;
+        
         if($url == ""){
             $retorno = [
                 'code'         => '003',
@@ -970,131 +1217,179 @@ class CronJobController extends Controller
             ];
             return $retorno;
         }
-        $activities = Youtube::searchChannelVideos($url, 'UCmGD63MyNLl3niTac686-XQ', 5);
-        // $activities = Youtube::getActivitiesByChannelId('UCmEClzCBDx-vrt0GuSKBd9g');
-       
-        $array_adicionados = [];
-        $array_existentes = [];
-        $array_erros = [];
-        if($activities){
-            foreach($activities as $item){
-    
-                //Validando os campos
-                $validator = Validator::make(['hash' => Str::slug($item->snippet->title.'-sessao-nerd-youtube')], [
-                        'hash' => 'required|unique:news',
-                    ],
-                    $messages = [
-                        'unique'    => 'Notícia já existe.',
-                    ]
-                );
-               
-                if ($validator->fails()) {
-
-                    $news = News::where( 'hash',  '=', Str::slug($item->snippet->title.'-sessao-nerd-youtube') )->first();
-                            
-                    if($news){
-                        $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
-                        
-                        if(!$news_tags){
-                            $insert_news_tags = new NewsTags;
-                            $insert_news_tags->news_id = $news->id;
-                            $insert_news_tags->tags_id = $tag->id;
-                            $insert_news_tags->save();
-                        }
-                    }
-    
-                    // Validation 
-                    array_push(
-                        $array_existentes,
-                        Str::slug($item->snippet->title.'-sessao-nerd-youtube')
-                    );
-                   
-                }else{
-    
-                    $img = "";
-                    $link ="";
-    
-                    if(!empty($item->snippet->thumbnails)){
-                        if(!empty($item->snippet->thumbnails->maxres->url)){
-                            $img = $item->snippet->thumbnails->maxres->url;
-                        }else if(!empty($item->snippet->thumbnails->standard->url)){
-                            $img = $item->snippet->thumbnails->standard->url;
-                        }else if(!empty($item->snippet->thumbnails->high->url)){
-                            $img = $item->snippet->thumbnails->high->url;
-                        }else if(!empty($item->snippet->thumbnails->medium->url)){
-                            $img = $item->snippet->thumbnails->medium->url;
-                        }else{
-                            $img = $item->snippet->thumbnails->default->url;
-                        }
-                    }
-    
-                    if(!empty($item->id->videoId)){
-                        $link = 'https://www.youtube.com/watch?v='.$item->id->videoId;
-                    }
-                   
-                    if($img != "" && $link != ""){
-                      
-                        
-                        if($this->validaNoticia( $tag->title, $this->removeEmoji($item->snippet->title) )){
-                            $file =$img;
-                            $filename =  date('Ymdhis'). '_' . Str::slug($this->removeEmoji($item->snippet->title)).'-sessao-nerd-youtube'.'.jpg';
-                            $destinationPath = public_path().'/uploads/news/';
-                            $upload = $this->downloadFile($filename, $file , $destinationPath);
-    
-                            $insert = new News;
-                            $insert->title = $this->removeEmoji($item->snippet->title);
-                            $insert->channels_id = $channel->id;
-                            $insert->slug = Str::slug($item->snippet->title);
-                            $insert->hash = Str::slug($item->snippet->title.'-sessao-nerd-youtube');
-                            $insert->link = $link;
-                            $insert->image = '/uploads/news/' . $filename;
-                            $insert->status = "show";
-                            $insert->order = 0;
-                    
-                            $insert->data = $this->formata_data(3, $item->snippet->publishedAt);
         
-                            $condition = $insert->save();
-                            if($condition){
+        //Busca crawler
+        $data = $this->getCurl($url);
+        
+        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)[;]/', $data, $matches);
+        
+        preg_match_all('/"sectionListRenderer":{"contents":\[(?P<artigo>[\s\S]*?)(,{"continuationItemRenderer")/', $matches['json'][0], $matches);
+       
+        if(isset($matches['artigo'][0])){
+            $dados = json_decode('['.$matches['artigo'][0].']');
+        }else{
+            $dados = [];
+        }
+        $return['content'] = [];
+        foreach ($dados as $key => $value) {
+            if($key < 11){
+                $result['noticia'] = "";
+                $result['img'] = "";
+                $result['link'] = "";
+                $result['data'] = "";
 
-                                $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
-                            
-                                if(!$news_tags){
-                                    $insert_news_tags = new NewsTags;
-                                    $insert_news_tags->news_id = $insert->id;
-                                    $insert_news_tags->tags_id = $tag->id;
-                                    $insert_news_tags->save();
-                                }
+                if(isset($value->itemSectionRenderer->contents[0]->videoRenderer)){
 
-                                array_push(
-                                    $array_adicionados,
-                                    $insert->id.' '.Str::slug($item->snippet->title.'-sessao-nerd-youtube')
-                                );
+                    $result['noticia'] = $value->itemSectionRenderer->contents[0]->videoRenderer->title->runs[0]->text;
+                    //Verifica se a noticia tem relação com as tags
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($result['noticia']) )){
+                    
+                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails)){
+                            if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url;
+                            }else{
+                                $result['img'] = "";
                             }
-    
                         }
-                    }else{
-                        array_push(
-                            $array_erros,
-                            Str::slug($item->snippet->title.'-sessao-nerd-youtube')
-                        );
+            
+                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->videoId)){
+                            $result['url'] = 'https://www.youtube.com/watch?v='.$value->itemSectionRenderer->contents[0]->videoRenderer->videoId;
+                        }
+                        
+                        if(isset($result['url']) && $result['url'] != ""){
+                            $url_date = $result['url'];
+                            $data2 = $this->getCurl($url_date);
+                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
+                            $dados2 = json_encode($matches['json'][0]);
+                            $dados2 = str_replace('"','',$dados2);
+                            // echo '<pre>'; print_r($dados2); echo '</pre>';
+                            $result['data'] =  $this->formata_data(4,$dados2);
+                        }
+
+                        $return['content'][] = $result;
+            
                     }
                 }
+            }else{
+                break;
             }
         }
         
+        // echo '<pre>'; print_r($return['content']); echo '</pre>';
+        // die;
+        foreach($return['content'] as $item){
+
+            //Validando os campos
+            $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-sessaonerdyoutube')], [
+                    'hash' => 'required|unique:news',
+                ],
+                $messages = [
+                    'unique'    => 'Notícia já existe.',
+                ]
+            );
+
+            if ($validator->fails()) {
+
+                $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-sessaonerdyoutube') )->first();
+                            
+                if($news){
+                    $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
+                    
+                    if(!$news_tags){
+                        $insert_news_tags = new NewsTags;
+                        $insert_news_tags->news_id = $news->id;
+                        $insert_news_tags->tags_id = $tag->id;
+                        $insert_news_tags->save();
+                    }
+                }
+
+                // Validation 
+                array_push(
+                    $array_existentes,
+                    Str::slug($item['noticia'].'-sessaonerdyoutube')
+                );
+            }else{
+
+                $img = "";
+                $link = "";
+                $data = "";
+
+                if($item['img']){
+                    $img = $item['img'];
+                }
+
+                if($item['url']){
+                    $link = $item['url'];
+                }
+
+                if($item['data']){
+                    $data = $item['data'];
+                }
+                if($img != "" && $link != ""){
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        //Baixa imagem
+                        $file =$img;
+                        $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-sessaonerdyoutube'.'.jpg';
+                        $destinationPath = public_path().'/uploads/news/';
+                        $upload = $this->downloadFile($filename, $file , $destinationPath);
+
+                        $insert = new News;
+                        $insert->title = $this->removeEmoji($item['noticia']);
+                        $insert->channels_id = $channel->id;
+                        $insert->slug = Str::slug($item['noticia']);
+                        $insert->hash = Str::slug($item['noticia'].'-sessaonerdyoutube');
+                        $insert->link = $link;
+                        $insert->image = '/uploads/news/' . $filename;
+                        $insert->status = "show";
+                        $insert->order = 0;
+                        
+                        $insert->data = $data;
+                        $condition = $insert->save();
+                        if($condition){
+                            
+                            $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
+                            
+                            if(!$news_tags){
+                                $insert_news_tags = new NewsTags;
+                                $insert_news_tags->news_id = $insert->id;
+                                $insert_news_tags->tags_id = $tag->id;
+                                $insert_news_tags->save();
+                            }
+
+                            array_push(
+                                $array_adicionados,
+                                $insert->id.' '.Str::slug($item['noticia'].'-sessaonerdyoutube')
+                            );
+                        }
+                    }
+                }else{
+                    array_push(
+                        $array_erros,
+                        Str::slug($item['noticia'].'-sessaonerdyoutube')
+                    );
+                }
+            }
+        }
+
         $retorno = [
             'code'         => '000',
             'adicionados'  => $array_adicionados, 
             'existentes'   => $array_existentes, 
-            'erros'        => $array_erros,
+            'erros'        => $array_erros, 
             'date'         => date("Y-m-d"),
             'hour'         => date("H:i:s"),
         ];
-
         return $retorno;
     }
 
     public function buscaArenaNerdYoutube(){
+
         // Search only videos in a given channel, return an array of PHP objects
         $channel = Channels::where( 'hash',  '=', 'arenanerdyoutube' )->firstOrFail();
         $url = "";
@@ -1121,7 +1416,7 @@ class CronJobController extends Controller
                 if($count == 1){
                     $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
                     if($tag ){
-                        $url = $tag->title ;
+                        $url = $channel->url_crawler .str_replace(" ","+",$tag->title) ;
                         // echo $url;
                     }
                 }
@@ -1130,6 +1425,7 @@ class CronJobController extends Controller
             // dd($url);
         }
         // echo 'url:'.$url;
+        
         if($url == ""){
             $retorno = [
                 'code'         => '003',
@@ -1141,131 +1437,179 @@ class CronJobController extends Controller
             ];
             return $retorno;
         }
-        $activities = Youtube::searchChannelVideos($url, 'UCTvRce47EoHn6hIVd-H1Ggg', 5);
-        // $activities = Youtube::getActivitiesByChannelId('UCmEClzCBDx-vrt0GuSKBd9g');
-       
-        $array_adicionados = [];
-        $array_existentes = [];
-        $array_erros = [];
-        if($activities){
-            foreach($activities as $item){
-    
-                //Validando os campos
-                $validator = Validator::make(['hash' => Str::slug($item->snippet->title.'-arena-nerd-youtube')], [
-                        'hash' => 'required|unique:news',
-                    ],
-                    $messages = [
-                        'unique'    => 'Notícia já existe.',
-                    ]
-                );
-               
-                if ($validator->fails()) {
-
-                    $news = News::where( 'hash',  '=', Str::slug($item->snippet->title.'-arena-nerd-youtube') )->first();
-                            
-                    if($news){
-                        $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
-                        
-                        if(!$news_tags){
-                            $insert_news_tags = new NewsTags;
-                            $insert_news_tags->news_id = $news->id;
-                            $insert_news_tags->tags_id = $tag->id;
-                            $insert_news_tags->save();
-                        }
-                    }
-    
-                    // Validation 
-                    array_push(
-                        $array_existentes,
-                        Str::slug($item->snippet->title.'-arena-nerd-youtube')
-                    );
-                   
-                }else{
-    
-                    $img = "";
-                    $link ="";
-    
-                    if(!empty($item->snippet->thumbnails)){
-                        if(!empty($item->snippet->thumbnails->maxres->url)){
-                            $img = $item->snippet->thumbnails->maxres->url;
-                        }else if(!empty($item->snippet->thumbnails->standard->url)){
-                            $img = $item->snippet->thumbnails->standard->url;
-                        }else if(!empty($item->snippet->thumbnails->high->url)){
-                            $img = $item->snippet->thumbnails->high->url;
-                        }else if(!empty($item->snippet->thumbnails->medium->url)){
-                            $img = $item->snippet->thumbnails->medium->url;
-                        }else{
-                            $img = $item->snippet->thumbnails->default->url;
-                        }
-                    }
-    
-                    if(!empty($item->id->videoId)){
-                        $link = 'https://www.youtube.com/watch?v='.$item->id->videoId;
-                    }
-                   
-                    if($img != "" && $link != ""){
-                      
-                        
-                        if($this->validaNoticia( $tag->title, $this->removeEmoji($item->snippet->title) )){
-                            $file =$img;
-                            $filename =  date('Ymdhis'). '_' . Str::slug($this->removeEmoji($item->snippet->title)).'-arena-nerd-youtube'.'.jpg';
-                            $destinationPath = public_path().'/uploads/news/';
-                            $upload = $this->downloadFile($filename, $file , $destinationPath);
-    
-                            $insert = new News;
-                            $insert->title = $this->removeEmoji($item->snippet->title);
-                            $insert->channels_id = $channel->id;
-                            $insert->slug = Str::slug($item->snippet->title);
-                            $insert->hash = Str::slug($item->snippet->title.'-arena-nerd-youtube');
-                            $insert->link = $link;
-                            $insert->image = '/uploads/news/' . $filename;
-                            $insert->status = "show";
-                            $insert->order = 0;
-                    
-                            $insert->data = $this->formata_data(3, $item->snippet->publishedAt);
         
-                            $condition = $insert->save();
-                            if($condition){
+        //Busca crawler
+        $data = $this->getCurl($url);
+        
+        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)[;]/', $data, $matches);
+        
+        preg_match_all('/"sectionListRenderer":{"contents":\[(?P<artigo>[\s\S]*?)(,{"continuationItemRenderer")/', $matches['json'][0], $matches);
+       
+        if(isset($matches['artigo'][0])){
+            $dados = json_decode('['.$matches['artigo'][0].']');
+        }else{
+            $dados = [];
+        }
+        $return['content'] = [];
+        foreach ($dados as $key => $value) {
+            if($key < 11){
+                $result['noticia'] = "";
+                $result['img'] = "";
+                $result['link'] = "";
+                $result['data'] = "";
 
-                                $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
-                            
-                                if(!$news_tags){
-                                    $insert_news_tags = new NewsTags;
-                                    $insert_news_tags->news_id = $insert->id;
-                                    $insert_news_tags->tags_id = $tag->id;
-                                    $insert_news_tags->save();
-                                }
+                if(isset($value->itemSectionRenderer->contents[0]->videoRenderer)){
 
-                                array_push(
-                                    $array_adicionados,
-                                    $insert->id.' '.Str::slug($item->snippet->title.'-arena-nerd-youtube')
-                                );
+                    $result['noticia'] = $value->itemSectionRenderer->contents[0]->videoRenderer->title->runs[0]->text;
+                    //Verifica se a noticia tem relação com as tags
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($result['noticia']) )){
+                    
+                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails)){
+                            if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url;
+                            }else{
+                                $result['img'] = "";
                             }
-    
                         }
-                    }else{
-                        array_push(
-                            $array_erros,
-                            Str::slug($item->snippet->title.'-arena-nerd-youtube')
-                        );
+            
+                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->videoId)){
+                            $result['url'] = 'https://www.youtube.com/watch?v='.$value->itemSectionRenderer->contents[0]->videoRenderer->videoId;
+                        }
+                        
+                        if(isset($result['url']) && $result['url'] != ""){
+                            $url_date = $result['url'];
+                            $data2 = $this->getCurl($url_date);
+                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
+                            $dados2 = json_encode($matches['json'][0]);
+                            $dados2 = str_replace('"','',$dados2);
+                            // echo '<pre>'; print_r($dados2); echo '</pre>';
+                            $result['data'] =  $this->formata_data(4,$dados2);
+                        }
+
+                        $return['content'][] = $result;
+            
                     }
                 }
+            }else{
+                break;
             }
         }
         
+        // echo '<pre>'; print_r($return['content']); echo '</pre>';
+        // die;
+        foreach($return['content'] as $item){
+
+            //Validando os campos
+            $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-arenanerdyoutube')], [
+                    'hash' => 'required|unique:news',
+                ],
+                $messages = [
+                    'unique'    => 'Notícia já existe.',
+                ]
+            );
+
+            if ($validator->fails()) {
+
+                $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-arenanerdyoutube') )->first();
+                            
+                if($news){
+                    $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
+                    
+                    if(!$news_tags){
+                        $insert_news_tags = new NewsTags;
+                        $insert_news_tags->news_id = $news->id;
+                        $insert_news_tags->tags_id = $tag->id;
+                        $insert_news_tags->save();
+                    }
+                }
+
+                // Validation 
+                array_push(
+                    $array_existentes,
+                    Str::slug($item['noticia'].'-arenanerdyoutube')
+                );
+            }else{
+
+                $img = "";
+                $link = "";
+                $data = "";
+
+                if($item['img']){
+                    $img = $item['img'];
+                }
+
+                if($item['url']){
+                    $link = $item['url'];
+                }
+
+                if($item['data']){
+                    $data = $item['data'];
+                }
+                if($img != "" && $link != ""){
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        //Baixa imagem
+                        $file =$img;
+                        $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-arenanerdyoutube'.'.jpg';
+                        $destinationPath = public_path().'/uploads/news/';
+                        $upload = $this->downloadFile($filename, $file , $destinationPath);
+
+                        $insert = new News;
+                        $insert->title = $this->removeEmoji($item['noticia']);
+                        $insert->channels_id = $channel->id;
+                        $insert->slug = Str::slug($item['noticia']);
+                        $insert->hash = Str::slug($item['noticia'].'-arenanerdyoutube');
+                        $insert->link = $link;
+                        $insert->image = '/uploads/news/' . $filename;
+                        $insert->status = "show";
+                        $insert->order = 0;
+                        
+                        $insert->data = $data;
+                        $condition = $insert->save();
+                        if($condition){
+                            
+                            $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
+                            
+                            if(!$news_tags){
+                                $insert_news_tags = new NewsTags;
+                                $insert_news_tags->news_id = $insert->id;
+                                $insert_news_tags->tags_id = $tag->id;
+                                $insert_news_tags->save();
+                            }
+
+                            array_push(
+                                $array_adicionados,
+                                $insert->id.' '.Str::slug($item['noticia'].'-arenanerdyoutube')
+                            );
+                        }
+                    }
+                }else{
+                    array_push(
+                        $array_erros,
+                        Str::slug($item['noticia'].'-arenanerdyoutube')
+                    );
+                }
+            }
+        }
+
         $retorno = [
             'code'         => '000',
             'adicionados'  => $array_adicionados, 
             'existentes'   => $array_existentes, 
-            'erros'        => $array_erros,
+            'erros'        => $array_erros, 
             'date'         => date("Y-m-d"),
             'hour'         => date("H:i:s"),
         ];
-
         return $retorno;
     }
-
+   
     public function buscaCaldeiraoNerdYoutube(){
+
         // Search only videos in a given channel, return an array of PHP objects
         $channel = Channels::where( 'hash',  '=', 'caldeiraonerdyoutube' )->firstOrFail();
         $url = "";
@@ -1292,7 +1636,7 @@ class CronJobController extends Controller
                 if($count == 1){
                     $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
                     if($tag ){
-                        $url = $tag->title ;
+                        $url = $channel->url_crawler .str_replace(" ","+",$tag->title) ;
                         // echo $url;
                     }
                 }
@@ -1301,6 +1645,7 @@ class CronJobController extends Controller
             // dd($url);
         }
         // echo 'url:'.$url;
+        
         if($url == ""){
             $retorno = [
                 'code'         => '003',
@@ -1312,131 +1657,179 @@ class CronJobController extends Controller
             ];
             return $retorno;
         }
-        $activities = Youtube::searchChannelVideos($url, 'UCkhfuyQUD5GNulpQRJOqrGg', 5);
-        // $activities = Youtube::getActivitiesByChannelId('UCmEClzCBDx-vrt0GuSKBd9g');
-       
-        $array_adicionados = [];
-        $array_existentes = [];
-        $array_erros = [];
-        if($activities){
-            foreach($activities as $item){
-    
-                //Validando os campos
-                $validator = Validator::make(['hash' => Str::slug($item->snippet->title.'-caldeirao-nerd-youtube')], [
-                        'hash' => 'required|unique:news',
-                    ],
-                    $messages = [
-                        'unique'    => 'Notícia já existe.',
-                    ]
-                );
-               
-                if ($validator->fails()) {
-
-                    $news = News::where( 'hash',  '=', Str::slug($item->snippet->title.'-caldeirao-nerd-youtube') )->first();
-                            
-                    if($news){
-                        $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
-                        
-                        if(!$news_tags){
-                            $insert_news_tags = new NewsTags;
-                            $insert_news_tags->news_id = $news->id;
-                            $insert_news_tags->tags_id = $tag->id;
-                            $insert_news_tags->save();
-                        }
-                    }
-    
-                    // Validation 
-                    array_push(
-                        $array_existentes,
-                        Str::slug($item->snippet->title.'-caldeirao-nerd-youtube')
-                    );
-                   
-                }else{
-    
-                    $img = "";
-                    $link ="";
-    
-                    if(!empty($item->snippet->thumbnails)){
-                        if(!empty($item->snippet->thumbnails->maxres->url)){
-                            $img = $item->snippet->thumbnails->maxres->url;
-                        }else if(!empty($item->snippet->thumbnails->standard->url)){
-                            $img = $item->snippet->thumbnails->standard->url;
-                        }else if(!empty($item->snippet->thumbnails->high->url)){
-                            $img = $item->snippet->thumbnails->high->url;
-                        }else if(!empty($item->snippet->thumbnails->medium->url)){
-                            $img = $item->snippet->thumbnails->medium->url;
-                        }else{
-                            $img = $item->snippet->thumbnails->default->url;
-                        }
-                    }
-    
-                    if(!empty($item->id->videoId)){
-                        $link = 'https://www.youtube.com/watch?v='.$item->id->videoId;
-                    }
-                   
-                    if($img != "" && $link != ""){
-                      
-                        
-                        if($this->validaNoticia( $tag->title, $this->removeEmoji($item->snippet->title) )){
-                            $file =$img;
-                            $filename =  date('Ymdhis'). '_' . Str::slug($this->removeEmoji($item->snippet->title)).'-caldeirao-nerd-youtube'.'.jpg';
-                            $destinationPath = public_path().'/uploads/news/';
-                            $upload = $this->downloadFile($filename, $file , $destinationPath);
-    
-                            $insert = new News;
-                            $insert->title = $this->removeEmoji($item->snippet->title);
-                            $insert->channels_id = $channel->id;
-                            $insert->slug = Str::slug($item->snippet->title);
-                            $insert->hash = Str::slug($item->snippet->title.'-caldeirao-nerd-youtube');
-                            $insert->link = $link;
-                            $insert->image = '/uploads/news/' . $filename;
-                            $insert->status = "show";
-                            $insert->order = 0;
-                    
-                            $insert->data = $this->formata_data(3, $item->snippet->publishedAt);
         
-                            $condition = $insert->save();
-                            if($condition){
+        //Busca crawler
+        $data = $this->getCurl($url);
+        
+        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)[;]/', $data, $matches);
+        
+        preg_match_all('/"sectionListRenderer":{"contents":\[(?P<artigo>[\s\S]*?)(,{"continuationItemRenderer")/', $matches['json'][0], $matches);
+       
+        if(isset($matches['artigo'][0])){
+            $dados = json_decode('['.$matches['artigo'][0].']');
+        }else{
+            $dados = [];
+        }
+        $return['content'] = [];
+        foreach ($dados as $key => $value) {
+            if($key < 11){
+                $result['noticia'] = "";
+                $result['img'] = "";
+                $result['link'] = "";
+                $result['data'] = "";
 
-                                $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
-                            
-                                if(!$news_tags){
-                                    $insert_news_tags = new NewsTags;
-                                    $insert_news_tags->news_id = $insert->id;
-                                    $insert_news_tags->tags_id = $tag->id;
-                                    $insert_news_tags->save();
-                                }
+                if(isset($value->itemSectionRenderer->contents[0]->videoRenderer)){
 
-                                array_push(
-                                    $array_adicionados,
-                                    $insert->id.' '.Str::slug($item->snippet->title.'-caldeirao-nerd-youtube')
-                                );
+                    $result['noticia'] = $value->itemSectionRenderer->contents[0]->videoRenderer->title->runs[0]->text;
+                    //Verifica se a noticia tem relação com as tags
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($result['noticia']) )){
+                    
+                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails)){
+                            if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url;
+                            }else{
+                                $result['img'] = "";
                             }
-    
                         }
-                    }else{
-                        array_push(
-                            $array_erros,
-                            Str::slug($item->snippet->title.'-caldeirao-nerd-youtube')
-                        );
+            
+                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->videoId)){
+                            $result['url'] = 'https://www.youtube.com/watch?v='.$value->itemSectionRenderer->contents[0]->videoRenderer->videoId;
+                        }
+                        
+                        if(isset($result['url']) && $result['url'] != ""){
+                            $url_date = $result['url'];
+                            $data2 = $this->getCurl($url_date);
+                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
+                            $dados2 = json_encode($matches['json'][0]);
+                            $dados2 = str_replace('"','',$dados2);
+                            // echo '<pre>'; print_r($dados2); echo '</pre>';
+                            $result['data'] =  $this->formata_data(4,$dados2);
+                        }
+
+                        $return['content'][] = $result;
+            
                     }
                 }
+            }else{
+                break;
             }
         }
         
+        // echo '<pre>'; print_r($return['content']); echo '</pre>';
+        // die;
+        foreach($return['content'] as $item){
+
+            //Validando os campos
+            $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-caldeiraonerdyoutube')], [
+                    'hash' => 'required|unique:news',
+                ],
+                $messages = [
+                    'unique'    => 'Notícia já existe.',
+                ]
+            );
+
+            if ($validator->fails()) {
+
+                $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-caldeiraonerdyoutube') )->first();
+                            
+                if($news){
+                    $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
+                    
+                    if(!$news_tags){
+                        $insert_news_tags = new NewsTags;
+                        $insert_news_tags->news_id = $news->id;
+                        $insert_news_tags->tags_id = $tag->id;
+                        $insert_news_tags->save();
+                    }
+                }
+
+                // Validation 
+                array_push(
+                    $array_existentes,
+                    Str::slug($item['noticia'].'-caldeiraonerdyoutube')
+                );
+            }else{
+
+                $img = "";
+                $link = "";
+                $data = "";
+
+                if($item['img']){
+                    $img = $item['img'];
+                }
+
+                if($item['url']){
+                    $link = $item['url'];
+                }
+
+                if($item['data']){
+                    $data = $item['data'];
+                }
+                if($img != "" && $link != ""){
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        //Baixa imagem
+                        $file =$img;
+                        $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-caldeiraonerdyoutube'.'.jpg';
+                        $destinationPath = public_path().'/uploads/news/';
+                        $upload = $this->downloadFile($filename, $file , $destinationPath);
+
+                        $insert = new News;
+                        $insert->title = $this->removeEmoji($item['noticia']);
+                        $insert->channels_id = $channel->id;
+                        $insert->slug = Str::slug($item['noticia']);
+                        $insert->hash = Str::slug($item['noticia'].'-caldeiraonerdyoutube');
+                        $insert->link = $link;
+                        $insert->image = '/uploads/news/' . $filename;
+                        $insert->status = "show";
+                        $insert->order = 0;
+                        
+                        $insert->data = $data;
+                        $condition = $insert->save();
+                        if($condition){
+                            
+                            $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
+                            
+                            if(!$news_tags){
+                                $insert_news_tags = new NewsTags;
+                                $insert_news_tags->news_id = $insert->id;
+                                $insert_news_tags->tags_id = $tag->id;
+                                $insert_news_tags->save();
+                            }
+
+                            array_push(
+                                $array_adicionados,
+                                $insert->id.' '.Str::slug($item['noticia'].'-caldeiraonerdyoutube')
+                            );
+                        }
+                    }
+                }else{
+                    array_push(
+                        $array_erros,
+                        Str::slug($item['noticia'].'-caldeiraonerdyoutube')
+                    );
+                }
+            }
+        }
+
         $retorno = [
             'code'         => '000',
             'adicionados'  => $array_adicionados, 
             'existentes'   => $array_existentes, 
-            'erros'        => $array_erros,
+            'erros'        => $array_erros, 
             'date'         => date("Y-m-d"),
             'hour'         => date("H:i:s"),
         ];
-
         return $retorno;
     }
-
+   
     public function buscaNerdExperienceYoutube(){
+
         // Search only videos in a given channel, return an array of PHP objects
         $channel = Channels::where( 'hash',  '=', 'nerdexperienceyoutube' )->firstOrFail();
         $url = "";
@@ -1463,7 +1856,7 @@ class CronJobController extends Controller
                 if($count == 1){
                     $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
                     if($tag ){
-                        $url = $tag->title ;
+                        $url = $channel->url_crawler .str_replace(" ","+",$tag->title) ;
                         // echo $url;
                     }
                 }
@@ -1472,6 +1865,7 @@ class CronJobController extends Controller
             // dd($url);
         }
         // echo 'url:'.$url;
+        
         if($url == ""){
             $retorno = [
                 'code'         => '003',
@@ -1483,131 +1877,179 @@ class CronJobController extends Controller
             ];
             return $retorno;
         }
-        $activities = Youtube::searchChannelVideos($url, 'UC2TIV0LAfVRaFy1FihRhwyw', 5);
-        // $activities = Youtube::getActivitiesByChannelId('UCmEClzCBDx-vrt0GuSKBd9g');
-       
-        $array_adicionados = [];
-        $array_existentes = [];
-        $array_erros = [];
-        if($activities){
-            foreach($activities as $item){
-    
-                //Validando os campos
-                $validator = Validator::make(['hash' => Str::slug($item->snippet->title.'-nerd-experience-youtube')], [
-                        'hash' => 'required|unique:news',
-                    ],
-                    $messages = [
-                        'unique'    => 'Notícia já existe.',
-                    ]
-                );
-               
-                if ($validator->fails()) {
-
-                    $news = News::where( 'hash',  '=', Str::slug($item->snippet->title.'-nerd-experience-youtube') )->first();
-                            
-                    if($news){
-                        $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
-                        
-                        if(!$news_tags){
-                            $insert_news_tags = new NewsTags;
-                            $insert_news_tags->news_id = $news->id;
-                            $insert_news_tags->tags_id = $tag->id;
-                            $insert_news_tags->save();
-                        }
-                    }
-    
-                    // Validation 
-                    array_push(
-                        $array_existentes,
-                        Str::slug($item->snippet->title.'-nerd-experience-youtube')
-                    );
-                   
-                }else{
-    
-                    $img = "";
-                    $link ="";
-    
-                    if(!empty($item->snippet->thumbnails)){
-                        if(!empty($item->snippet->thumbnails->maxres->url)){
-                            $img = $item->snippet->thumbnails->maxres->url;
-                        }else if(!empty($item->snippet->thumbnails->standard->url)){
-                            $img = $item->snippet->thumbnails->standard->url;
-                        }else if(!empty($item->snippet->thumbnails->high->url)){
-                            $img = $item->snippet->thumbnails->high->url;
-                        }else if(!empty($item->snippet->thumbnails->medium->url)){
-                            $img = $item->snippet->thumbnails->medium->url;
-                        }else{
-                            $img = $item->snippet->thumbnails->default->url;
-                        }
-                    }
-    
-                    if(!empty($item->id->videoId)){
-                        $link = 'https://www.youtube.com/watch?v='.$item->id->videoId;
-                    }
-                   
-                    if($img != "" && $link != ""){
-                      
-                        
-                        if($this->validaNoticia( $tag->title, $this->removeEmoji($item->snippet->title) )){
-                            $file =$img;
-                            $filename =  date('Ymdhis'). '_' . Str::slug($this->removeEmoji($item->snippet->title)).'-nerd-experience-youtube'.'.jpg';
-                            $destinationPath = public_path().'/uploads/news/';
-                            $upload = $this->downloadFile($filename, $file , $destinationPath);
-    
-                            $insert = new News;
-                            $insert->title = $this->removeEmoji($item->snippet->title);
-                            $insert->channels_id = $channel->id;
-                            $insert->slug = Str::slug($item->snippet->title);
-                            $insert->hash = Str::slug($item->snippet->title.'-nerd-experience-youtube');
-                            $insert->link = $link;
-                            $insert->image = '/uploads/news/' . $filename;
-                            $insert->status = "show";
-                            $insert->order = 0;
-                    
-                            $insert->data = $this->formata_data(3, $item->snippet->publishedAt);
         
-                            $condition = $insert->save();
-                            if($condition){
+        //Busca crawler
+        $data = $this->getCurl($url);
+        
+        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)[;]/', $data, $matches);
+        
+        preg_match_all('/"sectionListRenderer":{"contents":\[(?P<artigo>[\s\S]*?)(,{"continuationItemRenderer")/', $matches['json'][0], $matches);
+       
+        if(isset($matches['artigo'][0])){
+            $dados = json_decode('['.$matches['artigo'][0].']');
+        }else{
+            $dados = [];
+        }
+        $return['content'] = [];
+        foreach ($dados as $key => $value) {
+            if($key < 11){
+                $result['noticia'] = "";
+                $result['img'] = "";
+                $result['link'] = "";
+                $result['data'] = "";
 
-                                $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
-                            
-                                if(!$news_tags){
-                                    $insert_news_tags = new NewsTags;
-                                    $insert_news_tags->news_id = $insert->id;
-                                    $insert_news_tags->tags_id = $tag->id;
-                                    $insert_news_tags->save();
-                                }
+                if(isset($value->itemSectionRenderer->contents[0]->videoRenderer)){
 
-                                array_push(
-                                    $array_adicionados,
-                                    $insert->id.' '.Str::slug($item->snippet->title.'-nerd-experience-youtube')
-                                );
+                    $result['noticia'] = $value->itemSectionRenderer->contents[0]->videoRenderer->title->runs[0]->text;
+                    //Verifica se a noticia tem relação com as tags
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($result['noticia']) )){
+                    
+                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails)){
+                            if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url;
+                            }else{
+                                $result['img'] = "";
                             }
-    
                         }
-                    }else{
-                        array_push(
-                            $array_erros,
-                            Str::slug($item->snippet->title.'-nerd-experience-youtube')
-                        );
+            
+                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->videoId)){
+                            $result['url'] = 'https://www.youtube.com/watch?v='.$value->itemSectionRenderer->contents[0]->videoRenderer->videoId;
+                        }
+                        
+                        if(isset($result['url']) && $result['url'] != ""){
+                            $url_date = $result['url'];
+                            $data2 = $this->getCurl($url_date);
+                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
+                            $dados2 = json_encode($matches['json'][0]);
+                            $dados2 = str_replace('"','',$dados2);
+                            // echo '<pre>'; print_r($dados2); echo '</pre>';
+                            $result['data'] =  $this->formata_data(4,$dados2);
+                        }
+
+                        $return['content'][] = $result;
+            
                     }
                 }
+            }else{
+                break;
             }
         }
         
+        // echo '<pre>'; print_r($return['content']); echo '</pre>';
+        // die;
+        foreach($return['content'] as $item){
+
+            //Validando os campos
+            $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-nerdexperienceyoutube')], [
+                    'hash' => 'required|unique:news',
+                ],
+                $messages = [
+                    'unique'    => 'Notícia já existe.',
+                ]
+            );
+
+            if ($validator->fails()) {
+
+                $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-nerdexperienceyoutube') )->first();
+                            
+                if($news){
+                    $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
+                    
+                    if(!$news_tags){
+                        $insert_news_tags = new NewsTags;
+                        $insert_news_tags->news_id = $news->id;
+                        $insert_news_tags->tags_id = $tag->id;
+                        $insert_news_tags->save();
+                    }
+                }
+
+                // Validation 
+                array_push(
+                    $array_existentes,
+                    Str::slug($item['noticia'].'-nerdexperienceyoutube')
+                );
+            }else{
+
+                $img = "";
+                $link = "";
+                $data = "";
+
+                if($item['img']){
+                    $img = $item['img'];
+                }
+
+                if($item['url']){
+                    $link = $item['url'];
+                }
+
+                if($item['data']){
+                    $data = $item['data'];
+                }
+                if($img != "" && $link != ""){
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        //Baixa imagem
+                        $file =$img;
+                        $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-nerdexperienceyoutube'.'.jpg';
+                        $destinationPath = public_path().'/uploads/news/';
+                        $upload = $this->downloadFile($filename, $file , $destinationPath);
+
+                        $insert = new News;
+                        $insert->title = $this->removeEmoji($item['noticia']);
+                        $insert->channels_id = $channel->id;
+                        $insert->slug = Str::slug($item['noticia']);
+                        $insert->hash = Str::slug($item['noticia'].'-nerdexperienceyoutube');
+                        $insert->link = $link;
+                        $insert->image = '/uploads/news/' . $filename;
+                        $insert->status = "show";
+                        $insert->order = 0;
+                        
+                        $insert->data = $data;
+                        $condition = $insert->save();
+                        if($condition){
+                            
+                            $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
+                            
+                            if(!$news_tags){
+                                $insert_news_tags = new NewsTags;
+                                $insert_news_tags->news_id = $insert->id;
+                                $insert_news_tags->tags_id = $tag->id;
+                                $insert_news_tags->save();
+                            }
+
+                            array_push(
+                                $array_adicionados,
+                                $insert->id.' '.Str::slug($item['noticia'].'-nerdexperienceyoutube')
+                            );
+                        }
+                    }
+                }else{
+                    array_push(
+                        $array_erros,
+                        Str::slug($item['noticia'].'-nerdexperienceyoutube')
+                    );
+                }
+            }
+        }
+
         $retorno = [
             'code'         => '000',
             'adicionados'  => $array_adicionados, 
             'existentes'   => $array_existentes, 
-            'erros'        => $array_erros,
+            'erros'        => $array_erros, 
             'date'         => date("Y-m-d"),
             'hour'         => date("H:i:s"),
         ];
-
         return $retorno;
     }
 
     public function buscaCrisPandaYoutube(){
+
         // Search only videos in a given channel, return an array of PHP objects
         $channel = Channels::where( 'hash',  '=', 'crispandayoutube' )->firstOrFail();
         $url = "";
@@ -1634,7 +2076,7 @@ class CronJobController extends Controller
                 if($count == 1){
                     $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
                     if($tag ){
-                        $url = $tag->title ;
+                        $url = $channel->url_crawler .str_replace(" ","+",$tag->title) ;
                         // echo $url;
                     }
                 }
@@ -1643,6 +2085,7 @@ class CronJobController extends Controller
             // dd($url);
         }
         // echo 'url:'.$url;
+        
         if($url == ""){
             $retorno = [
                 'code'         => '003',
@@ -1654,302 +2097,179 @@ class CronJobController extends Controller
             ];
             return $retorno;
         }
-        $activities = Youtube::searchChannelVideos($url, 'UCIg-4NeNrY0DMUORXFmaNQw', 5);
-        // $activities = Youtube::getActivitiesByChannelId('UCmEClzCBDx-vrt0GuSKBd9g');
-       
-        $array_adicionados = [];
-        $array_existentes = [];
-        $array_erros = [];
-        if($activities){
-            foreach($activities as $item){
-    
-                //Validando os campos
-                $validator = Validator::make(['hash' => Str::slug($item->snippet->title.'-cris-panda-youtube')], [
-                        'hash' => 'required|unique:news',
-                    ],
-                    $messages = [
-                        'unique'    => 'Notícia já existe.',
-                    ]
-                );
-               
-                if ($validator->fails()) {
-
-                    $news = News::where( 'hash',  '=', Str::slug($item->snippet->title.'-cris-panda-youtube') )->first();
-                            
-                    if($news){
-                        $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
-                        
-                        if(!$news_tags){
-                            $insert_news_tags = new NewsTags;
-                            $insert_news_tags->news_id = $news->id;
-                            $insert_news_tags->tags_id = $tag->id;
-                            $insert_news_tags->save();
-                        }
-                    }
-    
-                    // Validation 
-                    array_push(
-                        $array_existentes,
-                        Str::slug($item->snippet->title.'-cris-panda-youtube')
-                    );
-                   
-                }else{
-    
-                    $img = "";
-                    $link ="";
-    
-                    if(!empty($item->snippet->thumbnails)){
-                        if(!empty($item->snippet->thumbnails->maxres->url)){
-                            $img = $item->snippet->thumbnails->maxres->url;
-                        }else if(!empty($item->snippet->thumbnails->standard->url)){
-                            $img = $item->snippet->thumbnails->standard->url;
-                        }else if(!empty($item->snippet->thumbnails->high->url)){
-                            $img = $item->snippet->thumbnails->high->url;
-                        }else if(!empty($item->snippet->thumbnails->medium->url)){
-                            $img = $item->snippet->thumbnails->medium->url;
-                        }else{
-                            $img = $item->snippet->thumbnails->default->url;
-                        }
-                    }
-    
-                    if(!empty($item->id->videoId)){
-                        $link = 'https://www.youtube.com/watch?v='.$item->id->videoId;
-                    }
-                   
-                    if($img != "" && $link != ""){
-                      
-                        
-                        if($this->validaNoticia( $tag->title, $this->removeEmoji($item->snippet->title) )){
-                            $file =$img;
-                            $filename =  date('Ymdhis'). '_' . Str::slug($this->removeEmoji($item->snippet->title)).'-cris-panda-youtube'.'.jpg';
-                            $destinationPath = public_path().'/uploads/news/';
-                            $upload = $this->downloadFile($filename, $file , $destinationPath);
-    
-                            $insert = new News;
-                            $insert->title = $this->removeEmoji($item->snippet->title);
-                            $insert->channels_id = $channel->id;
-                            $insert->slug = Str::slug($item->snippet->title);
-                            $insert->hash = Str::slug($item->snippet->title.'-cris-panda-youtube');
-                            $insert->link = $link;
-                            $insert->image = '/uploads/news/' . $filename;
-                            $insert->status = "show";
-                            $insert->order = 0;
-                    
-                            $insert->data = $this->formata_data(3, $item->snippet->publishedAt);
         
-                            $condition = $insert->save();
-                            if($condition){
+        //Busca crawler
+        $data = $this->getCurl($url);
+        
+        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)[;]/', $data, $matches);
+        
+        preg_match_all('/"sectionListRenderer":{"contents":\[(?P<artigo>[\s\S]*?)(,{"continuationItemRenderer")/', $matches['json'][0], $matches);
+       
+        if(isset($matches['artigo'][0])){
+            $dados = json_decode('['.$matches['artigo'][0].']');
+        }else{
+            $dados = [];
+        }
+        $return['content'] = [];
+        foreach ($dados as $key => $value) {
+            if($key < 11){
+                $result['noticia'] = "";
+                $result['img'] = "";
+                $result['link'] = "";
+                $result['data'] = "";
 
-                                $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
-                            
-                                if(!$news_tags){
-                                    $insert_news_tags = new NewsTags;
-                                    $insert_news_tags->news_id = $insert->id;
-                                    $insert_news_tags->tags_id = $tag->id;
-                                    $insert_news_tags->save();
-                                }
+                if(isset($value->itemSectionRenderer->contents[0]->videoRenderer)){
 
-                                array_push(
-                                    $array_adicionados,
-                                    $insert->id.' '.Str::slug($item->snippet->title.'-cris-panda-youtube')
-                                );
+                    $result['noticia'] = $value->itemSectionRenderer->contents[0]->videoRenderer->title->runs[0]->text;
+                    //Verifica se a noticia tem relação com as tags
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($result['noticia']) )){
+                    
+                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails)){
+                            if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url;
+                            }else{
+                                $result['img'] = "";
                             }
-    
                         }
-                    }else{
-                        array_push(
-                            $array_erros,
-                            Str::slug($item->snippet->title.'-cris-panda-youtube')
-                        );
+            
+                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->videoId)){
+                            $result['url'] = 'https://www.youtube.com/watch?v='.$value->itemSectionRenderer->contents[0]->videoRenderer->videoId;
+                        }
+                        
+                        if(isset($result['url']) && $result['url'] != ""){
+                            $url_date = $result['url'];
+                            $data2 = $this->getCurl($url_date);
+                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
+                            $dados2 = json_encode($matches['json'][0]);
+                            $dados2 = str_replace('"','',$dados2);
+                            // echo '<pre>'; print_r($dados2); echo '</pre>';
+                            $result['data'] =  $this->formata_data(4,$dados2);
+                        }
+
+                        $return['content'][] = $result;
+            
                     }
                 }
+            }else{
+                break;
             }
         }
         
+        // echo '<pre>'; print_r($return['content']); echo '</pre>';
+        // die;
+        foreach($return['content'] as $item){
+
+            //Validando os campos
+            $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-crispandayoutube')], [
+                    'hash' => 'required|unique:news',
+                ],
+                $messages = [
+                    'unique'    => 'Notícia já existe.',
+                ]
+            );
+
+            if ($validator->fails()) {
+
+                $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-crispandayoutube') )->first();
+                            
+                if($news){
+                    $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
+                    
+                    if(!$news_tags){
+                        $insert_news_tags = new NewsTags;
+                        $insert_news_tags->news_id = $news->id;
+                        $insert_news_tags->tags_id = $tag->id;
+                        $insert_news_tags->save();
+                    }
+                }
+
+                // Validation 
+                array_push(
+                    $array_existentes,
+                    Str::slug($item['noticia'].'-crispandayoutube')
+                );
+            }else{
+
+                $img = "";
+                $link = "";
+                $data = "";
+
+                if($item['img']){
+                    $img = $item['img'];
+                }
+
+                if($item['url']){
+                    $link = $item['url'];
+                }
+
+                if($item['data']){
+                    $data = $item['data'];
+                }
+                if($img != "" && $link != ""){
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        //Baixa imagem
+                        $file =$img;
+                        $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-crispandayoutube'.'.jpg';
+                        $destinationPath = public_path().'/uploads/news/';
+                        $upload = $this->downloadFile($filename, $file , $destinationPath);
+
+                        $insert = new News;
+                        $insert->title = $this->removeEmoji($item['noticia']);
+                        $insert->channels_id = $channel->id;
+                        $insert->slug = Str::slug($item['noticia']);
+                        $insert->hash = Str::slug($item['noticia'].'-crispandayoutube');
+                        $insert->link = $link;
+                        $insert->image = '/uploads/news/' . $filename;
+                        $insert->status = "show";
+                        $insert->order = 0;
+                        
+                        $insert->data = $data;
+                        $condition = $insert->save();
+                        if($condition){
+                            
+                            $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
+                            
+                            if(!$news_tags){
+                                $insert_news_tags = new NewsTags;
+                                $insert_news_tags->news_id = $insert->id;
+                                $insert_news_tags->tags_id = $tag->id;
+                                $insert_news_tags->save();
+                            }
+
+                            array_push(
+                                $array_adicionados,
+                                $insert->id.' '.Str::slug($item['noticia'].'-crispandayoutube')
+                            );
+                        }
+                    }
+                }else{
+                    array_push(
+                        $array_erros,
+                        Str::slug($item['noticia'].'-crispandayoutube')
+                    );
+                }
+            }
+        }
+
         $retorno = [
             'code'         => '000',
             'adicionados'  => $array_adicionados, 
             'existentes'   => $array_existentes, 
-            'erros'        => $array_erros,
+            'erros'        => $array_erros, 
             'date'         => date("Y-m-d"),
             'hour'         => date("H:i:s"),
         ];
-
-        return $retorno;
-    }
-
-    public function buscaHerancaNerdYoutube(){
-        // Search only videos in a given channel, return an array of PHP objects
-        $channel = Channels::where( 'hash',  '=', 'herancanerdyoutube' )->firstOrFail();
-        $url = "";
-
-        $array_adicionados = [];
-        $array_existentes = [];
-        $array_erros = [];
-
-        if($channel){
-            $hora = date('H:i:s');
-            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
-            // echo $hora;
-            // echo "<br>";
-            // echo $hora_30;
-            $crawlers = DB::table('crawler')
-                        ->where( 'status', '=', 'active' )
-                        ->where( 'tags_id', '!=', 0 )
-                        ->whereBetween('time_initial', [$hora, $hora_30])
-                        // ->orWhereBetween('time_final', [$hora, $hora_30])
-                        ->get();
-            $count = 1;
-            foreach ($crawlers as $key => $value) {
-                // echo "crawler";
-                if($count == 1){
-                    $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
-                    if($tag ){
-                        $url = $tag->title ;
-                        // echo $url;
-                    }
-                }
-                $count++;
-            }
-            // dd($url);
-        }
-        // echo 'url:'.$url;
-        if($url == ""){
-            $retorno = [
-                'code'         => '003',
-                'adicionados'  => $array_adicionados, 
-                'existentes'   => $array_existentes, 
-                'erros'        => $array_erros, 
-                'date'         => date("Y-m-d"),
-                'hour'         => date("H:i:s"),
-            ];
-            return $retorno;
-        }
-        $activities = Youtube::searchChannelVideos($url, 'UCFklwULD0GH0awMkBJNflvw', 5);
-        // $activities = Youtube::getActivitiesByChannelId('UCmEClzCBDx-vrt0GuSKBd9g');
-       
-        $array_adicionados = [];
-        $array_existentes = [];
-        $array_erros = [];
-        if($activities){
-            foreach($activities as $item){
-    
-                //Validando os campos
-                $validator = Validator::make(['hash' => Str::slug($item->snippet->title.'-heranca-nerd-youtube')], [
-                        'hash' => 'required|unique:news',
-                    ],
-                    $messages = [
-                        'unique'    => 'Notícia já existe.',
-                    ]
-                );
-               
-                if ($validator->fails()) {
-
-                    $news = News::where( 'hash',  '=', Str::slug($item->snippet->title.'-heranca-nerd-youtube') )->first();
-                            
-                    if($news){
-                        $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
-                        
-                        if(!$news_tags){
-                            $insert_news_tags = new NewsTags;
-                            $insert_news_tags->news_id = $news->id;
-                            $insert_news_tags->tags_id = $tag->id;
-                            $insert_news_tags->save();
-                        }
-                    }
-    
-                    // Validation 
-                    array_push(
-                        $array_existentes,
-                        Str::slug($item->snippet->title.'-heranca-nerd-youtube')
-                    );
-                   
-                }else{
-    
-                    $img = "";
-                    $link ="";
-    
-                    if(!empty($item->snippet->thumbnails)){
-                        if(!empty($item->snippet->thumbnails->maxres->url)){
-                            $img = $item->snippet->thumbnails->maxres->url;
-                        }else if(!empty($item->snippet->thumbnails->standard->url)){
-                            $img = $item->snippet->thumbnails->standard->url;
-                        }else if(!empty($item->snippet->thumbnails->high->url)){
-                            $img = $item->snippet->thumbnails->high->url;
-                        }else if(!empty($item->snippet->thumbnails->medium->url)){
-                            $img = $item->snippet->thumbnails->medium->url;
-                        }else{
-                            $img = $item->snippet->thumbnails->default->url;
-                        }
-                    }
-    
-                    if(!empty($item->id->videoId)){
-                        $link = 'https://www.youtube.com/watch?v='.$item->id->videoId;
-                    }
-                   
-                    if($img != "" && $link != ""){
-                      
-                        
-                        if($this->validaNoticia( $tag->title, $this->removeEmoji($item->snippet->title) )){
-                            $file =$img;
-                            $filename =  date('Ymdhis'). '_' . Str::slug($this->removeEmoji($item->snippet->title)).'-heranca-nerd-youtube'.'.jpg';
-                            $destinationPath = public_path().'/uploads/news/';
-                            $upload = $this->downloadFile($filename, $file , $destinationPath);
-    
-                            $insert = new News;
-                            $insert->title = $this->removeEmoji($item->snippet->title);
-                            $insert->channels_id = $channel->id;
-                            $insert->slug = Str::slug($item->snippet->title);
-                            $insert->hash = Str::slug($item->snippet->title.'-heranca-nerd-youtube');
-                            $insert->link = $link;
-                            $insert->image = '/uploads/news/' . $filename;
-                            $insert->status = "show";
-                            $insert->order = 0;
-                    
-                            $insert->data = $this->formata_data(3, $item->snippet->publishedAt);
-        
-                            $condition = $insert->save();
-                            if($condition){
-
-                                $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
-                            
-                                if(!$news_tags){
-                                    $insert_news_tags = new NewsTags;
-                                    $insert_news_tags->news_id = $insert->id;
-                                    $insert_news_tags->tags_id = $tag->id;
-                                    $insert_news_tags->save();
-                                }
-
-                                array_push(
-                                    $array_adicionados,
-                                    $insert->id.' '.Str::slug($item->snippet->title.'-heranca-nerd-youtube')
-                                );
-                            }
-    
-                        }
-                    }else{
-                        array_push(
-                            $array_erros,
-                            Str::slug($item->snippet->title.'-heranca-nerd-youtube')
-                        );
-                    }
-                }
-            }
-        }
-        
-        $retorno = [
-            'code'         => '000',
-            'adicionados'  => $array_adicionados, 
-            'existentes'   => $array_existentes, 
-            'erros'        => $array_erros,
-            'date'         => date("Y-m-d"),
-            'hour'         => date("H:i:s"),
-        ];
-
         return $retorno;
     }
 
     public function buscaNerdRabugentoYoutube(){
+
         // Search only videos in a given channel, return an array of PHP objects
         $channel = Channels::where( 'hash',  '=', 'nerdrabugentoyoutube' )->firstOrFail();
         $url = "";
@@ -1976,7 +2296,7 @@ class CronJobController extends Controller
                 if($count == 1){
                     $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
                     if($tag ){
-                        $url = $tag->title ;
+                        $url = $channel->url_crawler .str_replace(" ","+",$tag->title) ;
                         // echo $url;
                     }
                 }
@@ -1985,6 +2305,7 @@ class CronJobController extends Controller
             // dd($url);
         }
         // echo 'url:'.$url;
+        
         if($url == ""){
             $retorno = [
                 'code'         => '003',
@@ -1996,131 +2317,179 @@ class CronJobController extends Controller
             ];
             return $retorno;
         }
-        $activities = Youtube::searchChannelVideos($url, 'UClXazpjDAA6sA6dFzWXQ_lw', 5);
-        // $activities = Youtube::getActivitiesByChannelId('UCmEClzCBDx-vrt0GuSKBd9g');
-       
-        $array_adicionados = [];
-        $array_existentes = [];
-        $array_erros = [];
-        if($activities){
-            foreach($activities as $item){
-    
-                //Validando os campos
-                $validator = Validator::make(['hash' => Str::slug($item->snippet->title.'-nerd-rabugento-youtube')], [
-                        'hash' => 'required|unique:news',
-                    ],
-                    $messages = [
-                        'unique'    => 'Notícia já existe.',
-                    ]
-                );
-               
-                if ($validator->fails()) {
-
-                    $news = News::where( 'hash',  '=', Str::slug($item->snippet->title.'-nerd-rabugento-youtube') )->first();
-                            
-                    if($news){
-                        $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
-                        
-                        if(!$news_tags){
-                            $insert_news_tags = new NewsTags;
-                            $insert_news_tags->news_id = $news->id;
-                            $insert_news_tags->tags_id = $tag->id;
-                            $insert_news_tags->save();
-                        }
-                    }
-    
-                    // Validation 
-                    array_push(
-                        $array_existentes,
-                        Str::slug($item->snippet->title.'-nerd-rabugento-youtube')
-                    );
-                   
-                }else{
-    
-                    $img = "";
-                    $link ="";
-    
-                    if(!empty($item->snippet->thumbnails)){
-                        if(!empty($item->snippet->thumbnails->maxres->url)){
-                            $img = $item->snippet->thumbnails->maxres->url;
-                        }else if(!empty($item->snippet->thumbnails->standard->url)){
-                            $img = $item->snippet->thumbnails->standard->url;
-                        }else if(!empty($item->snippet->thumbnails->high->url)){
-                            $img = $item->snippet->thumbnails->high->url;
-                        }else if(!empty($item->snippet->thumbnails->medium->url)){
-                            $img = $item->snippet->thumbnails->medium->url;
-                        }else{
-                            $img = $item->snippet->thumbnails->default->url;
-                        }
-                    }
-    
-                    if(!empty($item->id->videoId)){
-                        $link = 'https://www.youtube.com/watch?v='.$item->id->videoId;
-                    }
-                   
-                    if($img != "" && $link != ""){
-                      
-                        
-                        if($this->validaNoticia( $tag->title, $this->removeEmoji($item->snippet->title) )){
-                            $file =$img;
-                            $filename =  date('Ymdhis'). '_' . Str::slug($this->removeEmoji($item->snippet->title)).'-nerd-rabugento-youtube'.'.jpg';
-                            $destinationPath = public_path().'/uploads/news/';
-                            $upload = $this->downloadFile($filename, $file , $destinationPath);
-    
-                            $insert = new News;
-                            $insert->title = $this->removeEmoji($item->snippet->title);
-                            $insert->channels_id = $channel->id;
-                            $insert->slug = Str::slug($item->snippet->title);
-                            $insert->hash = Str::slug($item->snippet->title.'-nerd-rabugento-youtube');
-                            $insert->link = $link;
-                            $insert->image = '/uploads/news/' . $filename;
-                            $insert->status = "show";
-                            $insert->order = 0;
-                    
-                            $insert->data = $this->formata_data(3, $item->snippet->publishedAt);
         
-                            $condition = $insert->save();
-                            if($condition){
+        //Busca crawler
+        $data = $this->getCurl($url);
+        
+        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)[;]/', $data, $matches);
+        
+        preg_match_all('/"sectionListRenderer":{"contents":\[(?P<artigo>[\s\S]*?)(,{"continuationItemRenderer")/', $matches['json'][0], $matches);
+       
+        if(isset($matches['artigo'][0])){
+            $dados = json_decode('['.$matches['artigo'][0].']');
+        }else{
+            $dados = [];
+        }
+        $return['content'] = [];
+        foreach ($dados as $key => $value) {
+            if($key < 11){
+                $result['noticia'] = "";
+                $result['img'] = "";
+                $result['link'] = "";
+                $result['data'] = "";
 
-                                $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
-                            
-                                if(!$news_tags){
-                                    $insert_news_tags = new NewsTags;
-                                    $insert_news_tags->news_id = $insert->id;
-                                    $insert_news_tags->tags_id = $tag->id;
-                                    $insert_news_tags->save();
-                                }
+                if(isset($value->itemSectionRenderer->contents[0]->videoRenderer)){
 
-                                array_push(
-                                    $array_adicionados,
-                                    $insert->id.' '.Str::slug($item->snippet->title.'-nerd-rabugento-youtube')
-                                );
+                    $result['noticia'] = $value->itemSectionRenderer->contents[0]->videoRenderer->title->runs[0]->text;
+                    //Verifica se a noticia tem relação com as tags
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($result['noticia']) )){
+                    
+                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails)){
+                            if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url;
+                            }else{
+                                $result['img'] = "";
                             }
-    
                         }
-                    }else{
-                        array_push(
-                            $array_erros,
-                            Str::slug($item->snippet->title.'-nerd-rabugento-youtube')
-                        );
+            
+                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->videoId)){
+                            $result['url'] = 'https://www.youtube.com/watch?v='.$value->itemSectionRenderer->contents[0]->videoRenderer->videoId;
+                        }
+                        
+                        if(isset($result['url']) && $result['url'] != ""){
+                            $url_date = $result['url'];
+                            $data2 = $this->getCurl($url_date);
+                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
+                            $dados2 = json_encode($matches['json'][0]);
+                            $dados2 = str_replace('"','',$dados2);
+                            // echo '<pre>'; print_r($dados2); echo '</pre>';
+                            $result['data'] =  $this->formata_data(4,$dados2);
+                        }
+
+                        $return['content'][] = $result;
+            
                     }
                 }
+            }else{
+                break;
             }
         }
         
+        // echo '<pre>'; print_r($return['content']); echo '</pre>';
+        // die;
+        foreach($return['content'] as $item){
+
+            //Validando os campos
+            $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-nerdrabugentoyoutube')], [
+                    'hash' => 'required|unique:news',
+                ],
+                $messages = [
+                    'unique'    => 'Notícia já existe.',
+                ]
+            );
+
+            if ($validator->fails()) {
+
+                $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-nerdrabugentoyoutube') )->first();
+                            
+                if($news){
+                    $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
+                    
+                    if(!$news_tags){
+                        $insert_news_tags = new NewsTags;
+                        $insert_news_tags->news_id = $news->id;
+                        $insert_news_tags->tags_id = $tag->id;
+                        $insert_news_tags->save();
+                    }
+                }
+
+                // Validation 
+                array_push(
+                    $array_existentes,
+                    Str::slug($item['noticia'].'-nerdrabugentoyoutube')
+                );
+            }else{
+
+                $img = "";
+                $link = "";
+                $data = "";
+
+                if($item['img']){
+                    $img = $item['img'];
+                }
+
+                if($item['url']){
+                    $link = $item['url'];
+                }
+
+                if($item['data']){
+                    $data = $item['data'];
+                }
+                if($img != "" && $link != ""){
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        //Baixa imagem
+                        $file =$img;
+                        $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-nerdrabugentoyoutube'.'.jpg';
+                        $destinationPath = public_path().'/uploads/news/';
+                        $upload = $this->downloadFile($filename, $file , $destinationPath);
+
+                        $insert = new News;
+                        $insert->title = $this->removeEmoji($item['noticia']);
+                        $insert->channels_id = $channel->id;
+                        $insert->slug = Str::slug($item['noticia']);
+                        $insert->hash = Str::slug($item['noticia'].'-nerdrabugentoyoutube');
+                        $insert->link = $link;
+                        $insert->image = '/uploads/news/' . $filename;
+                        $insert->status = "show";
+                        $insert->order = 0;
+                        
+                        $insert->data = $data;
+                        $condition = $insert->save();
+                        if($condition){
+                            
+                            $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
+                            
+                            if(!$news_tags){
+                                $insert_news_tags = new NewsTags;
+                                $insert_news_tags->news_id = $insert->id;
+                                $insert_news_tags->tags_id = $tag->id;
+                                $insert_news_tags->save();
+                            }
+
+                            array_push(
+                                $array_adicionados,
+                                $insert->id.' '.Str::slug($item['noticia'].'-nerdrabugentoyoutube')
+                            );
+                        }
+                    }
+                }else{
+                    array_push(
+                        $array_erros,
+                        Str::slug($item['noticia'].'-nerdrabugentoyoutube')
+                    );
+                }
+            }
+        }
+
         $retorno = [
             'code'         => '000',
             'adicionados'  => $array_adicionados, 
             'existentes'   => $array_existentes, 
-            'erros'        => $array_erros,
+            'erros'        => $array_erros, 
             'date'         => date("Y-m-d"),
             'hour'         => date("H:i:s"),
         ];
-
         return $retorno;
     }
 
     public function buscaOperacaoCinemaYoutube(){
+
         // Search only videos in a given channel, return an array of PHP objects
         $channel = Channels::where( 'hash',  '=', 'operacaocinemayoutube' )->firstOrFail();
         $url = "";
@@ -2147,7 +2516,7 @@ class CronJobController extends Controller
                 if($count == 1){
                     $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
                     if($tag ){
-                        $url = $tag->title ;
+                        $url = $channel->url_crawler .str_replace(" ","+",$tag->title) ;
                         // echo $url;
                     }
                 }
@@ -2156,6 +2525,7 @@ class CronJobController extends Controller
             // dd($url);
         }
         // echo 'url:'.$url;
+        
         if($url == ""){
             $retorno = [
                 'code'         => '003',
@@ -2167,131 +2537,179 @@ class CronJobController extends Controller
             ];
             return $retorno;
         }
-        $activities = Youtube::searchChannelVideos($url, 'UCT-QobdGYczKTSuWAQbQFAA', 5);
-        // $activities = Youtube::getActivitiesByChannelId('UCmEClzCBDx-vrt0GuSKBd9g');
-       
-        $array_adicionados = [];
-        $array_existentes = [];
-        $array_erros = [];
-        if($activities){
-            foreach($activities as $item){
-    
-                //Validando os campos
-                $validator = Validator::make(['hash' => Str::slug($item->snippet->title.'-operacao-cinema-youtube')], [
-                        'hash' => 'required|unique:news',
-                    ],
-                    $messages = [
-                        'unique'    => 'Notícia já existe.',
-                    ]
-                );
-               
-                if ($validator->fails()) {
-
-                    $news = News::where( 'hash',  '=', Str::slug($item->snippet->title.'-operacao-cinema-youtube') )->first();
-                            
-                    if($news){
-                        $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
-                        
-                        if(!$news_tags){
-                            $insert_news_tags = new NewsTags;
-                            $insert_news_tags->news_id = $news->id;
-                            $insert_news_tags->tags_id = $tag->id;
-                            $insert_news_tags->save();
-                        }
-                    }
-    
-                    // Validation 
-                    array_push(
-                        $array_existentes,
-                        Str::slug($item->snippet->title.'-operacao-cinema-youtube')
-                    );
-                   
-                }else{
-    
-                    $img = "";
-                    $link ="";
-    
-                    if(!empty($item->snippet->thumbnails)){
-                        if(!empty($item->snippet->thumbnails->maxres->url)){
-                            $img = $item->snippet->thumbnails->maxres->url;
-                        }else if(!empty($item->snippet->thumbnails->standard->url)){
-                            $img = $item->snippet->thumbnails->standard->url;
-                        }else if(!empty($item->snippet->thumbnails->high->url)){
-                            $img = $item->snippet->thumbnails->high->url;
-                        }else if(!empty($item->snippet->thumbnails->medium->url)){
-                            $img = $item->snippet->thumbnails->medium->url;
-                        }else{
-                            $img = $item->snippet->thumbnails->default->url;
-                        }
-                    }
-    
-                    if(!empty($item->id->videoId)){
-                        $link = 'https://www.youtube.com/watch?v='.$item->id->videoId;
-                    }
-                   
-                    if($img != "" && $link != ""){
-                      
-                        
-                        if($this->validaNoticia( $tag->title, $this->removeEmoji($item->snippet->title) )){
-                            $file =$img;
-                            $filename =  date('Ymdhis'). '_' . Str::slug($this->removeEmoji($item->snippet->title)).'-operacao-cinema-youtube'.'.jpg';
-                            $destinationPath = public_path().'/uploads/news/';
-                            $upload = $this->downloadFile($filename, $file , $destinationPath);
-    
-                            $insert = new News;
-                            $insert->title = $this->removeEmoji($item->snippet->title);
-                            $insert->channels_id = $channel->id;
-                            $insert->slug = Str::slug($item->snippet->title);
-                            $insert->hash = Str::slug($item->snippet->title.'-operacao-cinema-youtube');
-                            $insert->link = $link;
-                            $insert->image = '/uploads/news/' . $filename;
-                            $insert->status = "show";
-                            $insert->order = 0;
-                    
-                            $insert->data = $this->formata_data(3, $item->snippet->publishedAt);
         
-                            $condition = $insert->save();
-                            if($condition){
+        //Busca crawler
+        $data = $this->getCurl($url);
+        
+        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)[;]/', $data, $matches);
+        
+        preg_match_all('/"sectionListRenderer":{"contents":\[(?P<artigo>[\s\S]*?)(,{"continuationItemRenderer")/', $matches['json'][0], $matches);
+       
+        if(isset($matches['artigo'][0])){
+            $dados = json_decode('['.$matches['artigo'][0].']');
+        }else{
+            $dados = [];
+        }
+        $return['content'] = [];
+        foreach ($dados as $key => $value) {
+            if($key < 11){
+                $result['noticia'] = "";
+                $result['img'] = "";
+                $result['link'] = "";
+                $result['data'] = "";
 
-                                $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
-                            
-                                if(!$news_tags){
-                                    $insert_news_tags = new NewsTags;
-                                    $insert_news_tags->news_id = $insert->id;
-                                    $insert_news_tags->tags_id = $tag->id;
-                                    $insert_news_tags->save();
-                                }
+                if(isset($value->itemSectionRenderer->contents[0]->videoRenderer)){
 
-                                array_push(
-                                    $array_adicionados,
-                                    $insert->id.' '.Str::slug($item->snippet->title.'-operacao-cinema-youtube')
-                                );
+                    $result['noticia'] = $value->itemSectionRenderer->contents[0]->videoRenderer->title->runs[0]->text;
+                    //Verifica se a noticia tem relação com as tags
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($result['noticia']) )){
+                    
+                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails)){
+                            if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url;
+                            }else{
+                                $result['img'] = "";
                             }
-    
                         }
-                    }else{
-                        array_push(
-                            $array_erros,
-                            Str::slug($item->snippet->title.'-operacao-cinema-youtube')
-                        );
+            
+                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->videoId)){
+                            $result['url'] = 'https://www.youtube.com/watch?v='.$value->itemSectionRenderer->contents[0]->videoRenderer->videoId;
+                        }
+                        
+                        if(isset($result['url']) && $result['url'] != ""){
+                            $url_date = $result['url'];
+                            $data2 = $this->getCurl($url_date);
+                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
+                            $dados2 = json_encode($matches['json'][0]);
+                            $dados2 = str_replace('"','',$dados2);
+                            // echo '<pre>'; print_r($dados2); echo '</pre>';
+                            $result['data'] =  $this->formata_data(4,$dados2);
+                        }
+
+                        $return['content'][] = $result;
+            
                     }
                 }
+            }else{
+                break;
             }
         }
         
+        // echo '<pre>'; print_r($return['content']); echo '</pre>';
+        // die;
+        foreach($return['content'] as $item){
+
+            //Validando os campos
+            $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-operacaocinemayoutube')], [
+                    'hash' => 'required|unique:news',
+                ],
+                $messages = [
+                    'unique'    => 'Notícia já existe.',
+                ]
+            );
+
+            if ($validator->fails()) {
+
+                $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-operacaocinemayoutube') )->first();
+                            
+                if($news){
+                    $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
+                    
+                    if(!$news_tags){
+                        $insert_news_tags = new NewsTags;
+                        $insert_news_tags->news_id = $news->id;
+                        $insert_news_tags->tags_id = $tag->id;
+                        $insert_news_tags->save();
+                    }
+                }
+
+                // Validation 
+                array_push(
+                    $array_existentes,
+                    Str::slug($item['noticia'].'-operacaocinemayoutube')
+                );
+            }else{
+
+                $img = "";
+                $link = "";
+                $data = "";
+
+                if($item['img']){
+                    $img = $item['img'];
+                }
+
+                if($item['url']){
+                    $link = $item['url'];
+                }
+
+                if($item['data']){
+                    $data = $item['data'];
+                }
+                if($img != "" && $link != ""){
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        //Baixa imagem
+                        $file =$img;
+                        $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-operacaocinemayoutube'.'.jpg';
+                        $destinationPath = public_path().'/uploads/news/';
+                        $upload = $this->downloadFile($filename, $file , $destinationPath);
+
+                        $insert = new News;
+                        $insert->title = $this->removeEmoji($item['noticia']);
+                        $insert->channels_id = $channel->id;
+                        $insert->slug = Str::slug($item['noticia']);
+                        $insert->hash = Str::slug($item['noticia'].'-operacaocinemayoutube');
+                        $insert->link = $link;
+                        $insert->image = '/uploads/news/' . $filename;
+                        $insert->status = "show";
+                        $insert->order = 0;
+                        
+                        $insert->data = $data;
+                        $condition = $insert->save();
+                        if($condition){
+                            
+                            $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
+                            
+                            if(!$news_tags){
+                                $insert_news_tags = new NewsTags;
+                                $insert_news_tags->news_id = $insert->id;
+                                $insert_news_tags->tags_id = $tag->id;
+                                $insert_news_tags->save();
+                            }
+
+                            array_push(
+                                $array_adicionados,
+                                $insert->id.' '.Str::slug($item['noticia'].'-operacaocinemayoutube')
+                            );
+                        }
+                    }
+                }else{
+                    array_push(
+                        $array_erros,
+                        Str::slug($item['noticia'].'-operacaocinemayoutube')
+                    );
+                }
+            }
+        }
+
         $retorno = [
             'code'         => '000',
             'adicionados'  => $array_adicionados, 
             'existentes'   => $array_existentes, 
-            'erros'        => $array_erros,
+            'erros'        => $array_erros, 
             'date'         => date("Y-m-d"),
             'hour'         => date("H:i:s"),
         ];
-
         return $retorno;
     }
 
     public function buscaQuatroCoisasYoutube(){
+
         // Search only videos in a given channel, return an array of PHP objects
         $channel = Channels::where( 'hash',  '=', 'quatrocoisasyoutube' )->firstOrFail();
         $url = "";
@@ -2318,7 +2736,7 @@ class CronJobController extends Controller
                 if($count == 1){
                     $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
                     if($tag ){
-                        $url = $tag->title ;
+                        $url = $channel->url_crawler .str_replace(" ","+",$tag->title) ;
                         // echo $url;
                     }
                 }
@@ -2327,6 +2745,7 @@ class CronJobController extends Controller
             // dd($url);
         }
         // echo 'url:'.$url;
+        
         if($url == ""){
             $retorno = [
                 'code'         => '003',
@@ -2338,131 +2757,179 @@ class CronJobController extends Controller
             ];
             return $retorno;
         }
-        $activities = Youtube::searchChannelVideos($url, 'UCMn_W4pe7msJS77koaT96gg', 5);
-        // $activities = Youtube::getActivitiesByChannelId('UCmEClzCBDx-vrt0GuSKBd9g');
-       
-        $array_adicionados = [];
-        $array_existentes = [];
-        $array_erros = [];
-        if($activities){
-            foreach($activities as $item){
-    
-                //Validando os campos
-                $validator = Validator::make(['hash' => Str::slug($item->snippet->title.'-quatro-coisas-youtube')], [
-                        'hash' => 'required|unique:news',
-                    ],
-                    $messages = [
-                        'unique'    => 'Notícia já existe.',
-                    ]
-                );
-               
-                if ($validator->fails()) {
-
-                    $news = News::where( 'hash',  '=', Str::slug($item->snippet->title.'-quatro-coisas-youtube') )->first();
-                            
-                    if($news){
-                        $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
-                        
-                        if(!$news_tags){
-                            $insert_news_tags = new NewsTags;
-                            $insert_news_tags->news_id = $news->id;
-                            $insert_news_tags->tags_id = $tag->id;
-                            $insert_news_tags->save();
-                        }
-                    }
-    
-                    // Validation 
-                    array_push(
-                        $array_existentes,
-                        Str::slug($item->snippet->title.'-quatro-coisas-youtube')
-                    );
-                   
-                }else{
-    
-                    $img = "";
-                    $link ="";
-    
-                    if(!empty($item->snippet->thumbnails)){
-                        if(!empty($item->snippet->thumbnails->maxres->url)){
-                            $img = $item->snippet->thumbnails->maxres->url;
-                        }else if(!empty($item->snippet->thumbnails->standard->url)){
-                            $img = $item->snippet->thumbnails->standard->url;
-                        }else if(!empty($item->snippet->thumbnails->high->url)){
-                            $img = $item->snippet->thumbnails->high->url;
-                        }else if(!empty($item->snippet->thumbnails->medium->url)){
-                            $img = $item->snippet->thumbnails->medium->url;
-                        }else{
-                            $img = $item->snippet->thumbnails->default->url;
-                        }
-                    }
-    
-                    if(!empty($item->id->videoId)){
-                        $link = 'https://www.youtube.com/watch?v='.$item->id->videoId;
-                    }
-                   
-                    if($img != "" && $link != ""){
-                      
-                        
-                        if($this->validaNoticia( $tag->title, $this->removeEmoji($item->snippet->title) )){
-                            $file =$img;
-                            $filename =  date('Ymdhis'). '_' . Str::slug($this->removeEmoji($item->snippet->title)).'-quatro-coisas-youtube'.'.jpg';
-                            $destinationPath = public_path().'/uploads/news/';
-                            $upload = $this->downloadFile($filename, $file , $destinationPath);
-    
-                            $insert = new News;
-                            $insert->title = $this->removeEmoji($item->snippet->title);
-                            $insert->channels_id = $channel->id;
-                            $insert->slug = Str::slug($item->snippet->title);
-                            $insert->hash = Str::slug($item->snippet->title.'-quatro-coisas-youtube');
-                            $insert->link = $link;
-                            $insert->image = '/uploads/news/' . $filename;
-                            $insert->status = "show";
-                            $insert->order = 0;
-                    
-                            $insert->data = $this->formata_data(3, $item->snippet->publishedAt);
         
-                            $condition = $insert->save();
-                            if($condition){
+        //Busca crawler
+        $data = $this->getCurl($url);
+        
+        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)[;]/', $data, $matches);
+        
+        preg_match_all('/"sectionListRenderer":{"contents":\[(?P<artigo>[\s\S]*?)(,{"continuationItemRenderer")/', $matches['json'][0], $matches);
+       
+        if(isset($matches['artigo'][0])){
+            $dados = json_decode('['.$matches['artigo'][0].']');
+        }else{
+            $dados = [];
+        }
+        $return['content'] = [];
+        foreach ($dados as $key => $value) {
+            if($key < 11){
+                $result['noticia'] = "";
+                $result['img'] = "";
+                $result['link'] = "";
+                $result['data'] = "";
 
-                                $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
-                            
-                                if(!$news_tags){
-                                    $insert_news_tags = new NewsTags;
-                                    $insert_news_tags->news_id = $insert->id;
-                                    $insert_news_tags->tags_id = $tag->id;
-                                    $insert_news_tags->save();
-                                }
+                if(isset($value->itemSectionRenderer->contents[0]->videoRenderer)){
 
-                                array_push(
-                                    $array_adicionados,
-                                    $insert->id.' '.Str::slug($item->snippet->title.'-quatro-coisas-youtube')
-                                );
+                    $result['noticia'] = $value->itemSectionRenderer->contents[0]->videoRenderer->title->runs[0]->text;
+                    //Verifica se a noticia tem relação com as tags
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($result['noticia']) )){
+                    
+                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails)){
+                            if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url;
+                            }else{
+                                $result['img'] = "";
                             }
-    
                         }
-                    }else{
-                        array_push(
-                            $array_erros,
-                            Str::slug($item->snippet->title.'-quatro-coisas-youtube')
-                        );
+            
+                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->videoId)){
+                            $result['url'] = 'https://www.youtube.com/watch?v='.$value->itemSectionRenderer->contents[0]->videoRenderer->videoId;
+                        }
+                        
+                        if(isset($result['url']) && $result['url'] != ""){
+                            $url_date = $result['url'];
+                            $data2 = $this->getCurl($url_date);
+                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
+                            $dados2 = json_encode($matches['json'][0]);
+                            $dados2 = str_replace('"','',$dados2);
+                            // echo '<pre>'; print_r($dados2); echo '</pre>';
+                            $result['data'] =  $this->formata_data(4,$dados2);
+                        }
+
+                        $return['content'][] = $result;
+            
                     }
                 }
+            }else{
+                break;
             }
         }
         
+        // echo '<pre>'; print_r($return['content']); echo '</pre>';
+        // die;
+        foreach($return['content'] as $item){
+
+            //Validando os campos
+            $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-quatrocoisasyoutube')], [
+                    'hash' => 'required|unique:news',
+                ],
+                $messages = [
+                    'unique'    => 'Notícia já existe.',
+                ]
+            );
+
+            if ($validator->fails()) {
+
+                $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-quatrocoisasyoutube') )->first();
+                            
+                if($news){
+                    $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
+                    
+                    if(!$news_tags){
+                        $insert_news_tags = new NewsTags;
+                        $insert_news_tags->news_id = $news->id;
+                        $insert_news_tags->tags_id = $tag->id;
+                        $insert_news_tags->save();
+                    }
+                }
+
+                // Validation 
+                array_push(
+                    $array_existentes,
+                    Str::slug($item['noticia'].'-quatrocoisasyoutube')
+                );
+            }else{
+
+                $img = "";
+                $link = "";
+                $data = "";
+
+                if($item['img']){
+                    $img = $item['img'];
+                }
+
+                if($item['url']){
+                    $link = $item['url'];
+                }
+
+                if($item['data']){
+                    $data = $item['data'];
+                }
+                if($img != "" && $link != ""){
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        //Baixa imagem
+                        $file =$img;
+                        $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-quatrocoisasyoutube'.'.jpg';
+                        $destinationPath = public_path().'/uploads/news/';
+                        $upload = $this->downloadFile($filename, $file , $destinationPath);
+
+                        $insert = new News;
+                        $insert->title = $this->removeEmoji($item['noticia']);
+                        $insert->channels_id = $channel->id;
+                        $insert->slug = Str::slug($item['noticia']);
+                        $insert->hash = Str::slug($item['noticia'].'-quatrocoisasyoutube');
+                        $insert->link = $link;
+                        $insert->image = '/uploads/news/' . $filename;
+                        $insert->status = "show";
+                        $insert->order = 0;
+                        
+                        $insert->data = $data;
+                        $condition = $insert->save();
+                        if($condition){
+                            
+                            $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
+                            
+                            if(!$news_tags){
+                                $insert_news_tags = new NewsTags;
+                                $insert_news_tags->news_id = $insert->id;
+                                $insert_news_tags->tags_id = $tag->id;
+                                $insert_news_tags->save();
+                            }
+
+                            array_push(
+                                $array_adicionados,
+                                $insert->id.' '.Str::slug($item['noticia'].'-quatrocoisasyoutube')
+                            );
+                        }
+                    }
+                }else{
+                    array_push(
+                        $array_erros,
+                        Str::slug($item['noticia'].'-quatrocoisasyoutube')
+                    );
+                }
+            }
+        }
+
         $retorno = [
             'code'         => '000',
             'adicionados'  => $array_adicionados, 
             'existentes'   => $array_existentes, 
-            'erros'        => $array_erros,
+            'erros'        => $array_erros, 
             'date'         => date("Y-m-d"),
             'hour'         => date("H:i:s"),
         ];
-
         return $retorno;
     }
 
     public function buscaCavernaDoCarusoYoutube(){
+
         // Search only videos in a given channel, return an array of PHP objects
         $channel = Channels::where( 'hash',  '=', 'cavernadocarusoyoutube' )->firstOrFail();
         $url = "";
@@ -2489,7 +2956,7 @@ class CronJobController extends Controller
                 if($count == 1){
                     $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
                     if($tag ){
-                        $url = $tag->title ;
+                        $url = $channel->url_crawler .str_replace(" ","+",$tag->title) ;
                         // echo $url;
                     }
                 }
@@ -2498,6 +2965,7 @@ class CronJobController extends Controller
             // dd($url);
         }
         // echo 'url:'.$url;
+        
         if($url == ""){
             $retorno = [
                 'code'         => '003',
@@ -2509,131 +2977,179 @@ class CronJobController extends Controller
             ];
             return $retorno;
         }
-        $activities = Youtube::searchChannelVideos($url, 'UCAKA2kEF00INrjkrs-HIqmA', 5);
-        // $activities = Youtube::getActivitiesByChannelId('UCmEClzCBDx-vrt0GuSKBd9g');
-       
-        $array_adicionados = [];
-        $array_existentes = [];
-        $array_erros = [];
-        if($activities){
-            foreach($activities as $item){
-    
-                //Validando os campos
-                $validator = Validator::make(['hash' => Str::slug($item->snippet->title.'-caverna-do-caruso-youtube')], [
-                        'hash' => 'required|unique:news',
-                    ],
-                    $messages = [
-                        'unique'    => 'Notícia já existe.',
-                    ]
-                );
-               
-                if ($validator->fails()) {
-
-                    $news = News::where( 'hash',  '=', Str::slug($item->snippet->title.'-caverna-do-caruso-youtube') )->first();
-                            
-                    if($news){
-                        $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
-                        
-                        if(!$news_tags){
-                            $insert_news_tags = new NewsTags;
-                            $insert_news_tags->news_id = $news->id;
-                            $insert_news_tags->tags_id = $tag->id;
-                            $insert_news_tags->save();
-                        }
-                    }
-    
-                    // Validation 
-                    array_push(
-                        $array_existentes,
-                        Str::slug($item->snippet->title.'-caverna-do-caruso-youtube')
-                    );
-                   
-                }else{
-    
-                    $img = "";
-                    $link ="";
-    
-                    if(!empty($item->snippet->thumbnails)){
-                        if(!empty($item->snippet->thumbnails->maxres->url)){
-                            $img = $item->snippet->thumbnails->maxres->url;
-                        }else if(!empty($item->snippet->thumbnails->standard->url)){
-                            $img = $item->snippet->thumbnails->standard->url;
-                        }else if(!empty($item->snippet->thumbnails->high->url)){
-                            $img = $item->snippet->thumbnails->high->url;
-                        }else if(!empty($item->snippet->thumbnails->medium->url)){
-                            $img = $item->snippet->thumbnails->medium->url;
-                        }else{
-                            $img = $item->snippet->thumbnails->default->url;
-                        }
-                    }
-    
-                    if(!empty($item->id->videoId)){
-                        $link = 'https://www.youtube.com/watch?v='.$item->id->videoId;
-                    }
-                   
-                    if($img != "" && $link != ""){
-                      
-                        
-                        if($this->validaNoticia( $tag->title, $this->removeEmoji($item->snippet->title) )){
-                            $file =$img;
-                            $filename =  date('Ymdhis'). '_' . Str::slug($this->removeEmoji($item->snippet->title)).'-caverna-do-caruso-youtube'.'.jpg';
-                            $destinationPath = public_path().'/uploads/news/';
-                            $upload = $this->downloadFile($filename, $file , $destinationPath);
-    
-                            $insert = new News;
-                            $insert->title = $this->removeEmoji($item->snippet->title);
-                            $insert->channels_id = $channel->id;
-                            $insert->slug = Str::slug($item->snippet->title);
-                            $insert->hash = Str::slug($item->snippet->title.'-caverna-do-caruso-youtube');
-                            $insert->link = $link;
-                            $insert->image = '/uploads/news/' . $filename;
-                            $insert->status = "show";
-                            $insert->order = 0;
-                    
-                            $insert->data = $this->formata_data(3, $item->snippet->publishedAt);
         
-                            $condition = $insert->save();
-                            if($condition){
+        //Busca crawler
+        $data = $this->getCurl($url);
+        
+        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)[;]/', $data, $matches);
+        
+        preg_match_all('/"sectionListRenderer":{"contents":\[(?P<artigo>[\s\S]*?)(,{"continuationItemRenderer")/', $matches['json'][0], $matches);
+       
+        if(isset($matches['artigo'][0])){
+            $dados = json_decode('['.$matches['artigo'][0].']');
+        }else{
+            $dados = [];
+        }
+        $return['content'] = [];
+        foreach ($dados as $key => $value) {
+            if($key < 11){
+                $result['noticia'] = "";
+                $result['img'] = "";
+                $result['link'] = "";
+                $result['data'] = "";
 
-                                $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
-                            
-                                if(!$news_tags){
-                                    $insert_news_tags = new NewsTags;
-                                    $insert_news_tags->news_id = $insert->id;
-                                    $insert_news_tags->tags_id = $tag->id;
-                                    $insert_news_tags->save();
-                                }
+                if(isset($value->itemSectionRenderer->contents[0]->videoRenderer)){
 
-                                array_push(
-                                    $array_adicionados,
-                                    $insert->id.' '.Str::slug($item->snippet->title.'-caverna-do-caruso-youtube')
-                                );
+                    $result['noticia'] = $value->itemSectionRenderer->contents[0]->videoRenderer->title->runs[0]->text;
+                    //Verifica se a noticia tem relação com as tags
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($result['noticia']) )){
+                    
+                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails)){
+                            if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url;
+                            }else{
+                                $result['img'] = "";
                             }
-    
                         }
-                    }else{
-                        array_push(
-                            $array_erros,
-                            Str::slug($item->snippet->title.'-caverna-do-caruso-youtube')
-                        );
+            
+                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->videoId)){
+                            $result['url'] = 'https://www.youtube.com/watch?v='.$value->itemSectionRenderer->contents[0]->videoRenderer->videoId;
+                        }
+                        
+                        if(isset($result['url']) && $result['url'] != ""){
+                            $url_date = $result['url'];
+                            $data2 = $this->getCurl($url_date);
+                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
+                            $dados2 = json_encode($matches['json'][0]);
+                            $dados2 = str_replace('"','',$dados2);
+                            // echo '<pre>'; print_r($dados2); echo '</pre>';
+                            $result['data'] =  $this->formata_data(4,$dados2);
+                        }
+
+                        $return['content'][] = $result;
+            
                     }
                 }
+            }else{
+                break;
             }
         }
         
+        // echo '<pre>'; print_r($return['content']); echo '</pre>';
+        // die;
+        foreach($return['content'] as $item){
+
+            //Validando os campos
+            $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-cavernadocarusoyoutube')], [
+                    'hash' => 'required|unique:news',
+                ],
+                $messages = [
+                    'unique'    => 'Notícia já existe.',
+                ]
+            );
+
+            if ($validator->fails()) {
+
+                $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-cavernadocarusoyoutube') )->first();
+                            
+                if($news){
+                    $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
+                    
+                    if(!$news_tags){
+                        $insert_news_tags = new NewsTags;
+                        $insert_news_tags->news_id = $news->id;
+                        $insert_news_tags->tags_id = $tag->id;
+                        $insert_news_tags->save();
+                    }
+                }
+
+                // Validation 
+                array_push(
+                    $array_existentes,
+                    Str::slug($item['noticia'].'-cavernadocarusoyoutube')
+                );
+            }else{
+
+                $img = "";
+                $link = "";
+                $data = "";
+
+                if($item['img']){
+                    $img = $item['img'];
+                }
+
+                if($item['url']){
+                    $link = $item['url'];
+                }
+
+                if($item['data']){
+                    $data = $item['data'];
+                }
+                if($img != "" && $link != ""){
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        //Baixa imagem
+                        $file =$img;
+                        $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-cavernadocarusoyoutube'.'.jpg';
+                        $destinationPath = public_path().'/uploads/news/';
+                        $upload = $this->downloadFile($filename, $file , $destinationPath);
+
+                        $insert = new News;
+                        $insert->title = $this->removeEmoji($item['noticia']);
+                        $insert->channels_id = $channel->id;
+                        $insert->slug = Str::slug($item['noticia']);
+                        $insert->hash = Str::slug($item['noticia'].'-cavernadocarusoyoutube');
+                        $insert->link = $link;
+                        $insert->image = '/uploads/news/' . $filename;
+                        $insert->status = "show";
+                        $insert->order = 0;
+                        
+                        $insert->data = $data;
+                        $condition = $insert->save();
+                        if($condition){
+                            
+                            $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
+                            
+                            if(!$news_tags){
+                                $insert_news_tags = new NewsTags;
+                                $insert_news_tags->news_id = $insert->id;
+                                $insert_news_tags->tags_id = $tag->id;
+                                $insert_news_tags->save();
+                            }
+
+                            array_push(
+                                $array_adicionados,
+                                $insert->id.' '.Str::slug($item['noticia'].'-cavernadocarusoyoutube')
+                            );
+                        }
+                    }
+                }else{
+                    array_push(
+                        $array_erros,
+                        Str::slug($item['noticia'].'-cavernadocarusoyoutube')
+                    );
+                }
+            }
+        }
+
         $retorno = [
             'code'         => '000',
             'adicionados'  => $array_adicionados, 
             'existentes'   => $array_existentes, 
-            'erros'        => $array_erros,
+            'erros'        => $array_erros, 
             'date'         => date("Y-m-d"),
             'hour'         => date("H:i:s"),
         ];
-
         return $retorno;
     }
 
     public function buscaCaiqueIzotonYoutube(){
+
         // Search only videos in a given channel, return an array of PHP objects
         $channel = Channels::where( 'hash',  '=', 'caiqueizotonyoutube' )->firstOrFail();
         $url = "";
@@ -2660,7 +3176,7 @@ class CronJobController extends Controller
                 if($count == 1){
                     $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
                     if($tag ){
-                        $url = $tag->title ;
+                        $url = $channel->url_crawler .str_replace(" ","+",$tag->title) ;
                         // echo $url;
                     }
                 }
@@ -2669,6 +3185,7 @@ class CronJobController extends Controller
             // dd($url);
         }
         // echo 'url:'.$url;
+        
         if($url == ""){
             $retorno = [
                 'code'         => '003',
@@ -2680,131 +3197,179 @@ class CronJobController extends Controller
             ];
             return $retorno;
         }
-        $activities = Youtube::searchChannelVideos($url, 'UC3ucQfyGEXYlYFucvR87vyQ', 5);
-        // $activities = Youtube::getActivitiesByChannelId('UCmEClzCBDx-vrt0GuSKBd9g');
-       
-        $array_adicionados = [];
-        $array_existentes = [];
-        $array_erros = [];
-        if($activities){
-            foreach($activities as $item){
-    
-                //Validando os campos
-                $validator = Validator::make(['hash' => Str::slug($item->snippet->title.'-caique-izoton-youtube')], [
-                        'hash' => 'required|unique:news',
-                    ],
-                    $messages = [
-                        'unique'    => 'Notícia já existe.',
-                    ]
-                );
-               
-                if ($validator->fails()) {
-
-                    $news = News::where( 'hash',  '=', Str::slug($item->snippet->title.'-caique-izoton-youtube') )->first();
-                            
-                    if($news){
-                        $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
-                        
-                        if(!$news_tags){
-                            $insert_news_tags = new NewsTags;
-                            $insert_news_tags->news_id = $news->id;
-                            $insert_news_tags->tags_id = $tag->id;
-                            $insert_news_tags->save();
-                        }
-                    }
-    
-                    // Validation 
-                    array_push(
-                        $array_existentes,
-                        Str::slug($item->snippet->title.'-caique-izoton-youtube')
-                    );
-                   
-                }else{
-    
-                    $img = "";
-                    $link ="";
-    
-                    if(!empty($item->snippet->thumbnails)){
-                        if(!empty($item->snippet->thumbnails->maxres->url)){
-                            $img = $item->snippet->thumbnails->maxres->url;
-                        }else if(!empty($item->snippet->thumbnails->standard->url)){
-                            $img = $item->snippet->thumbnails->standard->url;
-                        }else if(!empty($item->snippet->thumbnails->high->url)){
-                            $img = $item->snippet->thumbnails->high->url;
-                        }else if(!empty($item->snippet->thumbnails->medium->url)){
-                            $img = $item->snippet->thumbnails->medium->url;
-                        }else{
-                            $img = $item->snippet->thumbnails->default->url;
-                        }
-                    }
-    
-                    if(!empty($item->id->videoId)){
-                        $link = 'https://www.youtube.com/watch?v='.$item->id->videoId;
-                    }
-                   
-                    if($img != "" && $link != ""){
-                      
-                        
-                        if($this->validaNoticia( $tag->title, $this->removeEmoji($item->snippet->title) )){
-                            $file =$img;
-                            $filename =  date('Ymdhis'). '_' . Str::slug($this->removeEmoji($item->snippet->title)).'-caique-izoton-youtube'.'.jpg';
-                            $destinationPath = public_path().'/uploads/news/';
-                            $upload = $this->downloadFile($filename, $file , $destinationPath);
-    
-                            $insert = new News;
-                            $insert->title = $this->removeEmoji($item->snippet->title);
-                            $insert->channels_id = $channel->id;
-                            $insert->slug = Str::slug($item->snippet->title);
-                            $insert->hash = Str::slug($item->snippet->title.'-caique-izoton-youtube');
-                            $insert->link = $link;
-                            $insert->image = '/uploads/news/' . $filename;
-                            $insert->status = "show";
-                            $insert->order = 0;
-                    
-                            $insert->data = $this->formata_data(3, $item->snippet->publishedAt);
         
-                            $condition = $insert->save();
-                            if($condition){
+        //Busca crawler
+        $data = $this->getCurl($url);
+        
+        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)[;]/', $data, $matches);
+        
+        preg_match_all('/"sectionListRenderer":{"contents":\[(?P<artigo>[\s\S]*?)(,{"continuationItemRenderer")/', $matches['json'][0], $matches);
+       
+        if(isset($matches['artigo'][0])){
+            $dados = json_decode('['.$matches['artigo'][0].']');
+        }else{
+            $dados = [];
+        }
+        $return['content'] = [];
+        foreach ($dados as $key => $value) {
+            if($key < 11){
+                $result['noticia'] = "";
+                $result['img'] = "";
+                $result['link'] = "";
+                $result['data'] = "";
 
-                                $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
-                            
-                                if(!$news_tags){
-                                    $insert_news_tags = new NewsTags;
-                                    $insert_news_tags->news_id = $insert->id;
-                                    $insert_news_tags->tags_id = $tag->id;
-                                    $insert_news_tags->save();
-                                }
+                if(isset($value->itemSectionRenderer->contents[0]->videoRenderer)){
 
-                                array_push(
-                                    $array_adicionados,
-                                    $insert->id.' '.Str::slug($item->snippet->title.'-caique-izoton-youtube')
-                                );
+                    $result['noticia'] = $value->itemSectionRenderer->contents[0]->videoRenderer->title->runs[0]->text;
+                    //Verifica se a noticia tem relação com as tags
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($result['noticia']) )){
+                    
+                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails)){
+                            if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url;
+                            }else{
+                                $result['img'] = "";
                             }
-    
                         }
-                    }else{
-                        array_push(
-                            $array_erros,
-                            Str::slug($item->snippet->title.'-caique-izoton-youtube')
-                        );
+            
+                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->videoId)){
+                            $result['url'] = 'https://www.youtube.com/watch?v='.$value->itemSectionRenderer->contents[0]->videoRenderer->videoId;
+                        }
+                        
+                        if(isset($result['url']) && $result['url'] != ""){
+                            $url_date = $result['url'];
+                            $data2 = $this->getCurl($url_date);
+                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
+                            $dados2 = json_encode($matches['json'][0]);
+                            $dados2 = str_replace('"','',$dados2);
+                            // echo '<pre>'; print_r($dados2); echo '</pre>';
+                            $result['data'] =  $this->formata_data(4,$dados2);
+                        }
+
+                        $return['content'][] = $result;
+            
                     }
                 }
+            }else{
+                break;
             }
         }
         
+        // echo '<pre>'; print_r($return['content']); echo '</pre>';
+        // die;
+        foreach($return['content'] as $item){
+
+            //Validando os campos
+            $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-caiqueizotonyoutube')], [
+                    'hash' => 'required|unique:news',
+                ],
+                $messages = [
+                    'unique'    => 'Notícia já existe.',
+                ]
+            );
+
+            if ($validator->fails()) {
+
+                $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-caiqueizotonyoutube') )->first();
+                            
+                if($news){
+                    $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
+                    
+                    if(!$news_tags){
+                        $insert_news_tags = new NewsTags;
+                        $insert_news_tags->news_id = $news->id;
+                        $insert_news_tags->tags_id = $tag->id;
+                        $insert_news_tags->save();
+                    }
+                }
+
+                // Validation 
+                array_push(
+                    $array_existentes,
+                    Str::slug($item['noticia'].'-caiqueizotonyoutube')
+                );
+            }else{
+
+                $img = "";
+                $link = "";
+                $data = "";
+
+                if($item['img']){
+                    $img = $item['img'];
+                }
+
+                if($item['url']){
+                    $link = $item['url'];
+                }
+
+                if($item['data']){
+                    $data = $item['data'];
+                }
+                if($img != "" && $link != ""){
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        //Baixa imagem
+                        $file =$img;
+                        $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-caiqueizotonyoutube'.'.jpg';
+                        $destinationPath = public_path().'/uploads/news/';
+                        $upload = $this->downloadFile($filename, $file , $destinationPath);
+
+                        $insert = new News;
+                        $insert->title = $this->removeEmoji($item['noticia']);
+                        $insert->channels_id = $channel->id;
+                        $insert->slug = Str::slug($item['noticia']);
+                        $insert->hash = Str::slug($item['noticia'].'-caiqueizotonyoutube');
+                        $insert->link = $link;
+                        $insert->image = '/uploads/news/' . $filename;
+                        $insert->status = "show";
+                        $insert->order = 0;
+                        
+                        $insert->data = $data;
+                        $condition = $insert->save();
+                        if($condition){
+                            
+                            $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
+                            
+                            if(!$news_tags){
+                                $insert_news_tags = new NewsTags;
+                                $insert_news_tags->news_id = $insert->id;
+                                $insert_news_tags->tags_id = $tag->id;
+                                $insert_news_tags->save();
+                            }
+
+                            array_push(
+                                $array_adicionados,
+                                $insert->id.' '.Str::slug($item['noticia'].'-caiqueizotonyoutube')
+                            );
+                        }
+                    }
+                }else{
+                    array_push(
+                        $array_erros,
+                        Str::slug($item['noticia'].'-caiqueizotonyoutube')
+                    );
+                }
+            }
+        }
+
         $retorno = [
             'code'         => '000',
             'adicionados'  => $array_adicionados, 
             'existentes'   => $array_existentes, 
-            'erros'        => $array_erros,
+            'erros'        => $array_erros, 
             'date'         => date("Y-m-d"),
             'hour'         => date("H:i:s"),
         ];
-
         return $retorno;
     }
-
+    
     public function buscaCinemaComRapaduraYoutube(){
+
         // Search only videos in a given channel, return an array of PHP objects
         $channel = Channels::where( 'hash',  '=', 'cinemacomrapadurayoutube' )->firstOrFail();
         $url = "";
@@ -2831,7 +3396,7 @@ class CronJobController extends Controller
                 if($count == 1){
                     $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
                     if($tag ){
-                        $url = $tag->title ;
+                        $url = $channel->url_crawler .str_replace(" ","+",$tag->title) ;
                         // echo $url;
                     }
                 }
@@ -2840,6 +3405,7 @@ class CronJobController extends Controller
             // dd($url);
         }
         // echo 'url:'.$url;
+        
         if($url == ""){
             $retorno = [
                 'code'         => '003',
@@ -2851,131 +3417,179 @@ class CronJobController extends Controller
             ];
             return $retorno;
         }
-        $activities = Youtube::searchChannelVideos($url, 'UCurl4RJpmlVmUJUiTWyGWAA', 5);
-        // $activities = Youtube::getActivitiesByChannelId('UCmEClzCBDx-vrt0GuSKBd9g');
-       
-        $array_adicionados = [];
-        $array_existentes = [];
-        $array_erros = [];
-        if($activities){
-            foreach($activities as $item){
-    
-                //Validando os campos
-                $validator = Validator::make(['hash' => Str::slug($item->snippet->title.'-cinema-com-rapadura-youtube')], [
-                        'hash' => 'required|unique:news',
-                    ],
-                    $messages = [
-                        'unique'    => 'Notícia já existe.',
-                    ]
-                );
-               
-                if ($validator->fails()) {
-
-                    $news = News::where( 'hash',  '=', Str::slug($item->snippet->title.'-cinema-com-rapadura-youtube') )->first();
-                            
-                    if($news){
-                        $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
-                        
-                        if(!$news_tags){
-                            $insert_news_tags = new NewsTags;
-                            $insert_news_tags->news_id = $news->id;
-                            $insert_news_tags->tags_id = $tag->id;
-                            $insert_news_tags->save();
-                        }
-                    }
-    
-                    // Validation 
-                    array_push(
-                        $array_existentes,
-                        Str::slug($item->snippet->title.'-cinema-com-rapadura-youtube')
-                    );
-                   
-                }else{
-    
-                    $img = "";
-                    $link ="";
-    
-                    if(!empty($item->snippet->thumbnails)){
-                        if(!empty($item->snippet->thumbnails->maxres->url)){
-                            $img = $item->snippet->thumbnails->maxres->url;
-                        }else if(!empty($item->snippet->thumbnails->standard->url)){
-                            $img = $item->snippet->thumbnails->standard->url;
-                        }else if(!empty($item->snippet->thumbnails->high->url)){
-                            $img = $item->snippet->thumbnails->high->url;
-                        }else if(!empty($item->snippet->thumbnails->medium->url)){
-                            $img = $item->snippet->thumbnails->medium->url;
-                        }else{
-                            $img = $item->snippet->thumbnails->default->url;
-                        }
-                    }
-    
-                    if(!empty($item->id->videoId)){
-                        $link = 'https://www.youtube.com/watch?v='.$item->id->videoId;
-                    }
-                   
-                    if($img != "" && $link != ""){
-                      
-                        
-                        if($this->validaNoticia( $tag->title, $this->removeEmoji($item->snippet->title) )){
-                            $file =$img;
-                            $filename =  date('Ymdhis'). '_' . Str::slug($this->removeEmoji($item->snippet->title)).'-cinema-com-rapadura-youtube'.'.jpg';
-                            $destinationPath = public_path().'/uploads/news/';
-                            $upload = $this->downloadFile($filename, $file , $destinationPath);
-    
-                            $insert = new News;
-                            $insert->title = $this->removeEmoji($item->snippet->title);
-                            $insert->channels_id = $channel->id;
-                            $insert->slug = Str::slug($item->snippet->title);
-                            $insert->hash = Str::slug($item->snippet->title.'-cinema-com-rapadura-youtube');
-                            $insert->link = $link;
-                            $insert->image = '/uploads/news/' . $filename;
-                            $insert->status = "show";
-                            $insert->order = 0;
-                    
-                            $insert->data = $this->formata_data(3, $item->snippet->publishedAt);
         
-                            $condition = $insert->save();
-                            if($condition){
+        //Busca crawler
+        $data = $this->getCurl($url);
+        
+        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)[;]/', $data, $matches);
+        
+        preg_match_all('/"sectionListRenderer":{"contents":\[(?P<artigo>[\s\S]*?)(,{"continuationItemRenderer")/', $matches['json'][0], $matches);
+       
+        if(isset($matches['artigo'][0])){
+            $dados = json_decode('['.$matches['artigo'][0].']');
+        }else{
+            $dados = [];
+        }
+        $return['content'] = [];
+        foreach ($dados as $key => $value) {
+            if($key < 11){
+                $result['noticia'] = "";
+                $result['img'] = "";
+                $result['link'] = "";
+                $result['data'] = "";
 
-                                $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
-                            
-                                if(!$news_tags){
-                                    $insert_news_tags = new NewsTags;
-                                    $insert_news_tags->news_id = $insert->id;
-                                    $insert_news_tags->tags_id = $tag->id;
-                                    $insert_news_tags->save();
-                                }
+                if(isset($value->itemSectionRenderer->contents[0]->videoRenderer)){
 
-                                array_push(
-                                    $array_adicionados,
-                                    $insert->id.' '.Str::slug($item->snippet->title.'-cinema-com-rapadura-youtube')
-                                );
+                    $result['noticia'] = $value->itemSectionRenderer->contents[0]->videoRenderer->title->runs[0]->text;
+                    //Verifica se a noticia tem relação com as tags
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($result['noticia']) )){
+                    
+                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails)){
+                            if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url;
+                            }else{
+                                $result['img'] = "";
                             }
-    
                         }
-                    }else{
-                        array_push(
-                            $array_erros,
-                            Str::slug($item->snippet->title.'-cinema-com-rapadura-youtube')
-                        );
+            
+                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->videoId)){
+                            $result['url'] = 'https://www.youtube.com/watch?v='.$value->itemSectionRenderer->contents[0]->videoRenderer->videoId;
+                        }
+                        
+                        if(isset($result['url']) && $result['url'] != ""){
+                            $url_date = $result['url'];
+                            $data2 = $this->getCurl($url_date);
+                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
+                            $dados2 = json_encode($matches['json'][0]);
+                            $dados2 = str_replace('"','',$dados2);
+                            // echo '<pre>'; print_r($dados2); echo '</pre>';
+                            $result['data'] =  $this->formata_data(4,$dados2);
+                        }
+
+                        $return['content'][] = $result;
+            
                     }
                 }
+            }else{
+                break;
             }
         }
         
+        // echo '<pre>'; print_r($return['content']); echo '</pre>';
+        // die;
+        foreach($return['content'] as $item){
+
+            //Validando os campos
+            $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-cinemacomrapadurayoutube')], [
+                    'hash' => 'required|unique:news',
+                ],
+                $messages = [
+                    'unique'    => 'Notícia já existe.',
+                ]
+            );
+
+            if ($validator->fails()) {
+
+                $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-cinemacomrapadurayoutube') )->first();
+                            
+                if($news){
+                    $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
+                    
+                    if(!$news_tags){
+                        $insert_news_tags = new NewsTags;
+                        $insert_news_tags->news_id = $news->id;
+                        $insert_news_tags->tags_id = $tag->id;
+                        $insert_news_tags->save();
+                    }
+                }
+
+                // Validation 
+                array_push(
+                    $array_existentes,
+                    Str::slug($item['noticia'].'-cinemacomrapadurayoutube')
+                );
+            }else{
+
+                $img = "";
+                $link = "";
+                $data = "";
+
+                if($item['img']){
+                    $img = $item['img'];
+                }
+
+                if($item['url']){
+                    $link = $item['url'];
+                }
+
+                if($item['data']){
+                    $data = $item['data'];
+                }
+                if($img != "" && $link != ""){
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        //Baixa imagem
+                        $file =$img;
+                        $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-cinemacomrapadurayoutube'.'.jpg';
+                        $destinationPath = public_path().'/uploads/news/';
+                        $upload = $this->downloadFile($filename, $file , $destinationPath);
+
+                        $insert = new News;
+                        $insert->title = $this->removeEmoji($item['noticia']);
+                        $insert->channels_id = $channel->id;
+                        $insert->slug = Str::slug($item['noticia']);
+                        $insert->hash = Str::slug($item['noticia'].'-cinemacomrapadurayoutube');
+                        $insert->link = $link;
+                        $insert->image = '/uploads/news/' . $filename;
+                        $insert->status = "show";
+                        $insert->order = 0;
+                        
+                        $insert->data = $data;
+                        $condition = $insert->save();
+                        if($condition){
+                            
+                            $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
+                            
+                            if(!$news_tags){
+                                $insert_news_tags = new NewsTags;
+                                $insert_news_tags->news_id = $insert->id;
+                                $insert_news_tags->tags_id = $tag->id;
+                                $insert_news_tags->save();
+                            }
+
+                            array_push(
+                                $array_adicionados,
+                                $insert->id.' '.Str::slug($item['noticia'].'-cinemacomrapadurayoutube')
+                            );
+                        }
+                    }
+                }else{
+                    array_push(
+                        $array_erros,
+                        Str::slug($item['noticia'].'-cinemacomrapadurayoutube')
+                    );
+                }
+            }
+        }
+
         $retorno = [
             'code'         => '000',
             'adicionados'  => $array_adicionados, 
             'existentes'   => $array_existentes, 
-            'erros'        => $array_erros,
+            'erros'        => $array_erros, 
             'date'         => date("Y-m-d"),
             'hour'         => date("H:i:s"),
         ];
-
         return $retorno;
     }
 
     public function buscaNewsNerdLandYoutube(){
+
         // Search only videos in a given channel, return an array of PHP objects
         $channel = Channels::where( 'hash',  '=', 'nerdlandyoutube' )->firstOrFail();
         $url = "";
@@ -3002,7 +3616,7 @@ class CronJobController extends Controller
                 if($count == 1){
                     $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
                     if($tag ){
-                        $url = $tag->title ;
+                        $url = $channel->url_crawler .str_replace(" ","+",$tag->title) ;
                         // echo $url;
                     }
                 }
@@ -3011,6 +3625,7 @@ class CronJobController extends Controller
             // dd($url);
         }
         // echo 'url:'.$url;
+        
         if($url == ""){
             $retorno = [
                 'code'         => '003',
@@ -3022,131 +3637,179 @@ class CronJobController extends Controller
             ];
             return $retorno;
         }
-        $activities = Youtube::searchChannelVideos($url, 'UCevaIHgjRXaYX3S6uQY8rig', 5);
-        // $activities = Youtube::getActivitiesByChannelId('UCmEClzCBDx-vrt0GuSKBd9g');
-       
-        $array_adicionados = [];
-        $array_existentes = [];
-        $array_erros = [];
-        if($activities){
-            foreach($activities as $item){
-    
-                //Validando os campos
-                $validator = Validator::make(['hash' => Str::slug($item->snippet->title.'-nerdland-youtube')], [
-                        'hash' => 'required|unique:news',
-                    ],
-                    $messages = [
-                        'unique'    => 'Notícia já existe.',
-                    ]
-                );
-               
-                if ($validator->fails()) {
-                    
-                    $news = News::where( 'hash',  '=', Str::slug($item->snippet->title.'-nerdland-youtube') )->first();
-                            
-                    if($news){
-                        $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
-                        
-                        if(!$news_tags){
-                            $insert_news_tags = new NewsTags;
-                            $insert_news_tags->news_id = $news->id;
-                            $insert_news_tags->tags_id = $tag->id;
-                            $insert_news_tags->save();
-                        }
-                    }
-
-                    // Validation 
-                    array_push(
-                        $array_existentes,
-                        Str::slug($item->snippet->title.'-nerdland-youtube')
-                    );
-                   
-                }else{
-    
-                    $img = "";
-                    $link ="";
-    
-                    if(!empty($item->snippet->thumbnails)){
-                        if(!empty($item->snippet->thumbnails->maxres->url)){
-                            $img = $item->snippet->thumbnails->maxres->url;
-                        }else if(!empty($item->snippet->thumbnails->standard->url)){
-                            $img = $item->snippet->thumbnails->standard->url;
-                        }else if(!empty($item->snippet->thumbnails->high->url)){
-                            $img = $item->snippet->thumbnails->high->url;
-                        }else if(!empty($item->snippet->thumbnails->medium->url)){
-                            $img = $item->snippet->thumbnails->medium->url;
-                        }else{
-                            $img = $item->snippet->thumbnails->default->url;
-                        }
-                    }
-    
-                    if(!empty($item->id->videoId)){
-                        $link = 'https://www.youtube.com/watch?v='.$item->id->videoId;
-                    }
-                   
-                    if($img != "" && $link != ""){
-                      
-                        
-                        if($this->validaNoticia( $tag->title, $this->removeEmoji($item->snippet->title) )){
-                            $file =$img;
-                            $filename =  date('Ymdhis'). '_' . Str::slug($this->removeEmoji($item->snippet->title)).'-nerdland-youtube'.'.jpg';
-                            $destinationPath = public_path().'/uploads/news/';
-                            $upload = $this->downloadFile($filename, $file , $destinationPath);
-    
-                            $insert = new News;
-                            $insert->title = $this->removeEmoji($item->snippet->title);
-                            $insert->channels_id = $channel->id;
-                            $insert->slug = Str::slug($item->snippet->title);
-                            $insert->hash = Str::slug($item->snippet->title.'-nerdland-youtube');
-                            $insert->link = $link;
-                            $insert->image = '/uploads/news/' . $filename;
-                            $insert->status = "show";
-                            $insert->order = 0;
-                    
-                            $insert->data = $this->formata_data(3, $item->snippet->publishedAt);
         
-                            $condition = $insert->save();
-                            if($condition){
+        //Busca crawler
+        $data = $this->getCurl($url);
+        
+        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)[;]/', $data, $matches);
+        
+        preg_match_all('/"sectionListRenderer":{"contents":\[(?P<artigo>[\s\S]*?)(,{"continuationItemRenderer")/', $matches['json'][0], $matches);
+       
+        if(isset($matches['artigo'][0])){
+            $dados = json_decode('['.$matches['artigo'][0].']');
+        }else{
+            $dados = [];
+        }
+        $return['content'] = [];
+        foreach ($dados as $key => $value) {
+            if($key < 11){
+                $result['noticia'] = "";
+                $result['img'] = "";
+                $result['link'] = "";
+                $result['data'] = "";
 
-                                $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
-                            
-                                if(!$news_tags){
-                                    $insert_news_tags = new NewsTags;
-                                    $insert_news_tags->news_id = $insert->id;
-                                    $insert_news_tags->tags_id = $tag->id;
-                                    $insert_news_tags->save();
-                                }
+                if(isset($value->itemSectionRenderer->contents[0]->videoRenderer)){
 
-                                array_push(
-                                    $array_adicionados,
-                                    $insert->id.' '.Str::slug($item->snippet->title.'-nerdland-youtube')
-                                );
+                    $result['noticia'] = $value->itemSectionRenderer->contents[0]->videoRenderer->title->runs[0]->text;
+                    //Verifica se a noticia tem relação com as tags
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($result['noticia']) )){
+                    
+                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails)){
+                            if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url;
+                            }else{
+                                $result['img'] = "";
                             }
-    
                         }
-                    }else{
-                        array_push(
-                            $array_erros,
-                            Str::slug($item->snippet->title.'-nerdland-youtube')
-                        );
+            
+                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->videoId)){
+                            $result['url'] = 'https://www.youtube.com/watch?v='.$value->itemSectionRenderer->contents[0]->videoRenderer->videoId;
+                        }
+                        
+                        if(isset($result['url']) && $result['url'] != ""){
+                            $url_date = $result['url'];
+                            $data2 = $this->getCurl($url_date);
+                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
+                            $dados2 = json_encode($matches['json'][0]);
+                            $dados2 = str_replace('"','',$dados2);
+                            // echo '<pre>'; print_r($dados2); echo '</pre>';
+                            $result['data'] =  $this->formata_data(4,$dados2);
+                        }
+
+                        $return['content'][] = $result;
+            
                     }
                 }
+            }else{
+                break;
             }
         }
         
+        // echo '<pre>'; print_r($return['content']); echo '</pre>';
+        // die;
+        foreach($return['content'] as $item){
+
+            //Validando os campos
+            $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-nerdlandyoutube')], [
+                    'hash' => 'required|unique:news',
+                ],
+                $messages = [
+                    'unique'    => 'Notícia já existe.',
+                ]
+            );
+
+            if ($validator->fails()) {
+
+                $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-nerdlandyoutube') )->first();
+                            
+                if($news){
+                    $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
+                    
+                    if(!$news_tags){
+                        $insert_news_tags = new NewsTags;
+                        $insert_news_tags->news_id = $news->id;
+                        $insert_news_tags->tags_id = $tag->id;
+                        $insert_news_tags->save();
+                    }
+                }
+
+                // Validation 
+                array_push(
+                    $array_existentes,
+                    Str::slug($item['noticia'].'-nerdlandyoutube')
+                );
+            }else{
+
+                $img = "";
+                $link = "";
+                $data = "";
+
+                if($item['img']){
+                    $img = $item['img'];
+                }
+
+                if($item['url']){
+                    $link = $item['url'];
+                }
+
+                if($item['data']){
+                    $data = $item['data'];
+                }
+                if($img != "" && $link != ""){
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        //Baixa imagem
+                        $file =$img;
+                        $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-nerdlandyoutube'.'.jpg';
+                        $destinationPath = public_path().'/uploads/news/';
+                        $upload = $this->downloadFile($filename, $file , $destinationPath);
+
+                        $insert = new News;
+                        $insert->title = $this->removeEmoji($item['noticia']);
+                        $insert->channels_id = $channel->id;
+                        $insert->slug = Str::slug($item['noticia']);
+                        $insert->hash = Str::slug($item['noticia'].'-nerdlandyoutube');
+                        $insert->link = $link;
+                        $insert->image = '/uploads/news/' . $filename;
+                        $insert->status = "show";
+                        $insert->order = 0;
+                        
+                        $insert->data = $data;
+                        $condition = $insert->save();
+                        if($condition){
+                            
+                            $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
+                            
+                            if(!$news_tags){
+                                $insert_news_tags = new NewsTags;
+                                $insert_news_tags->news_id = $insert->id;
+                                $insert_news_tags->tags_id = $tag->id;
+                                $insert_news_tags->save();
+                            }
+
+                            array_push(
+                                $array_adicionados,
+                                $insert->id.' '.Str::slug($item['noticia'].'-nerdlandyoutube')
+                            );
+                        }
+                    }
+                }else{
+                    array_push(
+                        $array_erros,
+                        Str::slug($item['noticia'].'-nerdlandyoutube')
+                    );
+                }
+            }
+        }
+
         $retorno = [
             'code'         => '000',
             'adicionados'  => $array_adicionados, 
             'existentes'   => $array_existentes, 
-            'erros'        => $array_erros,
+            'erros'        => $array_erros, 
             'date'         => date("Y-m-d"),
             'hour'         => date("H:i:s"),
         ];
-
         return $retorno;
     }
 
     public function buscaNewsEiNerdYoutube(){
+
         // Search only videos in a given channel, return an array of PHP objects
         $channel = Channels::where( 'hash',  '=', 'einerdyoutube' )->firstOrFail();
         $url = "";
@@ -3173,7 +3836,7 @@ class CronJobController extends Controller
                 if($count == 1){
                     $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
                     if($tag ){
-                        $url = $tag->title ;
+                        $url = $channel->url_crawler .str_replace(" ","+",$tag->title) ;
                         // echo $url;
                     }
                 }
@@ -3182,6 +3845,7 @@ class CronJobController extends Controller
             // dd($url);
         }
         // echo 'url:'.$url;
+        
         if($url == ""){
             $retorno = [
                 'code'         => '003',
@@ -3193,131 +3857,179 @@ class CronJobController extends Controller
             ];
             return $retorno;
         }
-        $activities = Youtube::searchChannelVideos($url, 'UCt_4wzTQqmcUvemNkeO0plA', 5);
-        // $activities = Youtube::getActivitiesByChannelId('UCmEClzCBDx-vrt0GuSKBd9g');
-       
-        $array_adicionados = [];
-        $array_existentes = [];
-        $array_erros = [];
-        if($activities){
-            foreach($activities as $item){
-    
-                //Validando os campos
-                $validator = Validator::make(['hash' => Str::slug($item->snippet->title.'-einerd-youtube')], [
-                        'hash' => 'required|unique:news',
-                    ],
-                    $messages = [
-                        'unique'    => 'Notícia já existe.',
-                    ]
-                );
-               
-                if ($validator->fails()) {
-                    
-                    $news = News::where( 'hash',  '=', Str::slug($item->snippet->title.'-einerd-youtube') )->first();
-                            
-                    if($news){
-                        $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
-                        
-                        if(!$news_tags){
-                            $insert_news_tags = new NewsTags;
-                            $insert_news_tags->news_id = $news->id;
-                            $insert_news_tags->tags_id = $tag->id;
-                            $insert_news_tags->save();
-                        }
-                    }
-
-                    // Validation 
-                    array_push(
-                        $array_existentes,
-                        Str::slug($item->snippet->title.'-einerd-youtube')
-                    );
-                   
-                }else{
-    
-                    $img = "";
-                    $link ="";
-    
-                    if(!empty($item->snippet->thumbnails)){
-                        if(!empty($item->snippet->thumbnails->maxres->url)){
-                            $img = $item->snippet->thumbnails->maxres->url;
-                        }else if(!empty($item->snippet->thumbnails->standard->url)){
-                            $img = $item->snippet->thumbnails->standard->url;
-                        }else if(!empty($item->snippet->thumbnails->high->url)){
-                            $img = $item->snippet->thumbnails->high->url;
-                        }else if(!empty($item->snippet->thumbnails->medium->url)){
-                            $img = $item->snippet->thumbnails->medium->url;
-                        }else{
-                            $img = $item->snippet->thumbnails->default->url;
-                        }
-                    }
-    
-                    if(!empty($item->id->videoId)){
-                        $link = 'https://www.youtube.com/watch?v='.$item->id->videoId;
-                    }
-                   
-                    if($img != "" && $link != ""){
-                      
-                        
-                        if($this->validaNoticia( $tag->title, $this->removeEmoji($item->snippet->title) )){
-                            $file =$img;
-                            $filename =  date('Ymdhis'). '_' . Str::slug($this->removeEmoji($item->snippet->title)).'-einerd-youtube'.'.jpg';
-                            $destinationPath = public_path().'/uploads/news/';
-                            $upload = $this->downloadFile($filename, $file , $destinationPath);
-    
-                            $insert = new News;
-                            $insert->title = $this->removeEmoji($item->snippet->title);
-                            $insert->channels_id = $channel->id;
-                            $insert->slug = Str::slug($item->snippet->title);
-                            $insert->hash = Str::slug($item->snippet->title.'-einerd-youtube');
-                            $insert->link = $link;
-                            $insert->image = '/uploads/news/' . $filename;
-                            $insert->status = "show";
-                            $insert->order = 0;
-                    
-                            $insert->data = $this->formata_data(3, $item->snippet->publishedAt);
         
-                            $condition = $insert->save();
-                            if($condition){
+        //Busca crawler
+        $data = $this->getCurl($url);
+        
+        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)[;]/', $data, $matches);
+        
+        preg_match_all('/"sectionListRenderer":{"contents":\[(?P<artigo>[\s\S]*?)(,{"continuationItemRenderer")/', $matches['json'][0], $matches);
+       
+        if(isset($matches['artigo'][0])){
+            $dados = json_decode('['.$matches['artigo'][0].']');
+        }else{
+            $dados = [];
+        }
+        $return['content'] = [];
+        foreach ($dados as $key => $value) {
+            if($key < 11){
+                $result['noticia'] = "";
+                $result['img'] = "";
+                $result['link'] = "";
+                $result['data'] = "";
 
-                                $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
-                            
-                                if(!$news_tags){
-                                    $insert_news_tags = new NewsTags;
-                                    $insert_news_tags->news_id = $insert->id;
-                                    $insert_news_tags->tags_id = $tag->id;
-                                    $insert_news_tags->save();
-                                }
+                if(isset($value->itemSectionRenderer->contents[0]->videoRenderer)){
 
-                                array_push(
-                                    $array_adicionados,
-                                    $insert->id.' '.Str::slug($item->snippet->title.'-einerd-youtube')
-                                );
+                    $result['noticia'] = $value->itemSectionRenderer->contents[0]->videoRenderer->title->runs[0]->text;
+                    //Verifica se a noticia tem relação com as tags
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($result['noticia']) )){
+                    
+                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails)){
+                            if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url;
+                            }else{
+                                $result['img'] = "";
                             }
-    
                         }
-                    }else{
-                        array_push(
-                            $array_erros,
-                            Str::slug($item->snippet->title.'-einerd-youtube')
-                        );
+            
+                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->videoId)){
+                            $result['url'] = 'https://www.youtube.com/watch?v='.$value->itemSectionRenderer->contents[0]->videoRenderer->videoId;
+                        }
+                        
+                        if(isset($result['url']) && $result['url'] != ""){
+                            $url_date = $result['url'];
+                            $data2 = $this->getCurl($url_date);
+                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
+                            $dados2 = json_encode($matches['json'][0]);
+                            $dados2 = str_replace('"','',$dados2);
+                            // echo '<pre>'; print_r($dados2); echo '</pre>';
+                            $result['data'] =  $this->formata_data(4,$dados2);
+                        }
+
+                        $return['content'][] = $result;
+            
                     }
                 }
+            }else{
+                break;
             }
         }
         
+        // echo '<pre>'; print_r($return['content']); echo '</pre>';
+        // die;
+        foreach($return['content'] as $item){
+
+            //Validando os campos
+            $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-einerdyoutube')], [
+                    'hash' => 'required|unique:news',
+                ],
+                $messages = [
+                    'unique'    => 'Notícia já existe.',
+                ]
+            );
+
+            if ($validator->fails()) {
+
+                $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-einerdyoutube') )->first();
+                            
+                if($news){
+                    $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
+                    
+                    if(!$news_tags){
+                        $insert_news_tags = new NewsTags;
+                        $insert_news_tags->news_id = $news->id;
+                        $insert_news_tags->tags_id = $tag->id;
+                        $insert_news_tags->save();
+                    }
+                }
+
+                // Validation 
+                array_push(
+                    $array_existentes,
+                    Str::slug($item['noticia'].'-einerdyoutube')
+                );
+            }else{
+
+                $img = "";
+                $link = "";
+                $data = "";
+
+                if($item['img']){
+                    $img = $item['img'];
+                }
+
+                if($item['url']){
+                    $link = $item['url'];
+                }
+
+                if($item['data']){
+                    $data = $item['data'];
+                }
+                if($img != "" && $link != ""){
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        //Baixa imagem
+                        $file =$img;
+                        $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-einerdyoutube'.'.jpg';
+                        $destinationPath = public_path().'/uploads/news/';
+                        $upload = $this->downloadFile($filename, $file , $destinationPath);
+
+                        $insert = new News;
+                        $insert->title = $this->removeEmoji($item['noticia']);
+                        $insert->channels_id = $channel->id;
+                        $insert->slug = Str::slug($item['noticia']);
+                        $insert->hash = Str::slug($item['noticia'].'-einerdyoutube');
+                        $insert->link = $link;
+                        $insert->image = '/uploads/news/' . $filename;
+                        $insert->status = "show";
+                        $insert->order = 0;
+                        
+                        $insert->data = $data;
+                        $condition = $insert->save();
+                        if($condition){
+                            
+                            $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
+                            
+                            if(!$news_tags){
+                                $insert_news_tags = new NewsTags;
+                                $insert_news_tags->news_id = $insert->id;
+                                $insert_news_tags->tags_id = $tag->id;
+                                $insert_news_tags->save();
+                            }
+
+                            array_push(
+                                $array_adicionados,
+                                $insert->id.' '.Str::slug($item['noticia'].'-einerdyoutube')
+                            );
+                        }
+                    }
+                }else{
+                    array_push(
+                        $array_erros,
+                        Str::slug($item['noticia'].'-einerdyoutube')
+                    );
+                }
+            }
+        }
+
         $retorno = [
             'code'         => '000',
             'adicionados'  => $array_adicionados, 
             'existentes'   => $array_existentes, 
-            'erros'        => $array_erros,
+            'erros'        => $array_erros, 
             'date'         => date("Y-m-d"),
             'hour'         => date("H:i:s"),
         ];
-
         return $retorno;
     }
-
+   
     public function buscaNewsPipocandoYoutube(){
+
         // Search only videos in a given channel, return an array of PHP objects
         $channel = Channels::where( 'hash',  '=', 'pipocandoyoutube' )->firstOrFail();
         $url = "";
@@ -3344,7 +4056,7 @@ class CronJobController extends Controller
                 if($count == 1){
                     $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
                     if($tag ){
-                        $url = $tag->title ;
+                        $url = $channel->url_crawler .str_replace(" ","+",$tag->title) ;
                         // echo $url;
                     }
                 }
@@ -3353,6 +4065,7 @@ class CronJobController extends Controller
             // dd($url);
         }
         // echo 'url:'.$url;
+        
         if($url == ""){
             $retorno = [
                 'code'         => '003',
@@ -3364,131 +4077,179 @@ class CronJobController extends Controller
             ];
             return $retorno;
         }
-        $activities = Youtube::searchChannelVideos($url, 'UCBFLqK7PAP9DQ3JpIrWFI7wQ', 5);
-        // $activities = Youtube::getActivitiesByChannelId('UCmEClzCBDx-vrt0GuSKBd9g');
-       
-        $array_adicionados = [];
-        $array_existentes = [];
-        $array_erros = [];
-        if($activities){
-            foreach($activities as $item){
-    
-                //Validando os campos
-                $validator = Validator::make(['hash' => Str::slug($item->snippet->title.'-pipocando-youtube')], [
-                        'hash' => 'required|unique:news',
-                    ],
-                    $messages = [
-                        'unique'    => 'Notícia já existe.',
-                    ]
-                );
-               
-                if ($validator->fails()) {
-
-                    $news = News::where( 'hash',  '=', Str::slug($item->snippet->title.'-pipocando-youtube') )->first();
-                            
-                    if($news){
-                        $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
-                        
-                        if(!$news_tags){
-                            $insert_news_tags = new NewsTags;
-                            $insert_news_tags->news_id = $news->id;
-                            $insert_news_tags->tags_id = $tag->id;
-                            $insert_news_tags->save();
-                        }
-                    }
-    
-                    // Validation 
-                    array_push(
-                        $array_existentes,
-                        Str::slug($item->snippet->title.'-pipocando-youtube')
-                    );
-                   
-                }else{
-    
-                    $img = "";
-                    $link ="";
-    
-                    if(!empty($item->snippet->thumbnails)){
-                        if(!empty($item->snippet->thumbnails->maxres->url)){
-                            $img = $item->snippet->thumbnails->maxres->url;
-                        }else if(!empty($item->snippet->thumbnails->standard->url)){
-                            $img = $item->snippet->thumbnails->standard->url;
-                        }else if(!empty($item->snippet->thumbnails->high->url)){
-                            $img = $item->snippet->thumbnails->high->url;
-                        }else if(!empty($item->snippet->thumbnails->medium->url)){
-                            $img = $item->snippet->thumbnails->medium->url;
-                        }else{
-                            $img = $item->snippet->thumbnails->default->url;
-                        }
-                    }
-    
-                    if(!empty($item->id->videoId)){
-                        $link = 'https://www.youtube.com/watch?v='.$item->id->videoId;
-                    }
-                   
-                    if($img != "" && $link != ""){
-                      
-                        
-                        if($this->validaNoticia( $tag->title, $this->removeEmoji($item->snippet->title) )){
-                            $file =$img;
-                            $filename =  date('Ymdhis'). '_' . Str::slug($this->removeEmoji($item->snippet->title)).'-pipocando-youtube'.'.jpg';
-                            $destinationPath = public_path().'/uploads/news/';
-                            $upload = $this->downloadFile($filename, $file , $destinationPath);
-    
-                            $insert = new News;
-                            $insert->title = $this->removeEmoji($item->snippet->title);
-                            $insert->channels_id = $channel->id;
-                            $insert->slug = Str::slug($item->snippet->title);
-                            $insert->hash = Str::slug($item->snippet->title.'-pipocando-youtube');
-                            $insert->link = $link;
-                            $insert->image = '/uploads/news/' . $filename;
-                            $insert->status = "show";
-                            $insert->order = 0;
-                    
-                            $insert->data = $this->formata_data(3, $item->snippet->publishedAt);
         
-                            $condition = $insert->save();
-                            if($condition){
+        //Busca crawler
+        $data = $this->getCurl($url);
+        
+        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)[;]/', $data, $matches);
+        
+        preg_match_all('/"sectionListRenderer":{"contents":\[(?P<artigo>[\s\S]*?)(,{"continuationItemRenderer")/', $matches['json'][0], $matches);
+       
+        if(isset($matches['artigo'][0])){
+            $dados = json_decode('['.$matches['artigo'][0].']');
+        }else{
+            $dados = [];
+        }
+        $return['content'] = [];
+        foreach ($dados as $key => $value) {
+            if($key < 11){
+                $result['noticia'] = "";
+                $result['img'] = "";
+                $result['link'] = "";
+                $result['data'] = "";
 
-                                $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
-                            
-                                if(!$news_tags){
-                                    $insert_news_tags = new NewsTags;
-                                    $insert_news_tags->news_id = $insert->id;
-                                    $insert_news_tags->tags_id = $tag->id;
-                                    $insert_news_tags->save();
-                                }
+                if(isset($value->itemSectionRenderer->contents[0]->videoRenderer)){
 
-                                array_push(
-                                    $array_adicionados,
-                                    $insert->id.' '.Str::slug($item->snippet->title.'-pipocando-youtube')
-                                );
+                    $result['noticia'] = $value->itemSectionRenderer->contents[0]->videoRenderer->title->runs[0]->text;
+                    //Verifica se a noticia tem relação com as tags
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($result['noticia']) )){
+                    
+                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails)){
+                            if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url;
+                            }else{
+                                $result['img'] = "";
                             }
-    
                         }
-                    }else{
-                        array_push(
-                            $array_erros,
-                            Str::slug($item->snippet->title.'-pipocando-youtube')
-                        );
+            
+                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->videoId)){
+                            $result['url'] = 'https://www.youtube.com/watch?v='.$value->itemSectionRenderer->contents[0]->videoRenderer->videoId;
+                        }
+                        
+                        if(isset($result['url']) && $result['url'] != ""){
+                            $url_date = $result['url'];
+                            $data2 = $this->getCurl($url_date);
+                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
+                            $dados2 = json_encode($matches['json'][0]);
+                            $dados2 = str_replace('"','',$dados2);
+                            // echo '<pre>'; print_r($dados2); echo '</pre>';
+                            $result['data'] =  $this->formata_data(4,$dados2);
+                        }
+
+                        $return['content'][] = $result;
+            
                     }
                 }
+            }else{
+                break;
             }
         }
         
+        // echo '<pre>'; print_r($return['content']); echo '</pre>';
+        // die;
+        foreach($return['content'] as $item){
+
+            //Validando os campos
+            $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-pipocandoyoutube')], [
+                    'hash' => 'required|unique:news',
+                ],
+                $messages = [
+                    'unique'    => 'Notícia já existe.',
+                ]
+            );
+
+            if ($validator->fails()) {
+
+                $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-pipocandoyoutube') )->first();
+                            
+                if($news){
+                    $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
+                    
+                    if(!$news_tags){
+                        $insert_news_tags = new NewsTags;
+                        $insert_news_tags->news_id = $news->id;
+                        $insert_news_tags->tags_id = $tag->id;
+                        $insert_news_tags->save();
+                    }
+                }
+
+                // Validation 
+                array_push(
+                    $array_existentes,
+                    Str::slug($item['noticia'].'-pipocandoyoutube')
+                );
+            }else{
+
+                $img = "";
+                $link = "";
+                $data = "";
+
+                if($item['img']){
+                    $img = $item['img'];
+                }
+
+                if($item['url']){
+                    $link = $item['url'];
+                }
+
+                if($item['data']){
+                    $data = $item['data'];
+                }
+                if($img != "" && $link != ""){
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        //Baixa imagem
+                        $file =$img;
+                        $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-pipocandoyoutube'.'.jpg';
+                        $destinationPath = public_path().'/uploads/news/';
+                        $upload = $this->downloadFile($filename, $file , $destinationPath);
+
+                        $insert = new News;
+                        $insert->title = $this->removeEmoji($item['noticia']);
+                        $insert->channels_id = $channel->id;
+                        $insert->slug = Str::slug($item['noticia']);
+                        $insert->hash = Str::slug($item['noticia'].'-pipocandoyoutube');
+                        $insert->link = $link;
+                        $insert->image = '/uploads/news/' . $filename;
+                        $insert->status = "show";
+                        $insert->order = 0;
+                        
+                        $insert->data = $data;
+                        $condition = $insert->save();
+                        if($condition){
+                            
+                            $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
+                            
+                            if(!$news_tags){
+                                $insert_news_tags = new NewsTags;
+                                $insert_news_tags->news_id = $insert->id;
+                                $insert_news_tags->tags_id = $tag->id;
+                                $insert_news_tags->save();
+                            }
+
+                            array_push(
+                                $array_adicionados,
+                                $insert->id.' '.Str::slug($item['noticia'].'-pipocandoyoutube')
+                            );
+                        }
+                    }
+                }else{
+                    array_push(
+                        $array_erros,
+                        Str::slug($item['noticia'].'-pipocandoyoutube')
+                    );
+                }
+            }
+        }
+
         $retorno = [
             'code'         => '000',
             'adicionados'  => $array_adicionados, 
             'existentes'   => $array_existentes, 
-            'erros'        => $array_erros,
+            'erros'        => $array_erros, 
             'date'         => date("Y-m-d"),
             'hour'         => date("H:i:s"),
         ];
-
         return $retorno;
     }
 
     public function buscaNewsOmeleteYoutube(){
+
         // Search only videos in a given channel, return an array of PHP objects
         $channel = Channels::where( 'hash',  '=', 'omeleteyoutube' )->firstOrFail();
         $url = "";
@@ -3515,7 +4276,7 @@ class CronJobController extends Controller
                 if($count == 1){
                     $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
                     if($tag ){
-                        $url = $tag->title ;
+                        $url = $channel->url_crawler .str_replace(" ","+",$tag->title) ;
                         // echo $url;
                     }
                 }
@@ -3524,6 +4285,7 @@ class CronJobController extends Controller
             // dd($url);
         }
         // echo 'url:'.$url;
+        
         if($url == ""){
             $retorno = [
                 'code'         => '003',
@@ -3535,131 +4297,179 @@ class CronJobController extends Controller
             ];
             return $retorno;
         }
-        $activities = Youtube::searchChannelVideos($url, 'UCaSAM5kna2KyX-uVLSGr8PQ', 5);
-        // $activities = Youtube::getActivitiesByChannelId('UCmEClzCBDx-vrt0GuSKBd9g');
-       
-        $array_adicionados = [];
-        $array_existentes = [];
-        $array_erros = [];
-        if($activities){
-            foreach($activities as $item){
-    
-                //Validando os campos
-                $validator = Validator::make(['hash' => Str::slug($item->snippet->title.'-omelete-youtube')], [
-                        'hash' => 'required|unique:news',
-                    ],
-                    $messages = [
-                        'unique'    => 'Notícia já existe.',
-                    ]
-                );
-               
-                if ($validator->fails()) {
-                    
-                    $news = News::where( 'hash',  '=', Str::slug($item->snippet->title.'-omelete-youtube') )->first();
-                            
-                    if($news){
-                        $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
-                        
-                        if(!$news_tags){
-                            $insert_news_tags = new NewsTags;
-                            $insert_news_tags->news_id = $news->id;
-                            $insert_news_tags->tags_id = $tag->id;
-                            $insert_news_tags->save();
-                        }
-                    }
-
-                    // Validation 
-                    array_push(
-                        $array_existentes,
-                        Str::slug($item->snippet->title.'-omelete-youtube')
-                    );
-                   
-                }else{
-    
-                    $img = "";
-                    $link ="";
-    
-                    if(!empty($item->snippet->thumbnails)){
-                        if(!empty($item->snippet->thumbnails->maxres->url)){
-                            $img = $item->snippet->thumbnails->maxres->url;
-                        }else if(!empty($item->snippet->thumbnails->standard->url)){
-                            $img = $item->snippet->thumbnails->standard->url;
-                        }else if(!empty($item->snippet->thumbnails->high->url)){
-                            $img = $item->snippet->thumbnails->high->url;
-                        }else if(!empty($item->snippet->thumbnails->medium->url)){
-                            $img = $item->snippet->thumbnails->medium->url;
-                        }else{
-                            $img = $item->snippet->thumbnails->default->url;
-                        }
-                    }
-    
-                    if(!empty($item->id->videoId)){
-                        $link = 'https://www.youtube.com/watch?v='.$item->id->videoId;
-                    }
-                   
-                    if($img != "" && $link != ""){
-                      
-                        
-                        if($this->validaNoticia( $tag->title, $this->removeEmoji($item->snippet->title) )){
-                            $file =$img;
-                            $filename =  date('Ymdhis'). '_' . Str::slug($this->removeEmoji($item->snippet->title)).'-omelete-youtube'.'.jpg';
-                            $destinationPath = public_path().'/uploads/news/';
-                            $upload = $this->downloadFile($filename, $file , $destinationPath);
-    
-                            $insert = new News;
-                            $insert->title = $this->removeEmoji($item->snippet->title);
-                            $insert->channels_id = $channel->id;
-                            $insert->slug = Str::slug($item->snippet->title);
-                            $insert->hash = Str::slug($item->snippet->title.'-omelete-youtube');
-                            $insert->link = $link;
-                            $insert->image = '/uploads/news/' . $filename;
-                            $insert->status = "show";
-                            $insert->order = 0;
-                    
-                            $insert->data = $this->formata_data(3, $item->snippet->publishedAt);
         
-                            $condition = $insert->save();
-                            if($condition){
+        //Busca crawler
+        $data = $this->getCurl($url);
+        
+        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)[;]/', $data, $matches);
+        
+        preg_match_all('/"sectionListRenderer":{"contents":\[(?P<artigo>[\s\S]*?)(,{"continuationItemRenderer")/', $matches['json'][0], $matches);
+       
+        if(isset($matches['artigo'][0])){
+            $dados = json_decode('['.$matches['artigo'][0].']');
+        }else{
+            $dados = [];
+        }
+        $return['content'] = [];
+        foreach ($dados as $key => $value) {
+            if($key < 11){
+                $result['noticia'] = "";
+                $result['img'] = "";
+                $result['link'] = "";
+                $result['data'] = "";
 
-                                $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
-                            
-                                if(!$news_tags){
-                                    $insert_news_tags = new NewsTags;
-                                    $insert_news_tags->news_id = $insert->id;
-                                    $insert_news_tags->tags_id = $tag->id;
-                                    $insert_news_tags->save();
-                                }
+                if(isset($value->itemSectionRenderer->contents[0]->videoRenderer)){
 
-                                array_push(
-                                    $array_adicionados,
-                                    $insert->id.' '.Str::slug($item->snippet->title.'-omelete-youtube')
-                                );
+                    $result['noticia'] = $value->itemSectionRenderer->contents[0]->videoRenderer->title->runs[0]->text;
+                    //Verifica se a noticia tem relação com as tags
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($result['noticia']) )){
+                    
+                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails)){
+                            if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url;
+                            }else{
+                                $result['img'] = "";
                             }
-    
                         }
-                    }else{
-                        array_push(
-                            $array_erros,
-                            Str::slug($item->snippet->title.'-omelete-youtube')
-                        );
+            
+                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->videoId)){
+                            $result['url'] = 'https://www.youtube.com/watch?v='.$value->itemSectionRenderer->contents[0]->videoRenderer->videoId;
+                        }
+                        
+                        if(isset($result['url']) && $result['url'] != ""){
+                            $url_date = $result['url'];
+                            $data2 = $this->getCurl($url_date);
+                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
+                            $dados2 = json_encode($matches['json'][0]);
+                            $dados2 = str_replace('"','',$dados2);
+                            // echo '<pre>'; print_r($dados2); echo '</pre>';
+                            $result['data'] =  $this->formata_data(4,$dados2);
+                        }
+
+                        $return['content'][] = $result;
+            
                     }
                 }
+            }else{
+                break;
             }
         }
         
+        // echo '<pre>'; print_r($return['content']); echo '</pre>';
+        // die;
+        foreach($return['content'] as $item){
+
+            //Validando os campos
+            $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-omeleteyoutube')], [
+                    'hash' => 'required|unique:news',
+                ],
+                $messages = [
+                    'unique'    => 'Notícia já existe.',
+                ]
+            );
+
+            if ($validator->fails()) {
+
+                $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-omeleteyoutube') )->first();
+                            
+                if($news){
+                    $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
+                    
+                    if(!$news_tags){
+                        $insert_news_tags = new NewsTags;
+                        $insert_news_tags->news_id = $news->id;
+                        $insert_news_tags->tags_id = $tag->id;
+                        $insert_news_tags->save();
+                    }
+                }
+
+                // Validation 
+                array_push(
+                    $array_existentes,
+                    Str::slug($item['noticia'].'-omeleteyoutube')
+                );
+            }else{
+
+                $img = "";
+                $link = "";
+                $data = "";
+
+                if($item['img']){
+                    $img = $item['img'];
+                }
+
+                if($item['url']){
+                    $link = $item['url'];
+                }
+
+                if($item['data']){
+                    $data = $item['data'];
+                }
+                if($img != "" && $link != ""){
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        //Baixa imagem
+                        $file =$img;
+                        $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-omeleteyoutube'.'.jpg';
+                        $destinationPath = public_path().'/uploads/news/';
+                        $upload = $this->downloadFile($filename, $file , $destinationPath);
+
+                        $insert = new News;
+                        $insert->title = $this->removeEmoji($item['noticia']);
+                        $insert->channels_id = $channel->id;
+                        $insert->slug = Str::slug($item['noticia']);
+                        $insert->hash = Str::slug($item['noticia'].'-omeleteyoutube');
+                        $insert->link = $link;
+                        $insert->image = '/uploads/news/' . $filename;
+                        $insert->status = "show";
+                        $insert->order = 0;
+                        
+                        $insert->data = $data;
+                        $condition = $insert->save();
+                        if($condition){
+                            
+                            $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
+                            
+                            if(!$news_tags){
+                                $insert_news_tags = new NewsTags;
+                                $insert_news_tags->news_id = $insert->id;
+                                $insert_news_tags->tags_id = $tag->id;
+                                $insert_news_tags->save();
+                            }
+
+                            array_push(
+                                $array_adicionados,
+                                $insert->id.' '.Str::slug($item['noticia'].'-omeleteyoutube')
+                            );
+                        }
+                    }
+                }else{
+                    array_push(
+                        $array_erros,
+                        Str::slug($item['noticia'].'-omeleteyoutube')
+                    );
+                }
+            }
+        }
+
         $retorno = [
             'code'         => '000',
             'adicionados'  => $array_adicionados, 
             'existentes'   => $array_existentes, 
-            'erros'        => $array_erros,
+            'erros'        => $array_erros, 
             'date'         => date("Y-m-d"),
             'hour'         => date("H:i:s"),
         ];
-
         return $retorno;
     }
 
     public function buscaNewsJovemNerdYoutube(){
+
         // Search only videos in a given channel, return an array of PHP objects
         $channel = Channels::where( 'hash',  '=', 'jovemnerdyoutube' )->firstOrFail();
         $url = "";
@@ -3686,7 +4496,7 @@ class CronJobController extends Controller
                 if($count == 1){
                     $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
                     if($tag ){
-                        $url = $tag->title ;
+                        $url = $channel->url_crawler .str_replace(" ","+",$tag->title) ;
                         // echo $url;
                     }
                 }
@@ -3695,6 +4505,7 @@ class CronJobController extends Controller
             // dd($url);
         }
         // echo 'url:'.$url;
+        
         if($url == ""){
             $retorno = [
                 'code'         => '003',
@@ -3706,127 +4517,174 @@ class CronJobController extends Controller
             ];
             return $retorno;
         }
-        $activities = Youtube::searchChannelVideos($url, 'UCmEClzCBDx-vrt0GuSKBd9g', 5);
-        // $activities = Youtube::getActivitiesByChannelId('UCmEClzCBDx-vrt0GuSKBd9g');
-       
-        $array_adicionados = [];
-        $array_existentes = [];
-        $array_erros = [];
-        if($activities){
-            foreach($activities as $item){
-    
-                //Validando os campos
-                $validator = Validator::make(['hash' => Str::slug($item->snippet->title.'-jovemnerd-youtube')], [
-                        'hash' => 'required|unique:news',
-                    ],
-                    $messages = [
-                        'unique'    => 'Notícia já existe.',
-                    ]
-                );
-               
-                if ($validator->fails()) {
-                    
-                    $news = News::where( 'hash',  '=', Str::slug($item->snippet->title.'-jovemnerd-youtube') )->first();
-                            
-                    if($news){
-                        $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
-                        
-                        if(!$news_tags){
-                            $insert_news_tags = new NewsTags;
-                            $insert_news_tags->news_id = $news->id;
-                            $insert_news_tags->tags_id = $tag->id;
-                            $insert_news_tags->save();
-                        }
-                    }
-
-                    // Validation 
-                    array_push(
-                        $array_existentes,
-                        Str::slug($item->snippet->title.'-jovemnerd-youtube')
-                    );
-                   
-                }else{
-    
-                    $img = "";
-                    $link ="";
-    
-                    if(!empty($item->snippet->thumbnails)){
-                        if(!empty($item->snippet->thumbnails->maxres->url)){
-                            $img = $item->snippet->thumbnails->maxres->url;
-                        }else if(!empty($item->snippet->thumbnails->standard->url)){
-                            $img = $item->snippet->thumbnails->standard->url;
-                        }else if(!empty($item->snippet->thumbnails->high->url)){
-                            $img = $item->snippet->thumbnails->high->url;
-                        }else if(!empty($item->snippet->thumbnails->medium->url)){
-                            $img = $item->snippet->thumbnails->medium->url;
-                        }else{
-                            $img = $item->snippet->thumbnails->default->url;
-                        }
-                    }
-    
-                    if(!empty($item->id->videoId)){
-                        $link = 'https://www.youtube.com/watch?v='.$item->id->videoId;
-                    }
-                   
-                    if($img != "" && $link != ""){
-                      
-                        
-                        if($this->validaNoticia( $tag->title, $this->removeEmoji($item->snippet->title) )){
-                            $file =$img;
-                            $filename =  date('Ymdhis'). '_' . Str::slug($this->removeEmoji($item->snippet->title)).'-jovemnerd-youtube'.'.jpg';
-                            $destinationPath = public_path().'/uploads/news/';
-                            $upload = $this->downloadFile($filename, $file , $destinationPath);
-    
-                            $insert = new News;
-                            $insert->title = $this->removeEmoji($item->snippet->title);
-                            $insert->channels_id = $channel->id;
-                            $insert->slug = Str::slug($item->snippet->title);
-                            $insert->hash = Str::slug($item->snippet->title.'-jovemnerd-youtube');
-                            $insert->link = $link;
-                            $insert->image = '/uploads/news/' . $filename;
-                            $insert->status = "show";
-                            $insert->order = 0;
-                    
-                            $insert->data = $this->formata_data(3, $item->snippet->publishedAt);
         
-                            $condition = $insert->save();
-                            if($condition){
+        //Busca crawler
+        $data = $this->getCurl($url);
+        
+        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)[;]/', $data, $matches);
+        
+        preg_match_all('/"sectionListRenderer":{"contents":\[(?P<artigo>[\s\S]*?)(,{"continuationItemRenderer")/', $matches['json'][0], $matches);
+       
+        if(isset($matches['artigo'][0])){
+            $dados = json_decode('['.$matches['artigo'][0].']');
+        }else{
+            $dados = [];
+        }
+        $return['content'] = [];
+        foreach ($dados as $key => $value) {
+            if($key < 11){
+                $result['noticia'] = "";
+                $result['img'] = "";
+                $result['link'] = "";
+                $result['data'] = "";
 
-                                $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
-                            
-                                if(!$news_tags){
-                                    $insert_news_tags = new NewsTags;
-                                    $insert_news_tags->news_id = $insert->id;
-                                    $insert_news_tags->tags_id = $tag->id;
-                                    $insert_news_tags->save();
-                                }
+                if(isset($value->itemSectionRenderer->contents[0]->videoRenderer)){
 
-                                array_push(
-                                    $array_adicionados,
-                                    $insert->id.' '.Str::slug($item->snippet->title.'-jovemnerd-youtube')
-                                );
+                    $result['noticia'] = $value->itemSectionRenderer->contents[0]->videoRenderer->title->runs[0]->text;
+                    //Verifica se a noticia tem relação com as tags
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($result['noticia']) )){
+                    
+                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails)){
+                            if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url;
+                            }else{
+                                $result['img'] = "";
                             }
-    
                         }
-                    }else{
-                        array_push(
-                            $array_erros,
-                            Str::slug($item->snippet->title.'-jovemnerd-youtube')
-                        );
+            
+                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->videoId)){
+                            $result['url'] = 'https://www.youtube.com/watch?v='.$value->itemSectionRenderer->contents[0]->videoRenderer->videoId;
+                        }
+                        
+                        if(isset($result['url']) && $result['url'] != ""){
+                            $url_date = $result['url'];
+                            $data2 = $this->getCurl($url_date);
+                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
+                            $dados2 = json_encode($matches['json'][0]);
+                            $dados2 = str_replace('"','',$dados2);
+                            // echo '<pre>'; print_r($dados2); echo '</pre>';
+                            $result['data'] =  $this->formata_data(4,$dados2);
+                        }
+
+                        $return['content'][] = $result;
+            
                     }
                 }
+            }else{
+                break;
             }
         }
         
+        // echo '<pre>'; print_r($return['content']); echo '</pre>';
+        // die;
+        foreach($return['content'] as $item){
+
+            //Validando os campos
+            $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-jovemnerdyoutube')], [
+                    'hash' => 'required|unique:news',
+                ],
+                $messages = [
+                    'unique'    => 'Notícia já existe.',
+                ]
+            );
+
+            if ($validator->fails()) {
+
+                $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-jovemnerdyoutube') )->first();
+                            
+                if($news){
+                    $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
+                    
+                    if(!$news_tags){
+                        $insert_news_tags = new NewsTags;
+                        $insert_news_tags->news_id = $news->id;
+                        $insert_news_tags->tags_id = $tag->id;
+                        $insert_news_tags->save();
+                    }
+                }
+
+                // Validation 
+                array_push(
+                    $array_existentes,
+                    Str::slug($item['noticia'].'-jovemnerdyoutube')
+                );
+            }else{
+
+                $img = "";
+                $link = "";
+                $data = "";
+
+                if($item['img']){
+                    $img = $item['img'];
+                }
+
+                if($item['url']){
+                    $link = $item['url'];
+                }
+
+                if($item['data']){
+                    $data = $item['data'];
+                }
+                if($img != "" && $link != ""){
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        //Baixa imagem
+                        $file =$img;
+                        $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-jovemnerdyoutube'.'.jpg';
+                        $destinationPath = public_path().'/uploads/news/';
+                        $upload = $this->downloadFile($filename, $file , $destinationPath);
+
+                        $insert = new News;
+                        $insert->title = $this->removeEmoji($item['noticia']);
+                        $insert->channels_id = $channel->id;
+                        $insert->slug = Str::slug($item['noticia']);
+                        $insert->hash = Str::slug($item['noticia'].'-jovemnerdyoutube');
+                        $insert->link = $link;
+                        $insert->image = '/uploads/news/' . $filename;
+                        $insert->status = "show";
+                        $insert->order = 0;
+                        
+                        $insert->data = $data;
+                        $condition = $insert->save();
+                        if($condition){
+                            
+                            $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
+                            
+                            if(!$news_tags){
+                                $insert_news_tags = new NewsTags;
+                                $insert_news_tags->news_id = $insert->id;
+                                $insert_news_tags->tags_id = $tag->id;
+                                $insert_news_tags->save();
+                            }
+
+                            array_push(
+                                $array_adicionados,
+                                $insert->id.' '.Str::slug($item['noticia'].'-jovemnerdyoutube')
+                            );
+                        }
+                    }
+                }else{
+                    array_push(
+                        $array_erros,
+                        Str::slug($item['noticia'].'-jovemnerdyoutube')
+                    );
+                }
+            }
+        }
+
         $retorno = [
             'code'         => '000',
             'adicionados'  => $array_adicionados, 
             'existentes'   => $array_existentes, 
-            'erros'        => $array_erros,
+            'erros'        => $array_erros, 
             'date'         => date("Y-m-d"),
             'hour'         => date("H:i:s"),
         ];
-
         return $retorno;
     }
 
@@ -3847,25 +4705,27 @@ class CronJobController extends Controller
             // echo "<br>";
             // echo $hora_30;
             $crawlers = DB::table('crawler')
-                            ->where( 'status', '=', 'active' )
-                            ->where( 'tags_id', '!=', 0 )
-                            ->whereBetween('time_initial', [$hora, $hora_30])
-                            // ->orWhereBetween('time_final', [$hora, $hora_30])
-                            ->get();
+                        ->where( 'status', '=', 'active' )
+                        ->where( 'tags_id', '!=', 0 )
+                        ->whereBetween('time_initial', [$hora, $hora_30])
+                        // ->orWhereBetween('time_final', [$hora, $hora_30])
+                        ->get();
             $count = 1;
             foreach ($crawlers as $key => $value) {
                 // echo "crawler";
                 if($count == 1){
-                    $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->first();
+                    $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
                     if($tag ){
-                        $url = $tag->title ;
+                        $url = $channel->url_crawler .str_replace(" ","+",$tag->title) ;
                         // echo $url;
                     }
                 }
                 $count++;
             }
+            // dd($url);
         }
-       
+        // echo 'url:'.$url;
+        
         if($url == ""){
             $retorno = [
                 'code'         => '003',
@@ -3878,126 +4738,173 @@ class CronJobController extends Controller
             return $retorno;
         }
         
-        $activities = Youtube::searchChannelVideos($url, 'UCE8deXi-Eea3SuEV1Q1L4ug', 5);
-        // $activities = Youtube::getActivitiesByChannelId('UCmEClzCBDx-vrt0GuSKBd9g');
-        $array_adicionados = [];
-        $array_existentes = [];
-        $array_erros = [];
-        if($activities){
-            foreach($activities as $item){
-    
-                //Validando os campos
-                $validator = Validator::make(['hash' => Str::slug($item->snippet->title.'-superoito-youtube')], [
-                        'hash' => 'required|unique:news',
-                    ],
-                    $messages = [
-                        'unique'    => 'Notícia já existe.',
-                    ]
-                );
-               
-                if ($validator->fails()) {
+        //Busca crawler
+        $data = $this->getCurl($url);
+        
+        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)[;]/', $data, $matches);
+        
+        preg_match_all('/"sectionListRenderer":{"contents":\[(?P<artigo>[\s\S]*?)(,{"continuationItemRenderer")/', $matches['json'][0], $matches);
+       
+        if(isset($matches['artigo'][0])){
+            $dados = json_decode('['.$matches['artigo'][0].']');
+        }else{
+            $dados = [];
+        }
+        $return['content'] = [];
+        foreach ($dados as $key => $value) {
+            if($key < 11){
+                $result['noticia'] = "";
+                $result['img'] = "";
+                $result['link'] = "";
+                $result['data'] = "";
+
+                if(isset($value->itemSectionRenderer->contents[0]->videoRenderer)){
+
+                    $result['noticia'] = $value->itemSectionRenderer->contents[0]->videoRenderer->title->runs[0]->text;
+                    //Verifica se a noticia tem relação com as tags
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($result['noticia']) )){
                     
-                    $news = News::where( 'hash',  '=', Str::slug($item->snippet->title.'-superoito-youtube') )->first();
-                            
-                    if($news){
-                        $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
-                        
-                        if(!$news_tags){
-                            $insert_news_tags = new NewsTags;
-                            $insert_news_tags->news_id = $news->id;
-                            $insert_news_tags->tags_id = $tag->id;
-                            $insert_news_tags->save();
-                        }
-                    }
-
-                    // Validation 
-                    array_push(
-                        $array_existentes,
-                        Str::slug($item->snippet->title.'-superoito-youtube')
-                    );
-                   
-                }else{
-    
-                    $img = "";
-                    $link ="";
-    
-                    if(!empty($item->snippet->thumbnails)){
-                        if(!empty($item->snippet->thumbnails->maxres->url)){
-                            $img = $item->snippet->thumbnails->maxres->url;
-                        }else if(!empty($item->snippet->thumbnails->standard->url)){
-                            $img = $item->snippet->thumbnails->standard->url;
-                        }else if(!empty($item->snippet->thumbnails->high->url)){
-                            $img = $item->snippet->thumbnails->high->url;
-                        }else if(!empty($item->snippet->thumbnails->medium->url)){
-                            $img = $item->snippet->thumbnails->medium->url;
-                        }else{
-                            $img = $item->snippet->thumbnails->default->url;
-                        }
-                    }
-    
-                    if(!empty($item->id->videoId)){
-                        $link = 'https://www.youtube.com/watch?v='.$item->id->videoId;
-                    }
-                   
-                    if($img != "" && $link != ""){
-                        
-                        if( $this->validaNoticia( $tag->title, $this->removeEmoji($item->snippet->title) )){
-                            $file =$img;
-                            $filename =  date('Ymdhis'). '_' . Str::slug($this->removeEmoji($item->snippet->title)).'-superoito-youtube'.'.jpg';
-                            $destinationPath = public_path().'/uploads/news/';
-                            $upload = $this->downloadFile($filename, $file , $destinationPath);
-    
-                            $insert = new News;
-                            $insert->title = $this->removeEmoji($item->snippet->title);
-                            $insert->channels_id = $channel->id;
-                            $insert->slug = Str::slug($item->snippet->title);
-                            $insert->hash = Str::slug($item->snippet->title.'-superoito-youtube');
-                            $insert->link = $link;
-                            $insert->image = '/uploads/news/' . $filename;
-                            $insert->status = "show";
-                            $insert->order = 0;
-                    
-                            $insert->data = $this->formata_data(3, $item->snippet->publishedAt) ;
-                           
-                            $condition = $insert->save();
-                            if($condition){
-
-                                $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
-                            
-                                if(!$news_tags){
-                                    $insert_news_tags = new NewsTags;
-                                    $insert_news_tags->news_id = $insert->id;
-                                    $insert_news_tags->tags_id = $tag->id;
-                                    $insert_news_tags->save();
-                                }
-
-                                array_push(
-                                    $array_adicionados,
-                                    $insert->id.' '.Str::slug($item->snippet->title.'-superoito-youtube')
-                                );
+                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails)){
+                            if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url;
+                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url)){
+                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url;
+                            }else{
+                                $result['img'] = "";
                             }
                         }
+            
+                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->videoId)){
+                            $result['url'] = 'https://www.youtube.com/watch?v='.$value->itemSectionRenderer->contents[0]->videoRenderer->videoId;
+                        }
                         
-                        
-                    }else{
-                        array_push(
-                            $array_erros,
-                            Str::slug($item->snippet->title.'-superoito-youtube')
-                        );
+                        if(isset($result['url']) && $result['url'] != ""){
+                            $url_date = $result['url'];
+                            $data2 = $this->getCurl($url_date);
+                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
+                            $dados2 = json_encode($matches['json'][0]);
+                            $dados2 = str_replace('"','',$dados2);
+                            // echo '<pre>'; print_r($dados2); echo '</pre>';
+                            $result['data'] =  $this->formata_data(4,$dados2);
+                        }
+
+                        $return['content'][] = $result;
+            
                     }
                 }
+            }else{
+                break;
             }
         }
         
+        // echo '<pre>'; print_r($return['content']); echo '</pre>';
+        // die;
+        foreach($return['content'] as $item){
+
+            //Validando os campos
+            $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-superoitoyoutube')], [
+                    'hash' => 'required|unique:news',
+                ],
+                $messages = [
+                    'unique'    => 'Notícia já existe.',
+                ]
+            );
+
+            if ($validator->fails()) {
+
+                $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-superoitoyoutube') )->first();
+                            
+                if($news){
+                    $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
+                    
+                    if(!$news_tags){
+                        $insert_news_tags = new NewsTags;
+                        $insert_news_tags->news_id = $news->id;
+                        $insert_news_tags->tags_id = $tag->id;
+                        $insert_news_tags->save();
+                    }
+                }
+
+                // Validation 
+                array_push(
+                    $array_existentes,
+                    Str::slug($item['noticia'].'-superoitoyoutube')
+                );
+            }else{
+
+                $img = "";
+                $link = "";
+                $data = "";
+
+                if($item['img']){
+                    $img = $item['img'];
+                }
+
+                if($item['url']){
+                    $link = $item['url'];
+                }
+
+                if($item['data']){
+                    $data = $item['data'];
+                }
+                if($img != "" && $link != ""){
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        //Baixa imagem
+                        $file =$img;
+                        $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-superoitoyoutube'.'.jpg';
+                        $destinationPath = public_path().'/uploads/news/';
+                        $upload = $this->downloadFile($filename, $file , $destinationPath);
+
+                        $insert = new News;
+                        $insert->title = $this->removeEmoji($item['noticia']);
+                        $insert->channels_id = $channel->id;
+                        $insert->slug = Str::slug($item['noticia']);
+                        $insert->hash = Str::slug($item['noticia'].'-superoitoyoutube');
+                        $insert->link = $link;
+                        $insert->image = '/uploads/news/' . $filename;
+                        $insert->status = "show";
+                        $insert->order = 0;
+                        
+                        $insert->data = $data;
+                        $condition = $insert->save();
+                        if($condition){
+                            
+                            $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
+                            
+                            if(!$news_tags){
+                                $insert_news_tags = new NewsTags;
+                                $insert_news_tags->news_id = $insert->id;
+                                $insert_news_tags->tags_id = $tag->id;
+                                $insert_news_tags->save();
+                            }
+
+                            array_push(
+                                $array_adicionados,
+                                $insert->id.' '.Str::slug($item['noticia'].'-superoitoyoutube')
+                            );
+                        }
+                    }
+                }else{
+                    array_push(
+                        $array_erros,
+                        Str::slug($item['noticia'].'-superoitoyoutube')
+                    );
+                }
+            }
+        }
+
         $retorno = [
             'code'         => '000',
             'adicionados'  => $array_adicionados, 
             'existentes'   => $array_existentes, 
-            'erros'        => $array_erros,
+            'erros'        => $array_erros, 
             'date'         => date("Y-m-d"),
             'hour'         => date("H:i:s"),
         ];
-
         return $retorno;
     }
 
@@ -4255,7 +5162,7 @@ class CronJobController extends Controller
 
             if ($validator->fails()) {
 
-                $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-omeletesite') )->first();
+                $news = News::where( 'hash',  '=', Str::slug($item['noticia'][0].'-omeletesite') )->first();
                             
                 if($news){
                     $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
@@ -4517,6 +5424,28 @@ class CronJobController extends Controller
         return $retorno;
     }
 
+    public function getCurl($url) {
+
+        $config['useragent'] = $this->getRandAgent();
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_USERAGENT, $config['useragent']);
+        // curl_setopt($ch, CURLOPT_PROXY, $proxy); // $proxy is ip of proxy server
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+        $httpCode = curl_getinfo($ch , CURLINFO_HTTP_CODE); // this results 0 every time
+        $response = curl_exec($ch);
+        if ($response === false) $response = curl_error($ch);
+       
+        curl_close($ch);
+
+        return $response;
+    }
+
     public function getHtml($url) {
 
         $context = stream_context_create(
@@ -4617,6 +5546,7 @@ class CronJobController extends Controller
         // 1 - 13 de julho de 2020 //JOVEM NERD SITE
         // 2 - 15.04.202111H51 //OMELETE  SITE
         // 3 - 2018-01-15T22:00:57Z //YOUTUBE
+        // 4 - 13 de out. de 2017 //YOUTUBE Site
         if($data != "" && $type == 1){
             $mes = array(
                 'referencia' => array('/ de janeiro de /', '/ de fevereiro de /', '/ de março de /', '/ de abril de /', '/ de maio de /', '/ de junho de /', '/ de julho de /' , '/ de agosto de /', '/ de setembro de /', '/ de outubro de /', '/ de novembro de /', '/ de dezembro de /'),
@@ -4632,6 +5562,17 @@ class CronJobController extends Controller
             return $data_final ;
         }else if($data != "" && $type == 3){
             $data_final = substr(  $data, 0, -10);
+            return $data_final ;
+        }else if($data != "" && $type == 4){
+            $data = str_replace('Estreou em ','',$data);
+            $data = str_replace('Transmitido ao vivo em ','',$data);
+            $mes = array(
+                'referencia' => array('/ de jan. de /', '/ de fev. de /', '/ de mar. de /', '/ de abr. de /', '/ de mai. de /', '/ de jun. de /', '/ de jul. de /' , '/ de ago. de /', '/ de set. de /', '/ de out. de /', '/ de nov. de /', '/ de dez. de /'),
+                'correcao' => array('/01/', '/02/', '/03/', '/04/', '/05/', '/06/', '/07/', '/08/', '/09/', '/10/', '/11/', '/12/')
+            );
+            $data_final = preg_replace($mes['referencia'], $mes['correcao'], $data);
+            $array = explode("/", $data_final);
+            $data_final = $array[2].'-'.$array[1].'-'.$array[0];
             return $data_final ;
         }
 
@@ -4715,6 +5656,20 @@ class CronJobController extends Controller
             "dela",
             "deles",
             "delas",
+
+            "after",
+            "at",
+            "before",
+            "by",
+            "from",
+            "in",
+            "on",
+            "to",
+            "the",
+            "of",
+            "with",
+            "without"
+
         );
 
         foreach($artigos as $artigo)

@@ -93,22 +93,30 @@
                                 </select>
                             </div>
                             <div class="form-group col-12 col-lg-6">
+                                <label>Tags</label>
+                                <select name="tags_id" class="form-control">
+                                    <option value="0" >Nenhum</option>
+                                    @foreach($tags as $tag)
+                                        <option value="{{ $tag->id }}" >{{ $tag->title }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-12 col-lg-6">
                                 <label>Data</label>
                                 <input type="text" name="data" class="form-control" placeholder="" value="{{ old('data') }}" >
                             </div>
-                      
-                        </div>
-                        <div class="form-row">
                             <div class="form-group col-12 col-lg-6">
                                 <label>Keywords</label>
                                 <input type="text" name="keywords" class="form-control" placeholder="" value="{{ old('keywords') }}" >
                             </div>
+                        </div>
+                        <div class="form-row">
                             <div class="form-group col-12 col-lg-6">
                                 <label>Ordem</label>
                                 <input type="text" name="order" class="form-control boxed" placeholder="" value="{{ old('order') }}">
                             </div>
-                        </div>
-                        <div class="form-row">
                             <div class="form-group col-12 col-lg-6">
                                 <label>Status</label>
                                 <select name="status" id="status" class="form-control">

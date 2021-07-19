@@ -5,6 +5,8 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Str;
 
+use App\Fornecedores\Youtube\ComunicaYoutube;
+
 use Illuminate\Http\Request;
 use Alaouy\Youtube\Facades\Youtube;
 use Twitter;
@@ -29,11 +31,11 @@ class CronJobController extends Controller
      */
 
     public function index()
-    {
-
+    {      
+        
         $arrayResults = [
-                            'Omelete_Site'       => $this->buscaNewsOmeleteSite(),
-                            'Jovem_Nerd_Site'    => $this->buscaNewsJovemNerdSite(),
+                            // 'Omelete_Site'       => $this->buscaNewsOmeleteSite(),
+                            // 'Jovem_Nerd_Site'    => $this->buscaNewsJovemNerdSite(),
                             'Super_Oito_Youtube' => $this->buscaNewsSuperOitoYoutube(),
                             'Jovem_Nerd_Youtube' => $this->buscaNewsJovemNerdYoutube(),
                             'Omelete_Youtube'    => $this->buscaNewsOmeleteYoutube(),
@@ -73,7 +75,7 @@ class CronJobController extends Controller
 
         // Search only videos in a given channel, return an array of PHP objects
         $channel = Channels::where( 'hash',  '=', 'thiagoromarizyoutube' )->firstOrFail();
-        $url = "";
+        $tag_title = "";
 
         $array_adicionados = [];
         $array_existentes = [];
@@ -97,17 +99,16 @@ class CronJobController extends Controller
                 if($count == 1){
                     $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
                     if($tag ){
-                        $url = $channel->url_crawler .str_replace(" ","+",$tag->title) ;
-                        // echo $url;
+                        $tag_title = $tag->title ;
                     }
                 }
                 $count++;
             }
-            // dd($url);
+            // dd($tag_title);
         }
-        // echo 'url:'.$url;
+        // echo 'url:'.$tag_title;
         
-        if($url == ""){
+        if($tag_title == ""){
             $retorno = [
                 'code'         => '003',
                 'adicionados'  => $array_adicionados, 
@@ -119,71 +120,12 @@ class CronJobController extends Controller
             return $retorno;
         }
         
-        //Busca crawler
-        $data = $this->getCurl($url);
-        
-        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)[;]/', $data, $matches);
-        
-        preg_match_all('/"sectionListRenderer":{"contents":\[(?P<artigo>[\s\S]*?)(,{"continuationItemRenderer")/', $matches['json'][0], $matches);
-        
-        if(isset($matches['artigo'][0])){
-            $dados = json_decode('['.$matches['artigo'][0].']');
-        }else{
-            $dados = [];
-        }
-        $return['content'] = [];
-        foreach ($dados as $key => $value) {
-            if($key < 11){
-                $result['noticia'] = "";
-                $result['img'] = "";
-                $result['link'] = "";
-                $result['data'] = "";
-
-                if(isset($value->itemSectionRenderer->contents[0]->videoRenderer)){
-
-                    $result['noticia'] = $value->itemSectionRenderer->contents[0]->videoRenderer->title->runs[0]->text;
-                    //Verifica se a noticia tem relação com as tags
-                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($result['noticia']) )){
-                    
-                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails)){
-                            if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url;
-                            }else{
-                                $result['img'] = "";
-                            }
-                        }
-            
-                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->videoId)){
-                            $result['url'] = 'https://www.youtube.com/watch?v='.$value->itemSectionRenderer->contents[0]->videoRenderer->videoId;
-                        }
-                        
-                        if(isset($result['url']) && $result['url'] != ""){
-                            $url_date = $result['url'];
-                            $data2 = $this->getCurl($url_date);
-                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
-                            $dados2 = json_encode($matches['json'][0]);
-                            $dados2 = str_replace('"','',$dados2);
-                            // echo '<pre>'; print_r($dados2); echo '</pre>';
-                            $result['data'] =  $this->formata_data(4,$dados2);
-                        }
-
-                        $return['content'][] = $result;
-            
-                    }
-                }
-            }else{
-                break;
-            }
-        }
-        
+        //Busca Crawler
+        $comunicaYoutube = new ComunicaYoutube;
+        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'ThiagoRomariz')->get();
+       
         // echo '<pre>'; print_r($return['content']); echo '</pre>';/
-        foreach($return['content'] as $item){
+        foreach($dados_busca as $item){
 
             //Validando os campos
             $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-thiagoromarizyoutube')], [
@@ -292,7 +234,7 @@ class CronJobController extends Controller
 
         // Search only videos in a given channel, return an array of PHP objects
         $channel = Channels::where( 'hash',  '=', 'entremigasyoutube' )->firstOrFail();
-        $url = "";
+        $tag_title = "";
 
         $array_adicionados = [];
         $array_existentes = [];
@@ -316,17 +258,17 @@ class CronJobController extends Controller
                 if($count == 1){
                     $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
                     if($tag ){
-                        $url = $channel->url_crawler .str_replace(" ","+",$tag->title) ;
-                        // echo $url;
+                        $tag_title = $tag->title ;
+                        // echo $tag_title;
                     }
                 }
                 $count++;
             }
-            // dd($url);
+            // dd($tag_title);
         }
-        // echo 'url:'.$url;
+        // echo 'url:'.$tag_title;
         
-        if($url == ""){
+        if($tag_title == ""){
             $retorno = [
                 'code'         => '003',
                 'adicionados'  => $array_adicionados, 
@@ -338,72 +280,11 @@ class CronJobController extends Controller
             return $retorno;
         }
         
-        //Busca crawler
-        $data = $this->getCurl($url);
-        
-        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)[;]/', $data, $matches);
-        
-        preg_match_all('/"sectionListRenderer":{"contents":\[(?P<artigo>[\s\S]*?)(,{"continuationItemRenderer")/', $matches['json'][0], $matches);
+        //Busca Crawler
+        $comunicaYoutube = new ComunicaYoutube;
+        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'EntreMigas')->get();
        
-        if(isset($matches['artigo'][0])){
-            $dados = json_decode('['.$matches['artigo'][0].']');
-        }else{
-            $dados = [];
-        }
-        $return['content'] = [];
-        foreach ($dados as $key => $value) {
-            if($key < 11){
-                $result['noticia'] = "";
-                $result['img'] = "";
-                $result['link'] = "";
-                $result['data'] = "";
-
-                if(isset($value->itemSectionRenderer->contents[0]->videoRenderer)){
-
-                    $result['noticia'] = $value->itemSectionRenderer->contents[0]->videoRenderer->title->runs[0]->text;
-                    //Verifica se a noticia tem relação com as tags
-                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($result['noticia']) )){
-                    
-                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails)){
-                            if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url;
-                            }else{
-                                $result['img'] = "";
-                            }
-                        }
-            
-                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->videoId)){
-                            $result['url'] = 'https://www.youtube.com/watch?v='.$value->itemSectionRenderer->contents[0]->videoRenderer->videoId;
-                        }
-                        
-                        if(isset($result['url']) && $result['url'] != ""){
-                            $url_date = $result['url'];
-                            $data2 = $this->getCurl($url_date);
-                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
-                            $dados2 = json_encode($matches['json'][0]);
-                            $dados2 = str_replace('"','',$dados2);
-                            // echo '<pre>'; print_r($dados2); echo '</pre>';
-                            $result['data'] =  $this->formata_data(4,$dados2);
-                        }
-
-                        $return['content'][] = $result;
-            
-                    }
-                }
-            }else{
-                break;
-            }
-        }
-        
-        // echo '<pre>'; print_r($return['content']); echo '</pre>';
-        // die;
-        foreach($return['content'] as $item){
+        foreach($dados_busca as $item){
 
             //Validando os campos
             $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-entremigasyoutube')], [
@@ -512,7 +393,7 @@ class CronJobController extends Controller
 
         // Search only videos in a given channel, return an array of PHP objects
         $channel = Channels::where( 'hash',  '=', 'miguellokiayoutube' )->firstOrFail();
-        $url = "";
+        $tag_title = "";
 
         $array_adicionados = [];
         $array_existentes = [];
@@ -536,17 +417,17 @@ class CronJobController extends Controller
                 if($count == 1){
                     $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
                     if($tag ){
-                        $url = $channel->url_crawler .str_replace(" ","+",$tag->title) ;
-                        // echo $url;
+                        $tag_title = $tag->title ;
+                        // echo $tag_title;
                     }
                 }
                 $count++;
             }
-            // dd($url);
+            // dd($tag_title);
         }
-        // echo 'url:'.$url;
+        // echo 'url:'.$tag_title;
         
-        if($url == ""){
+        if($tag_title == ""){
             $retorno = [
                 'code'         => '003',
                 'adicionados'  => $array_adicionados, 
@@ -558,72 +439,13 @@ class CronJobController extends Controller
             return $retorno;
         }
         
-        //Busca crawler
-        $data = $this->getCurl($url);
-        
-        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)[;]/', $data, $matches);
-        
-        preg_match_all('/"sectionListRenderer":{"contents":\[(?P<artigo>[\s\S]*?)(,{"continuationItemRenderer")/', $matches['json'][0], $matches);
-       
-        if(isset($matches['artigo'][0])){
-            $dados = json_decode('['.$matches['artigo'][0].']');
-        }else{
-            $dados = [];
-        }
-        $return['content'] = [];
-        foreach ($dados as $key => $value) {
-            if($key < 11){
-                $result['noticia'] = "";
-                $result['img'] = "";
-                $result['link'] = "";
-                $result['data'] = "";
-
-                if(isset($value->itemSectionRenderer->contents[0]->videoRenderer)){
-
-                    $result['noticia'] = $value->itemSectionRenderer->contents[0]->videoRenderer->title->runs[0]->text;
-                    //Verifica se a noticia tem relação com as tags
-                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($result['noticia']) )){
-                    
-                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails)){
-                            if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url;
-                            }else{
-                                $result['img'] = "";
-                            }
-                        }
-            
-                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->videoId)){
-                            $result['url'] = 'https://www.youtube.com/watch?v='.$value->itemSectionRenderer->contents[0]->videoRenderer->videoId;
-                        }
-                        
-                        if(isset($result['url']) && $result['url'] != ""){
-                            $url_date = $result['url'];
-                            $data2 = $this->getCurl($url_date);
-                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
-                            $dados2 = json_encode($matches['json'][0]);
-                            $dados2 = str_replace('"','',$dados2);
-                            // echo '<pre>'; print_r($dados2); echo '</pre>';
-                            $result['data'] =  $this->formata_data(4,$dados2);
-                        }
-
-                        $return['content'][] = $result;
-            
-                    }
-                }
-            }else{
-                break;
-            }
-        }
+        //Busca Crawler
+        $comunicaYoutube = new ComunicaYoutube;
+        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'MiguelLokiaMesmo')->get();
         
         // echo '<pre>'; print_r($return['content']); echo '</pre>';
         // die;
-        foreach($return['content'] as $item){
+        foreach($dados_busca as $item){
 
             //Validando os campos
             $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-miguellokiayoutube')], [
@@ -732,7 +554,7 @@ class CronJobController extends Controller
 
         // Search only videos in a given channel, return an array of PHP objects
         $channel = Channels::where( 'hash',  '=', 'gustavocunhayoutube' )->firstOrFail();
-        $url = "";
+        $tag_title = "";
 
         $array_adicionados = [];
         $array_existentes = [];
@@ -756,17 +578,17 @@ class CronJobController extends Controller
                 if($count == 1){
                     $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
                     if($tag ){
-                        $url = $channel->url_crawler .str_replace(" ","+",$tag->title) ;
-                        // echo $url;
+                        $tag_title = $tag->title ;
+                        // echo $tag_title;
                     }
                 }
                 $count++;
             }
-            // dd($url);
+            // dd($tag_title);
         }
-        // echo 'url:'.$url;
+        // echo 'url:'.$tag_title;
         
-        if($url == ""){
+        if($tag_title == ""){
             $retorno = [
                 'code'         => '003',
                 'adicionados'  => $array_adicionados, 
@@ -778,72 +600,13 @@ class CronJobController extends Controller
             return $retorno;
         }
         
-        //Busca crawler
-        $data = $this->getCurl($url);
-        
-        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)[;]/', $data, $matches);
-        
-        preg_match_all('/"sectionListRenderer":{"contents":\[(?P<artigo>[\s\S]*?)(,{"continuationItemRenderer")/', $matches['json'][0], $matches);
-       
-        if(isset($matches['artigo'][0])){
-            $dados = json_decode('['.$matches['artigo'][0].']');
-        }else{
-            $dados = [];
-        }
-        $return['content'] = [];
-        foreach ($dados as $key => $value) {
-            if($key < 11){
-                $result['noticia'] = "";
-                $result['img'] = "";
-                $result['link'] = "";
-                $result['data'] = "";
+        //Busca Crawler
+        $comunicaYoutube = new ComunicaYoutube;
+        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'GustavoCunhavideos')->get();
 
-                if(isset($value->itemSectionRenderer->contents[0]->videoRenderer)){
-
-                    $result['noticia'] = $value->itemSectionRenderer->contents[0]->videoRenderer->title->runs[0]->text;
-                    //Verifica se a noticia tem relação com as tags
-                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($result['noticia']) )){
-                    
-                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails)){
-                            if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url;
-                            }else{
-                                $result['img'] = "";
-                            }
-                        }
-            
-                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->videoId)){
-                            $result['url'] = 'https://www.youtube.com/watch?v='.$value->itemSectionRenderer->contents[0]->videoRenderer->videoId;
-                        }
-                        
-                        if(isset($result['url']) && $result['url'] != ""){
-                            $url_date = $result['url'];
-                            $data2 = $this->getCurl($url_date);
-                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
-                            $dados2 = json_encode($matches['json'][0]);
-                            $dados2 = str_replace('"','',$dados2);
-                            // echo '<pre>'; print_r($dados2); echo '</pre>';
-                            $result['data'] =  $this->formata_data(4,$dados2);
-                        }
-
-                        $return['content'][] = $result;
-            
-                    }
-                }
-            }else{
-                break;
-            }
-        }
-        
-        // echo '<pre>'; print_r($return['content']); echo '</pre>';
+        // echo '<pre>'; print_r($dados_busca); echo '</pre>';
         // die;
-        foreach($return['content'] as $item){
+        foreach($dados_busca as $item){
 
             //Validando os campos
             $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-gustavocunhayoutube')], [
@@ -952,7 +715,7 @@ class CronJobController extends Controller
 
         // Search only videos in a given channel, return an array of PHP objects
         $channel = Channels::where( 'hash',  '=', 'nerdnewsyoutube' )->firstOrFail();
-        $url = "";
+        $tag_title = "";
 
         $array_adicionados = [];
         $array_existentes = [];
@@ -976,17 +739,17 @@ class CronJobController extends Controller
                 if($count == 1){
                     $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
                     if($tag ){
-                        $url = $channel->url_crawler .str_replace(" ","+",$tag->title) ;
-                        // echo $url;
+                        $tag_title = $tag->title ;
+                        // echo $tag_title;
                     }
                 }
                 $count++;
             }
-            // dd($url);
+            // dd($tag_title);
         }
-        // echo 'url:'.$url;
+        // echo 'url:'.$tag_title;
         
-        if($url == ""){
+        if($tag_title == ""){
             $retorno = [
                 'code'         => '003',
                 'adicionados'  => $array_adicionados, 
@@ -999,71 +762,12 @@ class CronJobController extends Controller
         }
         
         //Busca crawler
-        $data = $this->getCurl($url);
-        
-        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)[;]/', $data, $matches);
-        
-        preg_match_all('/"sectionListRenderer":{"contents":\[(?P<artigo>[\s\S]*?)(,{"continuationItemRenderer")/', $matches['json'][0], $matches);
-       
-        if(isset($matches['artigo'][0])){
-            $dados = json_decode('['.$matches['artigo'][0].']');
-        }else{
-            $dados = [];
-        }
-        $return['content'] = [];
-        foreach ($dados as $key => $value) {
-            if($key < 11){
-                $result['noticia'] = "";
-                $result['img'] = "";
-                $result['link'] = "";
-                $result['data'] = "";
+        $comunicaYoutube = new ComunicaYoutube;
+        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'NerdNewsOficial')->get();
 
-                if(isset($value->itemSectionRenderer->contents[0]->videoRenderer)){
-
-                    $result['noticia'] = $value->itemSectionRenderer->contents[0]->videoRenderer->title->runs[0]->text;
-                    //Verifica se a noticia tem relação com as tags
-                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($result['noticia']) )){
-                    
-                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails)){
-                            if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url;
-                            }else{
-                                $result['img'] = "";
-                            }
-                        }
-            
-                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->videoId)){
-                            $result['url'] = 'https://www.youtube.com/watch?v='.$value->itemSectionRenderer->contents[0]->videoRenderer->videoId;
-                        }
-                        
-                        if(isset($result['url']) && $result['url'] != ""){
-                            $url_date = $result['url'];
-                            $data2 = $this->getCurl($url_date);
-                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
-                            $dados2 = json_encode($matches['json'][0]);
-                            $dados2 = str_replace('"','',$dados2);
-                            // echo '<pre>'; print_r($dados2); echo '</pre>';
-                            $result['data'] =  $this->formata_data(4,$dados2);
-                        }
-
-                        $return['content'][] = $result;
-            
-                    }
-                }
-            }else{
-                break;
-            }
-        }
-        
-        // echo '<pre>'; print_r($return['content']); echo '</pre>';
+        // echo '<pre>'; print_r($dados_busca); echo '</pre>';
         // die;
-        foreach($return['content'] as $item){
+        foreach($dados_busca as $item){
 
             //Validando os campos
             $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-nerdnewsyoutube')], [
@@ -1172,7 +876,7 @@ class CronJobController extends Controller
 
         // Search only videos in a given channel, return an array of PHP objects
         $channel = Channels::where( 'hash',  '=', 'sessaonerdyoutube' )->firstOrFail();
-        $url = "";
+        $tag_title = "";
 
         $array_adicionados = [];
         $array_existentes = [];
@@ -1196,17 +900,17 @@ class CronJobController extends Controller
                 if($count == 1){
                     $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
                     if($tag ){
-                        $url = $channel->url_crawler .str_replace(" ","+",$tag->title) ;
-                        // echo $url;
+                        $tag_title = $tag->title ;
+                        // echo $tag_title;
                     }
                 }
                 $count++;
             }
-            // dd($url);
+            // dd($tag_title);
         }
-        // echo 'url:'.$url;
+        // echo 'url:'.$tag_title;
         
-        if($url == ""){
+        if($tag_title == ""){
             $retorno = [
                 'code'         => '003',
                 'adicionados'  => $array_adicionados, 
@@ -1219,71 +923,12 @@ class CronJobController extends Controller
         }
         
         //Busca crawler
-        $data = $this->getCurl($url);
-        
-        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)[;]/', $data, $matches);
-        
-        preg_match_all('/"sectionListRenderer":{"contents":\[(?P<artigo>[\s\S]*?)(,{"continuationItemRenderer")/', $matches['json'][0], $matches);
-       
-        if(isset($matches['artigo'][0])){
-            $dados = json_decode('['.$matches['artigo'][0].']');
-        }else{
-            $dados = [];
-        }
-        $return['content'] = [];
-        foreach ($dados as $key => $value) {
-            if($key < 11){
-                $result['noticia'] = "";
-                $result['img'] = "";
-                $result['link'] = "";
-                $result['data'] = "";
-
-                if(isset($value->itemSectionRenderer->contents[0]->videoRenderer)){
-
-                    $result['noticia'] = $value->itemSectionRenderer->contents[0]->videoRenderer->title->runs[0]->text;
-                    //Verifica se a noticia tem relação com as tags
-                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($result['noticia']) )){
-                    
-                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails)){
-                            if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url;
-                            }else{
-                                $result['img'] = "";
-                            }
-                        }
-            
-                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->videoId)){
-                            $result['url'] = 'https://www.youtube.com/watch?v='.$value->itemSectionRenderer->contents[0]->videoRenderer->videoId;
-                        }
-                        
-                        if(isset($result['url']) && $result['url'] != ""){
-                            $url_date = $result['url'];
-                            $data2 = $this->getCurl($url_date);
-                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
-                            $dados2 = json_encode($matches['json'][0]);
-                            $dados2 = str_replace('"','',$dados2);
-                            // echo '<pre>'; print_r($dados2); echo '</pre>';
-                            $result['data'] =  $this->formata_data(4,$dados2);
-                        }
-
-                        $return['content'][] = $result;
-            
-                    }
-                }
-            }else{
-                break;
-            }
-        }
+        $comunicaYoutube = new ComunicaYoutube;
+        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'SessãoNerdOficial')->get();
         
         // echo '<pre>'; print_r($return['content']); echo '</pre>';
         // die;
-        foreach($return['content'] as $item){
+        foreach($dados_busca as $item){
 
             //Validando os campos
             $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-sessaonerdyoutube')], [
@@ -1392,7 +1037,7 @@ class CronJobController extends Controller
 
         // Search only videos in a given channel, return an array of PHP objects
         $channel = Channels::where( 'hash',  '=', 'arenanerdyoutube' )->firstOrFail();
-        $url = "";
+        $tag_title = "";
 
         $array_adicionados = [];
         $array_existentes = [];
@@ -1416,17 +1061,17 @@ class CronJobController extends Controller
                 if($count == 1){
                     $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
                     if($tag ){
-                        $url = $channel->url_crawler .str_replace(" ","+",$tag->title) ;
-                        // echo $url;
+                        $tag_title = $tag->title ;
+                        // echo $tag_title;
                     }
                 }
                 $count++;
             }
-            // dd($url);
+            // dd($tag_title);
         }
-        // echo 'url:'.$url;
+        // echo 'url:'.$tag_title;
         
-        if($url == ""){
+        if($tag_title == ""){
             $retorno = [
                 'code'         => '003',
                 'adicionados'  => $array_adicionados, 
@@ -1439,71 +1084,12 @@ class CronJobController extends Controller
         }
         
         //Busca crawler
-        $data = $this->getCurl($url);
-        
-        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)[;]/', $data, $matches);
-        
-        preg_match_all('/"sectionListRenderer":{"contents":\[(?P<artigo>[\s\S]*?)(,{"continuationItemRenderer")/', $matches['json'][0], $matches);
-       
-        if(isset($matches['artigo'][0])){
-            $dados = json_decode('['.$matches['artigo'][0].']');
-        }else{
-            $dados = [];
-        }
-        $return['content'] = [];
-        foreach ($dados as $key => $value) {
-            if($key < 11){
-                $result['noticia'] = "";
-                $result['img'] = "";
-                $result['link'] = "";
-                $result['data'] = "";
-
-                if(isset($value->itemSectionRenderer->contents[0]->videoRenderer)){
-
-                    $result['noticia'] = $value->itemSectionRenderer->contents[0]->videoRenderer->title->runs[0]->text;
-                    //Verifica se a noticia tem relação com as tags
-                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($result['noticia']) )){
-                    
-                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails)){
-                            if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url;
-                            }else{
-                                $result['img'] = "";
-                            }
-                        }
-            
-                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->videoId)){
-                            $result['url'] = 'https://www.youtube.com/watch?v='.$value->itemSectionRenderer->contents[0]->videoRenderer->videoId;
-                        }
-                        
-                        if(isset($result['url']) && $result['url'] != ""){
-                            $url_date = $result['url'];
-                            $data2 = $this->getCurl($url_date);
-                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
-                            $dados2 = json_encode($matches['json'][0]);
-                            $dados2 = str_replace('"','',$dados2);
-                            // echo '<pre>'; print_r($dados2); echo '</pre>';
-                            $result['data'] =  $this->formata_data(4,$dados2);
-                        }
-
-                        $return['content'][] = $result;
-            
-                    }
-                }
-            }else{
-                break;
-            }
-        }
+        $comunicaYoutube = new ComunicaYoutube;
+        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'ArenaNerdOficial')->get();
         
         // echo '<pre>'; print_r($return['content']); echo '</pre>';
         // die;
-        foreach($return['content'] as $item){
+        foreach($dados_busca as $item){
 
             //Validando os campos
             $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-arenanerdyoutube')], [
@@ -1612,7 +1198,7 @@ class CronJobController extends Controller
 
         // Search only videos in a given channel, return an array of PHP objects
         $channel = Channels::where( 'hash',  '=', 'caldeiraonerdyoutube' )->firstOrFail();
-        $url = "";
+        $tag_title = "";
 
         $array_adicionados = [];
         $array_existentes = [];
@@ -1636,17 +1222,17 @@ class CronJobController extends Controller
                 if($count == 1){
                     $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
                     if($tag ){
-                        $url = $channel->url_crawler .str_replace(" ","+",$tag->title) ;
-                        // echo $url;
+                        $tag_title = $tag->title;
+                        // echo $tag_title;
                     }
                 }
                 $count++;
             }
-            // dd($url);
+            // dd($tag_title);
         }
-        // echo 'url:'.$url;
+        // echo 'url:'.$tag_title;
         
-        if($url == ""){
+        if($tag_title == ""){
             $retorno = [
                 'code'         => '003',
                 'adicionados'  => $array_adicionados, 
@@ -1659,71 +1245,12 @@ class CronJobController extends Controller
         }
         
         //Busca crawler
-        $data = $this->getCurl($url);
-        
-        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)[;]/', $data, $matches);
-        
-        preg_match_all('/"sectionListRenderer":{"contents":\[(?P<artigo>[\s\S]*?)(,{"continuationItemRenderer")/', $matches['json'][0], $matches);
-       
-        if(isset($matches['artigo'][0])){
-            $dados = json_decode('['.$matches['artigo'][0].']');
-        }else{
-            $dados = [];
-        }
-        $return['content'] = [];
-        foreach ($dados as $key => $value) {
-            if($key < 11){
-                $result['noticia'] = "";
-                $result['img'] = "";
-                $result['link'] = "";
-                $result['data'] = "";
-
-                if(isset($value->itemSectionRenderer->contents[0]->videoRenderer)){
-
-                    $result['noticia'] = $value->itemSectionRenderer->contents[0]->videoRenderer->title->runs[0]->text;
-                    //Verifica se a noticia tem relação com as tags
-                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($result['noticia']) )){
-                    
-                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails)){
-                            if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url;
-                            }else{
-                                $result['img'] = "";
-                            }
-                        }
-            
-                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->videoId)){
-                            $result['url'] = 'https://www.youtube.com/watch?v='.$value->itemSectionRenderer->contents[0]->videoRenderer->videoId;
-                        }
-                        
-                        if(isset($result['url']) && $result['url'] != ""){
-                            $url_date = $result['url'];
-                            $data2 = $this->getCurl($url_date);
-                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
-                            $dados2 = json_encode($matches['json'][0]);
-                            $dados2 = str_replace('"','',$dados2);
-                            // echo '<pre>'; print_r($dados2); echo '</pre>';
-                            $result['data'] =  $this->formata_data(4,$dados2);
-                        }
-
-                        $return['content'][] = $result;
-            
-                    }
-                }
-            }else{
-                break;
-            }
-        }
+        $comunicaYoutube = new ComunicaYoutube;
+        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'CaldeirãoNerd')->get();
         
         // echo '<pre>'; print_r($return['content']); echo '</pre>';
         // die;
-        foreach($return['content'] as $item){
+        foreach($dados_busca as $item){
 
             //Validando os campos
             $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-caldeiraonerdyoutube')], [
@@ -1832,7 +1359,7 @@ class CronJobController extends Controller
 
         // Search only videos in a given channel, return an array of PHP objects
         $channel = Channels::where( 'hash',  '=', 'nerdexperienceyoutube' )->firstOrFail();
-        $url = "";
+        $tag_title= "";
 
         $array_adicionados = [];
         $array_existentes = [];
@@ -1855,18 +1382,18 @@ class CronJobController extends Controller
                 // echo "crawler";
                 if($count == 1){
                     $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
-                    if($tag ){
-                        $url = $channel->url_crawler .str_replace(" ","+",$tag->title) ;
-                        // echo $url;
+                    if($tag){
+                        $tag_title = $tag->title ;
+                        // echo $tag_title
                     }
                 }
                 $count++;
             }
-            // dd($url);
+            // dd($tag_title;
         }
-        // echo 'url:'.$url;
+        // echo 'url:'.$tag_title
         
-        if($url == ""){
+        if($tag_title== ""){
             $retorno = [
                 'code'         => '003',
                 'adicionados'  => $array_adicionados, 
@@ -1879,71 +1406,12 @@ class CronJobController extends Controller
         }
         
         //Busca crawler
-        $data = $this->getCurl($url);
-        
-        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)[;]/', $data, $matches);
-        
-        preg_match_all('/"sectionListRenderer":{"contents":\[(?P<artigo>[\s\S]*?)(,{"continuationItemRenderer")/', $matches['json'][0], $matches);
-       
-        if(isset($matches['artigo'][0])){
-            $dados = json_decode('['.$matches['artigo'][0].']');
-        }else{
-            $dados = [];
-        }
-        $return['content'] = [];
-        foreach ($dados as $key => $value) {
-            if($key < 11){
-                $result['noticia'] = "";
-                $result['img'] = "";
-                $result['link'] = "";
-                $result['data'] = "";
-
-                if(isset($value->itemSectionRenderer->contents[0]->videoRenderer)){
-
-                    $result['noticia'] = $value->itemSectionRenderer->contents[0]->videoRenderer->title->runs[0]->text;
-                    //Verifica se a noticia tem relação com as tags
-                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($result['noticia']) )){
-                    
-                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails)){
-                            if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url;
-                            }else{
-                                $result['img'] = "";
-                            }
-                        }
-            
-                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->videoId)){
-                            $result['url'] = 'https://www.youtube.com/watch?v='.$value->itemSectionRenderer->contents[0]->videoRenderer->videoId;
-                        }
-                        
-                        if(isset($result['url']) && $result['url'] != ""){
-                            $url_date = $result['url'];
-                            $data2 = $this->getCurl($url_date);
-                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
-                            $dados2 = json_encode($matches['json'][0]);
-                            $dados2 = str_replace('"','',$dados2);
-                            // echo '<pre>'; print_r($dados2); echo '</pre>';
-                            $result['data'] =  $this->formata_data(4,$dados2);
-                        }
-
-                        $return['content'][] = $result;
-            
-                    }
-                }
-            }else{
-                break;
-            }
-        }
+        $comunicaYoutube = new ComunicaYoutube;
+        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'NERDEXPERIENCEOFICIAL')->get();
         
         // echo '<pre>'; print_r($return['content']); echo '</pre>';
         // die;
-        foreach($return['content'] as $item){
+        foreach($dados_busca as $item){
 
             //Validando os campos
             $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-nerdexperienceyoutube')], [
@@ -2052,7 +1520,7 @@ class CronJobController extends Controller
 
         // Search only videos in a given channel, return an array of PHP objects
         $channel = Channels::where( 'hash',  '=', 'crispandayoutube' )->firstOrFail();
-        $url = "";
+        $tag_title = "";
 
         $array_adicionados = [];
         $array_existentes = [];
@@ -2075,18 +1543,18 @@ class CronJobController extends Controller
                 // echo "crawler";
                 if($count == 1){
                     $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
-                    if($tag ){
-                        $url = $channel->url_crawler .str_replace(" ","+",$tag->title) ;
-                        // echo $url;
+                    if($tag){
+                        $tag_title = $tag->title;
+                        // echo $tag_title;
                     }
                 }
                 $count++;
             }
-            // dd($url);
+            // dd($tag_title);
         }
-        // echo 'url:'.$url;
+        // echo 'url:'.$tag_title;
         
-        if($url == ""){
+        if($tag_title == ""){
             $retorno = [
                 'code'         => '003',
                 'adicionados'  => $array_adicionados, 
@@ -2099,71 +1567,12 @@ class CronJobController extends Controller
         }
         
         //Busca crawler
-        $data = $this->getCurl($url);
-        
-        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)[;]/', $data, $matches);
-        
-        preg_match_all('/"sectionListRenderer":{"contents":\[(?P<artigo>[\s\S]*?)(,{"continuationItemRenderer")/', $matches['json'][0], $matches);
-       
-        if(isset($matches['artigo'][0])){
-            $dados = json_decode('['.$matches['artigo'][0].']');
-        }else{
-            $dados = [];
-        }
-        $return['content'] = [];
-        foreach ($dados as $key => $value) {
-            if($key < 11){
-                $result['noticia'] = "";
-                $result['img'] = "";
-                $result['link'] = "";
-                $result['data'] = "";
+        $comunicaYoutube = new ComunicaYoutube;
+        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/user')->prepare($tag_title, 'CoxinhaNerd')->get();
 
-                if(isset($value->itemSectionRenderer->contents[0]->videoRenderer)){
-
-                    $result['noticia'] = $value->itemSectionRenderer->contents[0]->videoRenderer->title->runs[0]->text;
-                    //Verifica se a noticia tem relação com as tags
-                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($result['noticia']) )){
-                    
-                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails)){
-                            if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url;
-                            }else{
-                                $result['img'] = "";
-                            }
-                        }
-            
-                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->videoId)){
-                            $result['url'] = 'https://www.youtube.com/watch?v='.$value->itemSectionRenderer->contents[0]->videoRenderer->videoId;
-                        }
-                        
-                        if(isset($result['url']) && $result['url'] != ""){
-                            $url_date = $result['url'];
-                            $data2 = $this->getCurl($url_date);
-                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
-                            $dados2 = json_encode($matches['json'][0]);
-                            $dados2 = str_replace('"','',$dados2);
-                            // echo '<pre>'; print_r($dados2); echo '</pre>';
-                            $result['data'] =  $this->formata_data(4,$dados2);
-                        }
-
-                        $return['content'][] = $result;
-            
-                    }
-                }
-            }else{
-                break;
-            }
-        }
-        
         // echo '<pre>'; print_r($return['content']); echo '</pre>';
         // die;
-        foreach($return['content'] as $item){
+        foreach($dados_busca as $item){
 
             //Validando os campos
             $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-crispandayoutube')], [
@@ -2272,7 +1681,7 @@ class CronJobController extends Controller
 
         // Search only videos in a given channel, return an array of PHP objects
         $channel = Channels::where( 'hash',  '=', 'nerdrabugentoyoutube' )->firstOrFail();
-        $url = "";
+        $tag_title = "";
 
         $array_adicionados = [];
         $array_existentes = [];
@@ -2296,17 +1705,17 @@ class CronJobController extends Controller
                 if($count == 1){
                     $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
                     if($tag ){
-                        $url = $channel->url_crawler .str_replace(" ","+",$tag->title) ;
-                        // echo $url;
+                        $tag_title = $tag->title ;
+                        // echo $tag_title;
                     }
                 }
                 $count++;
             }
-            // dd($url);
+            // dd($tag_title);
         }
-        // echo 'url:'.$url;
+        // echo 'url:'.$tag_title;
         
-        if($url == ""){
+        if($tag_title == ""){
             $retorno = [
                 'code'         => '003',
                 'adicionados'  => $array_adicionados, 
@@ -2319,71 +1728,12 @@ class CronJobController extends Controller
         }
         
         //Busca crawler
-        $data = $this->getCurl($url);
-        
-        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)[;]/', $data, $matches);
-        
-        preg_match_all('/"sectionListRenderer":{"contents":\[(?P<artigo>[\s\S]*?)(,{"continuationItemRenderer")/', $matches['json'][0], $matches);
-       
-        if(isset($matches['artigo'][0])){
-            $dados = json_decode('['.$matches['artigo'][0].']');
-        }else{
-            $dados = [];
-        }
-        $return['content'] = [];
-        foreach ($dados as $key => $value) {
-            if($key < 11){
-                $result['noticia'] = "";
-                $result['img'] = "";
-                $result['link'] = "";
-                $result['data'] = "";
-
-                if(isset($value->itemSectionRenderer->contents[0]->videoRenderer)){
-
-                    $result['noticia'] = $value->itemSectionRenderer->contents[0]->videoRenderer->title->runs[0]->text;
-                    //Verifica se a noticia tem relação com as tags
-                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($result['noticia']) )){
-                    
-                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails)){
-                            if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url;
-                            }else{
-                                $result['img'] = "";
-                            }
-                        }
-            
-                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->videoId)){
-                            $result['url'] = 'https://www.youtube.com/watch?v='.$value->itemSectionRenderer->contents[0]->videoRenderer->videoId;
-                        }
-                        
-                        if(isset($result['url']) && $result['url'] != ""){
-                            $url_date = $result['url'];
-                            $data2 = $this->getCurl($url_date);
-                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
-                            $dados2 = json_encode($matches['json'][0]);
-                            $dados2 = str_replace('"','',$dados2);
-                            // echo '<pre>'; print_r($dados2); echo '</pre>';
-                            $result['data'] =  $this->formata_data(4,$dados2);
-                        }
-
-                        $return['content'][] = $result;
-            
-                    }
-                }
-            }else{
-                break;
-            }
-        }
+        $comunicaYoutube = new ComunicaYoutube;
+        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'NerdRabugentoOficial')->get();
         
         // echo '<pre>'; print_r($return['content']); echo '</pre>';
         // die;
-        foreach($return['content'] as $item){
+        foreach($dados_busca as $item){
 
             //Validando os campos
             $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-nerdrabugentoyoutube')], [
@@ -2492,7 +1842,7 @@ class CronJobController extends Controller
 
         // Search only videos in a given channel, return an array of PHP objects
         $channel = Channels::where( 'hash',  '=', 'operacaocinemayoutube' )->firstOrFail();
-        $url = "";
+        $tag_title = "";
 
         $array_adicionados = [];
         $array_existentes = [];
@@ -2516,17 +1866,17 @@ class CronJobController extends Controller
                 if($count == 1){
                     $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
                     if($tag ){
-                        $url = $channel->url_crawler .str_replace(" ","+",$tag->title) ;
-                        // echo $url;
+                        $tag_title = $tag->title ;
+                        // echo $tag_title;
                     }
                 }
                 $count++;
             }
-            // dd($url);
+            // dd($tag_title);
         }
-        // echo 'url:'.$url;
+        // echo 'url:'.$tag_title;
         
-        if($url == ""){
+        if($tag_title == ""){
             $retorno = [
                 'code'         => '003',
                 'adicionados'  => $array_adicionados, 
@@ -2539,71 +1889,12 @@ class CronJobController extends Controller
         }
         
         //Busca crawler
-        $data = $this->getCurl($url);
-        
-        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)[;]/', $data, $matches);
-        
-        preg_match_all('/"sectionListRenderer":{"contents":\[(?P<artigo>[\s\S]*?)(,{"continuationItemRenderer")/', $matches['json'][0], $matches);
-       
-        if(isset($matches['artigo'][0])){
-            $dados = json_decode('['.$matches['artigo'][0].']');
-        }else{
-            $dados = [];
-        }
-        $return['content'] = [];
-        foreach ($dados as $key => $value) {
-            if($key < 11){
-                $result['noticia'] = "";
-                $result['img'] = "";
-                $result['link'] = "";
-                $result['data'] = "";
-
-                if(isset($value->itemSectionRenderer->contents[0]->videoRenderer)){
-
-                    $result['noticia'] = $value->itemSectionRenderer->contents[0]->videoRenderer->title->runs[0]->text;
-                    //Verifica se a noticia tem relação com as tags
-                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($result['noticia']) )){
-                    
-                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails)){
-                            if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url;
-                            }else{
-                                $result['img'] = "";
-                            }
-                        }
-            
-                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->videoId)){
-                            $result['url'] = 'https://www.youtube.com/watch?v='.$value->itemSectionRenderer->contents[0]->videoRenderer->videoId;
-                        }
-                        
-                        if(isset($result['url']) && $result['url'] != ""){
-                            $url_date = $result['url'];
-                            $data2 = $this->getCurl($url_date);
-                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
-                            $dados2 = json_encode($matches['json'][0]);
-                            $dados2 = str_replace('"','',$dados2);
-                            // echo '<pre>'; print_r($dados2); echo '</pre>';
-                            $result['data'] =  $this->formata_data(4,$dados2);
-                        }
-
-                        $return['content'][] = $result;
-            
-                    }
-                }
-            }else{
-                break;
-            }
-        }
+        $comunicaYoutube = new ComunicaYoutube;
+        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'OperaçãoCinema')->get();
         
         // echo '<pre>'; print_r($return['content']); echo '</pre>';
         // die;
-        foreach($return['content'] as $item){
+        foreach($dados_busca as $item){
 
             //Validando os campos
             $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-operacaocinemayoutube')], [
@@ -2712,7 +2003,7 @@ class CronJobController extends Controller
 
         // Search only videos in a given channel, return an array of PHP objects
         $channel = Channels::where( 'hash',  '=', 'quatrocoisasyoutube' )->firstOrFail();
-        $url = "";
+        $tag_title = "";
 
         $array_adicionados = [];
         $array_existentes = [];
@@ -2736,17 +2027,17 @@ class CronJobController extends Controller
                 if($count == 1){
                     $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
                     if($tag ){
-                        $url = $channel->url_crawler .str_replace(" ","+",$tag->title) ;
-                        // echo $url;
+                        $tag_title = $tag->title ;
+                        // echo $tag_title;
                     }
                 }
                 $count++;
             }
-            // dd($url);
+            // dd($tag_title);
         }
-        // echo 'url:'.$url;
+        // echo 'url:'.$tag_title;
         
-        if($url == ""){
+        if($tag_title == ""){
             $retorno = [
                 'code'         => '003',
                 'adicionados'  => $array_adicionados, 
@@ -2759,71 +2050,12 @@ class CronJobController extends Controller
         }
         
         //Busca crawler
-        $data = $this->getCurl($url);
-        
-        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)[;]/', $data, $matches);
-        
-        preg_match_all('/"sectionListRenderer":{"contents":\[(?P<artigo>[\s\S]*?)(,{"continuationItemRenderer")/', $matches['json'][0], $matches);
-       
-        if(isset($matches['artigo'][0])){
-            $dados = json_decode('['.$matches['artigo'][0].']');
-        }else{
-            $dados = [];
-        }
-        $return['content'] = [];
-        foreach ($dados as $key => $value) {
-            if($key < 11){
-                $result['noticia'] = "";
-                $result['img'] = "";
-                $result['link'] = "";
-                $result['data'] = "";
-
-                if(isset($value->itemSectionRenderer->contents[0]->videoRenderer)){
-
-                    $result['noticia'] = $value->itemSectionRenderer->contents[0]->videoRenderer->title->runs[0]->text;
-                    //Verifica se a noticia tem relação com as tags
-                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($result['noticia']) )){
-                    
-                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails)){
-                            if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url;
-                            }else{
-                                $result['img'] = "";
-                            }
-                        }
-            
-                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->videoId)){
-                            $result['url'] = 'https://www.youtube.com/watch?v='.$value->itemSectionRenderer->contents[0]->videoRenderer->videoId;
-                        }
-                        
-                        if(isset($result['url']) && $result['url'] != ""){
-                            $url_date = $result['url'];
-                            $data2 = $this->getCurl($url_date);
-                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
-                            $dados2 = json_encode($matches['json'][0]);
-                            $dados2 = str_replace('"','',$dados2);
-                            // echo '<pre>'; print_r($dados2); echo '</pre>';
-                            $result['data'] =  $this->formata_data(4,$dados2);
-                        }
-
-                        $return['content'][] = $result;
-            
-                    }
-                }
-            }else{
-                break;
-            }
-        }
+        $comunicaYoutube = new ComunicaYoutube;
+        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'Qu4troCoisas')->get();
         
         // echo '<pre>'; print_r($return['content']); echo '</pre>';
         // die;
-        foreach($return['content'] as $item){
+        foreach($dados_busca as $item){
 
             //Validando os campos
             $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-quatrocoisasyoutube')], [
@@ -2932,7 +2164,7 @@ class CronJobController extends Controller
 
         // Search only videos in a given channel, return an array of PHP objects
         $channel = Channels::where( 'hash',  '=', 'cavernadocarusoyoutube' )->firstOrFail();
-        $url = "";
+        $tag_title = "";
 
         $array_adicionados = [];
         $array_existentes = [];
@@ -2956,17 +2188,17 @@ class CronJobController extends Controller
                 if($count == 1){
                     $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
                     if($tag ){
-                        $url = $channel->url_crawler .str_replace(" ","+",$tag->title) ;
-                        // echo $url;
+                        $tag_title = $tag->title ;
+                        // echo $tag_title;
                     }
                 }
                 $count++;
             }
-            // dd($url);
+            // dd($tag_title);
         }
-        // echo 'url:'.$url;
+        // echo 'url:'.$tag_title;
         
-        if($url == ""){
+        if($tag_title == ""){
             $retorno = [
                 'code'         => '003',
                 'adicionados'  => $array_adicionados, 
@@ -2979,71 +2211,12 @@ class CronJobController extends Controller
         }
         
         //Busca crawler
-        $data = $this->getCurl($url);
-        
-        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)[;]/', $data, $matches);
-        
-        preg_match_all('/"sectionListRenderer":{"contents":\[(?P<artigo>[\s\S]*?)(,{"continuationItemRenderer")/', $matches['json'][0], $matches);
-       
-        if(isset($matches['artigo'][0])){
-            $dados = json_decode('['.$matches['artigo'][0].']');
-        }else{
-            $dados = [];
-        }
-        $return['content'] = [];
-        foreach ($dados as $key => $value) {
-            if($key < 11){
-                $result['noticia'] = "";
-                $result['img'] = "";
-                $result['link'] = "";
-                $result['data'] = "";
-
-                if(isset($value->itemSectionRenderer->contents[0]->videoRenderer)){
-
-                    $result['noticia'] = $value->itemSectionRenderer->contents[0]->videoRenderer->title->runs[0]->text;
-                    //Verifica se a noticia tem relação com as tags
-                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($result['noticia']) )){
-                    
-                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails)){
-                            if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url;
-                            }else{
-                                $result['img'] = "";
-                            }
-                        }
-            
-                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->videoId)){
-                            $result['url'] = 'https://www.youtube.com/watch?v='.$value->itemSectionRenderer->contents[0]->videoRenderer->videoId;
-                        }
-                        
-                        if(isset($result['url']) && $result['url'] != ""){
-                            $url_date = $result['url'];
-                            $data2 = $this->getCurl($url_date);
-                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
-                            $dados2 = json_encode($matches['json'][0]);
-                            $dados2 = str_replace('"','',$dados2);
-                            // echo '<pre>'; print_r($dados2); echo '</pre>';
-                            $result['data'] =  $this->formata_data(4,$dados2);
-                        }
-
-                        $return['content'][] = $result;
-            
-                    }
-                }
-            }else{
-                break;
-            }
-        }
+        $comunicaYoutube = new ComunicaYoutube;
+        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'CAVERNADOCARUSO')->get();
         
         // echo '<pre>'; print_r($return['content']); echo '</pre>';
         // die;
-        foreach($return['content'] as $item){
+        foreach($dados_busca as $item){
 
             //Validando os campos
             $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-cavernadocarusoyoutube')], [
@@ -3152,7 +2325,7 @@ class CronJobController extends Controller
 
         // Search only videos in a given channel, return an array of PHP objects
         $channel = Channels::where( 'hash',  '=', 'caiqueizotonyoutube' )->firstOrFail();
-        $url = "";
+        $tag_title = "";
 
         $array_adicionados = [];
         $array_existentes = [];
@@ -3176,17 +2349,17 @@ class CronJobController extends Controller
                 if($count == 1){
                     $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
                     if($tag ){
-                        $url = $channel->url_crawler .str_replace(" ","+",$tag->title) ;
-                        // echo $url;
+                        $tag_title = $tag->title ;
+                        // echo $tag_title;
                     }
                 }
                 $count++;
             }
-            // dd($url);
+            // dd($tag_title);
         }
-        // echo 'url:'.$url;
+        // echo 'url:'.$tag_title;
         
-        if($url == ""){
+        if($tag_title == ""){
             $retorno = [
                 'code'         => '003',
                 'adicionados'  => $array_adicionados, 
@@ -3199,71 +2372,12 @@ class CronJobController extends Controller
         }
         
         //Busca crawler
-        $data = $this->getCurl($url);
-        
-        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)[;]/', $data, $matches);
-        
-        preg_match_all('/"sectionListRenderer":{"contents":\[(?P<artigo>[\s\S]*?)(,{"continuationItemRenderer")/', $matches['json'][0], $matches);
-       
-        if(isset($matches['artigo'][0])){
-            $dados = json_decode('['.$matches['artigo'][0].']');
-        }else{
-            $dados = [];
-        }
-        $return['content'] = [];
-        foreach ($dados as $key => $value) {
-            if($key < 11){
-                $result['noticia'] = "";
-                $result['img'] = "";
-                $result['link'] = "";
-                $result['data'] = "";
-
-                if(isset($value->itemSectionRenderer->contents[0]->videoRenderer)){
-
-                    $result['noticia'] = $value->itemSectionRenderer->contents[0]->videoRenderer->title->runs[0]->text;
-                    //Verifica se a noticia tem relação com as tags
-                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($result['noticia']) )){
-                    
-                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails)){
-                            if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url;
-                            }else{
-                                $result['img'] = "";
-                            }
-                        }
-            
-                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->videoId)){
-                            $result['url'] = 'https://www.youtube.com/watch?v='.$value->itemSectionRenderer->contents[0]->videoRenderer->videoId;
-                        }
-                        
-                        if(isset($result['url']) && $result['url'] != ""){
-                            $url_date = $result['url'];
-                            $data2 = $this->getCurl($url_date);
-                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
-                            $dados2 = json_encode($matches['json'][0]);
-                            $dados2 = str_replace('"','',$dados2);
-                            // echo '<pre>'; print_r($dados2); echo '</pre>';
-                            $result['data'] =  $this->formata_data(4,$dados2);
-                        }
-
-                        $return['content'][] = $result;
-            
-                    }
-                }
-            }else{
-                break;
-            }
-        }
+        $comunicaYoutube = new ComunicaYoutube;
+        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'CaiqueIzoton')->get();
         
         // echo '<pre>'; print_r($return['content']); echo '</pre>';
         // die;
-        foreach($return['content'] as $item){
+        foreach($dados_busca as $item){
 
             //Validando os campos
             $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-caiqueizotonyoutube')], [
@@ -3372,7 +2486,7 @@ class CronJobController extends Controller
 
         // Search only videos in a given channel, return an array of PHP objects
         $channel = Channels::where( 'hash',  '=', 'cinemacomrapadurayoutube' )->firstOrFail();
-        $url = "";
+        $tag_title = "";
 
         $array_adicionados = [];
         $array_existentes = [];
@@ -3396,17 +2510,17 @@ class CronJobController extends Controller
                 if($count == 1){
                     $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
                     if($tag ){
-                        $url = $channel->url_crawler .str_replace(" ","+",$tag->title) ;
-                        // echo $url;
+                        $tag_title = $tag->title ;
+                        // echo $tag_title;
                     }
                 }
                 $count++;
             }
-            // dd($url);
+            // dd($tag_title);
         }
-        // echo 'url:'.$url;
+        // echo 'url:'.$tag_title;
         
-        if($url == ""){
+        if($tag_title == ""){
             $retorno = [
                 'code'         => '003',
                 'adicionados'  => $array_adicionados, 
@@ -3419,71 +2533,12 @@ class CronJobController extends Controller
         }
         
         //Busca crawler
-        $data = $this->getCurl($url);
-        
-        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)[;]/', $data, $matches);
-        
-        preg_match_all('/"sectionListRenderer":{"contents":\[(?P<artigo>[\s\S]*?)(,{"continuationItemRenderer")/', $matches['json'][0], $matches);
-       
-        if(isset($matches['artigo'][0])){
-            $dados = json_decode('['.$matches['artigo'][0].']');
-        }else{
-            $dados = [];
-        }
-        $return['content'] = [];
-        foreach ($dados as $key => $value) {
-            if($key < 11){
-                $result['noticia'] = "";
-                $result['img'] = "";
-                $result['link'] = "";
-                $result['data'] = "";
-
-                if(isset($value->itemSectionRenderer->contents[0]->videoRenderer)){
-
-                    $result['noticia'] = $value->itemSectionRenderer->contents[0]->videoRenderer->title->runs[0]->text;
-                    //Verifica se a noticia tem relação com as tags
-                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($result['noticia']) )){
-                    
-                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails)){
-                            if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url;
-                            }else{
-                                $result['img'] = "";
-                            }
-                        }
-            
-                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->videoId)){
-                            $result['url'] = 'https://www.youtube.com/watch?v='.$value->itemSectionRenderer->contents[0]->videoRenderer->videoId;
-                        }
-                        
-                        if(isset($result['url']) && $result['url'] != ""){
-                            $url_date = $result['url'];
-                            $data2 = $this->getCurl($url_date);
-                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
-                            $dados2 = json_encode($matches['json'][0]);
-                            $dados2 = str_replace('"','',$dados2);
-                            // echo '<pre>'; print_r($dados2); echo '</pre>';
-                            $result['data'] =  $this->formata_data(4,$dados2);
-                        }
-
-                        $return['content'][] = $result;
-            
-                    }
-                }
-            }else{
-                break;
-            }
-        }
+        $comunicaYoutube = new ComunicaYoutube;
+        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'CinemacomRapaduraoficial')->get();
         
         // echo '<pre>'; print_r($return['content']); echo '</pre>';
         // die;
-        foreach($return['content'] as $item){
+        foreach($dados_busca as $item){
 
             //Validando os campos
             $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-cinemacomrapadurayoutube')], [
@@ -3592,7 +2647,7 @@ class CronJobController extends Controller
 
         // Search only videos in a given channel, return an array of PHP objects
         $channel = Channels::where( 'hash',  '=', 'nerdlandyoutube' )->firstOrFail();
-        $url = "";
+        $tag_title = "";
 
         $array_adicionados = [];
         $array_existentes = [];
@@ -3616,17 +2671,17 @@ class CronJobController extends Controller
                 if($count == 1){
                     $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
                     if($tag ){
-                        $url = $channel->url_crawler .str_replace(" ","+",$tag->title) ;
-                        // echo $url;
+                        $tag_title = $tag->title;
+                        // echo $tag_title;
                     }
                 }
                 $count++;
             }
-            // dd($url);
+            // dd($tag_title);
         }
-        // echo 'url:'.$url;
+        // echo 'url:'.$tag_title;
         
-        if($url == ""){
+        if($tag_title == ""){
             $retorno = [
                 'code'         => '003',
                 'adicionados'  => $array_adicionados, 
@@ -3639,71 +2694,12 @@ class CronJobController extends Controller
         }
         
         //Busca crawler
-        $data = $this->getCurl($url);
-        
-        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)[;]/', $data, $matches);
-        
-        preg_match_all('/"sectionListRenderer":{"contents":\[(?P<artigo>[\s\S]*?)(,{"continuationItemRenderer")/', $matches['json'][0], $matches);
-       
-        if(isset($matches['artigo'][0])){
-            $dados = json_decode('['.$matches['artigo'][0].']');
-        }else{
-            $dados = [];
-        }
-        $return['content'] = [];
-        foreach ($dados as $key => $value) {
-            if($key < 11){
-                $result['noticia'] = "";
-                $result['img'] = "";
-                $result['link'] = "";
-                $result['data'] = "";
-
-                if(isset($value->itemSectionRenderer->contents[0]->videoRenderer)){
-
-                    $result['noticia'] = $value->itemSectionRenderer->contents[0]->videoRenderer->title->runs[0]->text;
-                    //Verifica se a noticia tem relação com as tags
-                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($result['noticia']) )){
-                    
-                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails)){
-                            if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url;
-                            }else{
-                                $result['img'] = "";
-                            }
-                        }
-            
-                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->videoId)){
-                            $result['url'] = 'https://www.youtube.com/watch?v='.$value->itemSectionRenderer->contents[0]->videoRenderer->videoId;
-                        }
-                        
-                        if(isset($result['url']) && $result['url'] != ""){
-                            $url_date = $result['url'];
-                            $data2 = $this->getCurl($url_date);
-                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
-                            $dados2 = json_encode($matches['json'][0]);
-                            $dados2 = str_replace('"','',$dados2);
-                            // echo '<pre>'; print_r($dados2); echo '</pre>';
-                            $result['data'] =  $this->formata_data(4,$dados2);
-                        }
-
-                        $return['content'][] = $result;
-            
-                    }
-                }
-            }else{
-                break;
-            }
-        }
+        $comunicaYoutube = new ComunicaYoutube;
+        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'NerdLand')->get();
         
         // echo '<pre>'; print_r($return['content']); echo '</pre>';
         // die;
-        foreach($return['content'] as $item){
+        foreach($dados_busca as $item){
 
             //Validando os campos
             $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-nerdlandyoutube')], [
@@ -3812,7 +2808,7 @@ class CronJobController extends Controller
 
         // Search only videos in a given channel, return an array of PHP objects
         $channel = Channels::where( 'hash',  '=', 'einerdyoutube' )->firstOrFail();
-        $url = "";
+        $tag_title = "";
 
         $array_adicionados = [];
         $array_existentes = [];
@@ -3836,17 +2832,17 @@ class CronJobController extends Controller
                 if($count == 1){
                     $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
                     if($tag ){
-                        $url = $channel->url_crawler .str_replace(" ","+",$tag->title) ;
-                        // echo $url;
+                        $tag_title = $tag->title ;
+                        // echo $tag_title;
                     }
                 }
                 $count++;
             }
-            // dd($url);
+            // dd($tag_title);
         }
-        // echo 'url:'.$url;
+        // echo 'url:'.$tag_title;
         
-        if($url == ""){
+        if($tag_title == ""){
             $retorno = [
                 'code'         => '003',
                 'adicionados'  => $array_adicionados, 
@@ -3859,71 +2855,12 @@ class CronJobController extends Controller
         }
         
         //Busca crawler
-        $data = $this->getCurl($url);
-        
-        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)[;]/', $data, $matches);
-        
-        preg_match_all('/"sectionListRenderer":{"contents":\[(?P<artigo>[\s\S]*?)(,{"continuationItemRenderer")/', $matches['json'][0], $matches);
-       
-        if(isset($matches['artigo'][0])){
-            $dados = json_decode('['.$matches['artigo'][0].']');
-        }else{
-            $dados = [];
-        }
-        $return['content'] = [];
-        foreach ($dados as $key => $value) {
-            if($key < 11){
-                $result['noticia'] = "";
-                $result['img'] = "";
-                $result['link'] = "";
-                $result['data'] = "";
-
-                if(isset($value->itemSectionRenderer->contents[0]->videoRenderer)){
-
-                    $result['noticia'] = $value->itemSectionRenderer->contents[0]->videoRenderer->title->runs[0]->text;
-                    //Verifica se a noticia tem relação com as tags
-                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($result['noticia']) )){
-                    
-                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails)){
-                            if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url;
-                            }else{
-                                $result['img'] = "";
-                            }
-                        }
-            
-                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->videoId)){
-                            $result['url'] = 'https://www.youtube.com/watch?v='.$value->itemSectionRenderer->contents[0]->videoRenderer->videoId;
-                        }
-                        
-                        if(isset($result['url']) && $result['url'] != ""){
-                            $url_date = $result['url'];
-                            $data2 = $this->getCurl($url_date);
-                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
-                            $dados2 = json_encode($matches['json'][0]);
-                            $dados2 = str_replace('"','',$dados2);
-                            // echo '<pre>'; print_r($dados2); echo '</pre>';
-                            $result['data'] =  $this->formata_data(4,$dados2);
-                        }
-
-                        $return['content'][] = $result;
-            
-                    }
-                }
-            }else{
-                break;
-            }
-        }
+        $comunicaYoutube = new ComunicaYoutube;
+        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'einerdtv')->get();
         
         // echo '<pre>'; print_r($return['content']); echo '</pre>';
         // die;
-        foreach($return['content'] as $item){
+        foreach($dados_busca as $item){
 
             //Validando os campos
             $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-einerdyoutube')], [
@@ -4032,7 +2969,7 @@ class CronJobController extends Controller
 
         // Search only videos in a given channel, return an array of PHP objects
         $channel = Channels::where( 'hash',  '=', 'pipocandoyoutube' )->firstOrFail();
-        $url = "";
+        $tag_title = "";
 
         $array_adicionados = [];
         $array_existentes = [];
@@ -4056,17 +2993,17 @@ class CronJobController extends Controller
                 if($count == 1){
                     $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
                     if($tag ){
-                        $url = $channel->url_crawler .str_replace(" ","+",$tag->title) ;
-                        // echo $url;
+                        $tag_title = $tag->title ;
+                        // echo $tag_title;
                     }
                 }
                 $count++;
             }
-            // dd($url);
+            // dd($tag_title);
         }
-        // echo 'url:'.$url;
+        // echo 'url:'.$tag_title;
         
-        if($url == ""){
+        if($tag_title == ""){
             $retorno = [
                 'code'         => '003',
                 'adicionados'  => $array_adicionados, 
@@ -4079,71 +3016,12 @@ class CronJobController extends Controller
         }
         
         //Busca crawler
-        $data = $this->getCurl($url);
-        
-        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)[;]/', $data, $matches);
-        
-        preg_match_all('/"sectionListRenderer":{"contents":\[(?P<artigo>[\s\S]*?)(,{"continuationItemRenderer")/', $matches['json'][0], $matches);
-       
-        if(isset($matches['artigo'][0])){
-            $dados = json_decode('['.$matches['artigo'][0].']');
-        }else{
-            $dados = [];
-        }
-        $return['content'] = [];
-        foreach ($dados as $key => $value) {
-            if($key < 11){
-                $result['noticia'] = "";
-                $result['img'] = "";
-                $result['link'] = "";
-                $result['data'] = "";
-
-                if(isset($value->itemSectionRenderer->contents[0]->videoRenderer)){
-
-                    $result['noticia'] = $value->itemSectionRenderer->contents[0]->videoRenderer->title->runs[0]->text;
-                    //Verifica se a noticia tem relação com as tags
-                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($result['noticia']) )){
-                    
-                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails)){
-                            if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url;
-                            }else{
-                                $result['img'] = "";
-                            }
-                        }
-            
-                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->videoId)){
-                            $result['url'] = 'https://www.youtube.com/watch?v='.$value->itemSectionRenderer->contents[0]->videoRenderer->videoId;
-                        }
-                        
-                        if(isset($result['url']) && $result['url'] != ""){
-                            $url_date = $result['url'];
-                            $data2 = $this->getCurl($url_date);
-                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
-                            $dados2 = json_encode($matches['json'][0]);
-                            $dados2 = str_replace('"','',$dados2);
-                            // echo '<pre>'; print_r($dados2); echo '</pre>';
-                            $result['data'] =  $this->formata_data(4,$dados2);
-                        }
-
-                        $return['content'][] = $result;
-            
-                    }
-                }
-            }else{
-                break;
-            }
-        }
+        $comunicaYoutube = new ComunicaYoutube;
+        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'Pipocando')->get();
         
         // echo '<pre>'; print_r($return['content']); echo '</pre>';
-        // die;
-        foreach($return['content'] as $item){
+       
+        foreach($dados_busca as $item){
 
             //Validando os campos
             $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-pipocandoyoutube')], [
@@ -4252,7 +3130,7 @@ class CronJobController extends Controller
 
         // Search only videos in a given channel, return an array of PHP objects
         $channel = Channels::where( 'hash',  '=', 'omeleteyoutube' )->firstOrFail();
-        $url = "";
+        $tag_title = "";
 
         $array_adicionados = [];
         $array_existentes = [];
@@ -4276,17 +3154,17 @@ class CronJobController extends Controller
                 if($count == 1){
                     $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
                     if($tag ){
-                        $url = $channel->url_crawler .str_replace(" ","+",$tag->title) ;
-                        // echo $url;
+                        $tag_title = $tag->title;
+                        // echo $tag_title;
                     }
                 }
                 $count++;
             }
-            // dd($url);
+            // dd($tag_title);
         }
-        // echo 'url:'.$url;
+        // echo 'url:'.$tag_title;
         
-        if($url == ""){
+        if($tag_title == ""){
             $retorno = [
                 'code'         => '003',
                 'adicionados'  => $array_adicionados, 
@@ -4299,71 +3177,12 @@ class CronJobController extends Controller
         }
         
         //Busca crawler
-        $data = $this->getCurl($url);
-        
-        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)[;]/', $data, $matches);
-        
-        preg_match_all('/"sectionListRenderer":{"contents":\[(?P<artigo>[\s\S]*?)(,{"continuationItemRenderer")/', $matches['json'][0], $matches);
-       
-        if(isset($matches['artigo'][0])){
-            $dados = json_decode('['.$matches['artigo'][0].']');
-        }else{
-            $dados = [];
-        }
-        $return['content'] = [];
-        foreach ($dados as $key => $value) {
-            if($key < 11){
-                $result['noticia'] = "";
-                $result['img'] = "";
-                $result['link'] = "";
-                $result['data'] = "";
-
-                if(isset($value->itemSectionRenderer->contents[0]->videoRenderer)){
-
-                    $result['noticia'] = $value->itemSectionRenderer->contents[0]->videoRenderer->title->runs[0]->text;
-                    //Verifica se a noticia tem relação com as tags
-                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($result['noticia']) )){
-                    
-                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails)){
-                            if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url;
-                            }else{
-                                $result['img'] = "";
-                            }
-                        }
-            
-                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->videoId)){
-                            $result['url'] = 'https://www.youtube.com/watch?v='.$value->itemSectionRenderer->contents[0]->videoRenderer->videoId;
-                        }
-                        
-                        if(isset($result['url']) && $result['url'] != ""){
-                            $url_date = $result['url'];
-                            $data2 = $this->getCurl($url_date);
-                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
-                            $dados2 = json_encode($matches['json'][0]);
-                            $dados2 = str_replace('"','',$dados2);
-                            // echo '<pre>'; print_r($dados2); echo '</pre>';
-                            $result['data'] =  $this->formata_data(4,$dados2);
-                        }
-
-                        $return['content'][] = $result;
-            
-                    }
-                }
-            }else{
-                break;
-            }
-        }
+        $comunicaYoutube = new ComunicaYoutube;
+        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'omeleteve')->get();
         
         // echo '<pre>'; print_r($return['content']); echo '</pre>';
         // die;
-        foreach($return['content'] as $item){
+        foreach($dados_busca as $item){
 
             //Validando os campos
             $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-omeleteyoutube')], [
@@ -4472,7 +3291,7 @@ class CronJobController extends Controller
 
         // Search only videos in a given channel, return an array of PHP objects
         $channel = Channels::where( 'hash',  '=', 'jovemnerdyoutube' )->firstOrFail();
-        $url = "";
+        $tag_title = "";
 
         $array_adicionados = [];
         $array_existentes = [];
@@ -4496,17 +3315,17 @@ class CronJobController extends Controller
                 if($count == 1){
                     $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
                     if($tag ){
-                        $url = $channel->url_crawler .str_replace(" ","+",$tag->title) ;
-                        // echo $url;
+                        $tag_title = $tag->title ;
+                        // echo $tag_title;
                     }
                 }
                 $count++;
             }
-            // dd($url);
+            // dd($tag_title);
         }
-        // echo 'url:'.$url;
+        // echo 'url:'.$tag_title;
         
-        if($url == ""){
+        if($tag_title == ""){
             $retorno = [
                 'code'         => '003',
                 'adicionados'  => $array_adicionados, 
@@ -4519,71 +3338,12 @@ class CronJobController extends Controller
         }
         
         //Busca crawler
-        $data = $this->getCurl($url);
-        
-        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)[;]/', $data, $matches);
-        
-        preg_match_all('/"sectionListRenderer":{"contents":\[(?P<artigo>[\s\S]*?)(,{"continuationItemRenderer")/', $matches['json'][0], $matches);
-       
-        if(isset($matches['artigo'][0])){
-            $dados = json_decode('['.$matches['artigo'][0].']');
-        }else{
-            $dados = [];
-        }
-        $return['content'] = [];
-        foreach ($dados as $key => $value) {
-            if($key < 11){
-                $result['noticia'] = "";
-                $result['img'] = "";
-                $result['link'] = "";
-                $result['data'] = "";
-
-                if(isset($value->itemSectionRenderer->contents[0]->videoRenderer)){
-
-                    $result['noticia'] = $value->itemSectionRenderer->contents[0]->videoRenderer->title->runs[0]->text;
-                    //Verifica se a noticia tem relação com as tags
-                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($result['noticia']) )){
-                    
-                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails)){
-                            if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url;
-                            }else{
-                                $result['img'] = "";
-                            }
-                        }
-            
-                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->videoId)){
-                            $result['url'] = 'https://www.youtube.com/watch?v='.$value->itemSectionRenderer->contents[0]->videoRenderer->videoId;
-                        }
-                        
-                        if(isset($result['url']) && $result['url'] != ""){
-                            $url_date = $result['url'];
-                            $data2 = $this->getCurl($url_date);
-                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
-                            $dados2 = json_encode($matches['json'][0]);
-                            $dados2 = str_replace('"','',$dados2);
-                            // echo '<pre>'; print_r($dados2); echo '</pre>';
-                            $result['data'] =  $this->formata_data(4,$dados2);
-                        }
-
-                        $return['content'][] = $result;
-            
-                    }
-                }
-            }else{
-                break;
-            }
-        }
+        $comunicaYoutube = new ComunicaYoutube;
+        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'JovemNerd')->get();
         
         // echo '<pre>'; print_r($return['content']); echo '</pre>';
         // die;
-        foreach($return['content'] as $item){
+        foreach($dados_busca as $item){
 
             //Validando os campos
             $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-jovemnerdyoutube')], [
@@ -4692,7 +3452,7 @@ class CronJobController extends Controller
 
         // Search only videos in a given channel, return an array of PHP objects
         $channel = Channels::where( 'hash',  '=', 'superoitoyoutube' )->firstOrFail();
-        $url = "";
+        $tag_title = "";
 
         $array_adicionados = [];
         $array_existentes = [];
@@ -4716,17 +3476,17 @@ class CronJobController extends Controller
                 if($count == 1){
                     $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
                     if($tag ){
-                        $url = $channel->url_crawler .str_replace(" ","+",$tag->title) ;
-                        // echo $url;
+                        $tag_title = $tag->title;
+                        // echo $tag_title;
                     }
                 }
                 $count++;
             }
-            // dd($url);
+            // dd($tag_title);
         }
-        // echo 'url:'.$url;
+        // echo 'url:'.$tag_title;
         
-        if($url == ""){
+        if($tag_title == ""){
             $retorno = [
                 'code'         => '003',
                 'adicionados'  => $array_adicionados, 
@@ -4739,71 +3499,12 @@ class CronJobController extends Controller
         }
         
         //Busca crawler
-        $data = $this->getCurl($url);
-        
-        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)[;]/', $data, $matches);
-        
-        preg_match_all('/"sectionListRenderer":{"contents":\[(?P<artigo>[\s\S]*?)(,{"continuationItemRenderer")/', $matches['json'][0], $matches);
-       
-        if(isset($matches['artigo'][0])){
-            $dados = json_decode('['.$matches['artigo'][0].']');
-        }else{
-            $dados = [];
-        }
-        $return['content'] = [];
-        foreach ($dados as $key => $value) {
-            if($key < 11){
-                $result['noticia'] = "";
-                $result['img'] = "";
-                $result['link'] = "";
-                $result['data'] = "";
-
-                if(isset($value->itemSectionRenderer->contents[0]->videoRenderer)){
-
-                    $result['noticia'] = $value->itemSectionRenderer->contents[0]->videoRenderer->title->runs[0]->text;
-                    //Verifica se a noticia tem relação com as tags
-                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($result['noticia']) )){
-                    
-                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails)){
-                            if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[3]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[2]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[1]->url;
-                            }else if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url)){
-                                $result['img'] = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails[0]->url;
-                            }else{
-                                $result['img'] = "";
-                            }
-                        }
-            
-                        if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->videoId)){
-                            $result['url'] = 'https://www.youtube.com/watch?v='.$value->itemSectionRenderer->contents[0]->videoRenderer->videoId;
-                        }
-                        
-                        if(isset($result['url']) && $result['url'] != ""){
-                            $url_date = $result['url'];
-                            $data2 = $this->getCurl($url_date);
-                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
-                            $dados2 = json_encode($matches['json'][0]);
-                            $dados2 = str_replace('"','',$dados2);
-                            // echo '<pre>'; print_r($dados2); echo '</pre>';
-                            $result['data'] =  $this->formata_data(4,$dados2);
-                        }
-
-                        $return['content'][] = $result;
-            
-                    }
-                }
-            }else{
-                break;
-            }
-        }
+        $comunicaYoutube = new ComunicaYoutube;
+        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/user')->prepare($tag_title, 'otaviouga')->get();
         
         // echo '<pre>'; print_r($return['content']); echo '</pre>';
         // die;
-        foreach($return['content'] as $item){
+        foreach($dados_busca as $item){
 
             //Validando os campos
             $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-superoitoyoutube')], [
@@ -5546,12 +4247,13 @@ class CronJobController extends Controller
         // 1 - 13 de julho de 2020 //JOVEM NERD SITE
         // 2 - 15.04.202111H51 //OMELETE  SITE
         // 3 - 2018-01-15T22:00:57Z //YOUTUBE
-        // 4 - 13 de out. de 2017 //YOUTUBE Site
+        // 4 - 13 de out. de 2017  //YOUTUBE Site
+        $mes = array(
+            'referencia' => array('/ de janeiro de /', '/ de fevereiro de /', '/ de março de /', '/ de abril de /', '/ de maio de /', '/ de junho de /', '/ de julho de /' , '/ de agosto de /', '/ de setembro de /', '/ de outubro de /', '/ de novembro de /', '/ de dezembro de /'),
+            'correcao' => array('/01/', '/02/', '/03/', '/04/', '/05/', '/06/', '/07/', '/08/', '/09/', '/10/', '/11/', '/12/')
+        );
+
         if($data != "" && $type == 1){
-            $mes = array(
-                'referencia' => array('/ de janeiro de /', '/ de fevereiro de /', '/ de março de /', '/ de abril de /', '/ de maio de /', '/ de junho de /', '/ de julho de /' , '/ de agosto de /', '/ de setembro de /', '/ de outubro de /', '/ de novembro de /', '/ de dezembro de /'),
-                'correcao' => array('/01/', '/02/', '/03/', '/04/', '/05/', '/06/', '/07/', '/08/', '/09/', '/10/', '/11/', '/12/')
-            );
             $data_final = preg_replace($mes['referencia'], $mes['correcao'], $data);
             $array = explode("/", $data_final);
             $data_final = $array[2].'-'.$array[1].'-'.$array[0];
@@ -5564,16 +4266,23 @@ class CronJobController extends Controller
             $data_final = substr(  $data, 0, -10);
             return $data_final ;
         }else if($data != "" && $type == 4){
-            $data = str_replace('Estreou em ','',$data);
-            $data = str_replace('Transmitido ao vivo em ','',$data);
-            $mes = array(
-                'referencia' => array('/ de jan. de /', '/ de fev. de /', '/ de mar. de /', '/ de abr. de /', '/ de mai. de /', '/ de jun. de /', '/ de jul. de /' , '/ de ago. de /', '/ de set. de /', '/ de out. de /', '/ de nov. de /', '/ de dez. de /'),
-                'correcao' => array('/01/', '/02/', '/03/', '/04/', '/05/', '/06/', '/07/', '/08/', '/09/', '/10/', '/11/', '/12/')
-            );
-            $data_final = preg_replace($mes['referencia'], $mes['correcao'], $data);
-            $array = explode("/", $data_final);
-            $data_final = $array[2].'-'.$array[1].'-'.$array[0];
-            return $data_final ;
+
+            try {
+                if (strpos($data, 'hoje') !== false) {
+                    return date('Y-m-d') ;
+                }
+    
+                $data = str_replace('Estreou em ','',$data);
+                $data = str_replace('Transmitido ao vivo em ','',$data);
+                
+                $data_final = preg_replace($mes['referencia'], $mes['correcao'], $data);
+                $array = explode("/", $data_final);
+                $data_final = $array[2].'-'.$array[1].'-'.$array[0];
+                return $data_final ;
+            } catch (Exception $e) {
+                return date('Y-m-d') ;
+            }
+           
         }
 
     }

@@ -34,8 +34,8 @@ class CronJobController extends Controller
     {      
         
         $arrayResults = [
-                            // 'Omelete_Site'       => $this->buscaNewsOmeleteSite(),
-                            // 'Jovem_Nerd_Site'    => $this->buscaNewsJovemNerdSite(),
+                            'Omelete_Site'       => $this->buscaNewsOmeleteSite(),
+                            'Jovem_Nerd_Site'    => $this->buscaNewsJovemNerdSite(),
                             'Super_Oito_Youtube' => $this->buscaNewsSuperOitoYoutube(),
                             'Jovem_Nerd_Youtube' => $this->buscaNewsJovemNerdYoutube(),
                             'Omelete_Youtube'    => $this->buscaNewsOmeleteYoutube(),
@@ -140,7 +140,7 @@ class CronJobController extends Controller
 
                 $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-thiagoromarizyoutube') )->first();
                             
-                if($news){
+                if($news && $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                     $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
                     
                     if(!$news_tags){
@@ -170,11 +170,20 @@ class CronJobController extends Controller
                     $link = $item['url'];
                 }
 
-                if($item['data']){
-                    $data = $item['data'];
-                }
+                
                 if($img != "" && $link != ""){
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        if(isset($item['url']) && $item['url'] != ""){
+                            $url_date = $item['url'];
+                            sleep(1);
+                            $data2 = $this->getCurl($url_date);
+                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
+                            $dados2 = json_encode($matches['json'][0]);
+                            $dados2 = str_replace('"','',$dados2);
+                            // echo '<pre>'; print_r($dados2); echo '</pre>';
+                            $data =  $this->formata_data(4, trim($dados2)); ;
+                        }
+
                         //Baixa imagem
                         $file =$img;
                         $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-thiagoromarizyoutube'.'.jpg';
@@ -299,7 +308,7 @@ class CronJobController extends Controller
 
                 $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-entremigasyoutube') )->first();
                             
-                if($news){
+                if($news && $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                     $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
                     
                     if(!$news_tags){
@@ -329,11 +338,20 @@ class CronJobController extends Controller
                     $link = $item['url'];
                 }
 
-                if($item['data']){
-                    $data = $item['data'];
-                }
+                
                 if($img != "" && $link != ""){
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        if(isset($item['url']) && $item['url'] != ""){
+                            $url_date = $item['url'];
+                            sleep(1);
+                            $data2 = $this->getCurl($url_date);
+                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
+                            $dados2 = json_encode($matches['json'][0]);
+                            $dados2 = str_replace('"','',$dados2);
+                            // echo '<pre>'; print_r($dados2); echo '</pre>';
+                            $data =  $this->formata_data(4, trim($dados2)); ;
+                        }
+
                         //Baixa imagem
                         $file =$img;
                         $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-entremigasyoutube'.'.jpg';
@@ -460,7 +478,7 @@ class CronJobController extends Controller
 
                 $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-miguellokiayoutube') )->first();
                             
-                if($news){
+                if($news && $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                     $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
                     
                     if(!$news_tags){
@@ -490,11 +508,20 @@ class CronJobController extends Controller
                     $link = $item['url'];
                 }
 
-                if($item['data']){
-                    $data = $item['data'];
-                }
+                
                 if($img != "" && $link != ""){
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        if(isset($item['url']) && $item['url'] != ""){
+                            $url_date = $item['url'];
+                            sleep(1);
+                            $data2 = $this->getCurl($url_date);
+                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
+                            $dados2 = json_encode($matches['json'][0]);
+                            $dados2 = str_replace('"','',$dados2);
+                            // echo '<pre>'; print_r($dados2); echo '</pre>';
+                            $data =  $this->formata_data(4, trim($dados2)); ;
+                        }
+
                         //Baixa imagem
                         $file =$img;
                         $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-miguellokiayoutube'.'.jpg';
@@ -621,7 +648,7 @@ class CronJobController extends Controller
 
                 $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-gustavocunhayoutube') )->first();
                             
-                if($news){
+                if($news && $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                     $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
                     
                     if(!$news_tags){
@@ -651,11 +678,20 @@ class CronJobController extends Controller
                     $link = $item['url'];
                 }
 
-                if($item['data']){
-                    $data = $item['data'];
-                }
+                
                 if($img != "" && $link != ""){
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        if(isset($item['url']) && $item['url'] != ""){
+                            $url_date = $item['url'];
+                            sleep(1);
+                            $data2 = $this->getCurl($url_date);
+                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
+                            $dados2 = json_encode($matches['json'][0]);
+                            $dados2 = str_replace('"','',$dados2);
+                            // echo '<pre>'; print_r($dados2); echo '</pre>';
+                            $data =  $this->formata_data(4, trim($dados2)); ;
+                        }
+
                         //Baixa imagem
                         $file =$img;
                         $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-gustavocunhayoutube'.'.jpg';
@@ -782,7 +818,7 @@ class CronJobController extends Controller
 
                 $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-nerdnewsyoutube') )->first();
                             
-                if($news){
+                if($news && $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                     $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
                     
                     if(!$news_tags){
@@ -812,11 +848,20 @@ class CronJobController extends Controller
                     $link = $item['url'];
                 }
 
-                if($item['data']){
-                    $data = $item['data'];
-                }
+                
                 if($img != "" && $link != ""){
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        if(isset($item['url']) && $item['url'] != ""){
+                            $url_date = $item['url'];
+                            sleep(1);
+                            $data2 = $this->getCurl($url_date);
+                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
+                            $dados2 = json_encode($matches['json'][0]);
+                            $dados2 = str_replace('"','',$dados2);
+                            // echo '<pre>'; print_r($dados2); echo '</pre>';
+                            $data =  $this->formata_data(4, trim($dados2)); ;
+                        }
+
                         //Baixa imagem
                         $file =$img;
                         $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-nerdnewsyoutube'.'.jpg';
@@ -943,7 +988,7 @@ class CronJobController extends Controller
 
                 $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-sessaonerdyoutube') )->first();
                             
-                if($news){
+                if($news && $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                     $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
                     
                     if(!$news_tags){
@@ -973,11 +1018,20 @@ class CronJobController extends Controller
                     $link = $item['url'];
                 }
 
-                if($item['data']){
-                    $data = $item['data'];
-                }
+                
                 if($img != "" && $link != ""){
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        if(isset($item['url']) && $item['url'] != ""){
+                            $url_date = $item['url'];
+                            sleep(1);
+                            $data2 = $this->getCurl($url_date);
+                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
+                            $dados2 = json_encode($matches['json'][0]);
+                            $dados2 = str_replace('"','',$dados2);
+                            // echo '<pre>'; print_r($dados2); echo '</pre>';
+                            $data =  $this->formata_data(4, trim($dados2)); ;
+                        }
+
                         //Baixa imagem
                         $file =$img;
                         $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-sessaonerdyoutube'.'.jpg';
@@ -1104,7 +1158,7 @@ class CronJobController extends Controller
 
                 $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-arenanerdyoutube') )->first();
                             
-                if($news){
+                if($news && $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                     $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
                     
                     if(!$news_tags){
@@ -1134,11 +1188,20 @@ class CronJobController extends Controller
                     $link = $item['url'];
                 }
 
-                if($item['data']){
-                    $data = $item['data'];
-                }
+                
                 if($img != "" && $link != ""){
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        if(isset($item['url']) && $item['url'] != ""){
+                            $url_date = $item['url'];
+                            sleep(1);
+                            $data2 = $this->getCurl($url_date);
+                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
+                            $dados2 = json_encode($matches['json'][0]);
+                            $dados2 = str_replace('"','',$dados2);
+                            // echo '<pre>'; print_r($dados2); echo '</pre>';
+                            $data =  $this->formata_data(4, trim($dados2)); ;
+                        }
+
                         //Baixa imagem
                         $file =$img;
                         $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-arenanerdyoutube'.'.jpg';
@@ -1265,7 +1328,7 @@ class CronJobController extends Controller
 
                 $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-caldeiraonerdyoutube') )->first();
                             
-                if($news){
+                if($news && $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                     $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
                     
                     if(!$news_tags){
@@ -1295,11 +1358,20 @@ class CronJobController extends Controller
                     $link = $item['url'];
                 }
 
-                if($item['data']){
-                    $data = $item['data'];
-                }
+                
                 if($img != "" && $link != ""){
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        if(isset($item['url']) && $item['url'] != ""){
+                            $url_date = $item['url'];
+                            sleep(1);
+                            $data2 = $this->getCurl($url_date);
+                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
+                            $dados2 = json_encode($matches['json'][0]);
+                            $dados2 = str_replace('"','',$dados2);
+                            // echo '<pre>'; print_r($dados2); echo '</pre>';
+                            $data =  $this->formata_data(4, trim($dados2)); ;
+                        }
+
                         //Baixa imagem
                         $file =$img;
                         $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-caldeiraonerdyoutube'.'.jpg';
@@ -1426,7 +1498,7 @@ class CronJobController extends Controller
 
                 $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-nerdexperienceyoutube') )->first();
                             
-                if($news){
+                if($news && $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                     $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
                     
                     if(!$news_tags){
@@ -1456,11 +1528,20 @@ class CronJobController extends Controller
                     $link = $item['url'];
                 }
 
-                if($item['data']){
-                    $data = $item['data'];
-                }
+                
                 if($img != "" && $link != ""){
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        if(isset($item['url']) && $item['url'] != ""){
+                            $url_date = $item['url'];
+                            sleep(1);
+                            $data2 = $this->getCurl($url_date);
+                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
+                            $dados2 = json_encode($matches['json'][0]);
+                            $dados2 = str_replace('"','',$dados2);
+                            // echo '<pre>'; print_r($dados2); echo '</pre>';
+                            $data =  $this->formata_data(4, trim($dados2)); ;
+                        }
+
                         //Baixa imagem
                         $file =$img;
                         $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-nerdexperienceyoutube'.'.jpg';
@@ -1587,7 +1668,7 @@ class CronJobController extends Controller
 
                 $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-crispandayoutube') )->first();
                             
-                if($news){
+                if($news && $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                     $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
                     
                     if(!$news_tags){
@@ -1617,11 +1698,20 @@ class CronJobController extends Controller
                     $link = $item['url'];
                 }
 
-                if($item['data']){
-                    $data = $item['data'];
-                }
+                
                 if($img != "" && $link != ""){
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        if(isset($item['url']) && $item['url'] != ""){
+                            $url_date = $item['url'];
+                            sleep(1);
+                            $data2 = $this->getCurl($url_date);
+                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
+                            $dados2 = json_encode($matches['json'][0]);
+                            $dados2 = str_replace('"','',$dados2);
+                            // echo '<pre>'; print_r($dados2); echo '</pre>';
+                            $data =  $this->formata_data(4, trim($dados2)); ;
+                        }
+
                         //Baixa imagem
                         $file =$img;
                         $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-crispandayoutube'.'.jpg';
@@ -1748,7 +1838,7 @@ class CronJobController extends Controller
 
                 $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-nerdrabugentoyoutube') )->first();
                             
-                if($news){
+                if($news && $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                     $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
                     
                     if(!$news_tags){
@@ -1778,11 +1868,20 @@ class CronJobController extends Controller
                     $link = $item['url'];
                 }
 
-                if($item['data']){
-                    $data = $item['data'];
-                }
+                
                 if($img != "" && $link != ""){
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        if(isset($item['url']) && $item['url'] != ""){
+                            $url_date = $item['url'];
+                            sleep(1);
+                            $data2 = $this->getCurl($url_date);
+                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
+                            $dados2 = json_encode($matches['json'][0]);
+                            $dados2 = str_replace('"','',$dados2);
+                            // echo '<pre>'; print_r($dados2); echo '</pre>';
+                            $data =  $this->formata_data(4, trim($dados2)); ;
+                        }
+
                         //Baixa imagem
                         $file =$img;
                         $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-nerdrabugentoyoutube'.'.jpg';
@@ -1909,7 +2008,7 @@ class CronJobController extends Controller
 
                 $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-operacaocinemayoutube') )->first();
                             
-                if($news){
+                if($news && $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                     $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
                     
                     if(!$news_tags){
@@ -1939,11 +2038,20 @@ class CronJobController extends Controller
                     $link = $item['url'];
                 }
 
-                if($item['data']){
-                    $data = $item['data'];
-                }
+                
                 if($img != "" && $link != ""){
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        if(isset($item['url']) && $item['url'] != ""){
+                            $url_date = $item['url'];
+                            sleep(1);
+                            $data2 = $this->getCurl($url_date);
+                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
+                            $dados2 = json_encode($matches['json'][0]);
+                            $dados2 = str_replace('"','',$dados2);
+                            // echo '<pre>'; print_r($dados2); echo '</pre>';
+                            $data =  $this->formata_data(4, trim($dados2)); ;
+                        }
+
                         //Baixa imagem
                         $file =$img;
                         $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-operacaocinemayoutube'.'.jpg';
@@ -2070,7 +2178,7 @@ class CronJobController extends Controller
 
                 $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-quatrocoisasyoutube') )->first();
                             
-                if($news){
+                if($news && $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                     $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
                     
                     if(!$news_tags){
@@ -2100,11 +2208,20 @@ class CronJobController extends Controller
                     $link = $item['url'];
                 }
 
-                if($item['data']){
-                    $data = $item['data'];
-                }
+                
                 if($img != "" && $link != ""){
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        if(isset($item['url']) && $item['url'] != ""){
+                            $url_date = $item['url'];
+                            sleep(1);
+                            $data2 = $this->getCurl($url_date);
+                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
+                            $dados2 = json_encode($matches['json'][0]);
+                            $dados2 = str_replace('"','',$dados2);
+                            // echo '<pre>'; print_r($dados2); echo '</pre>';
+                            $data =  $this->formata_data(4, trim($dados2)); ;
+                        }
+
                         //Baixa imagem
                         $file =$img;
                         $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-quatrocoisasyoutube'.'.jpg';
@@ -2231,7 +2348,7 @@ class CronJobController extends Controller
 
                 $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-cavernadocarusoyoutube') )->first();
                             
-                if($news){
+                if($news && $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                     $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
                     
                     if(!$news_tags){
@@ -2261,11 +2378,20 @@ class CronJobController extends Controller
                     $link = $item['url'];
                 }
 
-                if($item['data']){
-                    $data = $item['data'];
-                }
+                
                 if($img != "" && $link != ""){
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        if(isset($item['url']) && $item['url'] != ""){
+                            $url_date = $item['url'];
+                            sleep(1);
+                            $data2 = $this->getCurl($url_date);
+                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
+                            $dados2 = json_encode($matches['json'][0]);
+                            $dados2 = str_replace('"','',$dados2);
+                            // echo '<pre>'; print_r($dados2); echo '</pre>';
+                            $data =  $this->formata_data(4, trim($dados2)); ;
+                        }
+
                         //Baixa imagem
                         $file =$img;
                         $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-cavernadocarusoyoutube'.'.jpg';
@@ -2392,7 +2518,7 @@ class CronJobController extends Controller
 
                 $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-caiqueizotonyoutube') )->first();
                             
-                if($news){
+                if($news && $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                     $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
                     
                     if(!$news_tags){
@@ -2422,11 +2548,20 @@ class CronJobController extends Controller
                     $link = $item['url'];
                 }
 
-                if($item['data']){
-                    $data = $item['data'];
-                }
+                
                 if($img != "" && $link != ""){
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        if(isset($item['url']) && $item['url'] != ""){
+                            $url_date = $item['url'];
+                            sleep(1);
+                            $data2 = $this->getCurl($url_date);
+                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
+                            $dados2 = json_encode($matches['json'][0]);
+                            $dados2 = str_replace('"','',$dados2);
+                            // echo '<pre>'; print_r($dados2); echo '</pre>';
+                            $data =  $this->formata_data(4, trim($dados2)); ;
+                        }
+
                         //Baixa imagem
                         $file =$img;
                         $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-caiqueizotonyoutube'.'.jpg';
@@ -2553,7 +2688,7 @@ class CronJobController extends Controller
 
                 $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-cinemacomrapadurayoutube') )->first();
                             
-                if($news){
+                if($news && $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                     $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
                     
                     if(!$news_tags){
@@ -2583,11 +2718,20 @@ class CronJobController extends Controller
                     $link = $item['url'];
                 }
 
-                if($item['data']){
-                    $data = $item['data'];
-                }
+                
                 if($img != "" && $link != ""){
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        if(isset($item['url']) && $item['url'] != ""){
+                            $url_date = $item['url'];
+                            sleep(1);
+                            $data2 = $this->getCurl($url_date);
+                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
+                            $dados2 = json_encode($matches['json'][0]);
+                            $dados2 = str_replace('"','',$dados2);
+                            // echo '<pre>'; print_r($dados2); echo '</pre>';
+                            $data =  $this->formata_data(4, trim($dados2)); ;
+                        }
+
                         //Baixa imagem
                         $file =$img;
                         $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-cinemacomrapadurayoutube'.'.jpg';
@@ -2714,7 +2858,7 @@ class CronJobController extends Controller
 
                 $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-nerdlandyoutube') )->first();
                             
-                if($news){
+                if($news && $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                     $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
                     
                     if(!$news_tags){
@@ -2744,11 +2888,20 @@ class CronJobController extends Controller
                     $link = $item['url'];
                 }
 
-                if($item['data']){
-                    $data = $item['data'];
-                }
+                
                 if($img != "" && $link != ""){
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        if(isset($item['url']) && $item['url'] != ""){
+                            $url_date = $item['url'];
+                            sleep(1);
+                            $data2 = $this->getCurl($url_date);
+                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
+                            $dados2 = json_encode($matches['json'][0]);
+                            $dados2 = str_replace('"','',$dados2);
+                            // echo '<pre>'; print_r($dados2); echo '</pre>';
+                            $data =  $this->formata_data(4, trim($dados2)); ;
+                        }
+
                         //Baixa imagem
                         $file =$img;
                         $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-nerdlandyoutube'.'.jpg';
@@ -2875,7 +3028,7 @@ class CronJobController extends Controller
 
                 $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-einerdyoutube') )->first();
                             
-                if($news){
+                if($news && $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                     $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
                     
                     if(!$news_tags){
@@ -2905,11 +3058,20 @@ class CronJobController extends Controller
                     $link = $item['url'];
                 }
 
-                if($item['data']){
-                    $data = $item['data'];
-                }
+                
                 if($img != "" && $link != ""){
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        if(isset($item['url']) && $item['url'] != ""){
+                            $url_date = $item['url'];
+                            sleep(1);
+                            $data2 = $this->getCurl($url_date);
+                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
+                            $dados2 = json_encode($matches['json'][0]);
+                            $dados2 = str_replace('"','',$dados2);
+                            // echo '<pre>'; print_r($dados2); echo '</pre>';
+                            $data =  $this->formata_data(4, trim($dados2)); ;
+                        }
+
                         //Baixa imagem
                         $file =$img;
                         $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-einerdyoutube'.'.jpg';
@@ -3036,7 +3198,7 @@ class CronJobController extends Controller
 
                 $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-pipocandoyoutube') )->first();
                             
-                if($news){
+                if($news && $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                     $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
                     
                     if(!$news_tags){
@@ -3066,11 +3228,20 @@ class CronJobController extends Controller
                     $link = $item['url'];
                 }
 
-                if($item['data']){
-                    $data = $item['data'];
-                }
+                
                 if($img != "" && $link != ""){
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        if(isset($item['url']) && $item['url'] != ""){
+                            $url_date = $item['url'];
+                            sleep(1);
+                            $data2 = $this->getCurl($url_date);
+                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
+                            $dados2 = json_encode($matches['json'][0]);
+                            $dados2 = str_replace('"','',$dados2);
+                            // echo '<pre>'; print_r($dados2); echo '</pre>';
+                            $data =  $this->formata_data(4, trim($dados2)); ;
+                        }
+
                         //Baixa imagem
                         $file =$img;
                         $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-pipocandoyoutube'.'.jpg';
@@ -3197,7 +3368,7 @@ class CronJobController extends Controller
 
                 $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-omeleteyoutube') )->first();
                             
-                if($news){
+                if($news && $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                     $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
                     
                     if(!$news_tags){
@@ -3227,11 +3398,20 @@ class CronJobController extends Controller
                     $link = $item['url'];
                 }
 
-                if($item['data']){
-                    $data = $item['data'];
-                }
+                
                 if($img != "" && $link != ""){
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        if(isset($item['url']) && $item['url'] != ""){
+                            $url_date = $item['url'];
+                            sleep(1);
+                            $data2 = $this->getCurl($url_date);
+                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
+                            $dados2 = json_encode($matches['json'][0]);
+                            $dados2 = str_replace('"','',$dados2);
+                            // echo '<pre>'; print_r($dados2); echo '</pre>';
+                            $data =  $this->formata_data(4, trim($dados2)); ;
+                        }
+
                         //Baixa imagem
                         $file =$img;
                         $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-omeleteyoutube'.'.jpg';
@@ -3358,7 +3538,7 @@ class CronJobController extends Controller
 
                 $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-jovemnerdyoutube') )->first();
                             
-                if($news){
+                if($news && $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                     $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
                     
                     if(!$news_tags){
@@ -3388,11 +3568,22 @@ class CronJobController extends Controller
                     $link = $item['url'];
                 }
 
-                if($item['data']){
-                    $data = $item['data'];
-                }
                 if($img != "" && $link != ""){
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        if(isset($item['url']) && $item['url'] != ""){
+                            $url_date = $item['url'];
+                           
+                            $data2 = $this->getCurl($url_date);
+                            // echo $this->getUserIP();
+                            sleep(1);
+                            // echo '<pre>'; print_r($data2); echo '</pre>';
+                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
+                            $dados2 = json_encode($matches['json'][0]);
+                            $dados2 = str_replace('"','',$dados2);
+                            $data =  $this->formata_data(4, trim($dados2));
+                        }
+                        // dd("");
+
                         //Baixa imagem
                         $file =$img;
                         $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-jovemnerdyoutube'.'.jpg';
@@ -3519,7 +3710,7 @@ class CronJobController extends Controller
 
                 $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-superoitoyoutube') )->first();
                             
-                if($news){
+                if($news && $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                     $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
                     
                     if(!$news_tags){
@@ -3549,11 +3740,21 @@ class CronJobController extends Controller
                     $link = $item['url'];
                 }
 
-                if($item['data']){
-                    $data = $item['data'];
-                }
+                
                 if($img != "" && $link != ""){
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        if(isset($item['url']) && $item['url'] != ""){
+                            $url_date = $item['url'];
+                            sleep(1);
+                            // echo $item['noticia'];
+                            $data2 = $this->getCurl($url_date);
+                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
+                            $dados2 = json_encode($matches['json'][0]);
+                            $dados2 = str_replace('"','',$dados2);
+                            // echo '<pre>'; print_r($dados2); echo '</pre>';
+                            $data =  $this->formata_data(4, trim($dados2)); ;
+                        }
+
                         //Baixa imagem
                         $file =$img;
                         $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-superoitoyoutube'.'.jpg';
@@ -3688,7 +3889,7 @@ class CronJobController extends Controller
 
                 $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-jovemnerdsite') )->first();
                             
-                if($news){
+                if($news && $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                     $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
                     
                     if(!$news_tags){
@@ -3719,7 +3920,7 @@ class CronJobController extends Controller
                 }
 
                 if($item['data']){
-                    $data = $item['data'];
+                    $data =  $this->formata_data(1, trim($item['data'])); 
                 }
                 if($img != "" && $link != ""){
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
@@ -3739,7 +3940,7 @@ class CronJobController extends Controller
                         $insert->status = "show";
                         $insert->order = 0;
                         
-                        $insert->data = $this->formata_data(1, trim($data));
+                        $insert->data = $data;
                         $condition = $insert->save();
                         if($condition){
                             
@@ -3865,7 +4066,7 @@ class CronJobController extends Controller
 
                 $news = News::where( 'hash',  '=', Str::slug($item['noticia'][0].'-omeletesite') )->first();
                             
-                if($news){
+                if($news && $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia'][0]) )){
                     $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
                     
                     if(!$news_tags){
@@ -4133,6 +4334,7 @@ class CronJobController extends Controller
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_USERAGENT, $config['useragent']);
+        curl_setopt($ch, CURLOPT_COOKIEFILE, '/tmp/cookiefile');
         // curl_setopt($ch, CURLOPT_PROXY, $proxy); // $proxy is ip of proxy server
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
@@ -4243,13 +4445,18 @@ class CronJobController extends Controller
 
     public function formata_data( $type, $data )
     {
-
+        
         // 1 - 13 de julho de 2020 //JOVEM NERD SITE
         // 2 - 15.04.202111H51 //OMELETE  SITE
         // 3 - 2018-01-15T22:00:57Z //YOUTUBE
         // 4 - 13 de out. de 2017  //YOUTUBE Site
         $mes = array(
             'referencia' => array('/ de janeiro de /', '/ de fevereiro de /', '/ de março de /', '/ de abril de /', '/ de maio de /', '/ de junho de /', '/ de julho de /' , '/ de agosto de /', '/ de setembro de /', '/ de outubro de /', '/ de novembro de /', '/ de dezembro de /'),
+            'correcao' => array('/01/', '/02/', '/03/', '/04/', '/05/', '/06/', '/07/', '/08/', '/09/', '/10/', '/11/', '/12/')
+        );
+
+        $mes2 = array(
+            'referencia' => array('/ de jan. de /', '/ de fev. de /', '/ de mar. de /', '/ de abr. de /', '/ de mai. de /', '/ de jun. de /', '/ de jul. de /' , '/ de ago. de /', '/ de set. de /', '/ de out. de /', '/ de nov. de /', '/ de dez. de /'),
             'correcao' => array('/01/', '/02/', '/03/', '/04/', '/05/', '/06/', '/07/', '/08/', '/09/', '/10/', '/11/', '/12/')
         );
 
@@ -4274,9 +4481,11 @@ class CronJobController extends Controller
     
                 $data = str_replace('Estreou em ','',$data);
                 $data = str_replace('Transmitido ao vivo em ','',$data);
-                
+              
                 $data_final = preg_replace($mes['referencia'], $mes['correcao'], $data);
+                $data_final = preg_replace($mes2['referencia'], $mes2['correcao'], $data_final);
                 $array = explode("/", $data_final);
+              
                 $data_final = $array[2].'-'.$array[1].'-'.$array[0];
                 return $data_final ;
             } catch (Exception $e) {
@@ -4287,41 +4496,34 @@ class CronJobController extends Controller
 
     }
 
-    public function validaNoticia($search, $title){
-        $search = $this->removeArtigosPreposicoes($search);
-        
-        // echo '<br/>';
-        // echo  $search;
-        // echo '<br/>';
-        // echo  $title;
-        // echo '<br/>';
-        // echo '<br/>';
-      
-        // $search = 'Falcão e O Soldado Invernal';
-       
-        // $title = "Trailer The Soldado Falcon and the Winter Soldier - Sem aposentadoria";
+    function validaNoticia($search, $title, $porcentagemMatch = 65){
+
+        $search = strtolower($this->removerAcentos($this->removeArtigosPreposicoes($search)));
+        $title = strtolower($this->removerAcentos($this->removeArtigosPreposicoes($title)));
         $palavras = explode(" ", $search);
-        
+        $palavrasTitle  = explode(" ", $title);
+    
         $matches = 0;
-        foreach ($palavras as $key => $value) {
-            // echo  trim($value);
-            // echo $title;
-            // echo '<br/>';
-            $value = ' '.$value .' ';
-            if(preg_match("/{$value}/i", $title)) {
-                // echo '------------true--------------------';
-                $matches = $matches + 1;
+        $similaridadeGeral = 0;
+        foreach ($palavras as $key => $palavraSearch) {
+            foreach ($palavrasTitle as $key2 => $palavraTitle) {
+                similar_text($palavraSearch, $palavraTitle, $similaridade);
+    
+                if($similaridade > 80) {
+                    $matches++; 
+                    $similaridadeGeral += $similaridade;
+                }
             }
-            // echo '<br/>';
         }
-        if( $matches > 0){
+    
+        if( $similaridadeGeral/count($palavras) > $porcentagemMatch){
             return true;
         }else{
             return false;
         }
     }
 
-    public function removeArtigosPreposicoes($frase){
+    function removeArtigosPreposicoes($frase){
         
         $artigos = array(
             "o",
@@ -4335,6 +4537,7 @@ class CronJobController extends Controller
             "umas",
             "ao",
             "à",
+            "de",
             "às",
             "da",
             "das",
@@ -4365,7 +4568,7 @@ class CronJobController extends Controller
             "dela",
             "deles",
             "delas",
-
+    
             "after",
             "at",
             "before",
@@ -4374,13 +4577,13 @@ class CronJobController extends Controller
             "in",
             "on",
             "to",
-            "the",
+            // "the",
             "of",
             "with",
             "without"
-
+    
         );
-
+    
         foreach($artigos as $artigo)
         {
             //no meio da frase
@@ -4390,7 +4593,34 @@ class CronJobController extends Controller
             //no final da linha
             $frase = preg_replace("/\s$artigo.$/i", '.', $frase);
         }
+        
         return $frase;
     }
-  
+    
+    function removerAcentos($texto){
+        return preg_replace(array("/(á|à|ã|â|ä)/","/(Á|À|Ã|Â|Ä)/","/(é|è|ê|ë)/","/(É|È|Ê|Ë)/","/(í|ì|î|ï)/","/(Í|Ì|Î|Ï)/","/(ó|ò|õ|ô|ö)/","/(Ó|Ò|Õ|Ô|Ö)/","/(ú|ù|û|ü)/","/(Ú|Ù|Û|Ü)/","/(ñ)/","/(Ñ)/", "/(ç)/", "/(Ç)/"),explode(" ","a A e E i I o O u U n N c C"),$texto);
+    }
+
+    function getUserIP() {
+        $ipaddress = '';
+        if (isset($_SERVER['HTTP_CLIENT_IP']))
+            $ipaddress = $_SERVER['HTTP_CLIENT_IP'];
+        else if(isset($_SERVER['HTTP_X_FORWARDED_FOR']))
+            $ipaddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        else if(isset($_SERVER['HTTP_X_FORWARDED']))
+            $ipaddress = $_SERVER['HTTP_X_FORWARDED'];
+        else if(isset($_SERVER['HTTP_X_CLUSTER_CLIENT_IP']))
+            $ipaddress = $_SERVER['HTTP_X_CLUSTER_CLIENT_IP'];
+        else if(isset($_SERVER['HTTP_FORWARDED_FOR']))
+            $ipaddress = $_SERVER['HTTP_FORWARDED_FOR'];
+        else if(isset($_SERVER['HTTP_FORWARDED']))
+            $ipaddress = $_SERVER['HTTP_FORWARDED'];
+        else if(isset($_SERVER['REMOTE_ADDR']))
+            $ipaddress = $_SERVER['REMOTE_ADDR'];
+        else
+            $ipaddress = 'UNKNOWN';
+        return $ipaddress;
+    }
+
+   
 }

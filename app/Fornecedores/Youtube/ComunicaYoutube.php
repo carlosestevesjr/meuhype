@@ -50,18 +50,22 @@ class ComunicaYoutube {
         return $this;
     }
 
-    public function get($quantidade = 20) {
+    public function get($quantidade = 15) {
        
         $data = $this->getCurl(sprintf($this->base_url, $this->canal, $this->tag));
-        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)[;]/', $data, $matches);
+        sleep(1);
+        // var_dump($data); 
+        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)(;<)/', $data, $matches);
+        // echo($matches['json'][0]); 
         
+    
+        // exit;
         if(isset($matches['json'][0])){
             $dados = json_decode($matches['json'][0]);
         }else{
             $dados = [];
         }
-        
-        
+       
         foreach ($dados->contents->twoColumnBrowseResultsRenderer->tabs as $key1 => $item1) {
             if(isset($item1->expandableTabRenderer) ){
                 $dados = $item1->expandableTabRenderer->content->sectionListRenderer->contents;
@@ -79,7 +83,6 @@ class ComunicaYoutube {
             $result['noticia'] = "";
             $result['img'] = "";
             $result['link'] = "";
-            $result['data'] = "";
 
             if(isset($value->itemSectionRenderer->contents[0]->videoRenderer)){
 
@@ -93,16 +96,6 @@ class ComunicaYoutube {
 
                 if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->videoId)){
                     $result['url'] = sprintf(self::BUSCA_VIDEO, $value->itemSectionRenderer->contents[0]->videoRenderer->videoId);
-                }
-                
-                if(isset($result['url']) && $result['url'] != ""){
-                    $url_date = $result['url'];
-                    $data2 = $this->getCurl($url_date);
-                    preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
-                    $dados2 = json_encode($matches['json'][0]);
-                    $dados2 = str_replace('"','',$dados2);
-                    // echo '<pre>'; print_r($dados2); echo '</pre>';
-                    $result['data'] =  $dados2;
                 }
 
                 $return['content'][] = $result;
@@ -152,6 +145,7 @@ class ComunicaYoutube {
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_USERAGENT, $config['useragent']);
+        curl_setopt($ch, CURLOPT_COOKIEJAR, '/tmp/cookiefile');
         // curl_setopt($ch, CURLOPT_PROXY, $proxy); // $proxy is ip of proxy server
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);

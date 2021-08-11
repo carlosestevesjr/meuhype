@@ -174,55 +174,111 @@ class NewsController extends Controller
 
     public function listaNewsTagUser(Request $request)
     {
-       
+        $lista =DB::table('news')
+        ->join('channels', 'news.channels_id', '=', 'channels.id')
+        ->select('news.*', 'channels.name as channel', 'channels.image as channel_logo', 'channels.type as channel_type');
+        $news_tags = DB::table('news_tags')->where('tags_id', '=', $request->id)->get();
         if($request->token !== "false"){
 
             $user = DB::table('users')->where('api_token', '=',$request->token)->first();
             if($user){
-                $array_channles = [];
-
+               
                 $user_channels = DB::table('user_channels')->where('users_id', '=', $user->id)->get();
                 $user_tags = DB::table('user_tags')->where('users_id', '=', $user->id)->where('tags_id', '=', $request->id)->get();
-            
-                $lista =DB::table('news')
-                ->join('channels', 'news.channels_id', '=', 'channels.id')
-                ->select('news.*', 'channels.name as channel', 'channels.image as channel_logo', 'channels.type as channel_type');
-                
-                if(count($user_channels) > 0 ){
-                    $lista->where(function($query) use ($user_channels) {
+               
+                //Se o usuário selecionar Tags e não canais
+                if(count($user_channels) <= 0 ){
+                  
+                    $lista->where(function($query) use ($news_tags) {
+                        
+                        //Filtra por tags
+                        $array_news = [];
+                        foreach($news_tags as $key => $item) {
+                            $array_news[$key] = $item->news_id;
+                        }
+                        
+                        $query->whereIn('news.id', $array_news);
+
+                    });
                     
+                    $lista = $lista->where('news.status', '=', 'show') 
+                    ->orderBy('data', 'desc')->paginate(15);
+                    $array = [];
+                    foreach($lista->items() as $key => $item) {
+
+                        $array[$key]['new'] = $item;
+                        $new = News::find($item->id);
+                    
+                        foreach( $new->tags as $tagskey => $tags) {
+                            $array[$key]['tags'][$tagskey] = $tags;
+                        }
+                    }
+
+                    $lista = [
+                        'data' =>  $array, 
+                    ];
+
+                    $retorno =  [
+                        'code'  => '000',
+                        'content' => [
+                                        'dados' =>  $lista, 
+                                    ],
+                        'date'         => date("Y-m-d"),
+                        'hour'         => date("H:i:s"),
+                    ];
+                    return response()->json($retorno , 200);
+
+                }else {
+                   
+                    $lista->where(function($query) use ($user_channels) {
+                        $array_channles = [];
                         //Filtra por canais
                         foreach($user_channels as $key => $item) {
                             $array_channles[$key] = $item->channels_id;
                         }
                         $query->whereIn('channels.id', $array_channles);
                     });
-                }
 
-                if(count($user_tags) > 0 ){
-                    $lista->where(function($query) use ($user_tags) {
+                    $lista->where(function($query) use ( $news_tags, $request) {
                         //Filtra por tags
                         $array_tags = [];
                         $array_news = [];
-
-                        foreach($user_tags as $key => $item) {
-                            $news = DB::table('news_tags')->where('tags_id', '=', $item->tags_id)->get();
-                            // dd($news );
-                            if(count($news) > 0 ){
-                                foreach($news as $key => $new) {
-                                    $array_news[$key] = $new->news_id;
-                                    $query->orWhere('news.id','=', $new->news_id);
-                                }
-                            }
+                        // dd($news_tags);
+                        foreach($news_tags as $key => $item) {
+                            $array_news[$key] = $item->news_id;
+                            $query->orWhere('news.id','=', $item->news_id);
                         }
+                        // $query->whereIn('news.id', $array_news);
                     });
-                }
-                
-                $lista->where('news.status', '=', 'show') 
-                ->orderBy('data', 'desc');
 
-                $lista = $lista->paginate(15);
-              
+                    $lista = $lista->where('news.status', '=', 'show') 
+                    ->orderBy('data', 'desc')->paginate(15);
+                    $array = [];
+                    foreach($lista->items() as $key => $item) {
+
+                        $array[$key]['new'] = $item;
+                        $new = News::find($item->id);
+                    
+                        foreach( $new->tags as $tagskey => $tags) {
+                            $array[$key]['tags'][$tagskey] = $tags;
+                        }
+                    }
+
+                    $lista = [
+                        'data' =>  $array, 
+                    ];
+
+                    $retorno =  [
+                        'code'  => '000',
+                        'content' => [
+                                        'dados' =>  $lista, 
+                                    ],
+                        'date'         => date("Y-m-d"),
+                        'hour'         => date("H:i:s"),
+                    ];
+                    return response()->json($retorno , 200);
+                }
+            
             }else{
                 $retorno =  [
                     'code'  => '999',
@@ -236,41 +292,36 @@ class NewsController extends Controller
             }
 
         }else{
-            $lista =DB::table('news')
-                ->join('channels', 'news.channels_id', '=', 'channels.id')
-                ->select('news.*', 'channels.name as channel', 'channels.image as channel_logo', 'channels.type as channel_type')
-                ->where('news.status', '=', 'show') ;
+
+            $lista->where(function($query) use ($news_tags) {
+                        
+                //Filtra por tags
+                $array_news = [];
+                foreach($news_tags as $key => $item) {
+                    $array_news[$key] = $item->news_id;
+                }
                 
-                // $lista->where(function($query) use ($user_channels) {
-                    
-                //     //Filtra por canais
-                //     foreach($user_channels as $key => $item) {
-                //         $array_channles[$key] = $item->channels_id;
-                //     }
-                //     $query->whereIn('channels.id', $array_channles);
-                // });
+                $query->whereIn('news.id', $array_news);
 
-                $lista->orderBy('data', 'desc')
-                ->paginate(15);
+            });
+            
+            $lista = $lista->where('news.status', '=', 'show') 
+            ->orderBy('data', 'desc')->paginate(15);
+            $array = [];
+            foreach($lista->items() as $key => $item) {
 
-        }
-
-        $array = [];
-        foreach($lista->items() as $key => $item) {
-
-            $array[$key]['new'] = $item;
-            $new = News::find($item->id);
-        
-            foreach( $new->tags as $tagskey => $tags) {
-                $array[$key]['tags'][$tagskey] = $tags;
+                $array[$key]['new'] = $item;
+                $new = News::find($item->id);
+            
+                foreach( $new->tags as $tagskey => $tags) {
+                    $array[$key]['tags'][$tagskey] = $tags;
+                }
             }
-        }
-      
-        $lista = [
-            'data' =>  $array, 
-        ];
-        
-        if($lista){
+
+            $lista = [
+                'data' =>  $array, 
+            ];
+
             $retorno =  [
                 'code'  => '000',
                 'content' => [
@@ -279,72 +330,123 @@ class NewsController extends Controller
                 'date'         => date("Y-m-d"),
                 'hour'         => date("H:i:s"),
             ];
-            
             return response()->json($retorno , 200);
-        }else{
-            $retorno =  [
-                'code'  => '000',
-                'content' => [
-                                'dados' =>  [], 
-                            ],
-                'date'         => date("Y-m-d"),
-                'hour'         => date("H:i:s"),
-            ];
-            return response()->json($retorno , 200);
+
         }
+
     }
 
     public function listaNewsChannelUser(Request $request)
     {
    
+        $lista =DB::table('news')
+        ->join('channels', 'news.channels_id', '=', 'channels.id')
+        ->select('news.*', 'channels.name as channel', 'channels.image as channel_logo', 'channels.type as channel_type');
+        $news_tags = DB::table('news_tags')->where('tags_id', '=', $request->id)->get();
         if($request->token !== "false"){
 
             $user = DB::table('users')->where('api_token', '=',$request->token)->first();
             if($user){
-                $array_channles = [];
+               
+                $user_channels = DB::table('user_channels')->where('users_id', '=', $user->id)->get();
+                $user_tags = DB::table('user_tags')->where('users_id', '=', $user->id)->where('tags_id', '=', $request->id)->get();
+               
+                //Se o usuário selecionar Tags e não canais
+                if(count($user_channels) <= 0 ){
 
-                $user_channels = DB::table('user_channels')->where('users_id', '=', $user->id)->where('channels_id', '=', $request->id)->get();
-                $user_tags = DB::table('user_tags')->where('users_id', '=', $user->id)->get();
-            
-                $lista =DB::table('news')
-                ->join('channels', 'news.channels_id', '=', 'channels.id')
-                ->select('news.*', 'channels.name as channel', 'channels.image as channel_logo', 'channels.type as channel_type');
-                
-                if(count($user_channels) > 0 ){
-                    $lista->where(function($query) use ($user_channels) {
-                    
+                    $lista->where(function($query) use ($user_channels, $request) {
+                        $array_channles = [];
                         //Filtra por canais
-                        foreach($user_channels as $key => $item) {
-                            $array_channles[$key] = $item->channels_id;
-                        }
-                        $query->whereIn('channels.id', $array_channles);
+                        $query->whereIn('channels.id', $request->id);
                     });
-                }
+                  
+                    $lista->where(function($query) use ($news_tags) {
+                        
+                        //Filtra por tags
+                        $array_news = [];
+                        foreach($news_tags as $key => $item) {
+                            $array_news[$key] = $item->news_id;
+                        }
+                        
+                        $query->whereIn('news.id', $array_news);
 
-                if(count($user_tags) > 0 ){
-                    $lista->where(function($query) use ($user_tags) {
+                    });
+                    
+                    $lista = $lista->where('news.status', '=', 'show') 
+                    ->orderBy('data', 'desc')->paginate(15);
+                    $array = [];
+                    foreach($lista->items() as $key => $item) {
+
+                        $array[$key]['new'] = $item;
+                        $new = News::find($item->id);
+                    
+                        foreach( $new->tags as $tagskey => $tags) {
+                            $array[$key]['tags'][$tagskey] = $tags;
+                        }
+                    }
+
+                    $lista = [
+                        'data' =>  $array, 
+                    ];
+
+                    $retorno =  [
+                        'code'  => '000',
+                        'content' => [
+                                        'dados' =>  $lista, 
+                                    ],
+                        'date'         => date("Y-m-d"),
+                        'hour'         => date("H:i:s"),
+                    ];
+                    return response()->json($retorno , 200);
+
+                }else {
+                   
+                    $lista->where(function($query) use ($user_channels, $request) {
+                        $array_channles = [];
+                        //Filtra por canais
+                        $query->orWhere('channels.id', $request->id);
+                    });
+
+                    $lista->where(function($query) use ( $news_tags, $request) {
                         //Filtra por tags
                         $array_tags = [];
                         $array_news = [];
-
-                        foreach($user_tags as $key => $item) {
-                            $news = DB::table('news_tags')->where('tags_id', '=', $item->tags_id)->get();
-                            // dd($news );
-                            if(count($news) > 0 ){
-                                foreach($news as $key => $new) {
-                                    $array_news[$key] = $new->news_id;
-                                    $query->orWhere('news.id','=', $new->news_id);
-                                }
-                            }
+                        // dd($news_tags);
+                        foreach($news_tags as $key => $item) {
+                            $array_news[$key] = $item->news_id;
+                            $query->orWhere('news.id','=', $item->news_id);
                         }
+                        // $query->whereIn('news.id', $array_news);
                     });
-                }
-                
-                $lista->where('news.status', '=', 'show') 
-                ->orderBy('data', 'desc');
 
-                $lista = $lista->paginate(15);
-              
+                    $lista = $lista->where('news.status', '=', 'show') 
+                    ->orderBy('data', 'desc')->paginate(15);
+                    $array = [];
+                    foreach($lista->items() as $key => $item) {
+
+                        $array[$key]['new'] = $item;
+                        $new = News::find($item->id);
+                    
+                        foreach( $new->tags as $tagskey => $tags) {
+                            $array[$key]['tags'][$tagskey] = $tags;
+                        }
+                    }
+
+                    $lista = [
+                        'data' =>  $array, 
+                    ];
+
+                    $retorno =  [
+                        'code'  => '000',
+                        'content' => [
+                                        'dados' =>  $lista, 
+                                    ],
+                        'date'         => date("Y-m-d"),
+                        'hour'         => date("H:i:s"),
+                    ];
+                    return response()->json($retorno , 200);
+                }
+            
             }else{
                 $retorno =  [
                     'code'  => '999',
@@ -358,31 +460,36 @@ class NewsController extends Controller
             }
 
         }else{
-            $lista =DB::table('news')
-                ->join('channels', 'news.channels_id', '=', 'channels.id')
-                ->select('news.*', 'channels.name as channel', 'channels.image as channel_logo', 'channels.type as channel_type')
-                ->where('news.status', '=', 'show') 
-                ->where('channels.id', '=', $request->id ) 
-                ->orderBy('data', 'desc')
-                ->paginate(15);
-        }
 
-        $array = [];
-        foreach($lista->items() as $key => $item) {
+            $lista->where(function($query) use ($news_tags) {
+                        
+                //Filtra por tags
+                $array_news = [];
+                foreach($news_tags as $key => $item) {
+                    $array_news[$key] = $item->news_id;
+                }
+                
+                $query->whereIn('news.id', $array_news);
 
-            $array[$key]['new'] = $item;
-            $new = News::find($item->id);
-        
-            foreach( $new->tags as $tagskey => $tags) {
-                $array[$key]['tags'][$tagskey] = $tags;
+            });
+            
+            $lista = $lista->where('news.status', '=', 'show') 
+            ->orderBy('data', 'desc')->paginate(15);
+            $array = [];
+            foreach($lista->items() as $key => $item) {
+
+                $array[$key]['new'] = $item;
+                $new = News::find($item->id);
+            
+                foreach( $new->tags as $tagskey => $tags) {
+                    $array[$key]['tags'][$tagskey] = $tags;
+                }
             }
-        }
-      
-        $lista = [
-            'data' =>  $array, 
-        ];
-        
-        if($lista){
+
+            $lista = [
+                'data' =>  $array, 
+            ];
+
             $retorno =  [
                 'code'  => '000',
                 'content' => [
@@ -391,18 +498,8 @@ class NewsController extends Controller
                 'date'         => date("Y-m-d"),
                 'hour'         => date("H:i:s"),
             ];
-            
             return response()->json($retorno , 200);
-        }else{
-            $retorno =  [
-                'code'  => '000',
-                'content' => [
-                                'dados' =>  [], 
-                            ],
-                'date'         => date("Y-m-d"),
-                'hour'         => date("H:i:s"),
-            ];
-            return response()->json($retorno , 200);
+
         }
     }
 

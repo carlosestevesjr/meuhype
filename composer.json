@@ -15,8 +15,7 @@
         "guzzlehttp/guzzle": "^6.3.1|^7.0.1",
         "laravel/framework": "^7.29",
         "laravel/tinker": "^2.5",
-        "laravel/ui": "^2.5",
-        "robman2100/laravel-8-spotify": "9999999-dev"
+        "laravel/ui": "^2.5"
     },
     "require-dev": {
         "facade/ignition": "^2.0",

@@ -66,6 +66,9 @@ Route::group(['prefix'=>'admin','middleware'=>'admin_auth'], function(){
         //Crawler
         Route::resource('crawler', 'CrawlerController');
 
+        //Crawler Config
+        Route::resource('crawler-configs', 'CrawlerConfigsController');
+
     });
 
     //Home

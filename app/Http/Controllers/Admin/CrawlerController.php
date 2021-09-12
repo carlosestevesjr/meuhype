@@ -135,7 +135,7 @@ class CrawlerController extends Controller
                 'title' => 'required|max:255',
                 'time_initial' => 'required|min:5',
                 'type' => 'required',
-                // 'tags_id' => 'required',
+                'tags_id' => 'required',
 				// 'image' => 'file|required|max:500|dimensions:max_width=1366,max_height=768',
 			],
 			$messages = [
@@ -143,6 +143,7 @@ class CrawlerController extends Controller
                 'time_initial.required' => 'O campo Hora Inicial deve ser preenchido.',
                 'time_final.required' => 'O campo Hora Final deve ser preenchido.',
                 'type.required' => 'O campo Tipo deve ser preenchido.',
+                'tags_id.required' => 'O campo Tag Crawler deve ser preenchido.',
                 // 'dimensions' => 'A imagem não esta nas dimenssões especificadas abaixo do campo.',
 				'max'    => 'A imagem :attribute não tem o tamanho correto - :max kb.', // Peso da imagem em KB
 			]
@@ -153,7 +154,7 @@ class CrawlerController extends Controller
                     ->withErrors($validator)
                     ->withInput();
         }else{
-           
+          
             // Cadastrando um novo Registro
             $insert = Crawler::find($id);
             $insert->title = $request->input('title');

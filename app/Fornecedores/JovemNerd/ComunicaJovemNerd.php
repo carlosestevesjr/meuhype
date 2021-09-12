@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Fornecedores\Youtube;
-
+use App\CrawlerConfigs;
 
 class ComunicaYoutube {
         

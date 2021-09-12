@@ -61,23 +61,26 @@
                                 <input type="time" name="time_initial" class="form-control" placeholder="" value="{{ old('time_initial') }}" >
                             </div>
                             <div class="form-group col-12 col-lg-6">
-                                <label>Tags</label>
-                                <select name="tags_id" class="form-control">
-                                    <option value="0" >Nenhum</option>
-                                    @foreach($tags as $tag)
-                                        <option value="{{ $tag->id }}" >{{ $tag->title }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-12 col-lg-6">
                                 <label>Tipo De Crawler</label>
                                 <select name="type" class="form-control">
                                     <option value="spotify">Spotify</option>
                                     <option value="site">Site</option>
                                 </select>
                             </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-12 col-lg-12">
+                                <h5>Tag Crawler</h5>
+                                @foreach($tags as $tag)
+                                    <div class=" form-check form-check-inline ">
+                                        <div class="form-control mb-1">
+                                            <input class="form-check-input" type="radio" id="_{{$tag->id}}" name="tags_id" value="{{ $tag->id }}">
+                                            <label class="form-check-label" for="_{{$tag->id}}"> {{ $tag->title }}</label><br>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                           
                             <div class="form-group col-12 col-lg-12">
                                 <label>Descrição</label>
                                 <textarea name="description" id="description" class="form-control textarea" rows="10">{{ old('description') }}</textarea>

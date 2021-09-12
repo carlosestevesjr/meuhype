@@ -47,62 +47,35 @@
     <div class="row">
         <div class="col-12 col-xl-12">
             <div class="card">
-                <div class="card-header">
-                    <h2><strong>{{ $item->title }}</strong></h2>
-                </div>
                 <div class="card-body">
                     <form method="post" action="{{ URL::asset($prefix_admin.'/'.$page_dados['route_controler'].'/'.$item->id ) }}" role="form" class="form" enctype="multipart/form-data" >
                         <div class="form-row">
-                            <div class="form-group col-12 col-lg-12">
-                                <label>Title</label>
-                                <input type="text" name="title" class="form-control" placeholder="" value="{{ $item->title }}" >
-                            </div>
-                        </div>
-                        <div class="form-row">
                             <div class="form-group col-12 col-lg-6">
-                                <label>Hora Inicial</label>
-                                <input type="time" name="time_initial" class="form-control" placeholder="" value="{{ $item->time_initial }}" >
+                                <label>Quantidade de notícias por Canal</label>
+                                <input type="number" name="qtd_noticias_por_canal" class="form-control" placeholder="" value="{{ $item->qtd_noticias_por_canal }}" >
                             </div>
-                            <div class="form-group col-12 col-lg-6">
-                                <label>Tipo De Crawler</label>
-                                <select name="type" class="form-control">
-                                    <option value="spotify" <?php if($item->type == 'spotify') echo "selected" ?>>Spotify</option>
-                                    <option value="site" <?php if($item->type == 'site') echo "selected" ?>>Site</option>
-                                </select>
-                            </div>
-                        </div>
-                      
-                        <div class="form-row">
                             <div class="form-group col-12 col-lg-12">
-                                <h5>Tag Crawler</h5>
-                                @foreach($tags as $tag)
-                                    <div class="form-check form-check-inline">
+                                <h1>Canais Ativos</h1>
+                                <?php $array_canais_ativos = json_decode($item->array_canais_ativos, true); ?>
+                                @foreach($channels as $channel)
+                                    <div class="">
                                         <div class="form-control mb-1">
-                                            <input class="form-check-input" type="radio" id="_{{$tag->id}}" name="tags_id" <?php if($tag->id == $item->tags_id){ echo 'checked';}?> value="{{$tag->id}}">
-                                            <label class="form-check-label" for="_{{$tag->id}}"> {{ $tag->title }}</label><br>
+                                            <input
+                                                type="checkbox"
+                                                id="_{{$channel->hash}}"
+                                                name="array_canais_ativos[]"
+                                                <?php
+                                                    if(in_array($channel->hash, $array_canais_ativos)){
+                                                        echo 'checked';
+                                                    }
+                                                ?>
+                                                <?php if(in_array($channel->hash, $array_canais_ativos)){ echo 'checked';}?>
+                                                value="{{$channel->hash}}"
+                                            >
+                                            <label class="form-check-label" for="_{{$channel->hash}}"> {{ $channel->name }}</label><br>
                                         </div>
                                     </div>
                                 @endforeach
-                            </div>
-                            <div class="form-group col-12 col-lg-12">
-                                <label>Descrição</label>
-                                <textarea name="description" id="description" class="form-control textarea" rows="10">{{ $item->description }}</textarea>
-                            </div>
-                        </div>
-                       
-                        <div class="form-row">
-                            <div class="form-group col-12 col-lg-6">
-                                <label>Ordem</label>
-                                <input type="text" name="order" class="form-control boxed" placeholder="" value="{{ $item->order }}">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-12 col-lg-6">
-                                <label>Status</label>
-                                <select name="status" id="status" class="form-control">
-                                    <option value="active" <?php if($item->status == 'active') echo "selected" ?>>Ativo</option>
-                                    <option value="hidden" <?php if($item->status == 'hidden') echo "selected" ?>>Bloqueado</option>
-                                </select>
                             </div>
                         </div>
                         <div class="form-row">

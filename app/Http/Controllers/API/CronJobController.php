@@ -11,9 +11,10 @@ use Illuminate\Http\Request;
 use Alaouy\Youtube\Facades\Youtube;
 use Twitter;
 use Spotify;
-
+use Mail;
 use Validator;
 
+use App\CrawlerConfigs;
 use App\News;
 use App\NewsTags;
 use App\Crawler;
@@ -32,43 +33,87 @@ class CronJobController extends Controller
 
     public function index()
     {      
-        
+          
+        $hora_inicial = date("H:i:s");
+
         $arrayResults = [
-                            'Omelete_Site'       => $this->buscaNewsOmeleteSite(),
-                            'Jovem_Nerd_Site'    => $this->buscaNewsJovemNerdSite(),
-                            'Super_Oito_Youtube' => $this->buscaNewsSuperOitoYoutube(),
-                            'Jovem_Nerd_Youtube' => $this->buscaNewsJovemNerdYoutube(),
-                            'Omelete_Youtube'    => $this->buscaNewsOmeleteYoutube(),
-                            'Pipocando_Youtube'  => $this->buscaNewsPipocandoYoutube(),
-                            'Ei_Nerd_Youtube'    => $this->buscaNewsEiNerdYoutube(),
-                            'Nerd_Land_Youtube'  => $this->buscaNewsNerdLandYoutube(),
-                            'Cinema_Com_Rapadura_Youtube' => $this->buscaCinemaComRapaduraYoutube(),
-                            'Caique_Izoton_Youtube' => $this->buscaCaiqueIzotonYoutube(),
-                            'Caverna_Do_Caruso_Youtube'  => $this->buscaCavernaDoCarusoYoutube(),
-                            'Quatro_Coisas_Youtube'  => $this->buscaQuatroCoisasYoutube(),
-                            'Operacao_Cinema_Youtube'  =>  $this->buscaOperacaoCinemaYoutube(),
-                            'Nerd_Rabugento_Youtube'  =>  $this->buscaNerdRabugentoYoutube(),
-                            'Cris_Panda_Youtube'  => $this->buscaCrisPandaYoutube(),
-                            'Nerd_Experience_Youtube'  => $this->buscaNerdExperienceYoutube(),
-                            'Caldeirao_Nerd_Youtube'  => $this->buscaCaldeiraoNerdYoutube(),
-                            'Arena_Nerd_Youtube'  => $this->buscaArenaNerdYoutube(),
-                            'Sessao_Nerd_Youtube'  => $this->buscaSessaoNerdYoutube(),
-                            'Nerd_News_Youtube'  => $this->buscaNerdNewsYoutube(),
-                            'Thiago_Romariz_Youtube'  => $this->buscaThiagoRomarizYoutube(),
-                            'Gustavo_Cunha_Youtube'  => $this->buscaGustavoCunhaYoutube(),
-                            'Miguel_Lokia_Youtube'  => $this->buscaMiguelLokiaYoutube(),
-                            'Entre_Migas_Youtube'  => $this->buscaEntreMigasYoutube(),
-                            // 'Jovem_Nerd_Spotify' => $this->buscaNewsJovemNerdSpotify(),
-                            // 'Cinema_Com_Rapadura_Spotify' => $this->buscaNewsCinemaComRapaduraSpotify(),
-                            
-                            
+                            'Omelete_Site'       => ($this->crawler_canais_ativos('omeletesite')) ? $this->buscaNewsOmeleteSite() : "desligado",
+                            'Jovem_Nerd_Site'    => ($this->crawler_canais_ativos('jovemnerdsite')) ? $this->buscaNewsJovemNerdSite() : "desligado",
+                            'Super_Oito_Youtube' => ($this->crawler_canais_ativos('superoitoyoutube')) ? $this->buscaNewsSuperOitoYoutube() : "desligado",
+                            'Jovem_Nerd_Youtube' => ($this->crawler_canais_ativos('jovemnerdyoutube')) ? $this->buscaNewsJovemNerdYoutube() : "desligado",
+                            'Omelete_Youtube'    => ($this->crawler_canais_ativos('omeleteyoutube')) ? $this->buscaNewsOmeleteYoutube() : "desligado",
+                            'Pipocando_Youtube'  => ($this->crawler_canais_ativos('pipocandoyoutube')) ? $this->buscaNewsPipocandoYoutube() : "desligado",
+                            'Ei_Nerd_Youtube'    => ($this->crawler_canais_ativos('einerdyoutube')) ? $this->buscaNewsEiNerdYoutube() : "desligado",
+                            'Nerd_Land_Youtube'  => ($this->crawler_canais_ativos('nerdlandyoutube')) ? $this->buscaNewsNerdLandYoutube() : "desligado",
+                            'Cinema_Com_Rapadura_Youtube' => ($this->crawler_canais_ativos('cinemacomrapadurayoutube')) ? $this->buscaCinemaComRapaduraYoutube() : "desligado",
+                            'Caique_Izoton_Youtube' => ($this->crawler_canais_ativos('caiqueizotonyoutube')) ? $this->buscaCaiqueIzotonYoutube() : "desligado",
+                            'Caverna_Do_Caruso_Youtube' => ($this->crawler_canais_ativos('cavernadocarusoyoutube')) ? $this->buscaCavernaDoCarusoYoutube() : "desligado",
+                            'Quatro_Coisas_Youtube' => ($this->crawler_canais_ativos('quatrocoisasyoutube')) ? $this->buscaQuatroCoisasYoutube() : "desligado",
+                            'Operacao_Cinema_Youtube' => ($this->crawler_canais_ativos('operacaocinemayoutube')) ? $this->buscaOperacaoCinemaYoutube() : "desligado",
+                            'Nerd_Rabugento_Youtube' => ($this->crawler_canais_ativos('nerdrabugentoyoutube')) ? $this->buscaNerdRabugentoYoutube() : "desligado",
+                            'Cris_Panda_Youtube' => ($this->crawler_canais_ativos('crispandayoutube')) ? $this->buscaCrisPandaYoutube() : "desligado",
+                            'Nerd_Experience_Youtube' => ($this->crawler_canais_ativos('nerdexperienceyoutube')) ? $this->buscaNerdExperienceYoutube() : "desligado",
+                            'Caldeirao_Nerd_Youtube' => ($this->crawler_canais_ativos('caldeiraonerdyoutube')) ? $this->buscaCaldeiraoNerdYoutube() : "desligado",
+                            'Arena_Nerd_Youtube' => ($this->crawler_canais_ativos('arenanerdyoutube')) ? $this->buscaArenaNerdYoutube() : "desligado",
+                            'Sessao_Nerd_Youtube' => ($this->crawler_canais_ativos('sessaonerdyoutube')) ? $this->buscaSessaoNerdYoutube() : "desligado",
+                            'Nerd_News_Youtube' => ($this->crawler_canais_ativos('nerdnewsyoutube')) ? $this->buscaNerdNewsYoutube() : "desligado",
+                            'Thiago_Romariz_Youtube' => ($this->crawler_canais_ativos('thiagoromarizyoutube')) ? $this->buscaThiagoRomarizYoutube() : "desligado",
+                            'Gustavo_Cunha_Youtube' => ($this->crawler_canais_ativos('gustavocunhayoutube')) ? $this->buscaGustavoCunhaYoutube() : "desligado",
+                            'Miguel_Lokia_Youtube' => ($this->crawler_canais_ativos('miguellokiayoutube')) ? $this->buscaMiguelLokiaYoutube() : "desligado",
+                            'Entre_Migas_Youtube' => ($this->crawler_canais_ativos('entremigasyoutube')) ? $this->buscaEntreMigasYoutube() : "desligado",
+                            'Jovem_Nerd_Spotify' => ($this->crawler_canais_ativos('jovemnerdspotify')) ? $this->buscaNewsJovemNerdSpotify() : "desligado",
+                            'Cinema_Com_Rapadura_Spotify' => ($this->crawler_canais_ativos('cinemacomrapaduraspotify')) ? $this->buscaNewsCinemaComRapaduraSpotify() : "desligado"
                         ];
+                        
+        $hora_final = date("H:i:s");
+        // $user = User::findOrFail('1');
+        // $message->from($address, $name = null);
+        // $message->sender($address, $name = null);
+        // $message->to($address, $name = null);
+        // $message->cc($address, $name = null);
+        // $message->bcc($address, $name = null);
+        // $message->replyTo($address, $name = null);
+        // $message->subject($subject);
+        // $message->priority($level);
+        // $message->attach($pathToFile, array $options = []);
+        //
+        // Attach a file from a raw $data string...
+        // $message->attachData($data, $name, array $options = []);
+
+        //Get the underlying SwiftMailer message instance...
+        // $message->getSwiftMessage();
+        // var_dump($arrayResults['Omelete_Site']);
+        // dd();   
         
-        return response()->json($arrayResults , 200);
-        // $this->formata_data(1,'20 de abril de 2021');
-        //$this->formata_data(3,'2018-01-15T22:00:57Z');
+        try {
+            $dados = [ 'data'  => $arrayResults, 'hora_inicial' => $hora_inicial,'hora_final' => $hora_final];
+            echo '<pre>';
+            print_r($arrayResults);
+            echo '</pre>';
+
+            // Mail::send('emails.contato', $dados, function ($message) {
+            //     $message->from('inthemovie@nocinema.kinghost.net', 'Contato Meu Hype');
+            //     $message->subject('Contato Pelo Site');
+            //     $message->to('carlosestevesjr0@gmail.com');
+            //     // $message->bcc('cissa@highpix.com.br');
+                
+            // });
+        }
+        catch (Exception $e) {
+            echo $e->getMessage();
+            $dados = [ 'data'  => $e->getMessage()];
+
+            // Mail::send('emails.contato', $dados, function ($message) {
+            //     $message->from('inthemovie@nocinema.kinghost.net', 'Contato Meu Hype');
+            //     $message->subject('Contato Pelo Site');
+            //     $message->to('carlosestevesjr0@gmail.com');
+            //     // $message->bcc('cissa@highpix.com.br');
+                
+            // });
+        }
         
-       
+        // return response()->json($arrayResults , 200);
+        
     }
 
     public function buscaThiagoRomarizYoutube(){
@@ -122,7 +167,7 @@ class CronJobController extends Controller
         
         //Busca Crawler
         $comunicaYoutube = new ComunicaYoutube;
-        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'ThiagoRomariz')->get();
+        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'ThiagoRomariz')->get($this->qtd_noticias_por_canal());
        
         // echo '<pre>'; print_r($return['content']); echo '</pre>';/
         foreach($dados_busca as $item){
@@ -175,7 +220,7 @@ class CronJobController extends Controller
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                         if(isset($item['url']) && $item['url'] != ""){
                             $url_date = $item['url'];
-                            sleep(1);
+                            $this->pauseTime();
                             $data2 = $this->getCurl($url_date);
                             preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
                             $dados2 = json_encode($matches['json'][0]);
@@ -291,7 +336,7 @@ class CronJobController extends Controller
         
         //Busca Crawler
         $comunicaYoutube = new ComunicaYoutube;
-        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'EntreMigas')->get();
+        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'EntreMigas')->get($this->qtd_noticias_por_canal());
        
         foreach($dados_busca as $item){
 
@@ -343,7 +388,7 @@ class CronJobController extends Controller
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                         if(isset($item['url']) && $item['url'] != ""){
                             $url_date = $item['url'];
-                            sleep(1);
+                            $this->pauseTime();
                             $data2 = $this->getCurl($url_date);
                             preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
                             $dados2 = json_encode($matches['json'][0]);
@@ -459,7 +504,7 @@ class CronJobController extends Controller
         
         //Busca Crawler
         $comunicaYoutube = new ComunicaYoutube;
-        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'MiguelLokiaMesmo')->get();
+        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'MiguelLokiaMesmo')->get($this->qtd_noticias_por_canal());
         
         // echo '<pre>'; print_r($return['content']); echo '</pre>';
         // die;
@@ -513,7 +558,7 @@ class CronJobController extends Controller
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                         if(isset($item['url']) && $item['url'] != ""){
                             $url_date = $item['url'];
-                            sleep(1);
+                            $this->pauseTime();
                             $data2 = $this->getCurl($url_date);
                             preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
                             $dados2 = json_encode($matches['json'][0]);
@@ -629,7 +674,7 @@ class CronJobController extends Controller
         
         //Busca Crawler
         $comunicaYoutube = new ComunicaYoutube;
-        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'GustavoCunhavideos')->get();
+        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'GustavoCunhavideos')->get($this->qtd_noticias_por_canal());
 
         // echo '<pre>'; print_r($dados_busca); echo '</pre>';
         // die;
@@ -683,7 +728,7 @@ class CronJobController extends Controller
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                         if(isset($item['url']) && $item['url'] != ""){
                             $url_date = $item['url'];
-                            sleep(1);
+                            $this->pauseTime();
                             $data2 = $this->getCurl($url_date);
                             preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
                             $dados2 = json_encode($matches['json'][0]);
@@ -799,7 +844,7 @@ class CronJobController extends Controller
         
         //Busca crawler
         $comunicaYoutube = new ComunicaYoutube;
-        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'NerdNewsOficial')->get();
+        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'NerdNewsOficial')->get($this->qtd_noticias_por_canal());
 
         // echo '<pre>'; print_r($dados_busca); echo '</pre>';
         // die;
@@ -853,7 +898,7 @@ class CronJobController extends Controller
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                         if(isset($item['url']) && $item['url'] != ""){
                             $url_date = $item['url'];
-                            sleep(1);
+                            $this->pauseTime();
                             $data2 = $this->getCurl($url_date);
                             preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
                             $dados2 = json_encode($matches['json'][0]);
@@ -969,7 +1014,7 @@ class CronJobController extends Controller
         
         //Busca crawler
         $comunicaYoutube = new ComunicaYoutube;
-        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'SessãoNerdOficial')->get();
+        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'SessãoNerdOficial')->get($this->qtd_noticias_por_canal());
         
         // echo '<pre>'; print_r($return['content']); echo '</pre>';
         // die;
@@ -1023,7 +1068,7 @@ class CronJobController extends Controller
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                         if(isset($item['url']) && $item['url'] != ""){
                             $url_date = $item['url'];
-                            sleep(1);
+                            $this->pauseTime();
                             $data2 = $this->getCurl($url_date);
                             preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
                             $dados2 = json_encode($matches['json'][0]);
@@ -1139,7 +1184,7 @@ class CronJobController extends Controller
         
         //Busca crawler
         $comunicaYoutube = new ComunicaYoutube;
-        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'ArenaNerdOficial')->get();
+        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'ArenaNerdOficial')->get($this->qtd_noticias_por_canal());
         
         // echo '<pre>'; print_r($return['content']); echo '</pre>';
         // die;
@@ -1193,7 +1238,7 @@ class CronJobController extends Controller
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                         if(isset($item['url']) && $item['url'] != ""){
                             $url_date = $item['url'];
-                            sleep(1);
+                            $this->pauseTime();
                             $data2 = $this->getCurl($url_date);
                             preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
                             $dados2 = json_encode($matches['json'][0]);
@@ -1309,7 +1354,7 @@ class CronJobController extends Controller
         
         //Busca crawler
         $comunicaYoutube = new ComunicaYoutube;
-        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'CaldeirãoNerd')->get();
+        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'CaldeirãoNerd')->get($this->qtd_noticias_por_canal());
         
         // echo '<pre>'; print_r($return['content']); echo '</pre>';
         // die;
@@ -1363,7 +1408,7 @@ class CronJobController extends Controller
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                         if(isset($item['url']) && $item['url'] != ""){
                             $url_date = $item['url'];
-                            sleep(1);
+                            $this->pauseTime();
                             $data2 = $this->getCurl($url_date);
                             preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
                             $dados2 = json_encode($matches['json'][0]);
@@ -1479,7 +1524,7 @@ class CronJobController extends Controller
         
         //Busca crawler
         $comunicaYoutube = new ComunicaYoutube;
-        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'NERDEXPERIENCEOFICIAL')->get();
+        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'NERDEXPERIENCEOFICIAL')->get($this->qtd_noticias_por_canal());
         
         // echo '<pre>'; print_r($return['content']); echo '</pre>';
         // die;
@@ -1533,7 +1578,7 @@ class CronJobController extends Controller
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                         if(isset($item['url']) && $item['url'] != ""){
                             $url_date = $item['url'];
-                            sleep(1);
+                            $this->pauseTime();
                             $data2 = $this->getCurl($url_date);
                             preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
                             $dados2 = json_encode($matches['json'][0]);
@@ -1649,7 +1694,7 @@ class CronJobController extends Controller
         
         //Busca crawler
         $comunicaYoutube = new ComunicaYoutube;
-        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/user')->prepare($tag_title, 'CoxinhaNerd')->get();
+        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/user')->prepare($tag_title, 'CoxinhaNerd')->get($this->qtd_noticias_por_canal());
 
         // echo '<pre>'; print_r($return['content']); echo '</pre>';
         // die;
@@ -1703,7 +1748,7 @@ class CronJobController extends Controller
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                         if(isset($item['url']) && $item['url'] != ""){
                             $url_date = $item['url'];
-                            sleep(1);
+                            $this->pauseTime();
                             $data2 = $this->getCurl($url_date);
                             preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
                             $dados2 = json_encode($matches['json'][0]);
@@ -1819,7 +1864,7 @@ class CronJobController extends Controller
         
         //Busca crawler
         $comunicaYoutube = new ComunicaYoutube;
-        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'NerdRabugentoOficial')->get();
+        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'NerdRabugentoOficial')->get($this->qtd_noticias_por_canal());
         
         // echo '<pre>'; print_r($return['content']); echo '</pre>';
         // die;
@@ -1873,7 +1918,7 @@ class CronJobController extends Controller
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                         if(isset($item['url']) && $item['url'] != ""){
                             $url_date = $item['url'];
-                            sleep(1);
+                            $this->pauseTime();
                             $data2 = $this->getCurl($url_date);
                             preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
                             $dados2 = json_encode($matches['json'][0]);
@@ -1989,7 +2034,7 @@ class CronJobController extends Controller
         
         //Busca crawler
         $comunicaYoutube = new ComunicaYoutube;
-        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'OperaçãoCinema')->get();
+        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'OperaçãoCinema')->get($this->qtd_noticias_por_canal());
         
         // echo '<pre>'; print_r($return['content']); echo '</pre>';
         // die;
@@ -2043,7 +2088,7 @@ class CronJobController extends Controller
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                         if(isset($item['url']) && $item['url'] != ""){
                             $url_date = $item['url'];
-                            sleep(1);
+                            $this->pauseTime();
                             $data2 = $this->getCurl($url_date);
                             preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
                             $dados2 = json_encode($matches['json'][0]);
@@ -2159,7 +2204,7 @@ class CronJobController extends Controller
         
         //Busca crawler
         $comunicaYoutube = new ComunicaYoutube;
-        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'Qu4troCoisas')->get();
+        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'Qu4troCoisas')->get($this->qtd_noticias_por_canal());
         
         // echo '<pre>'; print_r($return['content']); echo '</pre>';
         // die;
@@ -2213,7 +2258,7 @@ class CronJobController extends Controller
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                         if(isset($item['url']) && $item['url'] != ""){
                             $url_date = $item['url'];
-                            sleep(1);
+                            $this->pauseTime();
                             $data2 = $this->getCurl($url_date);
                             preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
                             $dados2 = json_encode($matches['json'][0]);
@@ -2329,7 +2374,7 @@ class CronJobController extends Controller
         
         //Busca crawler
         $comunicaYoutube = new ComunicaYoutube;
-        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'CAVERNADOCARUSO')->get();
+        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'CAVERNADOCARUSO')->get($this->qtd_noticias_por_canal());
         
         // echo '<pre>'; print_r($return['content']); echo '</pre>';
         // die;
@@ -2383,7 +2428,7 @@ class CronJobController extends Controller
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                         if(isset($item['url']) && $item['url'] != ""){
                             $url_date = $item['url'];
-                            sleep(1);
+                            $this->pauseTime();
                             $data2 = $this->getCurl($url_date);
                             preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
                             $dados2 = json_encode($matches['json'][0]);
@@ -2499,7 +2544,7 @@ class CronJobController extends Controller
         
         //Busca crawler
         $comunicaYoutube = new ComunicaYoutube;
-        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'CaiqueIzoton')->get();
+        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'CaiqueIzoton')->get($this->qtd_noticias_por_canal());
         
         // echo '<pre>'; print_r($return['content']); echo '</pre>';
         // die;
@@ -2553,7 +2598,7 @@ class CronJobController extends Controller
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                         if(isset($item['url']) && $item['url'] != ""){
                             $url_date = $item['url'];
-                            sleep(1);
+                            $this->pauseTime();
                             $data2 = $this->getCurl($url_date);
                             preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
                             $dados2 = json_encode($matches['json'][0]);
@@ -2669,7 +2714,7 @@ class CronJobController extends Controller
         
         //Busca crawler
         $comunicaYoutube = new ComunicaYoutube;
-        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'CinemacomRapaduraoficial')->get();
+        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'CinemacomRapaduraoficial')->get($this->qtd_noticias_por_canal());
         
         // echo '<pre>'; print_r($return['content']); echo '</pre>';
         // die;
@@ -2723,7 +2768,7 @@ class CronJobController extends Controller
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                         if(isset($item['url']) && $item['url'] != ""){
                             $url_date = $item['url'];
-                            sleep(1);
+                            $this->pauseTime();
                             $data2 = $this->getCurl($url_date);
                             preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
                             $dados2 = json_encode($matches['json'][0]);
@@ -2839,7 +2884,7 @@ class CronJobController extends Controller
         
         //Busca crawler
         $comunicaYoutube = new ComunicaYoutube;
-        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'NerdLand')->get();
+        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'NerdLand')->get($this->qtd_noticias_por_canal());
         
         // echo '<pre>'; print_r($return['content']); echo '</pre>';
         // die;
@@ -2893,7 +2938,7 @@ class CronJobController extends Controller
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                         if(isset($item['url']) && $item['url'] != ""){
                             $url_date = $item['url'];
-                            sleep(1);
+                            $this->pauseTime();
                             $data2 = $this->getCurl($url_date);
                             preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
                             $dados2 = json_encode($matches['json'][0]);
@@ -3009,7 +3054,7 @@ class CronJobController extends Controller
         
         //Busca crawler
         $comunicaYoutube = new ComunicaYoutube;
-        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'einerdtv')->get();
+        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'einerdtv')->get($this->qtd_noticias_por_canal());
         
         // echo '<pre>'; print_r($return['content']); echo '</pre>';
         // die;
@@ -3063,7 +3108,7 @@ class CronJobController extends Controller
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                         if(isset($item['url']) && $item['url'] != ""){
                             $url_date = $item['url'];
-                            sleep(1);
+                            $this->pauseTime();
                             $data2 = $this->getCurl($url_date);
                             preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
                             $dados2 = json_encode($matches['json'][0]);
@@ -3179,7 +3224,7 @@ class CronJobController extends Controller
         
         //Busca crawler
         $comunicaYoutube = new ComunicaYoutube;
-        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'Pipocando')->get();
+        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'Pipocando')->get($this->qtd_noticias_por_canal());
         
         // echo '<pre>'; print_r($return['content']); echo '</pre>';
        
@@ -3233,7 +3278,7 @@ class CronJobController extends Controller
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                         if(isset($item['url']) && $item['url'] != ""){
                             $url_date = $item['url'];
-                            sleep(1);
+                            $this->pauseTime();
                             $data2 = $this->getCurl($url_date);
                             preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
                             $dados2 = json_encode($matches['json'][0]);
@@ -3349,7 +3394,7 @@ class CronJobController extends Controller
         
         //Busca crawler
         $comunicaYoutube = new ComunicaYoutube;
-        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'omeleteve')->get();
+        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'omeleteve')->get($this->qtd_noticias_por_canal());
         
         // echo '<pre>'; print_r($return['content']); echo '</pre>';
         // die;
@@ -3403,7 +3448,7 @@ class CronJobController extends Controller
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                         if(isset($item['url']) && $item['url'] != ""){
                             $url_date = $item['url'];
-                            sleep(1);
+                            $this->pauseTime();
                             $data2 = $this->getCurl($url_date);
                             preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
                             $dados2 = json_encode($matches['json'][0]);
@@ -3519,7 +3564,7 @@ class CronJobController extends Controller
         
         //Busca crawler
         $comunicaYoutube = new ComunicaYoutube;
-        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'JovemNerd')->get();
+        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/c')->prepare($tag_title, 'JovemNerd')->get($this->qtd_noticias_por_canal());
         
         // echo '<pre>'; print_r($return['content']); echo '</pre>';
         // die;
@@ -3575,7 +3620,7 @@ class CronJobController extends Controller
                            
                             $data2 = $this->getCurl($url_date);
                             // echo $this->getUserIP();
-                            sleep(1);
+                            $this->pauseTime();
                             // echo '<pre>'; print_r($data2); echo '</pre>';
                             preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
                             $dados2 = json_encode($matches['json'][0]);
@@ -3691,7 +3736,7 @@ class CronJobController extends Controller
         
         //Busca crawler
         $comunicaYoutube = new ComunicaYoutube;
-        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/user')->prepare($tag_title, 'otaviouga')->get();
+        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/user')->prepare($tag_title, 'otaviouga')->get($this->qtd_noticias_por_canal());
         
         // echo '<pre>'; print_r($return['content']); echo '</pre>';
         // die;
@@ -3745,7 +3790,7 @@ class CronJobController extends Controller
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                         if(isset($item['url']) && $item['url'] != ""){
                             $url_date = $item['url'];
-                            sleep(1);
+                            $this->pauseTime();
                             // echo $item['noticia'];
                             $data2 = $this->getCurl($url_date);
                             preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
@@ -4622,5 +4667,38 @@ class CronJobController extends Controller
         return $ipaddress;
     }
 
-   
+    function pauseTime() {
+        $sorteio = rand(1,5);
+
+        if($sorteio == 1){
+            return usleep(3056872);
+        }else if($sorteio == 2){
+            return usleep(1925713);
+        }else if($sorteio == 3){
+            return usleep(2004567);
+        }else if($sorteio == 4){
+            return usleep(3354781);
+        }else if($sorteio == 5){
+            return usleep(1000000);
+        }
+    }
+    
+    function crawler_canais_ativos($hash_channel) {
+        $crawler_configs = CrawlerConfigs::where( 'id',  '=', 1 )->first();
+        $array_canais_ativos = json_decode($crawler_configs->array_canais_ativos, true);
+
+        if(in_array($hash_channel, $array_canais_ativos)){
+            return true;
+        }
+        return false;
+    }
+
+    function qtd_noticias_por_canal() {
+        $crawler_configs = CrawlerConfigs::where( 'id',  '=', 1 )->first();
+        if(empty($crawler_configs)){
+            return $crawler_configs->qtd_noticias_por_canal;
+        }else{
+            return 20;
+        }
+    }
 }

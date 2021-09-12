@@ -42,6 +42,9 @@
                 <a href="{{ URL::asset($prefix_admin.'/'.$page_dados['route_controler'].'/create') }}" class="btn btn-primary ">
                     Novo Registro
                 </a>
+                <a href=" {{ URL::asset('admin/crawler-configs/1/edit') }}" class="btn btn-primary ">
+                    Configurações
+                </a>
             </div>
             <div class="card">
                 <form action="{{ URL::asset($prefix_admin.'/'.$page_dados['route_controler']) }}"  class="form-inline d-none d-sm-inline-block">

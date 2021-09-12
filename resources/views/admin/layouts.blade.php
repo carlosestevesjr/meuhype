@@ -13,7 +13,7 @@
     <meta name="description" content="">
 
     <!-- Styles -->
-    <link href="{{ asset('adminkit-web-kit/dist/css/full-app.css') }}" rel="stylesheet">
+    <link href="{{ asset('adminkit-web-kit/examples/css/full-app.css') }}" rel="stylesheet">
 
     <!-- Scripts -->
     <script>

@@ -15,19 +15,7 @@ jobs:
     - name: executing remote ssh commands using password
       uses: actions/checkout@v2
       with:
-        repository: ''
-        ref: ''
-        token: ${{ github.token }}
-        ssh-key: ''
-        ssh-known-hosts: ''
-        ssh-strict: ''
-        persist-credentials: ''
-        path: ''
-        clean: ''
-        fetch-depth: ''
-        lfs: ''
-        submodules: ''
-      
+              
         host: ${{ secrets.SSH_HOST }}
         username: ${{ secrets.SSH_USER }}
         password: ${{ secrets.SSH_PASS }}

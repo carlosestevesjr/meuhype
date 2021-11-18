@@ -39,6 +39,9 @@ class CronJobController extends Controller
         $arrayResults = [
                             'Omelete_Site'       => ($this->crawler_canais_ativos('omeletesite')) ? $this->buscaNewsOmeleteSite() : "desligado",
                             'Jovem_Nerd_Site'    => ($this->crawler_canais_ativos('jovemnerdsite')) ? $this->buscaNewsJovemNerdSite() : "desligado",
+                            'Tec_Mundo_Site'    => ($this->crawler_canais_ativos('tecmundosite')) ? $this->buscaTecMundoSite() : "desligado",
+                            'Poltrona_Nerd_Site'    => ($this->crawler_canais_ativos('poltronanerdsite')) ? $this->buscaPoltronaNerdSite() : "desligado",
+                            'Poltrona_Nerd_Site'    => ($this->crawler_canais_ativos('poltronanerdsite')) ? $this->buscaPoltronaNerdSite() : "desligado",
                             'Super_Oito_Youtube' => ($this->crawler_canais_ativos('superoitoyoutube')) ? $this->buscaNewsSuperOitoYoutube() : "desligado",
                             'Jovem_Nerd_Youtube' => ($this->crawler_canais_ativos('jovemnerdyoutube')) ? $this->buscaNewsJovemNerdYoutube() : "desligado",
                             'Omelete_Youtube'    => ($this->crawler_canais_ativos('omeleteyoutube')) ? $this->buscaNewsOmeleteYoutube() : "desligado",
@@ -3905,7 +3908,7 @@ class CronJobController extends Controller
         // var_dump( $url );
         // $url = "https://jovemnerd.com.br/bunker/categoria/filmes/";
 
-        $result = $this->getHtml($url);
+        $result = $this->getCurl($url);
         preg_match_all('/card-post -rowdesktop">(?P<artigo>[\s\S]*?)(<\/article>)/', $result, $matches);
         $result = [];
         foreach ($matches['artigo'] as $key => $value) {
@@ -4073,7 +4076,7 @@ class CronJobController extends Controller
        
         // $url = "https://www.omelete.com.br/filmes";
 
-        $result = $this->getHtml($url);
+        $result = $this->getCurl($url);
        
         preg_match_all('/article class="col(?P<artigo>[\s\S]*?)(<\/article>)/', $result, $matches);
 
@@ -4189,6 +4192,361 @@ class CronJobController extends Controller
                     array_push(
                         $array_erros,
                         Str::slug($item['noticia'][0].'-omeletesite')
+                    );
+                }
+            }
+        }
+
+        $retorno = [
+            'code'         => '000',
+            'adicionados'  => $array_adicionados, 
+            'existentes'   => $array_existentes, 
+            'erros'        => $array_erros, 
+            'date'         => date("Y-m-d"),
+            'hour'         => date("H:i:s"),
+        ];
+        return $retorno;
+    }
+
+    public function buscaTecMundoSite(){
+
+        $channel = Channels::where( 'hash',  '=', 'tecmundosite' )->firstOrFail();
+        $url = "";
+
+        $array_adicionados = [];
+        $array_existentes = [];
+        $array_erros = [];
+
+        if($channel){
+            $hora = date('H:i:s');
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
+            // echo $hora;
+            // echo "<br>";
+            // echo $hora_30;
+            $crawlers = DB::table('crawler')
+                            ->where( 'status', '=', 'active' )
+                            ->where( 'tags_id', '!=', 0 )
+                            ->whereBetween('time_initial', [$hora, $hora_30])
+                            // ->orWhereBetween('time_final', [$hora, $hora_30])
+                            ->get();
+            $count = 1;
+            foreach ($crawlers as $key => $value) {
+                // echo "crawler";
+                if($count){
+                    $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
+                    if($tag ){
+                        $url = $channel->url_crawler .str_replace(" ","+",$tag->title) ;
+                        // echo $url;
+                    }
+                }
+                $count++;
+            }
+        }
+        // echo 'url:'.$url;
+        if($url == ""){
+            $retorno = [
+                'code'         => '003',
+                'adicionados'  => $array_adicionados, 
+                'existentes'   => $array_existentes, 
+                'erros'        => $array_erros, 
+                'date'         => date("Y-m-d"),
+                'hour'         => date("H:i:s"),
+            ];
+            return $retorno;
+        }
+
+        // var_dump( $url );
+        // $url = "https://jovemnerd.com.br/bunker/categoria/filmes/";
+
+        $result = $this->getCurl($url);
+        preg_match_all('/(<article class="tec--card tec--card--medium">)(?P<artigos>[\s\S]*?)(<\/article>)/', $result, $matches);
+        $result = [];
+       
+        foreach ($matches['artigos'] as $key => $value) {
+            preg_match_all('/(title=")(?P<noticia>[\s\S]*?)(")/', $value ,$matche_noticia);
+            $result['noticia'] = $matche_noticia['noticia'][0];
+       
+            preg_match_all('/(href=")(?P<link>[\s\S]*?)(")/', $value, $matche_link);
+            $result['url']=  $matche_link['link'][0];
+           
+            preg_match_all('/(<img data-src=")(?P<imagem>[\s\S]*?)("?ims=)/', $value, $matche_img);
+            $result['img'] = $matche_img['imagem'][0];
+            
+            preg_match_all('/(class="tec--timestamp__item z--font-semibold">)(?P<data>[\s\S]*?)(<\/div>)/', $value, $matche_data);
+            $result['data'] = $matche_data['data'][0];
+            $return['content'][] = $result;
+        }
+        
+        foreach($return['content'] as $item){
+
+            //Validando os campos
+            $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-tecmundosite')], [
+                    'hash' => 'required|unique:news',
+                ],
+                $messages = [
+                    'unique'    => 'Notícia já existe.',
+                ]
+            );
+
+            if ($validator->fails()) {
+
+                $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-tecmundosite') )->first();
+                            
+                if($news && $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                    $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
+                    
+                    if(!$news_tags){
+                        $insert_news_tags = new NewsTags;
+                        $insert_news_tags->news_id = $news->id;
+                        $insert_news_tags->tags_id = $tag->id;
+                        $insert_news_tags->save();
+                    }
+                }
+
+                // Validation 
+                array_push(
+                    $array_existentes,
+                    Str::slug($item['noticia'].'-tecmundosite')
+                );
+            }else{
+
+                $img = "";
+                $link = "";
+                $data = "";
+
+                if($item['img']){
+                    $img = $item['img'];
+                }
+
+                if($item['url']){
+                    $link = $item['url'];
+                }
+
+                if($item['data']){
+                    $data =  $this->formata_data(1, trim($item['data'])); 
+                }
+                if($img != "" && $link != ""){
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        //Baixa imagem
+                        $file =$img;
+                        $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-tecmundosite'.'.jpg';
+                        $destinationPath = public_path().'/uploads/news/';
+                        $upload = $this->downloadFile($filename, $file , $destinationPath);
+
+                        $insert = new News;
+                        $insert->title = $this->removeEmoji($item['noticia']);
+                        $insert->channels_id = $channel->id;
+                        $insert->slug = Str::slug($item['noticia']);
+                        $insert->hash = Str::slug($item['noticia'].'-tecmundosite');
+                        $insert->link = $link;
+                        $insert->image = '/uploads/news/' . $filename;
+                        $insert->status = "show";
+                        $insert->order = 0;
+                        
+                        $insert->data = $data;
+                        $condition = $insert->save();
+                        if($condition){
+                            
+                            $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
+                            
+                            if(!$news_tags){
+                                $insert_news_tags = new NewsTags;
+                                $insert_news_tags->news_id = $insert->id;
+                                $insert_news_tags->tags_id = $tag->id;
+                                $insert_news_tags->save();
+                            }
+
+                            array_push(
+                                $array_adicionados,
+                                $insert->id.' '.Str::slug($item['noticia'].'-tecmundosite')
+                            );
+                        }
+                    }
+                }else{
+                    array_push(
+                        $array_erros,
+                        Str::slug($item['noticia'].'-tecmundosite')
+                    );
+                }
+            }
+        }
+
+        $retorno = [
+            'code'         => '000',
+            'adicionados'  => $array_adicionados, 
+            'existentes'   => $array_existentes, 
+            'erros'        => $array_erros, 
+            'date'         => date("Y-m-d"),
+            'hour'         => date("H:i:s"),
+        ];
+        return $retorno;
+    }
+
+    public function buscaPoltronaNerdSite(){
+
+        $channel = Channels::where( 'hash',  '=', 'poltronanerdsite' )->firstOrFail();
+        $url = "";
+
+        $array_adicionados = [];
+        $array_existentes = [];
+        $array_erros = [];
+
+        if($channel){
+            $hora = date('H:i:s');
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
+            // echo $hora;
+            // echo "<br>";
+            // echo $hora_30;
+            $crawlers = DB::table('crawler')
+                            ->where( 'status', '=', 'active' )
+                            ->where( 'tags_id', '!=', 0 )
+                            ->whereBetween('time_initial', [$hora, $hora_30])
+                            // ->orWhereBetween('time_final', [$hora, $hora_30])
+                            ->get();
+            $count = 1;
+            foreach ($crawlers as $key => $value) {
+                // echo "crawler";
+                if($count){
+                    $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
+                    if($tag ){
+                        $url = $channel->url_crawler .str_replace(" ","+",$tag->title) ;
+                        // echo $url;
+                    }
+                }
+                $count++;
+            }
+        }
+        // echo 'url:'.$url;
+        if($url == ""){
+            $retorno = [
+                'code'         => '003',
+                'adicionados'  => $array_adicionados, 
+                'existentes'   => $array_existentes, 
+                'erros'        => $array_erros, 
+                'date'         => date("Y-m-d"),
+                'hour'         => date("H:i:s"),
+            ];
+            return $retorno;
+        }
+
+        // var_dump( $url );
+        // $url = "https://jovemnerd.com.br/bunker/categoria/filmes/";
+
+        $result = $this->getCurl($url);
+        preg_match_all('/(<article class="jeg_post jeg_pl_md_2 format-standard">)(?P<artigo>[\s\S]*?)(<\/article>)/',$result ,$matche_artigo);
+        $result = [];
+        
+        foreach ($matche_artigo['artigo'] as $key => $value) {
+            preg_match_all('/(<h3 class="jeg_post_title">\n<a href=")([https:\/\/][^\/\/])(?P<noticia>[\s\S]*?)(<\/a>\n<\/h3>)/', $value ,$matche_noticia);
+            $result['noticia'] = "";
+            if(isset($matche_noticia['noticia'][0])){
+                $explode = explode("\">",$matche_noticia['noticia'][0]);
+                if(isset($explode[1])){
+                    $result['noticia'] = $explode[1];
+                }
+            }
+          
+            preg_match_all('/(href=")(?P<link>[\s\S]*?)(")/', $value, $matche_link);
+            $result['url']=  $matche_link['link'][0];
+            
+            preg_match_all('/(ret_img,w_350,h_250\/)(?P<imagem>[\s\S]*?)(")/', $value, $matche_img);
+            $result['img'] = $matche_img['imagem'][0];
+            
+            preg_match_all('/(<i class="fa fa-clock-o"><\/i>)(?P<data>[\s\S]*?)(<\/a)/', $value, $matche_data);
+            $result['data'] = $matche_data['data'][0];
+    
+            $return['content'][] = $result;
+        }
+       
+        foreach($return['content'] as $item){
+
+            //Validando os campos
+            $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-poltronanerdsite')], [
+                    'hash' => 'required|unique:news',
+                ],
+                $messages = [
+                    'unique'    => 'Notícia já existe.',
+                ]
+            );
+
+            if ($validator->fails()) {
+
+                $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-poltronanerdsite') )->first();
+                            
+                if($news && $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                    $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
+                    
+                    if(!$news_tags){
+                        $insert_news_tags = new NewsTags;
+                        $insert_news_tags->news_id = $news->id;
+                        $insert_news_tags->tags_id = $tag->id;
+                        $insert_news_tags->save();
+                    }
+                }
+
+                // Validation 
+                array_push(
+                    $array_existentes,
+                    Str::slug($item['noticia'].'-poltronanerdsite')
+                );
+            }else{
+
+                $img = "";
+                $link = "";
+                $data = "";
+
+                if($item['img']){
+                    $img = $item['img'];
+                }
+
+                if($item['url']){
+                    $link = $item['url'];
+                }
+
+                if($item['data']){
+                    $data =  $this->formata_data(1, trim($item['data'])); 
+                }
+                if($img != "" && $link != ""){
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        //Baixa imagem
+                        $file =$img;
+                        $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-poltronanerdsite'.'.jpg';
+                        $destinationPath = public_path().'/uploads/news/';
+                        $upload = $this->downloadFile($filename, $file , $destinationPath);
+
+                        $insert = new News;
+                        $insert->title = $this->removeEmoji($item['noticia']);
+                        $insert->channels_id = $channel->id;
+                        $insert->slug = Str::slug($item['noticia']);
+                        $insert->hash = Str::slug($item['noticia'].'-poltronanerdsite');
+                        $insert->link = $link;
+                        $insert->image = '/uploads/news/' . $filename;
+                        $insert->status = "show";
+                        $insert->order = 0;
+                        
+                        $insert->data = $data;
+                        $condition = $insert->save();
+                        if($condition){
+                            
+                            $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
+                            
+                            if(!$news_tags){
+                                $insert_news_tags = new NewsTags;
+                                $insert_news_tags->news_id = $insert->id;
+                                $insert_news_tags->tags_id = $tag->id;
+                                $insert_news_tags->save();
+                            }
+
+                            array_push(
+                                $array_adicionados,
+                                $insert->id.' '.Str::slug($item['noticia'].'-poltronanerdsite')
+                            );
+                        }
+                    }
+                }else{
+                    array_push(
+                        $array_erros,
+                        Str::slug($item['noticia'].'-poltronanerdsite')
                     );
                 }
             }

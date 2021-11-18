@@ -23,6 +23,17 @@
             </li>
             <li class="sidebar-item">
                 <a href="#ui" data-toggle="collapse" class="sidebar-link collapsed">
+                    <i class="align-middle" data-feather="clipboard"></i> <span class="align-middle">Crawler</span>
+                </a>
+            </li>
+            <li>
+                <ul id="ui" class="sidebar-dropdown list-unstyled collapse " data-parent="#sidebar">
+                    <li class="sidebar-item"><a class="sidebar-link" href="{{ url($prefix_admin.'/crawler') }}">Crawler</a></li>
+                    <li class="sidebar-item"><a class="sidebar-link" href="{{ url($prefix_admin.'/crawler-configs/1/edit') }}">Config Configurações</a></li>
+                </ul>
+            </li>
+            <li class="sidebar-item">
+                <a href="#ui" data-toggle="collapse" class="sidebar-link collapsed">
                     <i class="align-middle" data-feather="clipboard"></i> <span class="align-middle">Posts</span>
                 </a>
             </li>
@@ -31,7 +42,6 @@
                     <li class="sidebar-item"><a class="sidebar-link" href="{{ url($prefix_admin.'/news') }}">News</a></li>
                     <li class="sidebar-item"><a class="sidebar-link" href="{{ url($prefix_admin.'/podcasts') }}">Podcasts</a></li>
                     <li class="sidebar-item"><a class="sidebar-link" href="{{ url($prefix_admin.'/tags') }}">Tags</a></li>
-                    <li class="sidebar-item"><a class="sidebar-link" href="{{ url($prefix_admin.'/crawler') }}">Crawler</a></li>
                     <li class="sidebar-item"><a class="sidebar-link" href="{{ url($prefix_admin.'/channels') }}">Canais</a></li>
                 </ul>
             </li>

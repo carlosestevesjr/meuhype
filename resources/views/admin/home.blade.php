@@ -13,7 +13,7 @@
                 <ol class="breadcrumb bg-transparent p-0 mt-1 mb-0">
                     <li class="breadcrumb-item"><a href="#">AdminKit</a></li>
                     <li class="breadcrumb-item"><a href="#">Dashboards</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Analytics</li>
+                    <li class="breadcrumb-item active" aria-current="page">Analyticssssssssssssssssss</li>
                 </ol>
             </nav>
         </div>

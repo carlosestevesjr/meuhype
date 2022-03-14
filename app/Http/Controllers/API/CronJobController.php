@@ -220,16 +220,20 @@ class CronJobController extends Controller
 
                 
                 if($img != "" && $link != ""){
+                    $data_json = "";
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                         if(isset($item['url']) && $item['url'] != ""){
+                            $data2 = "";
+                            $url_date = "";
                             $url_date = $item['url'];
                             $this->pauseTime();
                             $data2 = $this->getCurl($url_date);
-                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
-                            $dados2 = json_encode($matches['json'][0]);
-                            $dados2 = str_replace('"','',$dados2);
-                            // echo '<pre>'; print_r($dados2); echo '</pre>';
-                            $data =  $this->formata_data(4, trim($dados2)); ;
+                            preg_match_all('/(<meta itemprop="datePublished" content=")(?P<json>[\s\S]*?)["><meta]/', $data2, $matches);
+                            if(!empty($matches['json'][0])){
+                                $data =  trim($matches['json'][0]); 
+                            }else{
+                                $data = '0000-00-00';
+                            }
                         }
 
                         //Baixa imagem
@@ -388,16 +392,20 @@ class CronJobController extends Controller
 
                 
                 if($img != "" && $link != ""){
+                    $data_json = "";
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                         if(isset($item['url']) && $item['url'] != ""){
+                            $data2 = "";
+                            $url_date = "";
                             $url_date = $item['url'];
                             $this->pauseTime();
                             $data2 = $this->getCurl($url_date);
-                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
-                            $dados2 = json_encode($matches['json'][0]);
-                            $dados2 = str_replace('"','',$dados2);
-                            // echo '<pre>'; print_r($dados2); echo '</pre>';
-                            $data =  $this->formata_data(4, trim($dados2)); ;
+                            preg_match_all('/(<meta itemprop="datePublished" content=")(?P<json>[\s\S]*?)["><meta]/', $data2, $matches);
+                            if(!empty($matches['json'][0])){
+                                $data =  trim($matches['json'][0]); 
+                            }else{
+                                $data = '0000-00-00';
+                            }
                         }
 
                         //Baixa imagem
@@ -558,16 +566,20 @@ class CronJobController extends Controller
 
                 
                 if($img != "" && $link != ""){
+                    $data_json = "";
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                         if(isset($item['url']) && $item['url'] != ""){
+                            $data2 = "";
+                            $url_date = "";
                             $url_date = $item['url'];
                             $this->pauseTime();
                             $data2 = $this->getCurl($url_date);
-                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
-                            $dados2 = json_encode($matches['json'][0]);
-                            $dados2 = str_replace('"','',$dados2);
-                            // echo '<pre>'; print_r($dados2); echo '</pre>';
-                            $data =  $this->formata_data(4, trim($dados2)); ;
+                            preg_match_all('/(<meta itemprop="datePublished" content=")(?P<json>[\s\S]*?)["><meta]/', $data2, $matches);
+                            if(!empty($matches['json'][0])){
+                                $data =  trim($matches['json'][0]); 
+                            }else{
+                                $data = '0000-00-00';
+                            }
                         }
 
                         //Baixa imagem
@@ -728,16 +740,20 @@ class CronJobController extends Controller
 
                 
                 if($img != "" && $link != ""){
+                    $data_json = "";
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                         if(isset($item['url']) && $item['url'] != ""){
+                            $data2 = "";
+                            $url_date = "";
                             $url_date = $item['url'];
                             $this->pauseTime();
                             $data2 = $this->getCurl($url_date);
-                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
-                            $dados2 = json_encode($matches['json'][0]);
-                            $dados2 = str_replace('"','',$dados2);
-                            // echo '<pre>'; print_r($dados2); echo '</pre>';
-                            $data =  $this->formata_data(4, trim($dados2)); ;
+                            preg_match_all('/(<meta itemprop="datePublished" content=")(?P<json>[\s\S]*?)["><meta]/', $data2, $matches);
+                            if(!empty($matches['json'][0])){
+                                $data =  trim($matches['json'][0]); 
+                            }else{
+                                $data = '0000-00-00';
+                            }
                         }
 
                         //Baixa imagem
@@ -898,16 +914,20 @@ class CronJobController extends Controller
 
                 
                 if($img != "" && $link != ""){
+                    $data_json = "";
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                         if(isset($item['url']) && $item['url'] != ""){
+                            $data2 = "";
+                            $url_date = "";
                             $url_date = $item['url'];
                             $this->pauseTime();
                             $data2 = $this->getCurl($url_date);
-                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
-                            $dados2 = json_encode($matches['json'][0]);
-                            $dados2 = str_replace('"','',$dados2);
-                            // echo '<pre>'; print_r($dados2); echo '</pre>';
-                            $data =  $this->formata_data(4, trim($dados2)); ;
+                            preg_match_all('/(<meta itemprop="datePublished" content=")(?P<json>[\s\S]*?)["><meta]/', $data2, $matches);
+                            if(!empty($matches['json'][0])){
+                                $data =  trim($matches['json'][0]); 
+                            }else{
+                                $data = '0000-00-00';
+                            }
                         }
 
                         //Baixa imagem
@@ -1068,16 +1088,20 @@ class CronJobController extends Controller
 
                 
                 if($img != "" && $link != ""){
+                    $data_json = "";
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                         if(isset($item['url']) && $item['url'] != ""){
+                            $data2 = "";
+                            $url_date = "";
                             $url_date = $item['url'];
                             $this->pauseTime();
                             $data2 = $this->getCurl($url_date);
-                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
-                            $dados2 = json_encode($matches['json'][0]);
-                            $dados2 = str_replace('"','',$dados2);
-                            // echo '<pre>'; print_r($dados2); echo '</pre>';
-                            $data =  $this->formata_data(4, trim($dados2)); ;
+                            preg_match_all('/(<meta itemprop="datePublished" content=")(?P<json>[\s\S]*?)["><meta]/', $data2, $matches);
+                            if(!empty($matches['json'][0])){
+                                $data =  trim($matches['json'][0]); 
+                            }else{
+                                $data = '0000-00-00';
+                            }
                         }
 
                         //Baixa imagem
@@ -1238,16 +1262,20 @@ class CronJobController extends Controller
 
                 
                 if($img != "" && $link != ""){
+                    $data_json = "";
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                         if(isset($item['url']) && $item['url'] != ""){
+                            $data2 = "";
+                            $url_date = "";
                             $url_date = $item['url'];
                             $this->pauseTime();
                             $data2 = $this->getCurl($url_date);
-                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
-                            $dados2 = json_encode($matches['json'][0]);
-                            $dados2 = str_replace('"','',$dados2);
-                            // echo '<pre>'; print_r($dados2); echo '</pre>';
-                            $data =  $this->formata_data(4, trim($dados2)); ;
+                            preg_match_all('/(<meta itemprop="datePublished" content=")(?P<json>[\s\S]*?)["><meta]/', $data2, $matches);
+                            if(!empty($matches['json'][0])){
+                                $data =  trim($matches['json'][0]); 
+                            }else{
+                                $data = '0000-00-00';
+                            }
                         }
 
                         //Baixa imagem
@@ -1408,16 +1436,20 @@ class CronJobController extends Controller
 
                 
                 if($img != "" && $link != ""){
+                    $data_json = "";
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                         if(isset($item['url']) && $item['url'] != ""){
+                            $data2 = "";
+                            $url_date = "";
                             $url_date = $item['url'];
                             $this->pauseTime();
                             $data2 = $this->getCurl($url_date);
-                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
-                            $dados2 = json_encode($matches['json'][0]);
-                            $dados2 = str_replace('"','',$dados2);
-                            // echo '<pre>'; print_r($dados2); echo '</pre>';
-                            $data =  $this->formata_data(4, trim($dados2)); ;
+                            preg_match_all('/(<meta itemprop="datePublished" content=")(?P<json>[\s\S]*?)["><meta]/', $data2, $matches);
+                            if(!empty($matches['json'][0])){
+                                $data =  trim($matches['json'][0]); 
+                            }else{
+                                $data = '0000-00-00';
+                            }
                         }
 
                         //Baixa imagem
@@ -1578,16 +1610,20 @@ class CronJobController extends Controller
 
                 
                 if($img != "" && $link != ""){
+                    $data_json = "";
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                         if(isset($item['url']) && $item['url'] != ""){
+                            $data2 = "";
+                            $url_date = "";
                             $url_date = $item['url'];
                             $this->pauseTime();
                             $data2 = $this->getCurl($url_date);
-                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
-                            $dados2 = json_encode($matches['json'][0]);
-                            $dados2 = str_replace('"','',$dados2);
-                            // echo '<pre>'; print_r($dados2); echo '</pre>';
-                            $data =  $this->formata_data(4, trim($dados2)); ;
+                            preg_match_all('/(<meta itemprop="datePublished" content=")(?P<json>[\s\S]*?)["><meta]/', $data2, $matches);
+                            if(!empty($matches['json'][0])){
+                                $data =  trim($matches['json'][0]); 
+                            }else{
+                                $data = '0000-00-00';
+                            }
                         }
 
                         //Baixa imagem
@@ -1748,16 +1784,20 @@ class CronJobController extends Controller
 
                 
                 if($img != "" && $link != ""){
+                    $data_json = "";
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                         if(isset($item['url']) && $item['url'] != ""){
+                            $data2 = "";
+                            $url_date = "";
                             $url_date = $item['url'];
                             $this->pauseTime();
                             $data2 = $this->getCurl($url_date);
-                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
-                            $dados2 = json_encode($matches['json'][0]);
-                            $dados2 = str_replace('"','',$dados2);
-                            // echo '<pre>'; print_r($dados2); echo '</pre>';
-                            $data =  $this->formata_data(4, trim($dados2)); ;
+                            preg_match_all('/(<meta itemprop="datePublished" content=")(?P<json>[\s\S]*?)["><meta]/', $data2, $matches);
+                            if(!empty($matches['json'][0])){
+                                $data =  trim($matches['json'][0]); 
+                            }else{
+                                $data = '0000-00-00';
+                            }
                         }
 
                         //Baixa imagem
@@ -1918,16 +1958,20 @@ class CronJobController extends Controller
 
                 
                 if($img != "" && $link != ""){
+                    $data_json = "";
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                         if(isset($item['url']) && $item['url'] != ""){
+                            $data2 = "";
+                            $url_date = "";
                             $url_date = $item['url'];
                             $this->pauseTime();
                             $data2 = $this->getCurl($url_date);
-                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
-                            $dados2 = json_encode($matches['json'][0]);
-                            $dados2 = str_replace('"','',$dados2);
-                            // echo '<pre>'; print_r($dados2); echo '</pre>';
-                            $data =  $this->formata_data(4, trim($dados2)); ;
+                            preg_match_all('/(<meta itemprop="datePublished" content=")(?P<json>[\s\S]*?)["><meta]/', $data2, $matches);
+                            if(!empty($matches['json'][0])){
+                                $data =  trim($matches['json'][0]); 
+                            }else{
+                                $data = '0000-00-00';
+                            }
                         }
 
                         //Baixa imagem
@@ -2088,16 +2132,20 @@ class CronJobController extends Controller
 
                 
                 if($img != "" && $link != ""){
+                    $data_json = "";
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                         if(isset($item['url']) && $item['url'] != ""){
+                            $data2 = "";
+                            $url_date = "";
                             $url_date = $item['url'];
                             $this->pauseTime();
                             $data2 = $this->getCurl($url_date);
-                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
-                            $dados2 = json_encode($matches['json'][0]);
-                            $dados2 = str_replace('"','',$dados2);
-                            // echo '<pre>'; print_r($dados2); echo '</pre>';
-                            $data =  $this->formata_data(4, trim($dados2)); ;
+                            preg_match_all('/(<meta itemprop="datePublished" content=")(?P<json>[\s\S]*?)["><meta]/', $data2, $matches);
+                            if(!empty($matches['json'][0])){
+                                $data =  trim($matches['json'][0]); 
+                            }else{
+                                $data = '0000-00-00';
+                            }
                         }
 
                         //Baixa imagem
@@ -2258,16 +2306,20 @@ class CronJobController extends Controller
 
                 
                 if($img != "" && $link != ""){
+                    $data_json = "";
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                         if(isset($item['url']) && $item['url'] != ""){
+                            $data2 = "";
+                            $url_date = "";
                             $url_date = $item['url'];
                             $this->pauseTime();
                             $data2 = $this->getCurl($url_date);
-                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
-                            $dados2 = json_encode($matches['json'][0]);
-                            $dados2 = str_replace('"','',$dados2);
-                            // echo '<pre>'; print_r($dados2); echo '</pre>';
-                            $data =  $this->formata_data(4, trim($dados2)); ;
+                            preg_match_all('/(<meta itemprop="datePublished" content=")(?P<json>[\s\S]*?)["><meta]/', $data2, $matches);
+                            if(!empty($matches['json'][0])){
+                                $data =  trim($matches['json'][0]); 
+                            }else{
+                                $data = '0000-00-00';
+                            }
                         }
 
                         //Baixa imagem
@@ -2428,16 +2480,20 @@ class CronJobController extends Controller
 
                 
                 if($img != "" && $link != ""){
+                    $data_json = "";
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                         if(isset($item['url']) && $item['url'] != ""){
+                            $data2 = "";
+                            $url_date = "";
                             $url_date = $item['url'];
                             $this->pauseTime();
                             $data2 = $this->getCurl($url_date);
-                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
-                            $dados2 = json_encode($matches['json'][0]);
-                            $dados2 = str_replace('"','',$dados2);
-                            // echo '<pre>'; print_r($dados2); echo '</pre>';
-                            $data =  $this->formata_data(4, trim($dados2)); ;
+                            preg_match_all('/(<meta itemprop="datePublished" content=")(?P<json>[\s\S]*?)["><meta]/', $data2, $matches);
+                            if(!empty($matches['json'][0])){
+                                $data =  trim($matches['json'][0]); 
+                            }else{
+                                $data = '0000-00-00';
+                            }
                         }
 
                         //Baixa imagem
@@ -2598,16 +2654,20 @@ class CronJobController extends Controller
 
                 
                 if($img != "" && $link != ""){
+                    $data_json = "";
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                         if(isset($item['url']) && $item['url'] != ""){
+                            $data2 = "";
+                            $url_date = "";
                             $url_date = $item['url'];
                             $this->pauseTime();
                             $data2 = $this->getCurl($url_date);
-                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
-                            $dados2 = json_encode($matches['json'][0]);
-                            $dados2 = str_replace('"','',$dados2);
-                            // echo '<pre>'; print_r($dados2); echo '</pre>';
-                            $data =  $this->formata_data(4, trim($dados2)); ;
+                            preg_match_all('/(<meta itemprop="datePublished" content=")(?P<json>[\s\S]*?)["><meta]/', $data2, $matches);
+                            if(!empty($matches['json'][0])){
+                                $data =  trim($matches['json'][0]); 
+                            }else{
+                                $data = '0000-00-00';
+                            }
                         }
 
                         //Baixa imagem
@@ -2768,16 +2828,20 @@ class CronJobController extends Controller
 
                 
                 if($img != "" && $link != ""){
+                    $data_json = "";
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                         if(isset($item['url']) && $item['url'] != ""){
+                            $data2 = "";
+                            $url_date = "";
                             $url_date = $item['url'];
                             $this->pauseTime();
                             $data2 = $this->getCurl($url_date);
-                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
-                            $dados2 = json_encode($matches['json'][0]);
-                            $dados2 = str_replace('"','',$dados2);
-                            // echo '<pre>'; print_r($dados2); echo '</pre>';
-                            $data =  $this->formata_data(4, trim($dados2)); ;
+                            preg_match_all('/(<meta itemprop="datePublished" content=")(?P<json>[\s\S]*?)["><meta]/', $data2, $matches);
+                            if(!empty($matches['json'][0])){
+                                $data =  trim($matches['json'][0]); 
+                            }else{
+                                $data = '0000-00-00';
+                            }
                         }
 
                         //Baixa imagem
@@ -2938,16 +3002,20 @@ class CronJobController extends Controller
 
                 
                 if($img != "" && $link != ""){
+                    $data_json = "";
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                         if(isset($item['url']) && $item['url'] != ""){
+                            $data2 = "";
+                            $url_date = "";
                             $url_date = $item['url'];
                             $this->pauseTime();
                             $data2 = $this->getCurl($url_date);
-                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
-                            $dados2 = json_encode($matches['json'][0]);
-                            $dados2 = str_replace('"','',$dados2);
-                            // echo '<pre>'; print_r($dados2); echo '</pre>';
-                            $data =  $this->formata_data(4, trim($dados2)); ;
+                            preg_match_all('/(<meta itemprop="datePublished" content=")(?P<json>[\s\S]*?)["><meta]/', $data2, $matches);
+                            if(!empty($matches['json'][0])){
+                                $data =  trim($matches['json'][0]); 
+                            }else{
+                                $data = '0000-00-00';
+                            }
                         }
 
                         //Baixa imagem
@@ -3108,16 +3176,20 @@ class CronJobController extends Controller
 
                 
                 if($img != "" && $link != ""){
+                    $data_json = "";
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                         if(isset($item['url']) && $item['url'] != ""){
+                            $data2 = "";
+                            $url_date = "";
                             $url_date = $item['url'];
                             $this->pauseTime();
                             $data2 = $this->getCurl($url_date);
-                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
-                            $dados2 = json_encode($matches['json'][0]);
-                            $dados2 = str_replace('"','',$dados2);
-                            // echo '<pre>'; print_r($dados2); echo '</pre>';
-                            $data =  $this->formata_data(4, trim($dados2)); ;
+                            preg_match_all('/(<meta itemprop="datePublished" content=")(?P<json>[\s\S]*?)["><meta]/', $data2, $matches);
+                            if(!empty($matches['json'][0])){
+                                $data =  trim($matches['json'][0]); 
+                            }else{
+                                $data = '0000-00-00';
+                            }
                         }
 
                         //Baixa imagem
@@ -3278,16 +3350,20 @@ class CronJobController extends Controller
 
                 
                 if($img != "" && $link != ""){
+                    $data_json = "";
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                         if(isset($item['url']) && $item['url'] != ""){
+                            $data2 = "";
+                            $url_date = "";
                             $url_date = $item['url'];
                             $this->pauseTime();
                             $data2 = $this->getCurl($url_date);
-                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
-                            $dados2 = json_encode($matches['json'][0]);
-                            $dados2 = str_replace('"','',$dados2);
-                            // echo '<pre>'; print_r($dados2); echo '</pre>';
-                            $data =  $this->formata_data(4, trim($dados2)); ;
+                            preg_match_all('/(<meta itemprop="datePublished" content=")(?P<json>[\s\S]*?)["><meta]/', $data2, $matches);
+                            if(!empty($matches['json'][0])){
+                                $data =  trim($matches['json'][0]); 
+                            }else{
+                                $data = '0000-00-00';
+                            }
                         }
 
                         //Baixa imagem
@@ -3445,19 +3521,22 @@ class CronJobController extends Controller
                 if($item['url']){
                     $link = $item['url'];
                 }
-
                 
                 if($img != "" && $link != ""){
+                    $data_json = "";
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                         if(isset($item['url']) && $item['url'] != ""){
+                            $data2 = "";
+                            $url_date = "";
                             $url_date = $item['url'];
                             $this->pauseTime();
                             $data2 = $this->getCurl($url_date);
-                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
-                            $dados2 = json_encode($matches['json'][0]);
-                            $dados2 = str_replace('"','',$dados2);
-                            // echo '<pre>'; print_r($dados2); echo '</pre>';
-                            $data =  $this->formata_data(4, trim($dados2)); ;
+                            preg_match_all('/(<meta itemprop="datePublished" content=")(?P<json>[\s\S]*?)["><meta]/', $data2, $matches);
+                            if(!empty($matches['json'][0])){
+                                $data =  trim($matches['json'][0]); 
+                            }else{
+                                $data = '0000-00-00';
+                            }
                         }
 
                         //Baixa imagem
@@ -3617,20 +3696,21 @@ class CronJobController extends Controller
                 }
 
                 if($img != "" && $link != ""){
+                    $data_json = "";
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                         if(isset($item['url']) && $item['url'] != ""){
+                            $data2 = "";
+                            $url_date = "";
                             $url_date = $item['url'];
-                           
-                            $data2 = $this->getCurl($url_date);
-                            // echo $this->getUserIP();
                             $this->pauseTime();
-                            // echo '<pre>'; print_r($data2); echo '</pre>';
-                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
-                            $dados2 = json_encode($matches['json'][0]);
-                            $dados2 = str_replace('"','',$dados2);
-                            $data =  $this->formata_data(4, trim($dados2));
+                            $data2 = $this->getCurl($url_date);
+                            preg_match_all('/(<meta itemprop="datePublished" content=")(?P<json>[\s\S]*?)["><meta]/', $data2, $matches);
+                            if(!empty($matches['json'][0])){
+                                $data =  trim($matches['json'][0]); 
+                            }else{
+                                $data = '0000-00-00';
+                            }
                         }
-                        // dd("");
 
                         //Baixa imagem
                         $file =$img;
@@ -3790,17 +3870,20 @@ class CronJobController extends Controller
 
                 
                 if($img != "" && $link != ""){
+                    $data_json = "";
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                         if(isset($item['url']) && $item['url'] != ""){
+                            $data2 = "";
+                            $url_date = "";
                             $url_date = $item['url'];
                             $this->pauseTime();
-                            // echo $item['noticia'];
                             $data2 = $this->getCurl($url_date);
-                            preg_match_all('/(\"dateText\":{\"simpleText\":\")(?P<json>[\s\S]*?)["}}}]/', $data2, $matches);
-                            $dados2 = json_encode($matches['json'][0]);
-                            $dados2 = str_replace('"','',$dados2);
-                            // echo '<pre>'; print_r($dados2); echo '</pre>';
-                            $data =  $this->formata_data(4, trim($dados2)); ;
+                            preg_match_all('/(<meta itemprop="datePublished" content=")(?P<json>[\s\S]*?)["><meta]/', $data2, $matches);
+                            if(!empty($matches['json'][0])){
+                                $data =  trim($matches['json'][0]); 
+                            }else{
+                                $data = '0000-00-00';
+                            }
                         }
 
                         //Baixa imagem
@@ -3971,6 +4054,7 @@ class CronJobController extends Controller
                     $data =  $this->formata_data(1, trim($item['data'])); 
                 }
                 if($img != "" && $link != ""){
+                    $data_json = "";
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                         //Baixa imagem
                         $file =$img;
@@ -4151,7 +4235,7 @@ class CronJobController extends Controller
 
                
                 if($img != "" && $link != ""){
-                    
+                    $data_json = "";
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia'][0]) )){
                         //Baixa imagem
                         $file =$img;
@@ -4326,6 +4410,7 @@ class CronJobController extends Controller
                     $data =  $this->formata_data(1, trim($item['data'])); 
                 }
                 if($img != "" && $link != ""){
+                    $data_json = "";
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                         //Baixa imagem
                         $file =$img;
@@ -4507,6 +4592,7 @@ class CronJobController extends Controller
                     $data =  $this->formata_data(1, trim($item['data'])); 
                 }
                 if($img != "" && $link != ""){
+                    $data_json = "";
                     if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
                         //Baixa imagem
                         $file =$img;
@@ -4734,22 +4820,35 @@ class CronJobController extends Controller
         $config['useragent'] = $this->getRandAgent();
 
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_USERAGENT, $config['useragent']);
-        curl_setopt($ch, CURLOPT_COOKIEFILE, '/tmp/cookiefile');
-        // curl_setopt($ch, CURLOPT_PROXY, $proxy); // $proxy is ip of proxy server
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-        $httpCode = curl_getinfo($ch , CURLINFO_HTTP_CODE); // this results 0 every time
-        $response = curl_exec($ch);
-        if ($response === false) $response = curl_error($ch);
-       
-        curl_close($ch);
+        $timeout = 20; // set to zero for no timeout
+        curl_setopt ($ch, CURLOPT_URL, $url);
+        curl_setopt ($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
 
-        return $response;
+        ob_start();
+        curl_exec($ch);
+        curl_close($ch);
+        $file_contents = ob_get_contents();
+        ob_end_clean();
+
+
+        // $ch = curl_init();
+        // curl_setopt($ch, CURLOPT_URL, $url);
+        // curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        // curl_setopt($ch, CURLOPT_USERAGENT, $config['useragent']);
+        // // curl_setopt($ch, CURLOPT_COOKIEFILE, '/tmp/cookiefile');
+        // // curl_setopt($ch, CURLOPT_PROXY, $proxy); // $proxy is ip of proxy server
+        // curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        // curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        // // curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+        // // curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+        // $httpCode = curl_getinfo($ch , CURLINFO_HTTP_CODE); // this results 0 every time
+        // $response = curl_exec($ch);
+        // echo $httpCode;
+        // if ($response === false) $response = curl_error($ch);
+       
+        // curl_close($ch);
+
+        return $file_contents;
     }
 
     public function getHtml($url) {
@@ -4932,6 +5031,7 @@ class CronJobController extends Controller
             "o",
             "a",
             "e",
+            "é",
             "os",
             "as",
             "um",

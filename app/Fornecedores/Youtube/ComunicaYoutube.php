@@ -60,7 +60,7 @@ class ComunicaYoutube {
         
     
         // exit;
-        if(isset($matches['json'][0])){
+        if(!empty($matches['json'][0])){
             $dados = json_decode($matches['json'][0]);
         }else{
             $dados = [];
@@ -142,22 +142,35 @@ class ComunicaYoutube {
         $config['useragent'] = $this->getRandAgent();
 
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_USERAGENT, $config['useragent']);
-        curl_setopt($ch, CURLOPT_COOKIEJAR, '/tmp/cookiefile');
-        // curl_setopt($ch, CURLOPT_PROXY, $proxy); // $proxy is ip of proxy server
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-        $httpCode = curl_getinfo($ch , CURLINFO_HTTP_CODE); // this results 0 every time
-        $response = curl_exec($ch);
-        if ($response === false) $response = curl_error($ch);
-       
-        curl_close($ch);
+        $timeout = 20; // set to zero for no timeout
+        curl_setopt ($ch, CURLOPT_URL, $url);
+        curl_setopt ($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
 
-        return $response;
+        ob_start();
+        curl_exec($ch);
+        curl_close($ch);
+        $file_contents = ob_get_contents();
+        ob_end_clean();
+
+
+        // $ch = curl_init();
+        // curl_setopt($ch, CURLOPT_URL, $url);
+        // curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        // curl_setopt($ch, CURLOPT_USERAGENT, $config['useragent']);
+        // // curl_setopt($ch, CURLOPT_COOKIEFILE, '/tmp/cookiefile');
+        // // curl_setopt($ch, CURLOPT_PROXY, $proxy); // $proxy is ip of proxy server
+        // curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        // curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        // // curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+        // // curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+        // $httpCode = curl_getinfo($ch , CURLINFO_HTTP_CODE); // this results 0 every time
+        // $response = curl_exec($ch);
+        // echo $httpCode;
+        // if ($response === false) $response = curl_error($ch);
+       
+        // curl_close($ch);
+
+        return $file_contents;
     }
 
 }

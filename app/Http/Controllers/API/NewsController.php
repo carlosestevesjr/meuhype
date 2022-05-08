@@ -12,6 +12,57 @@ use Illuminate\Http\Request;
 class NewsController extends Controller
 {
 
+    public function listaNewsSearch(Request $request)
+    {
+        $params = $request->all();
+        $busca = !empty( $params['busca']) ? $params['busca']: "";
+       
+        $lista =DB::table('news')
+                    ->join('channels', 'news.channels_id', '=', 'channels.id')
+                    ->select('news.*', 'channels.name as channel', 'channels.image as channel_logo', 'channels.type as channel_type')
+                    ->where('news.status', '=', 'show') 
+                    ->where('news.title', 'LIKE', "%{$busca}%") 
+                    ->orderBy('data', 'desc')
+                    ->paginate(15);
+       
+        
+        $array = [];
+        foreach($lista->items() as $key => $item) {
+            $array[$key]['new'] = $item;
+            $new = News::find($item->id);
+            foreach( $new->tags as $tagskey => $tags) {
+                $array[$key]['tags'][$tagskey] = $tags;
+            }
+        }
+       
+        $lista = [
+            'data' =>  $array, 
+        ];
+        
+        if($lista){
+            $retorno =  [
+                'code'  => '000',
+                'content' => [
+                                'dados' =>  $lista, 
+                            ],
+                'date'         => date("Y-m-d"),
+                'hour'         => date("H:i:s"),
+            ];
+            
+            return response()->json($retorno , 200);
+        }else{
+            $retorno =  [
+                'code'  => '000',
+                'content' => [
+                                'dados' =>  [], 
+                            ],
+                'date'         => date("Y-m-d"),
+                'hour'         => date("H:i:s"),
+            ];
+            return response()->json($retorno , 200);
+        }
+    }
+
     public function listaNews(Request $request)
     {
      
@@ -159,7 +210,7 @@ class NewsController extends Controller
             $retorno =  [
                 'code'  => '000',
                 'content' => [
-                                'dados' =>  $lista, 
+                                'dados' =>  $lista,
                             ],
                 'date'         => date("Y-m-d"),
                 'hour'         => date("H:i:s"),
@@ -345,7 +396,7 @@ class NewsController extends Controller
 
     public function listaNewsChannelUser(Request $request)
     {
-   
+      
         $lista =DB::table('news')
         ->join('channels', 'news.channels_id', '=', 'channels.id')
         ->select('news.*', 'channels.name as channel', 'channels.image as channel_logo', 'channels.type as channel_type');
@@ -468,18 +519,6 @@ class NewsController extends Controller
                 $query->orWhere('channels.id', $request->id);
             });
 
-            $lista->where(function($query) use ( $news_tags, $request) {
-                //Filtra por tags
-                $array_tags = [];
-                $array_news = [];
-                // dd($news_tags);
-                foreach($news_tags as $key => $item) {
-                    $array_news[$key] = $item->news_id;
-                    $query->orWhere('news.id','=', $item->news_id);
-                }
-                // $query->whereIn('news.id', $array_news);
-            });
-
             $lista = $lista->where('news.status', '=', 'show') 
             ->orderBy('data', 'desc')->paginate(15);
             $array = [];
@@ -496,7 +535,6 @@ class NewsController extends Controller
             $lista = [
                 'data' =>  $array, 
             ];
-
             $retorno =  [
                 'code'  => '000',
                 'content' => [

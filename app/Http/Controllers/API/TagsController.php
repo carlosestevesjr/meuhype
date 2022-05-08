@@ -31,7 +31,7 @@ class TagsController extends Controller
                         ->where('status', '=', "active") 
                         ->orderBy('title', 'Asc')
                         // ->limit(15)
-                        ->get();
+                        ->paginate(10);
 
         if($lista){
             $retorno =  [

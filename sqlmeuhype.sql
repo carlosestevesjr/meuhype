@@ -14,7 +14,7 @@
 
 
 -- Copiando estrutura do banco de dados para meuhype
-CREATE DATABASE IF NOT EXISTS `meuhype` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+CREATE DATABASE IF NOT EXISTS `meuhype` /*!40100 DEFAULT CHARACTER SET utf8mb4 */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `meuhype`;
 
 -- Copiando estrutura para tabela meuhype.admins
@@ -79,7 +79,7 @@ CREATE TABLE IF NOT EXISTS `channels` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4;
 
 -- Copiando dados para a tabela meuhype.channels: ~27 rows (aproximadamente)
 /*!40000 ALTER TABLE `channels` DISABLE KEYS */;
@@ -189,7 +189,7 @@ CREATE TABLE IF NOT EXISTS `crawler` (
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
 
 -- Copiando dados para a tabela meuhype.crawler: ~4 rows (aproximadamente)
 /*!40000 ALTER TABLE `crawler` DISABLE KEYS */;
@@ -200,17 +200,17 @@ INSERT INTO `crawler` (`id`, `title`, `tags_id`, `time_initial`, `type`, `descri
 INSERT INTO `crawler` (`id`, `title`, `tags_id`, `time_initial`, `type`, `description`, `order`, `status`, `created_at`, `updated_at`) VALUES
 	(3, 'Spotify - Podcasts', 0, '00:18:00', 'spotify', '<p>Spotify</p>', 1, 'active', '2021-04-21 23:14:55', '2021-04-23 21:20:11');
 INSERT INTO `crawler` (`id`, `title`, `tags_id`, `time_initial`, `type`, `description`, `order`, `status`, `created_at`, `updated_at`) VALUES
-	(4, 'Crawler 3', 15, '16:51:00', 'site', NULL, 1, 'active', '2021-05-01 22:21:31', '2022-03-13 16:29:28');
+	(4, 'Crawler 3', 12, '23:28:00', 'site', NULL, 1, 'active', '2021-05-01 22:21:31', '2022-04-28 23:24:41');
 /*!40000 ALTER TABLE `crawler` ENABLE KEYS */;
 
 -- Copiando estrutura para tabela meuhype.crawler_configs
 CREATE TABLE IF NOT EXISTS `crawler_configs` (
   `id` int NOT NULL,
-  `array_canais_ativos` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `array_canais_ativos` text CHARACTER SET utf8mb4,
   `qtd_noticias_por_canal` int DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Copiando dados para a tabela meuhype.crawler_configs: ~1 rows (aproximadamente)
 /*!40000 ALTER TABLE `crawler_configs` DISABLE KEYS */;
@@ -224,7 +224,7 @@ CREATE TABLE IF NOT EXISTS `migrations` (
   `migration` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `batch` int NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4;
 
 -- Copiando dados para a tabela meuhype.migrations: ~0 rows (aproximadamente)
 /*!40000 ALTER TABLE `migrations` DISABLE KEYS */;
@@ -248,436 +248,400 @@ CREATE TABLE IF NOT EXISTS `news` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=214 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=196 DEFAULT CHARSET=utf8mb4;
 
--- Copiando dados para a tabela meuhype.news: ~209 rows (aproximadamente)
+-- Copiando dados para a tabela meuhype.news: ~186 rows (aproximadamente)
 /*!40000 ALTER TABLE `news` DISABLE KEYS */;
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(1, 3, 'The Penguin | DC oficializa minissérie derivada de Batman', 'the-penguin-dc-oficializa-minisserie-derivada-de-batman', 'the-penguin-dc-oficializa-minisserie-derivada-de-batman-omeletesite', '/uploads/news/20220312021423_the-penguin-dc-oficializa-minisserie-derivada-de-batman-omeletesite.jpg', NULL, 'show', 'https://www.omelete.com.br/batman-7/the-penguin-anuncio-hbo-max', NULL, NULL, 0, '2022-03-09', '2022-03-12 02:14:24', '2022-03-12 02:14:24');
+	(1, 3, 'Doutor Estranho 2 | Teaser confirma Xavier e sugere personagem de What If?', 'doutor-estranho-2-teaser-confirma-xavier-e-sugere-personagem-de-what-if', 'doutor-estranho-2-teaser-confirma-xavier-e-sugere-personagem-de-what-if-omeletesite', '/uploads/news/20220428111716_doutor-estranho-2-teaser-confirma-xavier-e-sugere-personagem-de-what-if-omeletesite.jpg', NULL, 'show', 'https://www.omelete.com.br/marvel-cinema/doutor-estranho-no-multiverso-da-loucura-professor-xavier-cadeira-teaser', NULL, NULL, 0, '2022-04-28', '2022-04-28 23:17:16', '2022-04-28 23:17:16');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(2, 3, 'The Batman | Homem solta morcego vivo em cinema e interrompe sessão', 'the-batman-homem-solta-morcego-vivo-em-cinema-e-interrompe-sessao', 'the-batman-homem-solta-morcego-vivo-em-cinema-e-interrompe-sessao-omeletesite', '/uploads/news/20220312021424_the-batman-homem-solta-morcego-vivo-em-cinema-e-interrompe-sessao-omeletesite.jpg', NULL, 'show', 'https://www.omelete.com.br/filmes/the-batman-morcego-vivo-cinema', NULL, NULL, 0, '2022-03-07', '2022-03-12 02:14:24', '2022-03-12 02:14:24');
+	(2, 3, 'Doutor Estranho salva America Chavez em cena inédita', 'doutor-estranho-salva-america-chavez-em-cena-inedita', 'doutor-estranho-salva-america-chavez-em-cena-inedita-omeletesite', '/uploads/news/20220428111716_doutor-estranho-salva-america-chavez-em-cena-inedita-omeletesite.jpg', NULL, 'show', 'https://www.omelete.com.br/marvel-cinema/doutor-estranho-salva-america-chavez-em-nova-cena-inedita', NULL, NULL, 0, '2022-04-28', '2022-04-28 23:17:16', '2022-04-28 23:17:16');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(3, 3, 'The Batman | Zoë Kravitz perdeu papel em Cavaleiro das Trevas por cor da pele', 'the-batman-zoe-kravitz-perdeu-papel-em-cavaleiro-das-trevas-por-cor-da-pele', 'the-batman-zoe-kravitz-perdeu-papel-em-cavaleiro-das-trevas-por-cor-da-pele-omeletesite', '/uploads/news/20220312021424_the-batman-zoe-kravitz-perdeu-papel-em-cavaleiro-das-trevas-por-cor-da-pele-omeletesite.jpg', NULL, 'show', 'https://www.omelete.com.br/dc-comics/zoe-kravitz-papel-batman', NULL, NULL, 0, '2022-03-07', '2022-03-12 02:14:24', '2022-03-12 02:14:24');
+	(3, 3, 'Doutor Estranho 2 | Marvel exibe 20 minutos na CinemaCon; veja a descrição', 'doutor-estranho-2-marvel-exibe-20-minutos-na-cinemacon-veja-a-descricao', 'doutor-estranho-2-marvel-exibe-20-minutos-na-cinemacon-veja-a-descricao-omeletesite', '/uploads/news/20220428111716_doutor-estranho-2-marvel-exibe-20-minutos-na-cinemacon-veja-a-descricao-omeletesite.jpg', NULL, 'show', 'https://www.omelete.com.br/marvel-cinema/doutor-estranho-2-abertura-cinemacon', NULL, NULL, 0, '2022-04-27', '2022-04-28 23:17:17', '2022-04-28 23:17:17');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(4, 1, 'The Batman: A vingança nunca é plena, mata a alma e a envenena', 'the-batman-a-vinganca-nunca-e-plena-mata-a-alma-e-a-envenena', 'the-batman-a-vinganca-nunca-e-plena-mata-a-alma-e-a-envenena-jovemnerdsite', '/uploads/news/20220312021426_the-batman-a-vinganca-nunca-e-plena-mata-a-alma-e-a-envenena-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdcast/the-batman-a-vinganca-nunca-e-plena-mata-a-alma-e-a-envenena/', NULL, NULL, 0, '2022-03-11', '2022-03-12 02:14:28', '2022-03-12 02:14:28');
+	(4, 3, 'Doutor Estranho 2 | Benedict Cumberbatch comenta banimento na Arábia Saudita', 'doutor-estranho-2-benedict-cumberbatch-comenta-banimento-na-arabia-saudita', 'doutor-estranho-2-benedict-cumberbatch-comenta-banimento-na-arabia-saudita-omeletesite', '/uploads/news/20220428111717_doutor-estranho-2-benedict-cumberbatch-comenta-banimento-na-arabia-saudita-omeletesite.jpg', NULL, 'show', 'https://www.omelete.com.br/marvel-cinema/doutor-estranho-2-no-multiverso-da-loucura-benedict-cumberbatch-comenta-censura', NULL, NULL, 0, '2022-04-26', '2022-04-28 23:17:17', '2022-04-28 23:17:17');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(5, 1, 'Música-tema de The Batman é lançada oficialmente; ouça', 'musica-tema-de-the-batman-e-lancada-oficialmente-ouca', 'musica-tema-de-the-batman-e-lancada-oficialmente-ouca-jovemnerdsite', '/uploads/news/20220312021428_musica-tema-de-the-batman-e-lancada-oficialmente-ouca-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/musica-tema-de-the-batman-e-lancada-oficialmente-ouca/', NULL, NULL, 0, '2022-01-21', '2022-03-12 02:14:29', '2022-03-12 02:14:29');
+	(5, 3, 'Doutor Estranho 2 | Comercial confirma de vez presença dos Illuminati', 'doutor-estranho-2-comercial-confirma-de-vez-presenca-dos-illuminati', 'doutor-estranho-2-comercial-confirma-de-vez-presenca-dos-illuminati-omeletesite', '/uploads/news/20220428111717_doutor-estranho-2-comercial-confirma-de-vez-presenca-dos-illuminati-omeletesite.jpg', NULL, 'show', 'https://www.omelete.com.br/marvel-cinema/doutor-estranho-2-teaser-confirma-illuminati', NULL, NULL, 0, '2022-04-26', '2022-04-28 23:17:17', '2022-04-28 23:17:17');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(6, 1, 'The Batman terá quase três horas de duração, confirma site', 'the-batman-tera-quase-tres-horas-de-duracao-confirma-site', 'the-batman-tera-quase-tres-horas-de-duracao-confirma-site-jovemnerdsite', '/uploads/news/20220312021429_the-batman-tera-quase-tres-horas-de-duracao-confirma-site-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/the-batman-tera-quase-tres-horas-de-duracao-confirma-site/', NULL, NULL, 0, '2022-01-20', '2022-03-12 02:14:30', '2022-03-12 02:14:30');
+	(6, 3, 'Doutor Estranho no Multiverso da Loucura ganha incrível pôster final; veja', 'doutor-estranho-no-multiverso-da-loucura-ganha-incrivel-poster-final-veja', 'doutor-estranho-no-multiverso-da-loucura-ganha-incrivel-poster-final-veja-omeletesite', '/uploads/news/20220428111717_doutor-estranho-no-multiverso-da-loucura-ganha-incrivel-poster-final-veja-omeletesite.jpg', NULL, 'show', 'https://www.omelete.com.br/filmes/doutor-estranho-2-poster', NULL, NULL, 0, '2022-04-26', '2022-04-28 23:17:18', '2022-04-28 23:17:18');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(7, 1, 'The Batman: Vingança servida quente! (Trailer Oficial)', 'the-batman-vinganca-servida-quente-trailer-oficial', 'the-batman-vinganca-servida-quente-trailer-oficial-jovemnerdsite', '/uploads/news/20220312021430_the-batman-vinganca-servida-quente-trailer-oficial-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdoffice/the-batman-vinganca-servida-quente-trailer-oficial/', NULL, NULL, 0, '2021-10-20', '2022-03-12 02:14:31', '2022-03-12 02:14:31');
+	(7, 3, 'Doutor Estranho 2 | Realidade se estilhaça em novos banners', 'doutor-estranho-2-realidade-se-estilhaca-em-novos-banners', 'doutor-estranho-2-realidade-se-estilhaca-em-novos-banners-omeletesite', '/uploads/news/20220428111718_doutor-estranho-2-realidade-se-estilhaca-em-novos-banners-omeletesite.jpg', NULL, 'show', 'https://www.omelete.com.br/marvel-cinema/doutor-estranho-2-no-multiverso-da-loucura-banners-realidades-fraturadas', NULL, NULL, 0, '2022-04-22', '2022-04-28 23:17:18', '2022-04-28 23:17:18');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(8, 1, 'Vídeo de The Batman revela visual de Zöe Kravitz como Mulher-Gato', 'video-de-the-batman-revela-visual-de-zoe-kravitz-como-mulher-gato', 'video-de-the-batman-revela-visual-de-zoe-kravitz-como-mulher-gato-jovemnerdsite', '/uploads/news/20220312021431_video-de-the-batman-revela-visual-de-zoe-kravitz-como-mulher-gato-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/video-de-the-batman-revela-visual-de-zoe-kravitz-como-mulher-gato/', NULL, NULL, 0, '2021-05-06', '2022-03-12 02:14:32', '2022-03-12 02:14:32');
+	(8, 3, 'Doutor Estranho 2 | Chegada de Sam Raimi e visual louco são foco de novo vídeo', 'doutor-estranho-2-chegada-de-sam-raimi-e-visual-louco-sao-foco-de-novo-video', 'doutor-estranho-2-chegada-de-sam-raimi-e-visual-louco-sao-foco-de-novo-video-omeletesite', '/uploads/news/20220428111718_doutor-estranho-2-chegada-de-sam-raimi-e-visual-louco-sao-foco-de-novo-video-omeletesite.jpg', NULL, 'show', 'https://www.omelete.com.br/marvel-cinema/doutor-estranho-2-no-multiverso-da-loucura-sam-raimi-featurette', NULL, NULL, 0, '2022-04-22', '2022-04-28 23:17:19', '2022-04-28 23:17:19');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(9, 1, 'The Batman &8211; Reaction e vingança!', 'the-batman-8211-reaction-e-vinganca', 'the-batman-8211-reaction-e-vinganca-jovemnerdsite', '/uploads/news/20220312021432_the-batman-8211-reaction-e-vinganca-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdoffice/the-batman-reaction-e-vinganca/', NULL, NULL, 0, '2020-09-02', '2022-03-12 02:14:34', '2022-03-12 02:14:34');
+	(9, 3, 'Doutor Estranho no Multiverso da Loucura não será exibido na Arábia Saudita', 'doutor-estranho-no-multiverso-da-loucura-nao-sera-exibido-na-arabia-saudita', 'doutor-estranho-no-multiverso-da-loucura-nao-sera-exibido-na-arabia-saudita-omeletesite', '/uploads/news/20220428111719_doutor-estranho-no-multiverso-da-loucura-nao-sera-exibido-na-arabia-saudita-omeletesite.jpg', NULL, 'show', 'https://www.omelete.com.br/marvel-cinema/doutor-estranho-2-no-multiverso-da-loucura-proibido-arabia-saudita', NULL, NULL, 0, '2022-04-22', '2022-04-28 23:17:19', '2022-04-28 23:17:19');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(10, 1, 'Teaser de The Batman é recriado em LEGO', 'teaser-de-the-batman-e-recriado-em-lego', 'teaser-de-the-batman-e-recriado-em-lego-jovemnerdsite', '/uploads/news/20220312021434_teaser-de-the-batman-e-recriado-em-lego-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/teaser-de-the-batman-e-recriado-em-lego/', NULL, NULL, 0, '2020-08-31', '2022-03-12 02:14:35', '2022-03-12 02:14:35');
+	(10, 1, 'Doutor Estranho 2 ganha teaser com Professor Xavier e ligação com What If?', 'doutor-estranho-2-ganha-teaser-com-professor-xavier-e-ligacao-com-what-if', 'doutor-estranho-2-ganha-teaser-com-professor-xavier-e-ligacao-com-what-if-jovemnerdsite', '/uploads/news/20220428111723_doutor-estranho-2-ganha-teaser-com-professor-xavier-e-ligacao-com-what-if-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/doutor-estranho-2-ganha-teaser-com-professor-xavier-what-if/', NULL, NULL, 0, '2022-04-28', '2022-04-28 23:17:24', '2022-04-28 23:17:24');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(11, 1, 'Fã mistura teaser de The Batman com trailer de Cats e o resultado é bizarro', 'fa-mistura-teaser-de-the-batman-com-trailer-de-cats-e-o-resultado-e-bizarro', 'fa-mistura-teaser-de-the-batman-com-trailer-de-cats-e-o-resultado-e-bizarro-jovemnerdsite', '/uploads/news/20220312021435_fa-mistura-teaser-de-the-batman-com-trailer-de-cats-e-o-resultado-e-bizarro-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/fa-mistura-trailer-de-the-batman-e-cats/', NULL, NULL, 0, '2020-08-26', '2022-03-12 02:14:36', '2022-03-12 02:14:36');
+	(11, 1, 'Minutos iniciais de Doutor Estranho 2 trazem multiverso e muita ação; leia a descrição', 'minutos-iniciais-de-doutor-estranho-2-trazem-multiverso-e-muita-acao-leia-a-descricao', 'minutos-iniciais-de-doutor-estranho-2-trazem-multiverso-e-muita-acao-leia-a-descricao-jovemnerdsite', '/uploads/news/20220428111724_minutos-iniciais-de-doutor-estranho-2-trazem-multiverso-e-muita-acao-leia-a-descricao-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/doutor-estranho-2-primeiros-minutos-descricao/', NULL, NULL, 0, '2022-04-28', '2022-04-28 23:17:25', '2022-04-28 23:17:25');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(12, 1, 'The Batman | &8220;Como fã, é o tipo de filme que eu quero ver&8221;, diz Zack Snyder', 'the-batman-8220como-fa-e-o-tipo-de-filme-que-eu-quero-ver8221-diz-zack-snyder', 'the-batman-8220como-fa-e-o-tipo-de-filme-que-eu-quero-ver8221-diz-zack-snyder-jovemnerdsite', '/uploads/news/20220312021436_the-batman-8220como-fa-e-o-tipo-de-filme-que-eu-quero-ver8221-diz-zack-snyder-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/the-batman-como-fa-e-o-tipo-de-filme-que-eu-quero-ver-diz-zack-snyder/', NULL, NULL, 0, '2020-08-25', '2022-03-12 02:14:37', '2022-03-12 02:14:37');
+	(12, 1, 'Doutor Estranho e America Chavez lutam contra monstro gigante em cena inédita', 'doutor-estranho-e-america-chavez-lutam-contra-monstro-gigante-em-cena-inedita', 'doutor-estranho-e-america-chavez-lutam-contra-monstro-gigante-em-cena-inedita-jovemnerdsite', '/uploads/news/20220428111725_doutor-estranho-e-america-chavez-lutam-contra-monstro-gigante-em-cena-inedita-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/doutor-estranho-multiverso-da-loucura-cena-inedita-america-chavez/', NULL, NULL, 0, '2022-04-28', '2022-04-28 23:17:26', '2022-04-28 23:17:26');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(13, 1, 'The Batman | Fã decifra mensagem do Charada que aparece no teaser', 'the-batman-fa-decifra-mensagem-do-charada-que-aparece-no-teaser', 'the-batman-fa-decifra-mensagem-do-charada-que-aparece-no-teaser-jovemnerdsite', '/uploads/news/20220312021437_the-batman-fa-decifra-mensagem-do-charada-que-aparece-no-teaser-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/the-batman-fa-decifra-mensagem-do-charada-que-aparece-no-teaser/', NULL, NULL, 0, '2020-08-24', '2022-03-12 02:14:37', '2022-03-12 02:14:37');
+	(13, 1, 'Benedict Cumberbatch defende personagem LGBT+ em Doutor Estranho 2 após banimento', 'benedict-cumberbatch-defende-personagem-lgbt-em-doutor-estranho-2-apos-banimento', 'benedict-cumberbatch-defende-personagem-lgbt-em-doutor-estranho-2-apos-banimento-jovemnerdsite', '/uploads/news/20220428111726_benedict-cumberbatch-defende-personagem-lgbt-em-doutor-estranho-2-apos-banimento-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/doutor-estranho-2-benedict-cumberbatch-defende-personagem-lgbt/', NULL, NULL, 0, '2022-04-26', '2022-04-28 23:17:28', '2022-04-28 23:17:28');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(14, 1, 'The Batman | Herói ainda é visto com desconfiança e medo pelas pessoas de Gotham', 'the-batman-heroi-ainda-e-visto-com-desconfianca-e-medo-pelas-pessoas-de-gotham', 'the-batman-heroi-ainda-e-visto-com-desconfianca-e-medo-pelas-pessoas-de-gotham-jovemnerdsite', '/uploads/news/20220312021437_the-batman-heroi-ainda-e-visto-com-desconfianca-e-medo-pelas-pessoas-de-gotham-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/the-batman-heroi-ainda-e-visto-com-desconfianca-e-medo-pelas-pessoas-de-gotham/', NULL, NULL, 0, '2020-08-22', '2022-03-12 02:14:39', '2022-03-12 02:14:39');
+	(14, 1, 'Variantes tomam conta do novo pôster de Doutor Estranho no Multiverso da Loucura', 'variantes-tomam-conta-do-novo-poster-de-doutor-estranho-no-multiverso-da-loucura', 'variantes-tomam-conta-do-novo-poster-de-doutor-estranho-no-multiverso-da-loucura-jovemnerdsite', '/uploads/news/20220428111728_variantes-tomam-conta-do-novo-poster-de-doutor-estranho-no-multiverso-da-loucura-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/doutor-estranho-no-multiverso-da-loucura-poster-variantes/', NULL, NULL, 0, '2022-04-26', '2022-04-28 23:17:29', '2022-04-28 23:17:29');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(15, 1, 'The Batman ganha primeiro teaser; assista', 'the-batman-ganha-primeiro-teaser-assista', 'the-batman-ganha-primeiro-teaser-assista-jovemnerdsite', '/uploads/news/20220312021439_the-batman-ganha-primeiro-teaser-assista-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/the-batman-ganha-primeiro-teaser-assista/', NULL, NULL, 0, '2020-08-22', '2022-03-12 02:14:40', '2022-03-12 02:14:40');
+	(15, 1, 'Novo teaser de Doutor Estranho 2 finalmente cita os Illuminati da Marvel', 'novo-teaser-de-doutor-estranho-2-finalmente-cita-os-illuminati-da-marvel', 'novo-teaser-de-doutor-estranho-2-finalmente-cita-os-illuminati-da-marvel-jovemnerdsite', '/uploads/news/20220428111729_novo-teaser-de-doutor-estranho-2-finalmente-cita-os-illuminati-da-marvel-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/doutor-estranho-2-teaser-confirma-illuminati/', NULL, NULL, 0, '2022-04-26', '2022-04-28 23:17:30', '2022-04-28 23:17:30');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(16, 1, 'The Batman | Primeiras imagens de Robert Pattinson como Bruce Wayne são reveladas; veja', 'the-batman-primeiras-imagens-de-robert-pattinson-como-bruce-wayne-sao-reveladas-veja', 'the-batman-primeiras-imagens-de-robert-pattinson-como-bruce-wayne-sao-reveladas-veja-jovemnerdsite', '/uploads/news/20220312021440_the-batman-primeiras-imagens-de-robert-pattinson-como-bruce-wayne-sao-reveladas-veja-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/the-batman-primeiras-imagens-de-robert-pattinsons-como-bruce-wayne-sao-reveladas-veja/', NULL, NULL, 0, '2020-08-22', '2022-03-12 02:14:41', '2022-03-12 02:14:41');
+	(16, 1, 'Doutor Estranho 2 é banido no Egito e Arábia Saudita por ter conteúdo LGBTQ+', 'doutor-estranho-2-e-banido-no-egito-e-arabia-saudita-por-ter-conteudo-lgbtq', 'doutor-estranho-2-e-banido-no-egito-e-arabia-saudita-por-ter-conteudo-lgbtq-jovemnerdsite', '/uploads/news/20220428111730_doutor-estranho-2-e-banido-no-egito-e-arabia-saudita-por-ter-conteudo-lgbtq-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/doutor-estranho-no-multiverso-da-loucura-banido-egito-arabia-saudita/', NULL, NULL, 0, '2022-04-25', '2022-04-28 23:17:31', '2022-04-28 23:17:31');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(17, 1, 'The Batman se passa em um universo diferente do apresentado em Liga da Justiça', 'the-batman-se-passa-em-um-universo-diferente-do-apresentado-em-liga-da-justica', 'the-batman-se-passa-em-um-universo-diferente-do-apresentado-em-liga-da-justica-jovemnerdsite', '/uploads/news/20220312021441_the-batman-se-passa-em-um-universo-diferente-do-apresentado-em-liga-da-justica-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/the-batman-se-passa-em-universo-diferente-do-apresentado-em-liga-da-justica/', NULL, NULL, 0, '2020-08-22', '2022-03-12 02:14:42', '2022-03-12 02:14:42');
+	(17, 1, 'Doutor Estranho no Multiverso da Loucura recebe pôsteres de Bosslogic', 'doutor-estranho-no-multiverso-da-loucura-recebe-posteres-de-bosslogic', 'doutor-estranho-no-multiverso-da-loucura-recebe-posteres-de-bosslogic-jovemnerdsite', '/uploads/news/20220428111731_doutor-estranho-no-multiverso-da-loucura-recebe-posteres-de-bosslogic-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/doutor-estranho-2-posteres-bosslogic/', NULL, NULL, 0, '2022-04-23', '2022-04-28 23:17:32', '2022-04-28 23:17:32');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(18, 1, 'The Batman | Matt Reeves divulga logo e nova arte do filme', 'the-batman-matt-reeves-divulga-logo-e-nova-arte-do-filme', 'the-batman-matt-reeves-divulga-logo-e-nova-arte-do-filme-jovemnerdsite', '/uploads/news/20220312021442_the-batman-matt-reeves-divulga-logo-e-nova-arte-do-filme-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/the-batman-matt-reeves-divulga-logo-e-nova-arte-do-filme/', NULL, NULL, 0, '2020-08-20', '2022-03-12 02:14:43', '2022-03-12 02:14:43');
+	(18, 1, 'Strange comparece ao casamento de Christine Palmer em foto de Doutor Estranho 2', 'strange-comparece-ao-casamento-de-christine-palmer-em-foto-de-doutor-estranho-2', 'strange-comparece-ao-casamento-de-christine-palmer-em-foto-de-doutor-estranho-2-jovemnerdsite', '/uploads/news/20220428111732_strange-comparece-ao-casamento-de-christine-palmer-em-foto-de-doutor-estranho-2-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/doutor-estranho-2-casamento/', NULL, NULL, 0, '2022-04-22', '2022-04-28 23:17:33', '2022-04-28 23:17:33');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(19, 1, 'Gravações de The Batman devem ser retomadas em setembro', 'gravacoes-de-the-batman-devem-ser-retomadas-em-setembro', 'gravacoes-de-the-batman-devem-ser-retomadas-em-setembro-jovemnerdsite', '/uploads/news/20220312021443_gravacoes-de-the-batman-devem-ser-retomadas-em-setembro-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/gravacoes-de-the-batman-devem-ser-retomadas-em-setembro/', NULL, NULL, 0, '2020-08-19', '2022-03-12 02:14:45', '2022-03-12 02:14:45');
+	(19, 1, 'Doutor Estranho no Multiverso da Loucura destaca Sam Raimi em novo vídeo', 'doutor-estranho-no-multiverso-da-loucura-destaca-sam-raimi-em-novo-video', 'doutor-estranho-no-multiverso-da-loucura-destaca-sam-raimi-em-novo-video-jovemnerdsite', '/uploads/news/20220428111733_doutor-estranho-no-multiverso-da-loucura-destaca-sam-raimi-em-novo-video-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/doutor-estranho-no-multiverso-da-loucura-video-sam-raimi/', NULL, NULL, 0, '2022-04-22', '2022-04-28 23:17:34', '2022-04-28 23:17:34');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(20, 1, 'The Batman | Novo símbolo do herói é registrado pela DC e Warner', 'the-batman-novo-simbolo-do-heroi-e-registrado-pela-dc-e-warner', 'the-batman-novo-simbolo-do-heroi-e-registrado-pela-dc-e-warner-jovemnerdsite', '/uploads/news/20220312021445_the-batman-novo-simbolo-do-heroi-e-registrado-pela-dc-e-warner-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/the-batman-novo-simbolo-do-heroi-e-registrado-pela-dc-e-warner/', NULL, NULL, 0, '2020-08-19', '2022-03-12 02:14:46', '2022-03-12 02:14:46');
+	(20, 1, 'Doutor Estranho 2 destaca poderes da Feiticeira Escarlate em teaser', 'doutor-estranho-2-destaca-poderes-da-feiticeira-escarlate-em-teaser', 'doutor-estranho-2-destaca-poderes-da-feiticeira-escarlate-em-teaser-jovemnerdsite', '/uploads/news/20220428111734_doutor-estranho-2-destaca-poderes-da-feiticeira-escarlate-em-teaser-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/doutor-estranho-multiverso-da-loucura-teaser-feiticeira-escarlate/', NULL, NULL, 0, '2022-04-18', '2022-04-28 23:17:35', '2022-04-28 23:17:35');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(21, 1, 'Robert Pattinson revela ter mentido para Christopher Nolan sobre teste de The Batman', 'robert-pattinson-revela-ter-mentido-para-christopher-nolan-sobre-teste-de-the-batman', 'robert-pattinson-revela-ter-mentido-para-christopher-nolan-sobre-teste-de-the-batman-jovemnerdsite', '/uploads/news/20220312021446_robert-pattinson-revela-ter-mentido-para-christopher-nolan-sobre-teste-de-the-batman-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/robert-pattinson-revela-ter-mentido-para-christopher-nolan-sobre-teste-de-the-batman/', NULL, NULL, 0, '2020-08-10', '2022-03-12 02:14:47', '2022-03-12 02:14:47');
+	(21, 1, 'Strange tem acerto de contas em novo comercial de Doutor Estranho 2', 'strange-tem-acerto-de-contas-em-novo-comercial-de-doutor-estranho-2', 'strange-tem-acerto-de-contas-em-novo-comercial-de-doutor-estranho-2-jovemnerdsite', '/uploads/news/20220428111735_strange-tem-acerto-de-contas-em-novo-comercial-de-doutor-estranho-2-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/strange-tem-acerto-de-contas-em-novo-comercial-de-doutor-estranho-2/', NULL, NULL, 0, '2022-04-13', '2022-04-28 23:17:37', '2022-04-28 23:17:37');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(22, 1, 'Zack Snyder está empolgado pra assistir The Batman de Matt Reeves', 'zack-snyder-esta-empolgado-pra-assistir-the-batman-de-matt-reeves', 'zack-snyder-esta-empolgado-pra-assistir-the-batman-de-matt-reeves-jovemnerdsite', '/uploads/news/20220312021447_zack-snyder-esta-empolgado-pra-assistir-the-batman-de-matt-reeves-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/zack-snyder-esta-empolgado-pra-assistir-the-batman-de-matt-reeves/', NULL, NULL, 0, '2020-07-21', '2022-03-12 02:14:47', '2022-03-12 02:14:47');
+	(22, 1, 'Personagens de Doutor Estranho no Multiverso da Loucura ganham cartazes individuais', 'personagens-de-doutor-estranho-no-multiverso-da-loucura-ganham-cartazes-individuais', 'personagens-de-doutor-estranho-no-multiverso-da-loucura-ganham-cartazes-individuais-jovemnerdsite', '/uploads/news/20220428111737_personagens-de-doutor-estranho-no-multiverso-da-loucura-ganham-cartazes-individuais-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/doutor-estranho-no-multiverso-da-loucura-cartazes-individuais/', NULL, NULL, 0, '2022-04-11', '2022-04-28 23:17:38', '2022-04-28 23:17:38');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(23, 1, 'The Batman ganhará série derivada no HBO Max', 'the-batman-ganhara-serie-derivada-no-hbo-max', 'the-batman-ganhara-serie-derivada-no-hbo-max-jovemnerdsite', '/uploads/news/20220312021447_the-batman-ganhara-serie-derivada-no-hbo-max-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/the-batman-ganhara-serie-derivada-no-hbo-max/', NULL, NULL, 0, '2020-07-10', '2022-03-12 02:14:49', '2022-03-12 02:14:49');
+	(23, 1, 'Vídeo de bastidores de Doutor Estranho no Multiverso da Loucura tem cenas inéditas', 'video-de-bastidores-de-doutor-estranho-no-multiverso-da-loucura-tem-cenas-ineditas', 'video-de-bastidores-de-doutor-estranho-no-multiverso-da-loucura-tem-cenas-ineditas-jovemnerdsite', '/uploads/news/20220428111738_video-de-bastidores-de-doutor-estranho-no-multiverso-da-loucura-tem-cenas-ineditas-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/video-de-bastidores-de-doutor-estranho-no-multiverso-da-loucura-tem-cenas-ineditas/', NULL, NULL, 0, '2022-04-11', '2022-04-28 23:17:39', '2022-04-28 23:17:39');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(24, 1, 'The Batman é sobre o Alfred e o Batman, diz diretor de fotografia', 'the-batman-e-sobre-o-alfred-e-o-batman-diz-diretor-de-fotografia', 'the-batman-e-sobre-o-alfred-e-o-batman-diz-diretor-de-fotografia-jovemnerdsite', '/uploads/news/20220312021449_the-batman-e-sobre-o-alfred-e-o-batman-diz-diretor-de-fotografia-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/the-batman-e-sobre-o-alfred-e-o-batman-diz-diretor-de-fotografia/', NULL, NULL, 0, '2020-07-07', '2022-03-12 02:14:50', '2022-03-12 02:14:50');
+	(24, 1, 'Sam Raimi não garante que Patrick Stewart está em Doutor Estranho 2', 'sam-raimi-nao-garante-que-patrick-stewart-esta-em-doutor-estranho-2', 'sam-raimi-nao-garante-que-patrick-stewart-esta-em-doutor-estranho-2-jovemnerdsite', '/uploads/news/20220428111739_sam-raimi-nao-garante-que-patrick-stewart-esta-em-doutor-estranho-2-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/sam-raimi-nao-garante-que-patrick-stewart-esta-em-doutor-estranho-2/', NULL, NULL, 0, '2022-04-07', '2022-04-28 23:17:40', '2022-04-28 23:17:40');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(25, 1, 'The Batman | Zoë Kravitz explica motivos que tornam Robert Pattinson o Batman perfeito', 'the-batman-zoe-kravitz-explica-motivos-que-tornam-robert-pattinson-o-batman-perfeito', 'the-batman-zoe-kravitz-explica-motivos-que-tornam-robert-pattinson-o-batman-perfeito-jovemnerdsite', '/uploads/news/20220312021450_the-batman-zoe-kravitz-explica-motivos-que-tornam-robert-pattinson-o-batman-perfeito-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/the-batman-zoe-kravitz-explica-porque-robert-pattinson-e-perfeito-como-batman/', NULL, NULL, 0, '2020-06-26', '2022-03-12 02:14:51', '2022-03-12 02:14:51');
+	(25, 1, 'Doutor Estranho no Multiverso da Loucura ganha um monte de cartazes inéditos', 'doutor-estranho-no-multiverso-da-loucura-ganha-um-monte-de-cartazes-ineditos', 'doutor-estranho-no-multiverso-da-loucura-ganha-um-monte-de-cartazes-ineditos-jovemnerdsite', '/uploads/news/20220428111740_doutor-estranho-no-multiverso-da-loucura-ganha-um-monte-de-cartazes-ineditos-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/doutor-estranho-no-multiverso-da-loucura-ganha-um-monte-de-cartazes-ineditos/', NULL, NULL, 0, '2022-04-06', '2022-04-28 23:17:41', '2022-04-28 23:17:41');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(26, 1, 'The Batman | Peter Sarsgaard elogia Robert Pattinson: &8220;ele está incrível&8221;', 'the-batman-peter-sarsgaard-elogia-robert-pattinson-8220ele-esta-incrivel8221', 'the-batman-peter-sarsgaard-elogia-robert-pattinson-8220ele-esta-incrivel8221-jovemnerdsite', '/uploads/news/20220312021451_the-batman-peter-sarsgaard-elogia-robert-pattinson-8220ele-esta-incrivel8221-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/the-batman-peter-sarsgaard-elogia-robert-pattinson-ele-esta-incrivel/', NULL, NULL, 0, '2020-06-20', '2022-03-12 02:14:52', '2022-03-12 02:14:52');
+	(26, 1, 'Personagens de WandaVision estão de volta em novo teaser de Doutor Estranho 2', 'personagens-de-wandavision-estao-de-volta-em-novo-teaser-de-doutor-estranho-2', 'personagens-de-wandavision-estao-de-volta-em-novo-teaser-de-doutor-estranho-2-jovemnerdsite', '/uploads/news/20220428111741_personagens-de-wandavision-estao-de-volta-em-novo-teaser-de-doutor-estranho-2-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/doutor-estranho-no-multiverso-da-loucura-teaser-personagens-wandavision/', NULL, NULL, 0, '2022-04-06', '2022-04-28 23:17:42', '2022-04-28 23:17:42');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(27, 1, 'The Batman | Robert Pattinson revela se inspirar em atores da Marvel para entrar em forma', 'the-batman-robert-pattinson-revela-se-inspirar-em-atores-da-marvel-para-entrar-em-forma', 'the-batman-robert-pattinson-revela-se-inspirar-em-atores-da-marvel-para-entrar-em-forma-jovemnerdsite', '/uploads/news/20220312021452_the-batman-robert-pattinson-revela-se-inspirar-em-atores-da-marvel-para-entrar-em-forma-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/the-batman-robert-pattinson-releva-se-inspirar-em-atores-da-marvel-para-entrar-em-forma/', NULL, NULL, 0, '2020-06-19', '2022-03-12 02:14:53', '2022-03-12 02:14:53');
+	(27, 1, 'Doutor Estranho no Multiverso da Loucura pode ter só 2 horas de duração, diz site', 'doutor-estranho-no-multiverso-da-loucura-pode-ter-so-2-horas-de-duracao-diz-site', 'doutor-estranho-no-multiverso-da-loucura-pode-ter-so-2-horas-de-duracao-diz-site-jovemnerdsite', '/uploads/news/20220428111742_doutor-estranho-no-multiverso-da-loucura-pode-ter-so-2-horas-de-duracao-diz-site-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/doutor-estranho-no-multiverso-da-loucura-pode-ter-so-2-horas-de-duracao-diz-site/', NULL, NULL, 0, '2022-04-05', '2022-04-28 23:17:43', '2022-04-28 23:17:43');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(28, 1, 'The Batman | Zöe Kravitz fala sobre o traje da Mulher-Gato no filme', 'the-batman-zoe-kravitz-fala-sobre-o-traje-da-mulher-gato-no-filme', 'the-batman-zoe-kravitz-fala-sobre-o-traje-da-mulher-gato-no-filme-jovemnerdsite', '/uploads/news/20220312021453_the-batman-zoe-kravitz-fala-sobre-o-traje-da-mulher-gato-no-filme-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/the-batman-zoe-kravitz-fala-sobre-o-traje-da-mulher-gato-no-filme/', NULL, NULL, 0, '2020-06-18', '2022-03-12 02:14:54', '2022-03-12 02:14:54');
+	(28, 1, 'Doutor Estranho no Multiverso da Loucura ganha cartazes para anunciar pré-venda', 'doutor-estranho-no-multiverso-da-loucura-ganha-cartazes-para-anunciar-pre-venda', 'doutor-estranho-no-multiverso-da-loucura-ganha-cartazes-para-anunciar-pre-venda-jovemnerdsite', '/uploads/news/20220428111743_doutor-estranho-no-multiverso-da-loucura-ganha-cartazes-para-anunciar-pre-venda-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/doutor-estranho-2-pre-venda-cartazes/', NULL, NULL, 0, '2022-04-04', '2022-04-28 23:17:44', '2022-04-28 23:17:44');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(29, 1, 'The Batman | &8220;Fiquei realmente surpreso com o roteiro&8221; diz Paul Dano, o Charada do filme', 'the-batman-8220fiquei-realmente-surpreso-com-o-roteiro8221-diz-paul-dano-o-charada-do-filme', 'the-batman-8220fiquei-realmente-surpreso-com-o-roteiro8221-diz-paul-dano-o-charada-do-filme-jovemnerdsite', '/uploads/news/20220312021454_the-batman-8220fiquei-realmente-surpreso-com-o-roteiro8221-diz-paul-dano-o-charada-do-filme-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/the-batman-fiquei-realmente-surpreso-com-o-roteiro-diz-paul-dano-o-charada-do-filme/', NULL, NULL, 0, '2020-06-04', '2022-03-12 02:14:55', '2022-03-12 02:14:55');
+	(29, 1, 'Wanda é destaque em novo teaser de Doutor Estranho no Multiverso da Loucura', 'wanda-e-destaque-em-novo-teaser-de-doutor-estranho-no-multiverso-da-loucura', 'wanda-e-destaque-em-novo-teaser-de-doutor-estranho-no-multiverso-da-loucura-jovemnerdsite', '/uploads/news/20220428111744_wanda-e-destaque-em-novo-teaser-de-doutor-estranho-no-multiverso-da-loucura-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/doutor-estranho-no-multiverso-da-loucura-novo-teaser-wanda-feiticeira-escarlate/', NULL, NULL, 0, '2022-04-02', '2022-04-28 23:17:45', '2022-04-28 23:17:45');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(30, 1, 'The Batman | Modelo conceitual do novo Batmóvel revela detalhes do veículo', 'the-batman-modelo-conceitual-do-novo-batmovel-revela-detalhes-do-veiculo', 'the-batman-modelo-conceitual-do-novo-batmovel-revela-detalhes-do-veiculo-jovemnerdsite', '/uploads/news/20220312021455_the-batman-modelo-conceitual-do-novo-batmovel-revela-detalhes-do-veiculo-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/the-batman-modelo-conceitual-do-novo-batmovel-revela-detalhes-do-veiculo/', NULL, NULL, 0, '2020-06-01', '2022-03-12 02:14:56', '2022-03-12 02:14:56');
+	(30, 1, 'Pré-venda de ingressos para Doutor Estranho 2 começa na próxima semana', 'pre-venda-de-ingressos-para-doutor-estranho-2-comeca-na-proxima-semana', 'pre-venda-de-ingressos-para-doutor-estranho-2-comeca-na-proxima-semana-jovemnerdsite', '/uploads/news/20220428111745_pre-venda-de-ingressos-para-doutor-estranho-2-comeca-na-proxima-semana-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/doutor-estranho-2-data-pre-venda-ingressos/', NULL, NULL, 0, '2022-04-01', '2022-04-28 23:17:46', '2022-04-28 23:17:46');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(31, 1, 'The Batman será a &8220;próxima evolução&8221; do super-herói, diz Jeffrey Wright, o Gordon do filme', 'the-batman-sera-a-8220proxima-evolucao8221-do-super-heroi-diz-jeffrey-wright-o-gordon-do-filme', 'the-batman-sera-a-8220proxima-evolucao8221-do-super-heroi-diz-jeffrey-wright-o-gordon-do-filme-jovemnerdsite', '/uploads/news/20220312021456_the-batman-sera-a-8220proxima-evolucao8221-do-super-heroi-diz-jeffrey-wright-o-gordon-do-filme-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/the-batman-filme-sera-a-proxima-evolucao-do-super-heroi-diz-jeffrey-wright/', NULL, NULL, 0, '2020-05-22', '2022-03-12 02:14:57', '2022-03-12 02:14:57');
+	(31, 1, 'Strange e America Chavez estão juntos em nova foto de Doutor Estranho 2', 'strange-e-america-chavez-estao-juntos-em-nova-foto-de-doutor-estranho-2', 'strange-e-america-chavez-estao-juntos-em-nova-foto-de-doutor-estranho-2-jovemnerdsite', '/uploads/news/20220428111746_strange-e-america-chavez-estao-juntos-em-nova-foto-de-doutor-estranho-2-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/doutor-estranho-2-nova-foto-america-chavez/', NULL, NULL, 0, '2022-03-29', '2022-04-28 23:17:47', '2022-04-28 23:17:47');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(32, 29, 'Ir para: The Batman: música do Nirvana no filme teve aumento de 1.200% no Spotify', 'ir-para-the-batman-musica-do-nirvana-no-filme-teve-aumento-de-1200-no-spotify', 'ir-para-the-batman-musica-do-nirvana-no-filme-teve-aumento-de-1200-no-spotify-tecmundosite', '/uploads/news/20220312021458_ir-para-the-batman-musica-do-nirvana-no-filme-teve-aumento-de-1200-no-spotify-tecmundosite.jpg', NULL, 'show', 'https://www.tecmundo.com.br/minha-serie/235268-the-batman-musica-nirvana-filme-spotify.htm', NULL, NULL, 0, '2022-03-11', '2022-03-12 02:14:59', '2022-03-12 02:14:59');
+	(32, 1, 'James McAvoy diz que não está em Doutor Estranho 2 nem sente falta de X-Men', 'james-mcavoy-diz-que-nao-esta-em-doutor-estranho-2-nem-sente-falta-de-x-men', 'james-mcavoy-diz-que-nao-esta-em-doutor-estranho-2-nem-sente-falta-de-x-men-jovemnerdsite', '/uploads/news/20220428111747_james-mcavoy-diz-que-nao-esta-em-doutor-estranho-2-nem-sente-falta-de-x-men-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/james-mcavoy-diz-que-nao-esta-em-doutor-estranho-2-nem-sente-falta-de-x-men/', NULL, NULL, 0, '2022-03-24', '2022-04-28 23:17:48', '2022-04-28 23:17:48');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(33, 29, 'Ir para: The Batman: o que é um filme noir?', 'ir-para-the-batman-o-que-e-um-filme-noir', 'ir-para-the-batman-o-que-e-um-filme-noir-tecmundosite', '/uploads/news/20220312021459_ir-para-the-batman-o-que-e-um-filme-noir-tecmundosite.jpg', NULL, 'show', 'https://www.tecmundo.com.br/minha-serie/235166-the-batman-filme-noir.htm', NULL, NULL, 0, '2022-03-10', '2022-03-12 02:14:59', '2022-03-12 02:14:59');
+	(33, 1, 'Doutor Estranho no Multiverso da Loucura terá quase duas horas e meia, diz site', 'doutor-estranho-no-multiverso-da-loucura-tera-quase-duas-horas-e-meia-diz-site', 'doutor-estranho-no-multiverso-da-loucura-tera-quase-duas-horas-e-meia-diz-site-jovemnerdsite', '/uploads/news/20220428111748_doutor-estranho-no-multiverso-da-loucura-tera-quase-duas-horas-e-meia-diz-site-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/doutor-estranho-no-multiverso-da-loucura-duracao/', NULL, NULL, 0, '2022-03-24', '2022-04-28 23:17:49', '2022-04-28 23:17:49');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(34, 29, 'Ir para: The Batman: Zoë Kravitz foi recusada em trilogia anterior de filmes', 'ir-para-the-batman-zoe-kravitz-foi-recusada-em-trilogia-anterior-de-filmes', 'ir-para-the-batman-zoe-kravitz-foi-recusada-em-trilogia-anterior-de-filmes-tecmundosite', '/uploads/news/20220312021459_ir-para-the-batman-zoe-kravitz-foi-recusada-em-trilogia-anterior-de-filmes-tecmundosite.jpg', NULL, 'show', 'https://www.tecmundo.com.br/minha-serie/235011-the-batman-zoe-kravitz-recusada-trilogia-anterior-filmes.htm', NULL, NULL, 0, '2022-03-08', '2022-03-12 02:14:59', '2022-03-12 02:14:59');
+	(34, 1, 'Benedict Cumberbatch diz que Doutor Estranho 2 foi difícil, mas muito recompensador', 'benedict-cumberbatch-diz-que-doutor-estranho-2-foi-dificil-mas-muito-recompensador', 'benedict-cumberbatch-diz-que-doutor-estranho-2-foi-dificil-mas-muito-recompensador-jovemnerdsite', '/uploads/news/20220428111749_benedict-cumberbatch-diz-que-doutor-estranho-2-foi-dificil-mas-muito-recompensador-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/doutor-estranho-multiverso-da-loucura-benedict-cumberbatch-dificil/', NULL, NULL, 0, '2022-03-18', '2022-04-28 23:17:50', '2022-04-28 23:17:50');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(35, 29, 'Ir para: The Batman: série prequel não acontecerá mais no HBO Max; veja!', 'ir-para-the-batman-serie-prequel-nao-acontecera-mais-no-hbo-max-veja', 'ir-para-the-batman-serie-prequel-nao-acontecera-mais-no-hbo-max-veja-tecmundosite', '/uploads/news/20220312021459_ir-para-the-batman-serie-prequel-nao-acontecera-mais-no-hbo-max-veja-tecmundosite.jpg', NULL, 'show', 'https://www.tecmundo.com.br/minha-serie/235028-the-batman-serie-prequel-nao-acontecera-hbo-max.htm', NULL, NULL, 0, '2022-03-08', '2022-03-12 02:15:00', '2022-03-12 02:15:00');
+	(35, 1, 'Novas fotos de Doutor Estranho 2 mostram America Chavez, Wong e mais', 'novas-fotos-de-doutor-estranho-2-mostram-america-chavez-wong-e-mais', 'novas-fotos-de-doutor-estranho-2-mostram-america-chavez-wong-e-mais-jovemnerdsite', '/uploads/news/20220428111750_novas-fotos-de-doutor-estranho-2-mostram-america-chavez-wong-e-mais-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/doutor-estranho-no-multiverso-da-loucura-novas-fotos-wong-bastidores/', NULL, NULL, 0, '2022-03-18', '2022-04-28 23:17:51', '2022-04-28 23:17:51');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(36, 29, 'Ir para: The Batman: bilheteria de estreia é maior do que o esperado; veja valor!', 'ir-para-the-batman-bilheteria-de-estreia-e-maior-do-que-o-esperado-veja-valor', 'ir-para-the-batman-bilheteria-de-estreia-e-maior-do-que-o-esperado-veja-valor-tecmundosite', '/uploads/news/20220312021500_ir-para-the-batman-bilheteria-de-estreia-e-maior-do-que-o-esperado-veja-valor-tecmundosite.jpg', NULL, 'show', 'https://www.tecmundo.com.br/minha-serie/234958-the-batman-bilheteria-estreia-maior-esperado-valor.htm', NULL, NULL, 0, '2022-03-07', '2022-03-12 02:15:00', '2022-03-12 02:15:00');
+	(36, 1, 'Doutor Estranho 2 vai deixar fãs de Evil Dead felizes, diz Kevin Feige', 'doutor-estranho-2-vai-deixar-fas-de-evil-dead-felizes-diz-kevin-feige', 'doutor-estranho-2-vai-deixar-fas-de-evil-dead-felizes-diz-kevin-feige-jovemnerdsite', '/uploads/news/20220428111751_doutor-estranho-2-vai-deixar-fas-de-evil-dead-felizes-diz-kevin-feige-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/doutor-estranho-2-vai-deixar-fas-de-evil-dead-felizes-diz-kevin-feige/', NULL, NULL, 0, '2022-03-17', '2022-04-28 23:17:53', '2022-04-28 23:17:53');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(37, 29, 'Ir para: The Batman: Matt Reeves fala sobre possível crossover com Coringa', 'ir-para-the-batman-matt-reeves-fala-sobre-possivel-crossover-com-coringa', 'ir-para-the-batman-matt-reeves-fala-sobre-possivel-crossover-com-coringa-tecmundosite', '/uploads/news/20220312021500_ir-para-the-batman-matt-reeves-fala-sobre-possivel-crossover-com-coringa-tecmundosite.jpg', NULL, 'show', 'https://www.tecmundo.com.br/minha-serie/234910-the-batman-matt-reeves-crossover-coringa.htm', NULL, NULL, 0, '2022-03-07', '2022-03-12 02:15:00', '2022-03-12 02:15:00');
+	(37, 1, 'Benedict Cumberbatch explica que Doutor Estranho não é um Vingador', 'benedict-cumberbatch-explica-que-doutor-estranho-nao-e-um-vingador', 'benedict-cumberbatch-explica-que-doutor-estranho-nao-e-um-vingador-jovemnerdsite', '/uploads/news/20220428111753_benedict-cumberbatch-explica-que-doutor-estranho-nao-e-um-vingador-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/benedict-cumberbatch-explica-que-doutor-estranho-nao-e-um-vingador/', NULL, NULL, 0, '2022-03-17', '2022-04-28 23:17:53', '2022-04-28 23:17:53');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(38, 29, 'Ir para: The Batman: fãs exaltam filme como um dos melhores da DC; veja reações!', 'ir-para-the-batman-fas-exaltam-filme-como-um-dos-melhores-da-dc-veja-reacoes', 'ir-para-the-batman-fas-exaltam-filme-como-um-dos-melhores-da-dc-veja-reacoes-tecmundosite', '/uploads/news/20220312021500_ir-para-the-batman-fas-exaltam-filme-como-um-dos-melhores-da-dc-veja-reacoes-tecmundosite.jpg', NULL, 'show', 'https://www.tecmundo.com.br/minha-serie/234862-the-batman-fas-exaltam-filme-melhores-dc-veja-reacoes.htm', NULL, NULL, 0, '2022-03-04', '2022-03-12 02:15:00', '2022-03-12 02:15:00');
+	(38, 29, 'Ir para: Avatar 2 ganha nome oficial e terá trailer durante Doutor Estranho 2', 'ir-para-avatar-2-ganha-nome-oficial-e-tera-trailer-durante-doutor-estranho-2', 'ir-para-avatar-2-ganha-nome-oficial-e-tera-trailer-durante-doutor-estranho-2-tecmundosite', '/uploads/news/20220428111756_ir-para-avatar-2-ganha-nome-oficial-e-tera-trailer-durante-doutor-estranho-2-tecmundosite.jpg', NULL, 'show', 'https://www.tecmundo.com.br/minha-serie/237743-avatar-2-ganha-nome-oficial-tera-trailer-durante-doutor-estranho-2.htm', NULL, NULL, 0, '2022-04-27', '2022-04-28 23:17:56', '2022-04-28 23:17:56');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(39, 29, 'Ir para: The Batman: diretor responde críticas sobre tempo de duração do filme', 'ir-para-the-batman-diretor-responde-criticas-sobre-tempo-de-duracao-do-filme', 'ir-para-the-batman-diretor-responde-criticas-sobre-tempo-de-duracao-do-filme-tecmundosite', '/uploads/news/20220312021501_ir-para-the-batman-diretor-responde-criticas-sobre-tempo-de-duracao-do-filme-tecmundosite.jpg', NULL, 'show', 'https://www.tecmundo.com.br/minha-serie/234809-the-batman-diretor-criticas-tempo-duracao-filme.htm', NULL, NULL, 0, '2022-03-04', '2022-03-12 02:15:01', '2022-03-12 02:15:01');
+	(39, 29, 'Ir para: Doutor Estranho 2: vídeo inédito revela presença dos Illuminati; veja!', 'ir-para-doutor-estranho-2-video-inedito-revela-presenca-dos-illuminati-veja', 'ir-para-doutor-estranho-2-video-inedito-revela-presenca-dos-illuminati-veja-tecmundosite', '/uploads/news/20220428111756_ir-para-doutor-estranho-2-video-inedito-revela-presenca-dos-illuminati-veja-tecmundosite.jpg', NULL, 'show', 'https://www.tecmundo.com.br/minha-serie/237641-doutor-estranho-2-video-inedito-illuminati.htm', NULL, NULL, 0, '2022-04-26', '2022-04-28 23:17:56', '2022-04-28 23:17:56');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(40, 29, 'Ir para: Além de The Batman e Crepúsculo: 5 filmes para conhecer Robert Pattinson', 'ir-para-alem-de-the-batman-e-crepusculo-5-filmes-para-conhecer-robert-pattinson', 'ir-para-alem-de-the-batman-e-crepusculo-5-filmes-para-conhecer-robert-pattinson-tecmundosite', '/uploads/news/20220312021501_ir-para-alem-de-the-batman-e-crepusculo-5-filmes-para-conhecer-robert-pattinson-tecmundosite.jpg', NULL, 'show', 'https://www.tecmundo.com.br/minha-serie/234756-batman-crepusculo-5-filmes-conhecer-robert-pattinson.htm', NULL, NULL, 0, '2022-03-03', '2022-03-12 02:15:01', '2022-03-12 02:15:01');
+	(40, 29, 'Ir para: Doutor Estranho 2: filme é banido na Arábia Saudita por personagem LGBT', 'ir-para-doutor-estranho-2-filme-e-banido-na-arabia-saudita-por-personagem-lgbt', 'ir-para-doutor-estranho-2-filme-e-banido-na-arabia-saudita-por-personagem-lgbt-tecmundosite', '/uploads/news/20220428111756_ir-para-doutor-estranho-2-filme-e-banido-na-arabia-saudita-por-personagem-lgbt-tecmundosite.jpg', NULL, 'show', 'https://www.tecmundo.com.br/minha-serie/237492-doutor-estranho-2-filme-banido-arabia-saudita-personagem-lgbt.htm', NULL, NULL, 0, '2022-04-22', '2022-04-28 23:17:57', '2022-04-28 23:17:57');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(41, 29, 'Ir para: The Batman 2: produtor fala sobre quando sequência deve ser lançada', 'ir-para-the-batman-2-produtor-fala-sobre-quando-sequencia-deve-ser-lancada', 'ir-para-the-batman-2-produtor-fala-sobre-quando-sequencia-deve-ser-lancada-tecmundosite', '/uploads/news/20220312021501_ir-para-the-batman-2-produtor-fala-sobre-quando-sequencia-deve-ser-lancada-tecmundosite.jpg', NULL, 'show', 'https://www.tecmundo.com.br/minha-serie/234719-the-batman-2-produtor-sequencia-lancamento.htm', NULL, NULL, 0, '2022-03-03', '2022-03-12 02:15:02', '2022-03-12 02:15:02');
+	(41, 29, 'Ir para: Doutor Estranho 2: filme deve ter mais surpresas que Vingadores: Ultimato', 'ir-para-doutor-estranho-2-filme-deve-ter-mais-surpresas-que-vingadores-ultimato', 'ir-para-doutor-estranho-2-filme-deve-ter-mais-surpresas-que-vingadores-ultimato-tecmundosite', '/uploads/news/20220428111757_ir-para-doutor-estranho-2-filme-deve-ter-mais-surpresas-que-vingadores-ultimato-tecmundosite.jpg', NULL, 'show', 'https://www.tecmundo.com.br/minha-serie/237108-doutor-estranho-2-filme-surpresas-vingadores-ultimato.htm', NULL, NULL, 0, '2022-04-14', '2022-04-28 23:17:57', '2022-04-28 23:17:57');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(42, 30, 'Matt Reeves fala do personagem misterioso de The Batman', 'matt-reeves-fala-do-personagem-misterioso-de-the-batman', 'matt-reeves-fala-do-personagem-misterioso-de-the-batman-poltronanerdsite', '/uploads/news/20220312021502_matt-reeves-fala-do-personagem-misterioso-de-the-batman-poltronanerdsite.jpg', NULL, 'show', 'https://poltronanerd.com.br/filmes/matt-reeves-fala-do-personagem-misterioso-de-the-batman-132229', NULL, NULL, 0, '2022-03-04', '2022-03-12 02:15:02', '2022-03-12 02:15:02');
+	(42, 29, 'Ir para: Doutor Estranho 2: Wanda toca o terror em teaser com cenas inéditas; veja!', 'ir-para-doutor-estranho-2-wanda-toca-o-terror-em-teaser-com-cenas-ineditas-veja', 'ir-para-doutor-estranho-2-wanda-toca-o-terror-em-teaser-com-cenas-ineditas-veja-tecmundosite', '/uploads/news/20220428111757_ir-para-doutor-estranho-2-wanda-toca-o-terror-em-teaser-com-cenas-ineditas-veja-tecmundosite.jpg', NULL, 'show', 'https://www.tecmundo.com.br/minha-serie/237041-doutor-estranho-2-wanda-toca-terror-teaser-cenas-ineditas.htm', NULL, NULL, 0, '2022-04-13', '2022-04-28 23:17:58', '2022-04-28 23:17:58');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(43, 30, 'Sonic 2 &8211; O Filme ganha trailer com referência a The Batman', 'sonic-2-8211-o-filme-ganha-trailer-com-referencia-a-the-batman', 'sonic-2-8211-o-filme-ganha-trailer-com-referencia-a-the-batman-poltronanerdsite', '/uploads/news/20220312021503_sonic-2-8211-o-filme-ganha-trailer-com-referencia-a-the-batman-poltronanerdsite.jpg', NULL, 'show', 'https://poltronanerd.com.br/filmes/sonic-2-o-filme-ganha-trailer-com-referencia-a-the-batman-132177', NULL, NULL, 0, '2022-03-02', '2022-03-12 02:15:03', '2022-03-12 02:15:03');
+	(43, 29, 'Ir para: Doutor Estranho 2: novos cartazes mostram personagens do MCU; veja!', 'ir-para-doutor-estranho-2-novos-cartazes-mostram-personagens-do-mcu-veja', 'ir-para-doutor-estranho-2-novos-cartazes-mostram-personagens-do-mcu-veja-tecmundosite', '/uploads/news/20220428111758_ir-para-doutor-estranho-2-novos-cartazes-mostram-personagens-do-mcu-veja-tecmundosite.jpg', NULL, 'show', 'https://www.tecmundo.com.br/minha-serie/236944-doutor-estranho-2-novos-cartazes-personagens-mcu.htm', NULL, NULL, 0, '2022-04-12', '2022-04-28 23:17:59', '2022-04-28 23:17:59');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(44, 30, 'The Batman | Crítica', 'the-batman-critica', 'the-batman-critica-poltronanerdsite', '/uploads/news/20220312021503_the-batman-critica-poltronanerdsite.jpg', NULL, 'show', 'https://poltronanerd.com.br/site/criticas/the-batman-critica-132113', NULL, NULL, 0, '2022-03-01', '2022-03-12 02:15:04', '2022-03-12 02:15:04');
+	(44, 29, 'Ir para: Doutor Estranho 2: tapa de Will Smith vira cena de filme da Marvel', 'ir-para-doutor-estranho-2-tapa-de-will-smith-vira-cena-de-filme-da-marvel', 'ir-para-doutor-estranho-2-tapa-de-will-smith-vira-cena-de-filme-da-marvel-tecmundosite', '/uploads/news/20220428111759_ir-para-doutor-estranho-2-tapa-de-will-smith-vira-cena-de-filme-da-marvel-tecmundosite.jpg', NULL, 'show', 'https://www.tecmundo.com.br/minha-serie/236881-doutor-estranho-2-tapa-will-smith-cena-filme-marvel.htm', NULL, NULL, 0, '2022-04-11', '2022-04-28 23:17:59', '2022-04-28 23:17:59');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(45, 30, 'The Batman I Escute o tema de Michael Giacchino para o longa', 'the-batman-i-escute-o-tema-de-michael-giacchino-para-o-longa', 'the-batman-i-escute-o-tema-de-michael-giacchino-para-o-longa-poltronanerdsite', '/uploads/news/20220312021504_the-batman-i-escute-o-tema-de-michael-giacchino-para-o-longa-poltronanerdsite.jpg', NULL, 'show', 'https://poltronanerd.com.br/filmes/the-batman-i-escute-o-tema-de-michael-giacchino-para-o-longa-130935', NULL, NULL, 0, '2022-01-21', '2022-03-12 02:15:04', '2022-03-12 02:15:04');
+	(45, 29, 'Ir para: Doutor Estranho 2: Wanda é mais poderosa do que o mago? Entenda!', 'ir-para-doutor-estranho-2-wanda-e-mais-poderosa-do-que-o-mago-entenda', 'ir-para-doutor-estranho-2-wanda-e-mais-poderosa-do-que-o-mago-entenda-tecmundosite', '/uploads/news/20220428111759_ir-para-doutor-estranho-2-wanda-e-mais-poderosa-do-que-o-mago-entenda-tecmundosite.jpg', NULL, 'show', 'https://www.tecmundo.com.br/minha-serie/236787-doutor-estranho-2-wanda-mais-poderosa-mago.htm', NULL, NULL, 0, '2022-04-08', '2022-04-28 23:18:00', '2022-04-28 23:18:00');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(46, 30, 'The Batman | Kristen Stewart revela se faria o Coringa no filme', 'the-batman-kristen-stewart-revela-se-faria-o-coringa-no-filme', 'the-batman-kristen-stewart-revela-se-faria-o-coringa-no-filme-poltronanerdsite', '/uploads/news/20220312021504_the-batman-kristen-stewart-revela-se-faria-o-coringa-no-filme-poltronanerdsite.jpg', NULL, 'show', 'https://poltronanerd.com.br/filmes/the-batman-kristen-stewart-revela-se-faria-o-coringa-no-filme-127870', NULL, NULL, 0, '2021-10-23', '2022-03-12 02:15:05', '2022-03-12 02:15:05');
+	(46, 29, 'Ir para: Doutor Estranho 2: Wanda e seus filhos retornam em novo vídeo; veja!', 'ir-para-doutor-estranho-2-wanda-e-seus-filhos-retornam-em-novo-video-veja', 'ir-para-doutor-estranho-2-wanda-e-seus-filhos-retornam-em-novo-video-veja-tecmundosite', '/uploads/news/20220428111800_ir-para-doutor-estranho-2-wanda-e-seus-filhos-retornam-em-novo-video-veja-tecmundosite.jpg', NULL, 'show', 'https://www.tecmundo.com.br/minha-serie/236672-doutor-estranho-2-wanda-filhos-novo-video.htm', NULL, NULL, 0, '2022-04-06', '2022-04-28 23:18:00', '2022-04-28 23:18:00');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(47, 30, 'The Batman ganha novos cartazes para o DC FanDome 2021', 'the-batman-ganha-novos-cartazes-para-o-dc-fandome-2021', 'the-batman-ganha-novos-cartazes-para-o-dc-fandome-2021-poltronanerdsite', '/uploads/news/20220312021505_the-batman-ganha-novos-cartazes-para-o-dc-fandome-2021-poltronanerdsite.jpg', NULL, 'show', 'https://poltronanerd.com.br/filmes/the-batman-ganha-novos-cartazes-para-o-dc-fandome-2021-127525', NULL, NULL, 0, '2021-10-15', '2022-03-12 02:15:05', '2022-03-12 02:15:05');
+	(47, 29, 'Ir para: Doutor Estranho 2: pré-venda de ingressos começa hoje (6)', 'ir-para-doutor-estranho-2-pre-venda-de-ingressos-comeca-hoje-6', 'ir-para-doutor-estranho-2-pre-venda-de-ingressos-comeca-hoje-6-tecmundosite', '/uploads/news/20220428111800_ir-para-doutor-estranho-2-pre-venda-de-ingressos-comeca-hoje-6-tecmundosite.jpg', NULL, 'show', 'https://www.tecmundo.com.br/minha-serie/236653-doutor-estranho-2-pre-venda-ingressos-comeca-6.htm', NULL, NULL, 0, '2022-04-06', '2022-04-28 23:18:01', '2022-04-28 23:18:01');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(48, 30, 'The Batman | Novo teaser do filme destaca o Batsinal', 'the-batman-novo-teaser-do-filme-destaca-o-batsinal', 'the-batman-novo-teaser-do-filme-destaca-o-batsinal-poltronanerdsite', '/uploads/news/20220312021505_the-batman-novo-teaser-do-filme-destaca-o-batsinal-poltronanerdsite.jpg', NULL, 'show', 'https://poltronanerd.com.br/filmes/the-batman-novo-teaser-do-filme-destaca-o-batsinal-127454', NULL, NULL, 0, '2021-10-14', '2022-03-12 02:15:05', '2022-03-12 02:15:05');
+	(48, 30, 'Doutor Estranho no Multiverso da Loucura é banido em vários países', 'doutor-estranho-no-multiverso-da-loucura-e-banido-em-varios-paises', 'doutor-estranho-no-multiverso-da-loucura-e-banido-em-varios-paises-poltronanerdsite', '/uploads/news/20220428111804_doutor-estranho-no-multiverso-da-loucura-e-banido-em-varios-paises-poltronanerdsite.jpg', NULL, 'show', 'https://poltronanerd.com.br/filmes/doutor-estranho-no-multiverso-da-loucura-e-banido-em-varios-paises-133742', NULL, NULL, 0, '2022-04-26', '2022-04-28 23:18:05', '2022-04-28 23:18:05');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(49, 30, 'The Batman | HBO Max está desenvolvendo spin-off do Pinguim', 'the-batman-hbo-max-esta-desenvolvendo-spin-off-do-pinguim', 'the-batman-hbo-max-esta-desenvolvendo-spin-off-do-pinguim-poltronanerdsite', '/uploads/news/20220312021505_the-batman-hbo-max-esta-desenvolvendo-spin-off-do-pinguim-poltronanerdsite.jpg', NULL, 'show', 'https://poltronanerd.com.br/filmes/the-batman-hbo-max-esta-desenvolvendo-spin-off-do-pinguim-125910', NULL, NULL, 0, '2021-09-18', '2022-03-12 02:15:06', '2022-03-12 02:15:06');
+	(49, 30, 'Doutor Estranho no Multiverso da Loucura | Pré-venda bate recorde de vendas', 'doutor-estranho-no-multiverso-da-loucura-pre-venda-bate-recorde-de-vendas', 'doutor-estranho-no-multiverso-da-loucura-pre-venda-bate-recorde-de-vendas-poltronanerdsite', '/uploads/news/20220428111805_doutor-estranho-no-multiverso-da-loucura-pre-venda-bate-recorde-de-vendas-poltronanerdsite.jpg', NULL, 'show', 'https://poltronanerd.com.br/filmes/doutor-estranho-no-multiverso-da-loucura-pre-venda-bate-recorde-de-vendas-133223', NULL, NULL, 0, '2022-04-08', '2022-04-28 23:18:05', '2022-04-28 23:18:05');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(50, 30, 'The Batman | Teaser mostra Batmóvel, Mulher-Gato e revela data do novo trailer', 'the-batman-teaser-mostra-batmovel-mulher-gato-e-revela-data-do-novo-trailer', 'the-batman-teaser-mostra-batmovel-mulher-gato-e-revela-data-do-novo-trailer-poltronanerdsite', '/uploads/news/20220312021506_the-batman-teaser-mostra-batmovel-mulher-gato-e-revela-data-do-novo-trailer-poltronanerdsite.jpg', NULL, 'show', 'https://poltronanerd.com.br/filmes/the-batman-teaser-batmovel-mulher-gato-trailer-126033', NULL, NULL, 0, '2021-09-16', '2022-03-12 02:15:06', '2022-03-12 02:15:06');
+	(50, 30, 'Trailers que foram ao ar durante o Super Bowl: Cavaleiro da Lua, Doutor Estranho e mais!', 'trailers-que-foram-ao-ar-durante-o-super-bowl-cavaleiro-da-lua-doutor-estranho-e-mais', 'trailers-que-foram-ao-ar-durante-o-super-bowl-cavaleiro-da-lua-doutor-estranho-e-mais-poltronanerdsite', '/uploads/news/20220428111805_trailers-que-foram-ao-ar-durante-o-super-bowl-cavaleiro-da-lua-doutor-estranho-e-mais-poltronanerdsite.jpg', NULL, 'show', 'https://poltronanerd.com.br/filmes/trailers-que-foram-ao-ar-durante-o-super-bowl-cavaleiro-da-lua-doutor-estranho-e-mais-131680', NULL, NULL, 0, '2022-02-15', '2022-04-28 23:18:06', '2022-04-28 23:18:06');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(51, 30, 'The Batman | Robert Pattinson está insatisfeito com o papel', 'the-batman-robert-pattinson-esta-insatisfeito-com-o-papel', 'the-batman-robert-pattinson-esta-insatisfeito-com-o-papel-poltronanerdsite', '/uploads/news/20220312021506_the-batman-robert-pattinson-esta-insatisfeito-com-o-papel-poltronanerdsite.jpg', NULL, 'show', 'https://poltronanerd.com.br/filmes/the-batman-robert-pattinson-esta-insatisfeito-com-o-papel-123803', NULL, NULL, 0, '2021-08-07', '2022-03-12 02:15:07', '2022-03-12 02:15:07');
+	(51, 30, 'Doutor Estranho I Refilmagens da sequência são finalizadas', 'doutor-estranho-i-refilmagens-da-sequencia-sao-finalizadas', 'doutor-estranho-i-refilmagens-da-sequencia-sao-finalizadas-poltronanerdsite', '/uploads/news/20220428111806_doutor-estranho-i-refilmagens-da-sequencia-sao-finalizadas-poltronanerdsite.jpg', NULL, 'show', 'https://poltronanerd.com.br/filmes/doutor-estranho-i-refilmagens-da-sequencia-sao-finalizadas-130641', NULL, NULL, 0, '2022-01-13', '2022-04-28 23:18:06', '2022-04-28 23:18:06');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(52, 30, 'The Batman | Robert Pattinson é visto no set em Liverpool', 'the-batman-robert-pattinson-e-visto-no-set-em-liverpool', 'the-batman-robert-pattinson-e-visto-no-set-em-liverpool-poltronanerdsite', '/uploads/news/20220312021507_the-batman-robert-pattinson-e-visto-no-set-em-liverpool-poltronanerdsite.jpg', NULL, 'show', 'https://poltronanerd.com.br/filmes/the-batman-robert-pattinson-e-visto-no-set-em-liverpool-109918', NULL, NULL, 0, '2020-10-12', '2022-03-12 02:15:07', '2022-03-12 02:15:07');
+	(52, 30, 'Doutor Estranho | Quebra-cabeça pode ter revelado vilão do filme', 'doutor-estranho-quebra-cabeca-pode-ter-revelado-vilao-do-filme', 'doutor-estranho-quebra-cabeca-pode-ter-revelado-vilao-do-filme-poltronanerdsite', '/uploads/news/20220428111806_doutor-estranho-quebra-cabeca-pode-ter-revelado-vilao-do-filme-poltronanerdsite.jpg', NULL, 'show', 'https://poltronanerd.com.br/filmes/doutor-estranho-quebra-cabeca-pode-ter-revelado-vilao-do-filme-128290', NULL, NULL, 0, '2021-11-01', '2022-04-28 23:18:07', '2022-04-28 23:18:07');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(53, 30, 'The Batman tem data de lançamento adiada', 'the-batman-tem-data-de-lancamento-adiada', 'the-batman-tem-data-de-lancamento-adiada-poltronanerdsite', '/uploads/news/20220312021507_the-batman-tem-data-de-lancamento-adiada-poltronanerdsite.jpg', NULL, 'show', 'https://poltronanerd.com.br/filmes/the-batman-tem-data-de-lancamento-adiada-109532', NULL, NULL, 0, '2020-10-06', '2022-03-12 02:15:08', '2022-03-12 02:15:08');
+	(53, 30, 'Marvel Studios adia os lançamentos de Doutor Estranho 2 e mais filmes', 'marvel-studios-adia-os-lancamentos-de-doutor-estranho-2-e-mais-filmes', 'marvel-studios-adia-os-lancamentos-de-doutor-estranho-2-e-mais-filmes-poltronanerdsite', '/uploads/news/20220428111807_marvel-studios-adia-os-lancamentos-de-doutor-estranho-2-e-mais-filmes-poltronanerdsite.jpg', NULL, 'show', 'https://poltronanerd.com.br/filmes/marvel-studios-adia-os-lancamentos-de-doutor-estranho-2-e-mais-filmes-127747', NULL, NULL, 0, '2021-10-18', '2022-04-28 23:18:07', '2022-04-28 23:18:07');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(54, 30, 'Robert Pattinson diz que poder estragar The Batman o anima', 'robert-pattinson-diz-que-poder-estragar-the-batman-o-anima', 'robert-pattinson-diz-que-poder-estragar-the-batman-o-anima-poltronanerdsite', '/uploads/news/20220312021508_robert-pattinson-diz-que-poder-estragar-the-batman-o-anima-poltronanerdsite.jpg', NULL, 'show', 'https://poltronanerd.com.br/filmes/the-batman-robert-pattinson-estragar-109050', NULL, NULL, 0, '2020-09-28', '2022-03-12 02:15:09', '2022-03-12 02:15:09');
+	(54, 30, 'James McAvoy pode retornar como Xavier em Doutor Estranho 2', 'james-mcavoy-pode-retornar-como-xavier-em-doutor-estranho-2', 'james-mcavoy-pode-retornar-como-xavier-em-doutor-estranho-2-poltronanerdsite', '/uploads/news/20220428111807_james-mcavoy-pode-retornar-como-xavier-em-doutor-estranho-2-poltronanerdsite.jpg', NULL, 'show', 'https://poltronanerd.com.br/filmes/james-mcavoy-pode-retornar-como-xavier-em-doutor-estranho-2-125276', NULL, NULL, 0, '2021-08-30', '2022-04-28 23:18:08', '2022-04-28 23:18:08');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(55, 8, 'THE BATMAN é bom? - Vale Crítica', 'the-batman-e-bom-vale-critica', 'the-batman-e-bom-vale-critica-superoitoyoutube', '/uploads/news/20220312021516_the-batman-e-bom-vale-critica-superoitoyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=IS6NkxTsWAM', NULL, NULL, 0, '2022-03-06', '2022-03-12 02:15:16', '2022-03-12 02:15:16');
+	(55, 30, 'Doutor Estranho enfrentará o Darkseid em Liga da Justiça', 'doutor-estranho-enfrentara-o-darkseid-em-liga-da-justica', 'doutor-estranho-enfrentara-o-darkseid-em-liga-da-justica-poltronanerdsite', '/uploads/news/20220428111808_doutor-estranho-enfrentara-o-darkseid-em-liga-da-justica-poltronanerdsite.jpg', NULL, 'show', 'https://poltronanerd.com.br/filmes/doutor-estranho-tera-versao-ajudando-a-liga-da-justica-125116', NULL, NULL, 0, '2021-08-26', '2022-04-28 23:18:09', '2022-04-28 23:18:09');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(56, 2, 'The Batman: EXCLUSIVO! Conversamos com Robert Pattinson, Matt Reeves e elenco', 'the-batman-exclusivo-conversamos-com-robert-pattinson-matt-reeves-e-elenco', 'the-batman-exclusivo-conversamos-com-robert-pattinson-matt-reeves-e-elenco-jovemnerdyoutube', '/uploads/news/20220312021521_the-batman-exclusivo-conversamos-com-robert-pattinson-matt-reeves-e-elenco-jovemnerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=_EyDqnD4Jjo', NULL, NULL, 0, '2022-03-04', '2022-03-12 02:15:22', '2022-03-12 02:15:22');
+	(56, 30, 'Doutor Estranho | Roteirista comenta diferença para Loki', 'doutor-estranho-roteirista-comenta-diferenca-para-loki', 'doutor-estranho-roteirista-comenta-diferenca-para-loki-poltronanerdsite', '/uploads/news/20220428111809_doutor-estranho-roteirista-comenta-diferenca-para-loki-poltronanerdsite.jpg', NULL, 'show', 'https://poltronanerd.com.br/filmes/doutor-estranho-roteirista-comenta-diferenca-para-loki-123506', NULL, NULL, 0, '2021-07-28', '2022-04-28 23:18:09', '2022-04-28 23:18:09');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(57, 2, 'The Batman: Vingança servida quente! (Trailer Oficial)', 'the-batman-vinganca-servida-quente-trailer-oficial', 'the-batman-vinganca-servida-quente-trailer-oficial-jovemnerdyoutube', '/uploads/news/20220312021525_the-batman-vinganca-servida-quente-trailer-oficial-jovemnerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=sLkikrwkSSU', NULL, NULL, 0, '2021-10-20', '2022-03-12 02:15:25', '2022-03-12 02:15:25');
+	(57, 30, 'Doutor Estranho pode ganhar série animada de terror', 'doutor-estranho-pode-ganhar-serie-animada-de-terror', 'doutor-estranho-pode-ganhar-serie-animada-de-terror-poltronanerdsite', '/uploads/news/20220428111809_doutor-estranho-pode-ganhar-serie-animada-de-terror-poltronanerdsite.jpg', NULL, 'show', 'https://poltronanerd.com.br/series/doutor-estranho-pode-ganhar-serie-animada-de-terror-123176', NULL, NULL, 0, '2021-07-23', '2022-04-28 23:18:10', '2022-04-28 23:18:10');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(58, 2, 'The Batman - Reaction e vingança!', 'the-batman-reaction-e-vinganca', 'the-batman-reaction-e-vinganca-jovemnerdyoutube', '/uploads/news/20220312021528_the-batman-reaction-e-vinganca-jovemnerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=vl1dcQwuGow', NULL, NULL, 0, '2020-09-02', '2022-03-12 02:15:29', '2022-03-12 02:15:29');
+	(58, 30, 'Tom Hiddleston foi confirmado em Doutor Estranho 2?', 'tom-hiddleston-foi-confirmado-em-doutor-estranho-2', 'tom-hiddleston-foi-confirmado-em-doutor-estranho-2-poltronanerdsite', '/uploads/news/20220428111810_tom-hiddleston-foi-confirmado-em-doutor-estranho-2-poltronanerdsite.jpg', NULL, 'show', 'https://poltronanerd.com.br/filmes/tom-hiddleston-foi-confirmado-em-doutor-estranho-2-122647', NULL, NULL, 0, '2021-07-14', '2022-04-28 23:18:10', '2022-04-28 23:18:10');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(59, 2, 'Batman Arkham Origins - Eu sou BÁTIMA', 'batman-arkham-origins-eu-sou-batima', 'batman-arkham-origins-eu-sou-batima-jovemnerdyoutube', '/uploads/news/20220312021532_batman-arkham-origins-eu-sou-batima-jovemnerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=K_X7MZP42p0', NULL, NULL, 0, '2014-02-17', '2022-03-12 02:15:33', '2022-03-12 02:15:33');
+	(59, 30, 'Marvel estaria desenvolvendo spin-off de Doutor Estranho', 'marvel-estaria-desenvolvendo-spin-off-de-doutor-estranho', 'marvel-estaria-desenvolvendo-spin-off-de-doutor-estranho-poltronanerdsite', '/uploads/news/20220428111810_marvel-estaria-desenvolvendo-spin-off-de-doutor-estranho-poltronanerdsite.jpg', NULL, 'show', 'https://poltronanerd.com.br/filmes/marvel-estaria-desenvolvendo-spin-off-de-doutor-estranho-121667', NULL, NULL, 0, '2021-07-05', '2022-04-28 23:18:11', '2022-04-28 23:18:11');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(60, 2, 'Batman Arkham City - I\'M BATMAN!', 'batman-arkham-city-im-batman', 'batman-arkham-city-im-batman-jovemnerdyoutube', '/uploads/news/20220312021539_batman-arkham-city-im-batman-jovemnerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=vZVB5utuYAI', NULL, NULL, 0, '2011-10-31', '2022-03-12 02:15:39', '2022-03-12 02:15:39');
+	(60, 8, 'DOUTOR ESTRANHO é bom? - Vale Crítica', 'doutor-estranho-e-bom-vale-critica', 'doutor-estranho-e-bom-vale-critica-superoitoyoutube', '/uploads/news/20220428111817_doutor-estranho-e-bom-vale-critica-superoitoyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=k7bziIfSqeA', NULL, NULL, 0, '2016-10-30', '2022-04-28 23:18:18', '2022-04-28 23:18:18');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(61, 4, '(CRÍTICA) THE BATMAN: ASSISTIMOS E É BOM? | VEREDITO', 'critica-the-batman-assistimos-e-e-bom-veredito', 'critica-the-batman-assistimos-e-e-bom-veredito-omeleteyoutube', '/uploads/news/20220312021545_critica-the-batman-assistimos-e-e-bom-veredito-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=D8ospvqt_Pk', NULL, NULL, 0, '2022-03-03', '2022-03-12 02:15:45', '2022-03-12 02:15:45');
+	(61, 8, 'DOUTOR ESTRANHO - 8 Segredos e Curiosidades', 'doutor-estranho-8-segredos-e-curiosidades', 'doutor-estranho-8-segredos-e-curiosidades-superoitoyoutube', '/uploads/news/20220428111822_doutor-estranho-8-segredos-e-curiosidades-superoitoyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=DtlwoBUkibw', NULL, NULL, 0, '2016-09-02', '2022-04-28 23:18:22', '2022-04-28 23:18:22');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(62, 4, 'THE BATMAN: 5 PERGUNTAS RESPONDIDAS COM SPOILERS (OMG!) | OTV', 'the-batman-5-perguntas-respondidas-com-spoilers-omg-otv', 'the-batman-5-perguntas-respondidas-com-spoilers-omg-otv-omeleteyoutube', '/uploads/news/20220312021549_the-batman-5-perguntas-respondidas-com-spoilers-omg-otv-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=Heh5gVCEU8U', NULL, NULL, 0, '2022-03-01', '2022-03-12 02:15:49', '2022-03-12 02:15:49');
+	(62, 2, 'Doutor Estranho no Multiverso da Loucura - X-Men 99% confirmado! Trailer Oficial', 'doutor-estranho-no-multiverso-da-loucura-x-men-99-confirmado-trailer-oficial', 'doutor-estranho-no-multiverso-da-loucura-x-men-99-confirmado-trailer-oficial-jovemnerdyoutube', '/uploads/news/20220428111826_doutor-estranho-no-multiverso-da-loucura-x-men-99-confirmado-trailer-oficial-jovemnerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=wgooeqMjFv8', NULL, NULL, 0, '2022-02-23', '2022-04-28 23:18:27', '2022-04-28 23:18:27');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(63, 4, 'THE BATMAN: 5 PERGUNTAS RESPONDIDAS SEM SPOILERS | OTV', 'the-batman-5-perguntas-respondidas-sem-spoilers-otv', 'the-batman-5-perguntas-respondidas-sem-spoilers-otv-omeleteyoutube', '/uploads/news/20220312021553_the-batman-5-perguntas-respondidas-sem-spoilers-otv-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=p1DussuIrtQ', NULL, NULL, 0, '2022-02-28', '2022-03-12 02:15:54', '2022-03-12 02:15:54');
+	(63, 4, 'DOUTOR ESTRANHO 2 E THE FLASH SÃO O MESMO FILME? | OTV', 'doutor-estranho-2-e-the-flash-sao-o-mesmo-filme-otv', 'doutor-estranho-2-e-the-flash-sao-o-mesmo-filme-otv-omeleteyoutube', '/uploads/news/20220428111832_doutor-estranho-2-e-the-flash-sao-o-mesmo-filme-otv-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=B405G_n4Brc', NULL, NULL, 0, '2022-01-19', '2022-04-28 23:18:32', '2022-04-28 23:18:32');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(64, 4, '10 EASTER EGGS NÃO VISTOS EM THE BATMAN (O 5 É DEMAIS!) | OMELISTA', '10-easter-eggs-nao-vistos-em-the-batman-o-5-e-demais-omelista', '10-easter-eggs-nao-vistos-em-the-batman-o-5-e-demais-omelista-omeleteyoutube', '/uploads/news/20220312021558_10-easter-eggs-nao-vistos-em-the-batman-o-5-e-demais-omelista-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=x1nyeFbrsA4', NULL, NULL, 0, '2022-03-10', '2022-03-12 02:15:58', '2022-03-12 02:15:58');
+	(64, 4, 'Doutor Estranho - O Veredito | OmeleTV', 'doutor-estranho-o-veredito-omeletv', 'doutor-estranho-o-veredito-omeletv-omeleteyoutube', '/uploads/news/20220428111835_doutor-estranho-o-veredito-omeletv-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=0HKRwwlgsbo', NULL, NULL, 0, '2016-11-03', '2022-04-28 23:18:35', '2022-04-28 23:18:35');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(65, 4, 'TRAILER THE BATMAN NA DC FANDOME 2021: O QUE ACHAMOS? | OmeleTV', 'trailer-the-batman-na-dc-fandome-2021-o-que-achamos-omeletv', 'trailer-the-batman-na-dc-fandome-2021-o-que-achamos-omeletv-omeleteyoutube', '/uploads/news/20220312021602_trailer-the-batman-na-dc-fandome-2021-o-que-achamos-omeletv-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=SDivhxdAfIo', NULL, NULL, 0, '2021-10-18', '2022-03-12 02:16:03', '2022-03-12 02:16:03');
+	(65, 4, '(PIRAMOS!) X-MEN CHEGAM AO MCU E O TRAILER DE DOUTOR ESTRANHO 2 | OTV LIVE', 'piramos-x-men-chegam-ao-mcu-e-o-trailer-de-doutor-estranho-2-otv-live', 'piramos-x-men-chegam-ao-mcu-e-o-trailer-de-doutor-estranho-2-otv-live-omeleteyoutube', '/uploads/news/20220428111837_piramos-x-men-chegam-ao-mcu-e-o-trailer-de-doutor-estranho-2-otv-live-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=BNmCK3xCOnM', NULL, NULL, 0, '2022-02-14', '2022-04-28 23:18:38', '2022-04-28 23:18:38');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(66, 4, 'THE BATMAN: O QUE ESPERAMOS DO NOVO FILME DA DC? DESCUBRA! | OmeleTV', 'the-batman-o-que-esperamos-do-novo-filme-da-dc-descubra-omeletv', 'the-batman-o-que-esperamos-do-novo-filme-da-dc-descubra-omeletv-omeleteyoutube', '/uploads/news/20220312021606_the-batman-o-que-esperamos-do-novo-filme-da-dc-descubra-omeletv-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=rq8AMPJeLJk', NULL, NULL, 0, '2022-02-03', '2022-03-12 02:16:06', '2022-03-12 02:16:06');
+	(66, 4, 'A MARVEL MÍSTICA: DOUTOR ESTRANHO | Marvel 10 Anos 14', 'a-marvel-mistica-doutor-estranho-marvel-10-anos-14', 'a-marvel-mistica-doutor-estranho-marvel-10-anos-14-omeleteyoutube', '/uploads/news/20220428111842_a-marvel-mistica-doutor-estranho-marvel-10-anos-14-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=uoXj5_SR8c0', NULL, NULL, 0, '2018-04-06', '2022-04-28 23:18:43', '2022-04-28 23:18:43');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(67, 4, 'THE BATMAN: O MAIOR QUE JÁ TIVEMOS ATÉ HOJE? | OTV AO VIVO', 'the-batman-o-maior-que-ja-tivemos-ate-hoje-otv-ao-vivo', 'the-batman-o-maior-que-ja-tivemos-ate-hoje-otv-ao-vivo-omeleteyoutube', '/uploads/news/20220312021609_the-batman-o-maior-que-ja-tivemos-ate-hoje-otv-ao-vivo-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=luXJdV6707g', NULL, NULL, 0, '2022-03-07', '2022-03-12 02:16:09', '2022-03-12 02:16:09');
+	(67, 4, 'Doutor Estranho - Trailer Comentado', 'doutor-estranho-trailer-comentado', 'doutor-estranho-trailer-comentado-omeleteyoutube', '/uploads/news/20220428111845_doutor-estranho-trailer-comentado-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=P_JeUAhdY70', NULL, NULL, 0, '2016-04-13', '2022-04-28 23:18:45', '2022-04-28 23:18:45');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(68, 4, 'THE BATMAN! UNIFORME DO HERÓI REVELADO | Live Omelete', 'the-batman-uniforme-do-heroi-revelado-live-omelete', 'the-batman-uniforme-do-heroi-revelado-live-omelete-omeleteyoutube', '/uploads/news/20220312021613_the-batman-uniforme-do-heroi-revelado-live-omelete-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=iCeHulhznVI', NULL, NULL, 0, '2020-02-14', '2022-03-12 02:16:13', '2022-03-12 02:16:13');
+	(68, 4, 'Vimos 15 minutos de Doutor Estranho E PIRAMOS! | OmeleTV', 'vimos-15-minutos-de-doutor-estranho-e-piramos-omeletv', 'vimos-15-minutos-de-doutor-estranho-e-piramos-omeletv-omeleteyoutube', '/uploads/news/20220428111848_vimos-15-minutos-de-doutor-estranho-e-piramos-omeletv-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=9uDqjGDkkeE', NULL, NULL, 0, '2016-10-12', '2022-04-28 23:18:49', '2022-04-28 23:18:49');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(69, 4, 'REVELADO! QUEM SÃO OS VILÕES DE THE BATMAN | Live', 'revelado-quem-sao-os-viloes-de-the-batman-live', 'revelado-quem-sao-os-viloes-de-the-batman-live-omeleteyoutube', '/uploads/news/20220312021618_revelado-quem-sao-os-viloes-de-the-batman-live-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=wLscudiMiEE', NULL, NULL, 0, '2019-10-18', '2022-03-12 02:16:18', '2022-03-12 02:16:18');
+	(69, 4, 'MULTIVERSO E TERROR NA MARVEL! DOUTOR ESTRANHO 2 VEM AÍ', 'multiverso-e-terror-na-marvel-doutor-estranho-2-vem-ai', 'multiverso-e-terror-na-marvel-doutor-estranho-2-vem-ai-omeleteyoutube', '/uploads/news/20220428111851_multiverso-e-terror-na-marvel-doutor-estranho-2-vem-ai-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=YPk_xtav1aA', NULL, NULL, 0, '2019-07-25', '2022-04-28 23:18:51', '2022-04-28 23:18:51');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(70, 4, 'QUEM É QUEM EM THE BATMAN', 'quem-e-quem-em-the-batman', 'quem-e-quem-em-the-batman-omeleteyoutube', '/uploads/news/20220312021620_quem-e-quem-em-the-batman-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=idC8w7or41Y', NULL, NULL, 0, '2020-01-28', '2022-03-12 02:16:21', '2022-03-12 02:16:21');
+	(70, 4, 'DOUTOR ESTRANHO COM ARMADURA HOMEM DE FERRO! A IDEIA DELETADA FiqueEmCasa Comigo', 'doutor-estranho-com-armadura-homem-de-ferro-a-ideia-deletada-fiqueemcasa-comigo', 'doutor-estranho-com-armadura-homem-de-ferro-a-ideia-deletada-fiqueemcasa-comigo-omeleteyoutube', '/uploads/news/20220428111853_doutor-estranho-com-armadura-homem-de-ferro-a-ideia-deletada-fiqueemcasa-comigo-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=x4QaO-TdKgE', NULL, NULL, 0, '2020-04-27', '2022-04-28 23:18:54', '2022-04-28 23:18:54');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(71, 4, 'TUDO QUE SABEMOS SOBRE THE BATMAN (ATÉ AGORA)', 'tudo-que-sabemos-sobre-the-batman-ate-agora', 'tudo-que-sabemos-sobre-the-batman-ate-agora-omeleteyoutube', '/uploads/news/20220312021623_tudo-que-sabemos-sobre-the-batman-ate-agora-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=f7ys-ZB5C0M', NULL, NULL, 0, '2020-03-05', '2022-03-12 02:16:23', '2022-03-12 02:16:23');
+	(71, 4, 'VINGADOR SOBREVIVENTE? DOUTOR ESTRANHO 2 CONFIRMADO', 'vingador-sobrevivente-doutor-estranho-2-confirmado', 'vingador-sobrevivente-doutor-estranho-2-confirmado-omeleteyoutube', '/uploads/news/20220428111858_vingador-sobrevivente-doutor-estranho-2-confirmado-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=gEvS60N_nYI', NULL, NULL, 0, '2018-12-13', '2022-04-28 23:18:58', '2022-04-28 23:18:58');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(72, 4, 'FINALMENTE! QUEM É O VILÃO DE THE BATMAN', 'finalmente-quem-e-o-vilao-de-the-batman', 'finalmente-quem-e-o-vilao-de-the-batman-omeleteyoutube', '/uploads/news/20220312021628_finalmente-quem-e-o-vilao-de-the-batman-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=ibTBuTSUtrE', NULL, NULL, 0, '2018-05-31', '2022-03-12 02:16:28', '2022-03-12 02:16:28');
+	(72, 4, 'Doutor Estranho: TUDO sobre o novo herói da Marvel nos cinemas | OmeleTV', 'doutor-estranho-tudo-sobre-o-novo-heroi-da-marvel-nos-cinemas-omeletv', 'doutor-estranho-tudo-sobre-o-novo-heroi-da-marvel-nos-cinemas-omeletv-omeleteyoutube', '/uploads/news/20220428111901_doutor-estranho-tudo-sobre-o-novo-heroi-da-marvel-nos-cinemas-omeletv-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=ucBfn8jA4iU', NULL, NULL, 0, '2016-09-14', '2022-04-28 23:19:02', '2022-04-28 23:19:02');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(73, 4, 'BOMBA: The Batman sem Ben Affleck. E agora? | OmeleTV AO VIVO', 'bomba-the-batman-sem-ben-affleck-e-agora-omeletv-ao-vivo', 'bomba-the-batman-sem-ben-affleck-e-agora-omeletv-ao-vivo-omeleteyoutube', '/uploads/news/20220312021631_bomba-the-batman-sem-ben-affleck-e-agora-omeletv-ao-vivo-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=AbERBAZjQCc', NULL, NULL, 0, '2017-01-31', '2022-03-12 02:16:32', '2022-03-12 02:16:32');
+	(73, 4, 'Doutor Estranho e o segredo das Joias do Infinito | OmeleTV', 'doutor-estranho-e-o-segredo-das-joias-do-infinito-omeletv', 'doutor-estranho-e-o-segredo-das-joias-do-infinito-omeletv-omeleteyoutube', '/uploads/news/20220428111906_doutor-estranho-e-o-segredo-das-joias-do-infinito-omeletv-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=QZNIYQ0RLDQ', NULL, NULL, 0, '2016-10-21', '2022-04-28 23:19:07', '2022-04-28 23:19:07');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(74, 4, 'SEGREDOS DO TRAILER DE THE BATMAN! FiqueEmCasa Comigo', 'segredos-do-trailer-de-the-batman-fiqueemcasa-comigo', 'segredos-do-trailer-de-the-batman-fiqueemcasa-comigo-omeleteyoutube', '/uploads/news/20220312021634_segredos-do-trailer-de-the-batman-fiqueemcasa-comigo-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=MVLtgZP5ZXA', NULL, NULL, 0, '2020-08-28', '2022-03-12 02:16:35', '2022-03-12 02:16:35');
+	(74, 4, 'Doutor Estranho - 5 perguntas COM spoilers | OmeleTV', 'doutor-estranho-5-perguntas-com-spoilers-omeletv', 'doutor-estranho-5-perguntas-com-spoilers-omeletv-omeleteyoutube', '/uploads/news/20220428111910_doutor-estranho-5-perguntas-com-spoilers-omeletv-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=VH2ERSss6IM', NULL, NULL, 0, '2016-10-27', '2022-04-28 23:19:10', '2022-04-28 23:19:10');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(75, 5, 'THE BATMAN: ANÁLISE COMPLETA [Com Spoilers]', 'the-batman-analise-completa-com-spoilers', 'the-batman-analise-completa-com-spoilers-einerdyoutube', '/uploads/news/20220312021644_the-batman-analise-completa-com-spoilers-einerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=UfTnBwRGUlU', NULL, NULL, 0, '2022-03-03', '2022-03-12 02:16:44', '2022-03-12 02:16:44');
+	(75, 4, 'MELHOR FILME DA MARVEL! DOUTOR ESTRANHO 2 VAI MUDAR TUDO', 'melhor-filme-da-marvel-doutor-estranho-2-vai-mudar-tudo', 'melhor-filme-da-marvel-doutor-estranho-2-vai-mudar-tudo-omeleteyoutube', '/uploads/news/20220428111915_melhor-filme-da-marvel-doutor-estranho-2-vai-mudar-tudo-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=IDmkTXGStsw', NULL, NULL, 0, '2020-02-25', '2022-04-28 23:19:15', '2022-04-28 23:19:15');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(76, 5, 'ASSISTI THE BATMAN - O FILME REALMENTE É BOM? [Sem Spoilers]', 'assisti-the-batman-o-filme-realmente-e-bom-sem-spoilers', 'assisti-the-batman-o-filme-realmente-e-bom-sem-spoilers-einerdyoutube', '/uploads/news/20220312021649_assisti-the-batman-o-filme-realmente-e-bom-sem-spoilers-einerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=8nr8e09OMkY', NULL, NULL, 0, '2022-03-02', '2022-03-12 02:16:50', '2022-03-12 02:16:50');
+	(76, 4, 'O FIM DO DOUTOR ESTRANHO?!', 'o-fim-do-doutor-estranho', 'o-fim-do-doutor-estranho-omeleteyoutube', '/uploads/news/20220428111918_o-fim-do-doutor-estranho-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=oHUaBvUquRE', NULL, NULL, 0, '2018-04-16', '2022-04-28 23:19:19', '2022-04-28 23:19:19');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(77, 5, 'CENA PÓS-CRÉDITOS DE THE BATMAN TEM ALGO QUE VAI EXPLODIR CABEÇAS!', 'cena-pos-creditos-de-the-batman-tem-algo-que-vai-explodir-cabecas', 'cena-pos-creditos-de-the-batman-tem-algo-que-vai-explodir-cabecas-einerdyoutube', '/uploads/news/20220312021652_cena-pos-creditos-de-the-batman-tem-algo-que-vai-explodir-cabecas-einerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=i21UkpDpgU4', NULL, NULL, 0, '2022-03-06', '2022-03-12 02:16:53', '2022-03-12 02:16:53');
+	(77, 4, 'EXPLICANDO O PLANO DE DOUTOR ESTRANHO', 'explicando-o-plano-de-doutor-estranho', 'explicando-o-plano-de-doutor-estranho-omeleteyoutube', '/uploads/news/20220428111922_explicando-o-plano-de-doutor-estranho-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=llG1q3hIOvo', NULL, NULL, 0, '2018-05-02', '2022-04-28 23:19:23', '2022-04-28 23:19:23');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(78, 5, 'CONFIRMADO THE BATMAN 2 E VÁRIAS SÉRIES! - VEJA O QUE VEM POR AÍ', 'confirmado-the-batman-2-e-varias-series-veja-o-que-vem-por-ai', 'confirmado-the-batman-2-e-varias-series-veja-o-que-vem-por-ai-einerdyoutube', '/uploads/news/20220312021656_confirmado-the-batman-2-e-varias-series-veja-o-que-vem-por-ai-einerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=qya8-SPsQhM', NULL, NULL, 0, '2022-03-05', '2022-03-12 02:16:57', '2022-03-12 02:16:57');
+	(78, 4, 'DOUTOR ESTRANHO 2: O MISTÉRIO DO TEMPO NA MARVEL | HYPERDRIVE SAC 2', 'doutor-estranho-2-o-misterio-do-tempo-na-marvel-hyperdrive-sac-2', 'doutor-estranho-2-o-misterio-do-tempo-na-marvel-hyperdrive-sac-2-omeleteyoutube', '/uploads/news/20220428111926_doutor-estranho-2-o-misterio-do-tempo-na-marvel-hyperdrive-sac-2-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=KNoAVdAKE1Y', NULL, NULL, 0, '2018-06-29', '2022-04-28 23:19:26', '2022-04-28 23:19:26');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(79, 5, 'THE BATMAN VS. CAVALEIRO DAS TREVAS, QUEM FOI O MELHOR BATMAN?', 'the-batman-vs-cavaleiro-das-trevas-quem-foi-o-melhor-batman', 'the-batman-vs-cavaleiro-das-trevas-quem-foi-o-melhor-batman-einerdyoutube', '/uploads/news/20220312021701_the-batman-vs-cavaleiro-das-trevas-quem-foi-o-melhor-batman-einerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=CG3R3WyQiVY', NULL, NULL, 0, '2022-03-04', '2022-03-12 02:17:02', '2022-03-12 02:17:02');
+	(79, 4, 'DOUTOR ESTRANHO, PIETRO, WANDAVISION: ERRAMOS TODAS AS TEORIAS? FicaEmCasa Comigo', 'doutor-estranho-pietro-wandavision-erramos-todas-as-teorias-ficaemcasa-comigo', 'doutor-estranho-pietro-wandavision-erramos-todas-as-teorias-ficaemcasa-comigo-omeleteyoutube', '/uploads/news/20220428111929_doutor-estranho-pietro-wandavision-erramos-todas-as-teorias-ficaemcasa-comigo-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=Iyu0T0LcPDU', NULL, NULL, 0, '2021-03-08', '2022-04-28 23:19:30', '2022-04-28 23:19:30');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(80, 5, 'THE BATMAN - A CORTE DAS CORUJAS ESTÁ POR TRÁS DE TUDO E EU POSSO PROVAR!', 'the-batman-a-corte-das-corujas-esta-por-tras-de-tudo-e-eu-posso-provar', 'the-batman-a-corte-das-corujas-esta-por-tras-de-tudo-e-eu-posso-provar-einerdyoutube', '/uploads/news/20220312021706_the-batman-a-corte-das-corujas-esta-por-tras-de-tudo-e-eu-posso-provar-einerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=KUtjSjPHfgg', NULL, NULL, 0, '2022-02-19', '2022-03-12 02:17:07', '2022-03-12 02:17:07');
+	(80, 4, 'COMEÇOU O MULTIVERSO! LOKI E DOUTOR ESTRANHO JUNTOS', 'comecou-o-multiverso-loki-e-doutor-estranho-juntos', 'comecou-o-multiverso-loki-e-doutor-estranho-juntos-omeleteyoutube', '/uploads/news/20220428111934_comecou-o-multiverso-loki-e-doutor-estranho-juntos-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=MA-xlhAD3JY', NULL, NULL, 0, '2019-11-08', '2022-04-28 23:19:34', '2022-04-28 23:19:34');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(81, 5, 'TRAILER THE BATMAN: ANÁLISE SUPER COMPLETA (fizemos a investigação do Batman)', 'trailer-the-batman-analise-super-completa-fizemos-a-investigacao-do-batman', 'trailer-the-batman-analise-super-completa-fizemos-a-investigacao-do-batman-einerdyoutube', '/uploads/news/20220312021710_trailer-the-batman-analise-super-completa-fizemos-a-investigacao-do-batman-einerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=78Sg91d4Vi8', NULL, NULL, 0, '2021-10-17', '2022-03-12 02:17:11', '2022-03-12 02:17:11');
+	(81, 7, 'DOUTOR ESTRANHO É O MELHOR FILME DA MARVEL? - Crítica', 'doutor-estranho-e-o-melhor-filme-da-marvel-critica', 'doutor-estranho-e-o-melhor-filme-da-marvel-critica-pipocandoyoutube', '/uploads/news/20220428111938_doutor-estranho-e-o-melhor-filme-da-marvel-critica-pipocandoyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=sz5HXsdEy8A', NULL, NULL, 0, '2016-10-30', '2022-04-28 23:19:39', '2022-04-28 23:19:39');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(82, 5, 'A FAMÍLIA WAYNE ERA CORRUPTA? - ANÁLISE COMPLETA THE BATMAN TRAILER 3', 'a-familia-wayne-era-corrupta-analise-completa-the-batman-trailer-3', 'a-familia-wayne-era-corrupta-analise-completa-the-batman-trailer-3-einerdyoutube', '/uploads/news/20220312021715_a-familia-wayne-era-corrupta-analise-completa-the-batman-trailer-3-einerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=eohzSne1nHk', NULL, NULL, 0, '2021-12-28', '2022-03-12 02:17:15', '2022-03-12 02:17:15');
+	(82, 5, '37 PERSONAGENS QUE VÃO OU QUE PODEM APARECER EM DOUTOR ESTRANHO 2', '37-personagens-que-vao-ou-que-podem-aparecer-em-doutor-estranho-2', '37-personagens-que-vao-ou-que-podem-aparecer-em-doutor-estranho-2-einerdyoutube', '/uploads/news/20220428111945_37-personagens-que-vao-ou-que-podem-aparecer-em-doutor-estranho-2-einerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=SZI25Z5M_6U', NULL, NULL, 0, '2022-04-27', '2022-04-28 23:19:46', '2022-04-28 23:19:46');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(83, 5, 'THE BATMAN É SEQUÊNCIA DIRETA DE CORINGA E EU POSSO PROVAR!', 'the-batman-e-sequencia-direta-de-coringa-e-eu-posso-provar', 'the-batman-e-sequencia-direta-de-coringa-e-eu-posso-provar-einerdyoutube', '/uploads/news/20220312021720_the-batman-e-sequencia-direta-de-coringa-e-eu-posso-provar-einerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=RHXyeD87Yck', NULL, NULL, 0, '2021-10-28', '2022-03-12 02:17:21', '2022-03-12 02:17:21');
+	(83, 5, 'BOMBA! TRIBUNAL VIVO EM DOUTOR ESTRANHO 2? NÃO É RUMOR!', 'bomba-tribunal-vivo-em-doutor-estranho-2-nao-e-rumor', 'bomba-tribunal-vivo-em-doutor-estranho-2-nao-e-rumor-einerdyoutube', '/uploads/news/20220428111949_bomba-tribunal-vivo-em-doutor-estranho-2-nao-e-rumor-einerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=7x2DQJyjbr0', NULL, NULL, 0, '2022-04-27', '2022-04-28 23:19:49', '2022-04-28 23:19:49');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(84, 5, 'THE BATMAN: ANÁLISE COMPLETA DO TRAILER', 'the-batman-analise-completa-do-trailer', 'the-batman-analise-completa-do-trailer-einerdyoutube', '/uploads/news/20220312021725_the-batman-analise-completa-do-trailer-einerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=cfpIlgjzPjA', NULL, NULL, 0, '2020-08-24', '2022-03-12 02:17:25', '2022-03-12 02:17:25');
+	(84, 5, 'POR QUE O DOUTOR ESTRANHO NÃO FEZ THANOS ESQUECER AS JOIAS DO INFINITO?', 'por-que-o-doutor-estranho-nao-fez-thanos-esquecer-as-joias-do-infinito', 'por-que-o-doutor-estranho-nao-fez-thanos-esquecer-as-joias-do-infinito-einerdyoutube', '/uploads/news/20220428111954_por-que-o-doutor-estranho-nao-fez-thanos-esquecer-as-joias-do-infinito-einerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=QuNWAZzPHF0', NULL, NULL, 0, '2022-04-24', '2022-04-28 23:19:54', '2022-04-28 23:19:54');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(85, 5, 'THE BATMAN - ROBERT PATTINSON PODE SER O MELHOR BATMAN DE TODOS OS TEMPOS', 'the-batman-robert-pattinson-pode-ser-o-melhor-batman-de-todos-os-tempos', 'the-batman-robert-pattinson-pode-ser-o-melhor-batman-de-todos-os-tempos-einerdyoutube', '/uploads/news/20220312021728_the-batman-robert-pattinson-pode-ser-o-melhor-batman-de-todos-os-tempos-einerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=wl5B35LKVaE', NULL, NULL, 0, '2020-08-26', '2022-03-12 02:17:28', '2022-03-12 02:17:28');
+	(85, 5, 'DOUTOR ESTRANHO E FEITICEIRA ESCARLATE DO UCM - QUEM VENCERIA?', 'doutor-estranho-e-feiticeira-escarlate-do-ucm-quem-venceria', 'doutor-estranho-e-feiticeira-escarlate-do-ucm-quem-venceria-einerdyoutube', '/uploads/news/20220428111958_doutor-estranho-e-feiticeira-escarlate-do-ucm-quem-venceria-einerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=GNBkpYtG0y8', NULL, NULL, 0, '2021-03-07', '2022-04-28 23:19:59', '2022-04-28 23:19:59');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(86, 5, 'THE BATMAN ESTÁ FORA DO UNIVERSO COMPARTILHADO DC', 'the-batman-esta-fora-do-universo-compartilhado-dc', 'the-batman-esta-fora-do-universo-compartilhado-dc-einerdyoutube', '/uploads/news/20220312021731_the-batman-esta-fora-do-universo-compartilhado-dc-einerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=oE2q009xo1M', NULL, NULL, 0, '2019-11-03', '2022-03-12 02:17:32', '2022-03-12 02:17:32');
+	(86, 5, 'COMO O HOMEM-ARANHA DERROTOU O DOUTOR ESTRANHO? [Doutor Estranho é muito superior!]', 'como-o-homem-aranha-derrotou-o-doutor-estranho-doutor-estranho-e-muito-superior', 'como-o-homem-aranha-derrotou-o-doutor-estranho-doutor-estranho-e-muito-superior-einerdyoutube', '/uploads/news/20220428112002_como-o-homem-aranha-derrotou-o-doutor-estranho-doutor-estranho-e-muito-superior-einerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=mFUUCLBAsno', NULL, NULL, 0, '2022-01-09', '2022-04-28 23:20:02', '2022-04-28 23:20:02');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(87, 5, 'THE BATMAN - PREVISÕES PARA O FILME OU TRILOGIA', 'the-batman-previsoes-para-o-filme-ou-trilogia', 'the-batman-previsoes-para-o-filme-ou-trilogia-einerdyoutube', '/uploads/news/20220312021736_the-batman-previsoes-para-o-filme-ou-trilogia-einerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=Q5EKbHeDGyE', NULL, NULL, 0, '2020-09-05', '2022-03-12 02:17:36', '2022-03-12 02:17:36');
+	(87, 3, 'Duna, WandaVision, Arcane, Loki e mais são indicados ao Hugo Awards; veja lista', 'duna-wandavision-arcane-loki-e-mais-sao-indicados-ao-hugo-awards-veja-lista', 'duna-wandavision-arcane-loki-e-mais-sao-indicados-ao-hugo-awards-veja-lista-omeletesite', '/uploads/news/20220428112447_duna-wandavision-arcane-loki-e-mais-sao-indicados-ao-hugo-awards-veja-lista-omeletesite.jpg', NULL, 'show', 'https://www.omelete.com.br/filmes/hugo-2022-indicados', NULL, NULL, 0, '2022-04-08', '2022-04-28 23:24:47', '2022-04-28 23:24:47');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(88, 6, 'EU VI E SURTEI! THE BATMAN É SIMPLESMENTE O MELHOR FILME DA DC!', 'eu-vi-e-surtei-the-batman-e-simplesmente-o-melhor-filme-da-dc', 'eu-vi-e-surtei-the-batman-e-simplesmente-o-melhor-filme-da-dc-nerdlandyoutube', '/uploads/news/20220312021741_eu-vi-e-surtei-the-batman-e-simplesmente-o-melhor-filme-da-dc-nerdlandyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=kOlkdd_PGTo', NULL, NULL, 0, '2022-02-28', '2022-03-12 02:17:42', '2022-03-12 02:17:42');
+	(88, 3, 'Vídeo explora efeitos especiais de cena emocionante de WandaVision; veja', 'video-explora-efeitos-especiais-de-cena-emocionante-de-wandavision-veja', 'video-explora-efeitos-especiais-de-cena-emocionante-de-wandavision-veja-omeletesite', '/uploads/news/20220428112447_video-explora-efeitos-especiais-de-cena-emocionante-de-wandavision-veja-omeletesite.jpg', NULL, 'show', 'https://www.omelete.com.br/marvel-cinema/wandavision-video-efeitos', NULL, NULL, 0, '2022-01-22', '2022-04-28 23:24:47', '2022-04-28 23:24:47');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(89, 6, 'ENTENDA O FINAL DO FILME THE BATMAN E O CORINGA LIGADO DIRETO AO BATMAN! FINAL THE BATMAN EXPLICADO!', 'entenda-o-final-do-filme-the-batman-e-o-coringa-ligado-direto-ao-batman-final-the-batman-explicado', 'entenda-o-final-do-filme-the-batman-e-o-coringa-ligado-direto-ao-batman-final-the-batman-explicado-nerdlandyoutube', '/uploads/news/20220312021744_entenda-o-final-do-filme-the-batman-e-o-coringa-ligado-direto-ao-batman-final-the-batman-explicado-nerdlandyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=ewW1AnDwtP8', NULL, NULL, 0, '2022-02-28', '2022-03-12 02:17:45', '2022-03-12 02:17:45');
+	(89, 3, 'WandaVision: ator de Billy revela fotos do set no aniversário de um ano da série', 'wandavision-ator-de-billy-revela-fotos-do-set-no-aniversario-de-um-ano-da-serie', 'wandavision-ator-de-billy-revela-fotos-do-set-no-aniversario-de-um-ano-da-serie-omeletesite', '/uploads/news/20220428112447_wandavision-ator-de-billy-revela-fotos-do-set-no-aniversario-de-um-ano-da-serie-omeletesite.jpg', NULL, 'show', 'https://www.omelete.com.br/marvel-cinema/wandavision-aniversario-um-ano', NULL, NULL, 0, '2022-01-16', '2022-04-28 23:24:47', '2022-04-28 23:24:47');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(90, 6, 'EXPLICADO! THE BATMAN TRAILER 2 OFICIAL! CHARADA, PINGUIM, MULHER GATO E MUITO MAIS!', 'explicado-the-batman-trailer-2-oficial-charada-pinguim-mulher-gato-e-muito-mais', 'explicado-the-batman-trailer-2-oficial-charada-pinguim-mulher-gato-e-muito-mais-nerdlandyoutube', '/uploads/news/20220312021749_explicado-the-batman-trailer-2-oficial-charada-pinguim-mulher-gato-e-muito-mais-nerdlandyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=LmnEo5z4MCI', NULL, NULL, 0, '2021-10-17', '2022-03-12 02:17:49', '2022-03-12 02:17:49');
+	(90, 3, 'Succession, WandaVision e mais: As melhores performances de 2021', 'succession-wandavision-e-mais-as-melhores-performances-de-2021', 'succession-wandavision-e-mais-as-melhores-performances-de-2021-omeletesite', '/uploads/news/20220428112448_succession-wandavision-e-mais-as-melhores-performances-de-2021-omeletesite.jpg', NULL, 'show', 'https://www.omelete.com.br/filmes/melhores-performances-2021', NULL, NULL, 0, '2021-12-27', '2022-04-28 23:24:48', '2022-04-28 23:24:48');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(91, 6, 'THE BATMAN TRAILER OFICIAL LEGENDADO', 'the-batman-trailer-oficial-legendado', 'the-batman-trailer-oficial-legendado-nerdlandyoutube', '/uploads/news/20220312021752_the-batman-trailer-oficial-legendado-nerdlandyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=z2URKRqzMI4', NULL, NULL, 0, '2020-08-22', '2022-03-12 02:17:53', '2022-03-12 02:17:53');
+	(91, 1, 'Artes mostram visuais alternativos de Agatha Harkness em WandaVision', 'artes-mostram-visuais-alternativos-de-agatha-harkness-em-wandavision', 'artes-mostram-visuais-alternativos-de-agatha-harkness-em-wandavision-jovemnerdsite', '/uploads/news/20220428112451_artes-mostram-visuais-alternativos-de-agatha-harkness-em-wandavision-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/wandavision-visuais-alternativos-agatha-harkness/', NULL, NULL, 0, '2022-03-07', '2022-04-28 23:24:52', '2022-04-28 23:24:52');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(92, 6, 'SAIU! PRIMEIRO TEASER TRAILER THE BATMAN E TODOS OS SEGREDOS ESCONDIDOS', 'saiu-primeiro-teaser-trailer-the-batman-e-todos-os-segredos-escondidos', 'saiu-primeiro-teaser-trailer-the-batman-e-todos-os-segredos-escondidos-nerdlandyoutube', '/uploads/news/20220312021758_saiu-primeiro-teaser-trailer-the-batman-e-todos-os-segredos-escondidos-nerdlandyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=RV1KaH4UoGw', NULL, NULL, 0, '2020-02-14', '2022-03-12 02:17:58', '2022-03-12 02:17:58');
+	(92, 1, 'Industrial Light &038; Magic revela bastidores dos efeitos visuais de WandaVision', 'industrial-light-038-magic-revela-bastidores-dos-efeitos-visuais-de-wandavision', 'industrial-light-038-magic-revela-bastidores-dos-efeitos-visuais-de-wandavision-jovemnerdsite', '/uploads/news/20220428112452_industrial-light-038-magic-revela-bastidores-dos-efeitos-visuais-de-wandavision-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/wandavision-video-efeitos-visuais-marvel/', NULL, NULL, 0, '2022-01-22', '2022-04-28 23:24:53', '2022-04-28 23:24:53');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(93, 6, '38 SEGREDOS TRAILER THE BATMAN ANALISE COMPLETA', '38-segredos-trailer-the-batman-analise-completa', '38-segredos-trailer-the-batman-analise-completa-nerdlandyoutube', '/uploads/news/20220312021800_38-segredos-trailer-the-batman-analise-completa-nerdlandyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=Mv2t5V5DsII', NULL, NULL, 0, '2020-08-24', '2022-03-12 02:18:01', '2022-03-12 02:18:01');
+	(93, 1, 'Ator mirim de WandaVision comemora 1 ano da série com foto de bastidores', 'ator-mirim-de-wandavision-comemora-1-ano-da-serie-com-foto-de-bastidores', 'ator-mirim-de-wandavision-comemora-1-ano-da-serie-com-foto-de-bastidores-jovemnerdsite', '/uploads/news/20220428112453_ator-mirim-de-wandavision-comemora-1-ano-da-serie-com-foto-de-bastidores-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/ator-mirim-de-wandavision-comemora-1-ano-da-serie-com-foto-de-bastidores/', NULL, NULL, 0, '2022-01-17', '2022-04-28 23:24:54', '2022-04-28 23:24:54');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(94, 6, 'MAIORES DIFERENÇAS ENTRE O NOVO BATMAN DO ROBERT PATTINSON E BATMAN DO BEN AFFLECK (LIGA DA JUSTIÇA)', 'maiores-diferencas-entre-o-novo-batman-do-robert-pattinson-e-batman-do-ben-affleck-liga-da-justica', 'maiores-diferencas-entre-o-novo-batman-do-robert-pattinson-e-batman-do-ben-affleck-liga-da-justica-nerdlandyoutube', '/uploads/news/20220312021805_maiores-diferencas-entre-o-novo-batman-do-robert-pattinson-e-batman-do-ben-affleck-liga-da-justica-nerdlandyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=MdHy1FHtPYc', NULL, NULL, 0, '2022-03-02', '2022-03-12 02:18:06', '2022-03-12 02:18:06');
+	(94, 1, 'WandaVision e Loki foram as séries mais pirateadas de 2021', 'wandavision-e-loki-foram-as-series-mais-pirateadas-de-2021', 'wandavision-e-loki-foram-as-series-mais-pirateadas-de-2021-jovemnerdsite', '/uploads/news/20220428112454_wandavision-e-loki-foram-as-series-mais-pirateadas-de-2021-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/wandavision-e-loki-foram-as-series-mais-pirateadas-de-2021/', NULL, NULL, 0, '2021-12-29', '2022-04-28 23:24:55', '2022-04-28 23:24:55');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(95, 6, 'VILÃO DO FILME THE BATMAN VAI GANHAR SÉRIE! Shorts', 'vilao-do-filme-the-batman-vai-ganhar-serie-shorts', 'vilao-do-filme-the-batman-vai-ganhar-serie-shorts-nerdlandyoutube', '/uploads/news/20220312021810_vilao-do-filme-the-batman-vai-ganhar-serie-shorts-nerdlandyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=wDvWYWQrQN8', NULL, NULL, 0, '2021-09-18', '2022-03-12 02:18:10', '2022-03-12 02:18:10');
+	(95, 1, 'Música de WandaVision, &8220;Agatha All Along&8221; é indicada ao Grammy Awards', 'musica-de-wandavision-8220agatha-all-along8221-e-indicada-ao-grammy-awards', 'musica-de-wandavision-8220agatha-all-along8221-e-indicada-ao-grammy-awards-jovemnerdsite', '/uploads/news/20220428112455_musica-de-wandavision-8220agatha-all-along8221-e-indicada-ao-grammy-awards-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/wandavision-agatha-all-along-indicacao-grammy/', NULL, NULL, 0, '2021-11-23', '2022-04-28 23:24:56', '2022-04-28 23:24:56');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(96, 6, 'EXPLICADO! TRAILER THE FLASH! SUPERGIRL, BATMAN E FLASHPOINT!', 'explicado-trailer-the-flash-supergirl-batman-e-flashpoint', 'explicado-trailer-the-flash-supergirl-batman-e-flashpoint-nerdlandyoutube', '/uploads/news/20220312021815_explicado-trailer-the-flash-supergirl-batman-e-flashpoint-nerdlandyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=RhRR7-9oVdo', NULL, NULL, 0, '2021-10-17', '2022-03-12 02:18:15', '2022-03-12 02:18:15');
+	(96, 1, 'Marvel anuncia derivado de WandaVision e novas séries; veja todas', 'marvel-anuncia-derivado-de-wandavision-e-novas-series-veja-todas', 'marvel-anuncia-derivado-de-wandavision-e-novas-series-veja-todas-jovemnerdsite', '/uploads/news/20220428112456_marvel-anuncia-derivado-de-wandavision-e-novas-series-veja-todas-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/marvel-anuncia-derivado-de-wandavision-novas-series-disney-plus-day/', NULL, NULL, 0, '2021-11-12', '2022-04-28 23:24:57', '2022-04-28 23:24:57');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(97, 9, 'FUTURO DE THE BATMAN | 5 NOVIDADES QUENTES', 'futuro-de-the-batman-5-novidades-quentes', 'futuro-de-the-batman-5-novidades-quentes-cinemacomrapadurayoutube', '/uploads/news/20220312021821_futuro-de-the-batman-5-novidades-quentes-cinemacomrapadurayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=gfHklYX1AB8', NULL, NULL, 0, '2022-03-07', '2022-03-12 02:18:21', '2022-03-12 02:18:21');
+	(97, 1, 'Kathryn Hahn nega rumores sobre derivado de WandaVision', 'kathryn-hahn-nega-rumores-sobre-derivado-de-wandavision', 'kathryn-hahn-nega-rumores-sobre-derivado-de-wandavision-jovemnerdsite', '/uploads/news/20220428112457_kathryn-hahn-nega-rumores-sobre-derivado-de-wandavision-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/wandavision-kathryn-hahn-nega-rumores-derivado-agatha-harkness/', NULL, NULL, 0, '2021-10-29', '2022-04-28 23:24:58', '2022-04-28 23:24:58');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(98, 9, 'CRÍTICA | THE BATMAN É FANTÁSTICO! (Sem Spoilers)', 'critica-the-batman-e-fantastico-sem-spoilers', 'critica-the-batman-e-fantastico-sem-spoilers-cinemacomrapadurayoutube', '/uploads/news/20220312021824_critica-the-batman-e-fantastico-sem-spoilers-cinemacomrapadurayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=4iIZ08MVQ90', NULL, NULL, 0, '2022-02-28', '2022-03-12 02:18:25', '2022-03-12 02:18:25');
+	(98, 1, 'Disney Plus está desenvolvendo série derivada de WandaVision com Kathryn Hahn, diz site', 'disney-plus-esta-desenvolvendo-serie-derivada-de-wandavision-com-kathryn-hahn-diz-site', 'disney-plus-esta-desenvolvendo-serie-derivada-de-wandavision-com-kathryn-hahn-diz-site-jovemnerdsite', '/uploads/news/20220428112458_disney-plus-esta-desenvolvendo-serie-derivada-de-wandavision-com-kathryn-hahn-diz-site-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/wandavision-serie-derivada-agatha-harkness-kathryn-hahn/', NULL, NULL, 0, '2021-10-07', '2022-04-28 23:24:59', '2022-04-28 23:24:59');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(99, 9, 'THE BATMAN | RAIO-X DO TRAILER 2', 'the-batman-raio-x-do-trailer-2', 'the-batman-raio-x-do-trailer-2-cinemacomrapadurayoutube', '/uploads/news/20220312021829_the-batman-raio-x-do-trailer-2-cinemacomrapadurayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=B57SIrrQppA', NULL, NULL, 0, '2021-10-16', '2022-03-12 02:18:29', '2022-03-12 02:18:29');
+	(99, 1, 'Homem de Ferro ganha armadura bizarra em HQ sobre Darkhold, o livro sombrio de WandaVision', 'homem-de-ferro-ganha-armadura-bizarra-em-hq-sobre-darkhold-o-livro-sombrio-de-wandavision', 'homem-de-ferro-ganha-armadura-bizarra-em-hq-sobre-darkhold-o-livro-sombrio-de-wandavision-jovemnerdsite', '/uploads/news/20220428112459_homem-de-ferro-ganha-armadura-bizarra-em-hq-sobre-darkhold-o-livro-sombrio-de-wandavision-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/homem-de-ferro-marvel-armadura-bizarra-hq-darkhold-livro-wandavision/', NULL, NULL, 0, '2021-10-04', '2022-04-28 23:25:01', '2022-04-28 23:25:01');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(100, 9, 'OS ACERTOS DE THE BATMAN | COM SPOILERS', 'os-acertos-de-the-batman-com-spoilers', 'os-acertos-de-the-batman-com-spoilers-cinemacomrapadurayoutube', '/uploads/news/20220312021833_os-acertos-de-the-batman-com-spoilers-cinemacomrapadurayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=udnEs-qvvjk', NULL, NULL, 0, '2022-03-02', '2022-03-12 02:18:33', '2022-03-12 02:18:33');
+	(100, 1, 'WandaVision se torna a primeira série da Marvel a vencer um Emmy', 'wandavision-se-torna-a-primeira-serie-da-marvel-a-vencer-um-emmy', 'wandavision-se-torna-a-primeira-serie-da-marvel-a-vencer-um-emmy-jovemnerdsite', '/uploads/news/20220428112501_wandavision-se-torna-a-primeira-serie-da-marvel-a-vencer-um-emmy-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/wandavision-primeira-serie-marvel-vencedora-emmy/', NULL, NULL, 0, '2021-09-13', '2022-04-28 23:25:01', '2022-04-28 23:25:01');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(101, 9, 'FILMAGENS DE THE BATMAN COMEÇARAM! QUEM ESTÁ NO ELENCO?', 'filmagens-de-the-batman-comecaram-quem-esta-no-elenco', 'filmagens-de-the-batman-comecaram-quem-esta-no-elenco-cinemacomrapadurayoutube', '/uploads/news/20220312021837_filmagens-de-the-batman-comecaram-quem-esta-no-elenco-cinemacomrapadurayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=pfmdqq-JmN8', NULL, NULL, 0, '2020-01-28', '2022-03-12 02:18:38', '2022-03-12 02:18:38');
+	(101, 1, 'Será que WandaVision previu a data do trailer de Homem-Aranha: Sem Volta Para Casa?', 'sera-que-wandavision-previu-a-data-do-trailer-de-homem-aranha-sem-volta-para-casa', 'sera-que-wandavision-previu-a-data-do-trailer-de-homem-aranha-sem-volta-para-casa-jovemnerdsite', '/uploads/news/20220428112502_sera-que-wandavision-previu-a-data-do-trailer-de-homem-aranha-sem-volta-para-casa-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/wandavision-previu-data-trailer-homem-aranha-sem-volta-para-casa/', NULL, NULL, 0, '2021-08-24', '2022-04-28 23:25:02', '2022-04-28 23:25:02');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(102, 9, 'THE BATMAN: 10 ATORES PARA VIVER O HERÓI!', 'the-batman-10-atores-para-viver-o-heroi', 'the-batman-10-atores-para-viver-o-heroi-cinemacomrapadurayoutube', '/uploads/news/20220312021842_the-batman-10-atores-para-viver-o-heroi-cinemacomrapadurayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=_d6zZtqPz4w', NULL, NULL, 0, '2018-09-08', '2022-03-12 02:18:43', '2022-03-12 02:18:43');
+	(102, 1, 'Paul Bettany revela diferentes faces do Visão em fotos dos bastidores de WandaVision', 'paul-bettany-revela-diferentes-faces-do-visao-em-fotos-dos-bastidores-de-wandavision', 'paul-bettany-revela-diferentes-faces-do-visao-em-fotos-dos-bastidores-de-wandavision-jovemnerdsite', '/uploads/news/20220428112502_paul-bettany-revela-diferentes-faces-do-visao-em-fotos-dos-bastidores-de-wandavision-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/paul-bettany-revela-diferentes-faces-do-visao-em-fotos-dos-bastidores-de-wandavision/', NULL, NULL, 0, '2021-08-16', '2022-04-28 23:25:03', '2022-04-28 23:25:03');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(103, 9, 'THE BATMAN | VEJA O NOVO VISUAL DO BATMAN DE ROBERT PATTINSON', 'the-batman-veja-o-novo-visual-do-batman-de-robert-pattinson', 'the-batman-veja-o-novo-visual-do-batman-de-robert-pattinson-cinemacomrapadurayoutube', '/uploads/news/20220312021846_the-batman-veja-o-novo-visual-do-batman-de-robert-pattinson-cinemacomrapadurayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=8BuZ4IwLIgU', NULL, NULL, 0, '2020-02-14', '2022-03-12 02:18:46', '2022-03-12 02:18:46');
+	(103, 1, 'Doutor Estranho 2 não faria sentido sem WandaVision, diz Elizabeth Olsen', 'doutor-estranho-2-nao-faria-sentido-sem-wandavision-diz-elizabeth-olsen', 'doutor-estranho-2-nao-faria-sentido-sem-wandavision-diz-elizabeth-olsen-jovemnerdsite', '/uploads/news/20220428112503_doutor-estranho-2-nao-faria-sentido-sem-wandavision-diz-elizabeth-olsen-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/doutor-estranho-2-nao-faria-sentido-sem-wandavision-diz-elizabeth-olsen/', NULL, NULL, 0, '2021-07-13', '2022-04-28 23:25:04', '2022-04-28 23:25:04');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(104, 9, 'THE BATMAN VAI GANHAR SÉRIE NO STREAMING', 'the-batman-vai-ganhar-serie-no-streaming', 'the-batman-vai-ganhar-serie-no-streaming-cinemacomrapadurayoutube', '/uploads/news/20220312021849_the-batman-vai-ganhar-serie-no-streaming-cinemacomrapadurayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=d_3TIZVm0ic', NULL, NULL, 0, '2020-07-15', '2022-03-12 02:18:51', '2022-03-12 02:18:51');
+	(104, 1, 'Elizabeth Olsen, de Vingadores e WandaVision, fez um teste &8220;terrível&8221; para Game of Thrones', 'elizabeth-olsen-de-vingadores-e-wandavision-fez-um-teste-8220terrivel8221-para-game-of-thrones', 'elizabeth-olsen-de-vingadores-e-wandavision-fez-um-teste-8220terrivel8221-para-game-of-thrones-jovemnerdsite', '/uploads/news/20220428112504_elizabeth-olsen-de-vingadores-e-wandavision-fez-um-teste-8220terrivel8221-para-game-of-thrones-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/elizabeth-olsen-de-vingadores-e-wandavision-fez-um-teste-terrivel-para-game-of-thrones/', NULL, NULL, 0, '2021-06-22', '2022-04-28 23:25:05', '2022-04-28 23:25:05');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(105, 9, 'CENAS INÉDITAS DA DC 2022! THE FLASH, ADÃO NEGRO, THE BATMAN E AQUAMAN 2!', 'cenas-ineditas-da-dc-2022-the-flash-adao-negro-the-batman-e-aquaman-2', 'cenas-ineditas-da-dc-2022-the-flash-adao-negro-the-batman-e-aquaman-2-cinemacomrapadurayoutube', '/uploads/news/20220312021854_cenas-ineditas-da-dc-2022-the-flash-adao-negro-the-batman-e-aquaman-2-cinemacomrapadurayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=Vyfy7eFKeCc', NULL, NULL, 0, '2022-02-11', '2022-03-12 02:18:54', '2022-03-12 02:18:54');
+	(105, 1, 'Randall Park, de WandaVision, entra para o elenco de derivado de Big Mouth', 'randall-park-de-wandavision-entra-para-o-elenco-de-derivado-de-big-mouth', 'randall-park-de-wandavision-entra-para-o-elenco-de-derivado-de-big-mouth-jovemnerdsite', '/uploads/news/20220428112505_randall-park-de-wandavision-entra-para-o-elenco-de-derivado-de-big-mouth-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/randall-park-de-wandavision-entra-para-o-elenco-de-derivado-de-big-mouth/', NULL, NULL, 0, '2021-06-14', '2022-04-28 23:25:06', '2022-04-28 23:25:06');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(106, 9, 'ANÁLISE DO PRIMEIRO TRAILER DE \'THE BATMAN\'', 'analise-do-primeiro-trailer-de-the-batman', 'analise-do-primeiro-trailer-de-the-batman-cinemacomrapadurayoutube', '/uploads/news/20220312021856_analise-do-primeiro-trailer-de-the-batman-cinemacomrapadurayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=kQNyGCNatHo', NULL, NULL, 0, '2020-08-22', '2022-03-12 02:18:57', '2022-03-12 02:18:57');
+	(106, 1, 'WandaVision não terá segunda temporada, diz Elizabeth Olsen', 'wandavision-nao-tera-segunda-temporada-diz-elizabeth-olsen', 'wandavision-nao-tera-segunda-temporada-diz-elizabeth-olsen-jovemnerdsite', '/uploads/news/20220428112507_wandavision-nao-tera-segunda-temporada-diz-elizabeth-olsen-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/wandavision-nao-tera-segunda-temporada-diz-elizabeth-olsen/', NULL, NULL, 0, '2021-06-09', '2022-04-28 23:25:07', '2022-04-28 23:25:07');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(107, 9, 'THE BATMAN: QUEM SERÃO OS VILÕES? ESCALAMOS O ELENCO!!', 'the-batman-quem-serao-os-viloes-escalamos-o-elenco', 'the-batman-quem-serao-os-viloes-escalamos-o-elenco-cinemacomrapadurayoutube', '/uploads/news/20220312021901_the-batman-quem-serao-os-viloes-escalamos-o-elenco-cinemacomrapadurayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=BTKMGpgLhLg', NULL, NULL, 0, '2019-06-27', '2022-03-12 02:19:01', '2022-03-12 02:19:01');
+	(107, 1, 'Agatha seria bem diferente em WandaVision, revela roteirista', 'agatha-seria-bem-diferente-em-wandavision-revela-roteirista', 'agatha-seria-bem-diferente-em-wandavision-revela-roteirista-jovemnerdsite', '/uploads/news/20220428112507_agatha-seria-bem-diferente-em-wandavision-revela-roteirista-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/agatha-seria-bem-diferente-em-wandavision-revela-roteirista/', NULL, NULL, 0, '2021-06-03', '2022-04-28 23:25:08', '2022-04-28 23:25:08');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(108, 9, 'THE BATMAN, o que está acontecendo?', 'the-batman-o-que-esta-acontecendo', 'the-batman-o-que-esta-acontecendo-cinemacomrapadurayoutube', '/uploads/news/20220312021907_the-batman-o-que-esta-acontecendo-cinemacomrapadurayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=iQs5QuE9uGg', NULL, NULL, 0, '2017-03-14', '2022-03-12 02:19:08', '2022-03-12 02:19:08');
+	(108, 1, 'Kat Dennings esperava ter participação menor em WandaVision', 'kat-dennings-esperava-ter-participacao-menor-em-wandavision', 'kat-dennings-esperava-ter-participacao-menor-em-wandavision-jovemnerdsite', '/uploads/news/20220428112508_kat-dennings-esperava-ter-participacao-menor-em-wandavision-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/kat-dennings-esperava-participacao-menor-wandavision/', NULL, NULL, 0, '2021-05-24', '2022-04-28 23:25:09', '2022-04-28 23:25:09');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(109, 9, 'DCFANDOME TRAILERS DE THE BATMAN, SNYDERCUT E O ESQUADRÃO SUICIDA', 'dcfandome-trailers-de-the-batman-snydercut-e-o-esquadrao-suicida', 'dcfandome-trailers-de-the-batman-snydercut-e-o-esquadrao-suicida-cinemacomrapadurayoutube', '/uploads/news/20220312021910_dcfandome-trailers-de-the-batman-snydercut-e-o-esquadrao-suicida-cinemacomrapadurayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=gyKbYlHBBdI', NULL, NULL, 0, '2020-08-21', '2022-03-12 02:19:10', '2022-03-12 02:19:10');
+	(109, 1, 'WandaVision teria a aparição de Doutor Estranho, revela Kevin Feige', 'wandavision-teria-a-aparicao-de-doutor-estranho-revela-kevin-feige', 'wandavision-teria-a-aparicao-de-doutor-estranho-revela-kevin-feige-jovemnerdsite', '/uploads/news/20220428112509_wandavision-teria-a-aparicao-de-doutor-estranho-revela-kevin-feige-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/wandavision-teria-a-aparicao-de-doutor-estranho-revela-kevin-feige/', NULL, NULL, 0, '2021-05-03', '2022-04-28 23:25:10', '2022-04-28 23:25:10');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(110, 9, 'THE BATMAN TERÁ NOVA VERSÃO DO CORINGA?', 'the-batman-tera-nova-versao-do-coringa', 'the-batman-tera-nova-versao-do-coringa-cinemacomrapadurayoutube', '/uploads/news/20220312021913_the-batman-tera-nova-versao-do-coringa-cinemacomrapadurayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=hsFubwAo6bU', NULL, NULL, 0, '2020-06-13', '2022-03-12 02:19:13', '2022-03-12 02:19:13');
+	(110, 1, 'WandaVision faz crossover com diferentes séries em ilustrações', 'wandavision-faz-crossover-com-diferentes-series-em-ilustracoes', 'wandavision-faz-crossover-com-diferentes-series-em-ilustracoes-jovemnerdsite', '/uploads/news/20220428112510_wandavision-faz-crossover-com-diferentes-series-em-ilustracoes-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/wandavision-ganha-crossover-com-diferentes-series-em-ilustracoes/', NULL, NULL, 0, '2021-03-27', '2022-04-28 23:25:11', '2022-04-28 23:25:11');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(111, 9, 'TRETA NA DC!!! DIRETOR THE BATMAN x WARNER (de novo )', 'treta-na-dc-diretor-the-batman-x-warner-de-novo', 'treta-na-dc-diretor-the-batman-x-warner-de-novo-cinemacomrapadurayoutube', '/uploads/news/20220312021915_treta-na-dc-diretor-the-batman-x-warner-de-novo-cinemacomrapadurayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=lWs71_2KkuY', NULL, NULL, 0, '2021-08-31', '2022-03-12 02:19:16', '2022-03-12 02:19:16');
+	(111, 1, 'Fã faz abertura de WandaVision inspirada em Friends', 'fa-faz-abertura-de-wandavision-inspirada-em-friends', 'fa-faz-abertura-de-wandavision-inspirada-em-friends-jovemnerdsite', '/uploads/news/20220428112511_fa-faz-abertura-de-wandavision-inspirada-em-friends-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/fa-faz-abertura-de-wandavision-inspirada-em-friends/', NULL, NULL, 0, '2021-03-25', '2022-04-28 23:25:12', '2022-04-28 23:25:12');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(112, 9, 'BEN AFFLECK ESTÁ FORA DE VEZ DE THE BATMAN?', 'ben-affleck-esta-fora-de-vez-de-the-batman', 'ben-affleck-esta-fora-de-vez-de-the-batman-cinemacomrapadurayoutube', '/uploads/news/20220312021919_ben-affleck-esta-fora-de-vez-de-the-batman-cinemacomrapadurayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=cZ_nO7tAB_8', NULL, NULL, 0, '2018-09-06', '2022-03-12 02:19:19', '2022-03-12 02:19:19');
+	(112, 1, 'Confira a magia dos efeitos visuais de WandaVision', 'confira-a-magia-dos-efeitos-visuais-de-wandavision', 'confira-a-magia-dos-efeitos-visuais-de-wandavision-jovemnerdsite', '/uploads/news/20220428112512_confira-a-magia-dos-efeitos-visuais-de-wandavision-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/veja-a-magia-dos-efeitos-visuais-de-wandavision/', NULL, NULL, 0, '2021-03-24', '2022-04-28 23:25:13', '2022-04-28 23:25:13');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(113, 10, 'THE BATMAN Trailer 2 - Qual O Plano do Charada?', 'the-batman-trailer-2-qual-o-plano-do-charada', 'the-batman-trailer-2-qual-o-plano-do-charada-caiqueizotonyoutube', '/uploads/news/20220312021925_the-batman-trailer-2-qual-o-plano-do-charada-caiqueizotonyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=QaEmPuDOusU', NULL, NULL, 0, '2021-10-20', '2022-03-12 02:19:26', '2022-03-12 02:19:26');
+	(113, 1, 'Roteiro de WandaVision também deixou a atriz da Monica Rambeau confusa', 'roteiro-de-wandavision-tambem-deixou-a-atriz-da-monica-rambeau-confusa', 'roteiro-de-wandavision-tambem-deixou-a-atriz-da-monica-rambeau-confusa-jovemnerdsite', '/uploads/news/20220428112514_roteiro-de-wandavision-tambem-deixou-a-atriz-da-monica-rambeau-confusa-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/roteiro-de-wandavision-tambem-deixou-a-atriz-da-monica-rambeau-confusa/', NULL, NULL, 0, '2021-03-18', '2022-04-28 23:25:14', '2022-04-28 23:25:14');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(114, 10, 'THE BATMAN | Análise do Trailer!', 'the-batman-analise-do-trailer', 'the-batman-analise-do-trailer-caiqueizotonyoutube', '/uploads/news/20220312021929_the-batman-analise-do-trailer-caiqueizotonyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=YdbISjPGMZM', NULL, NULL, 0, '2020-08-25', '2022-03-12 02:19:29', '2022-03-12 02:19:29');
+	(114, 1, 'Falcão e o Soldado Invernal é completamente diferente de WandaVision, diz roteirista', 'falcao-e-o-soldado-invernal-e-completamente-diferente-de-wandavision-diz-roteirista', 'falcao-e-o-soldado-invernal-e-completamente-diferente-de-wandavision-diz-roteirista-jovemnerdsite', '/uploads/news/20220428112515_falcao-e-o-soldado-invernal-e-completamente-diferente-de-wandavision-diz-roteirista-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/falcao-e-o-soldado-invernal-e-completamente-diferente-de-wandavision-diz-roteirista/', NULL, NULL, 0, '2021-03-17', '2022-04-28 23:25:15', '2022-04-28 23:25:15');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(115, 12, 'CRÍTICA: THE BATMAN EXPLICADO COM SPOILERS PELA TIA DO BÁTIMA EM PESSOA', 'critica-the-batman-explicado-com-spoilers-pela-tia-do-batima-em-pessoa', 'critica-the-batman-explicado-com-spoilers-pela-tia-do-batima-em-pessoa-quatrocoisasyoutube', '/uploads/news/20220312021937_critica-the-batman-explicado-com-spoilers-pela-tia-do-batima-em-pessoa-quatrocoisasyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=XqGUifqbS7g', NULL, NULL, 0, '2022-03-07', '2022-03-12 02:19:37', '2022-03-12 02:19:37');
+	(115, 1, 'Benedict Cumberbatch pede desculpas aos fãs de WandaVision', 'benedict-cumberbatch-pede-desculpas-aos-fas-de-wandavision', 'benedict-cumberbatch-pede-desculpas-aos-fas-de-wandavision-jovemnerdsite', '/uploads/news/20220428112515_benedict-cumberbatch-pede-desculpas-aos-fas-de-wandavision-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/benedict-cumberbatch-pede-desculpas-aos-fas-de-wandavision/', NULL, NULL, 0, '2021-03-12', '2022-04-28 23:25:17', '2022-04-28 23:25:17');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(116, 12, 'PRIMEIRAS CRÍTICAS: O QUE ESTÃO FALANDO DE THE BATMAN?', 'primeiras-criticas-o-que-estao-falando-de-the-batman', 'primeiras-criticas-o-que-estao-falando-de-the-batman-quatrocoisasyoutube', '/uploads/news/20220312021941_primeiras-criticas-o-que-estao-falando-de-the-batman-quatrocoisasyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=VpvGe1aGbAs', NULL, NULL, 0, '2022-03-01', '2022-03-12 02:19:41', '2022-03-12 02:19:41');
+	(116, 1, 'Criadora de WandaVision nunca tinha ouvido falar do Mefisto', 'criadora-de-wandavision-nunca-tinha-ouvido-falar-do-mefisto', 'criadora-de-wandavision-nunca-tinha-ouvido-falar-do-mefisto-jovemnerdsite', '/uploads/news/20220428112517_criadora-de-wandavision-nunca-tinha-ouvido-falar-do-mefisto-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/criadora-de-wandavision-nunca-tinha-ouvido-falar-do-mefisto/', NULL, NULL, 0, '2021-03-12', '2022-04-28 23:25:18', '2022-04-28 23:25:18');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(117, 12, 'THE BATMAN É BARRADO NA CENSURA DO REINO UNIDO - E AGORA?', 'the-batman-e-barrado-na-censura-do-reino-unido-e-agora', 'the-batman-e-barrado-na-censura-do-reino-unido-e-agora-quatrocoisasyoutube', '/uploads/news/20220312021943_the-batman-e-barrado-na-censura-do-reino-unido-e-agora-quatrocoisasyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=xcJ3t9_Bw98', NULL, NULL, 0, '2022-02-26', '2022-03-12 02:19:43', '2022-03-12 02:19:43');
+	(117, 1, 'WandaVision: Nostalgia, teorias e luto', 'wandavision-nostalgia-teorias-e-luto', 'wandavision-nostalgia-teorias-e-luto-jovemnerdsite', '/uploads/news/20220428112518_wandavision-nostalgia-teorias-e-luto-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdcast/wandavision-nostalgia-teorias-e-luto/', NULL, NULL, 0, '2021-03-12', '2022-04-28 23:25:19', '2022-04-28 23:25:19');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(118, 12, 'PRÉ ESTREIA DE "THE BATMAN" DERRUBOU SITE E ESGOTOU EM POUCOS MINUTOS', 'pre-estreia-de-the-batman-derrubou-site-e-esgotou-em-poucos-minutos', 'pre-estreia-de-the-batman-derrubou-site-e-esgotou-em-poucos-minutos-quatrocoisasyoutube', '/uploads/news/20220312021947_pre-estreia-de-the-batman-derrubou-site-e-esgotou-em-poucos-minutos-quatrocoisasyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=2C__-rHWNFg', NULL, NULL, 0, '2022-02-10', '2022-03-12 02:19:47', '2022-03-12 02:19:47');
+	(118, 29, 'Ir para: WandaVision ganhará série spin-off focada na vilã Agatha Harkness', 'ir-para-wandavision-ganhara-serie-spin-off-focada-na-vila-agatha-harkness', 'ir-para-wandavision-ganhara-serie-spin-off-focada-na-vila-agatha-harkness-tecmundosite', '/uploads/news/20220428112522_ir-para-wandavision-ganhara-serie-spin-off-focada-na-vila-agatha-harkness-tecmundosite.jpg', NULL, 'show', 'https://www.tecmundo.com.br/minha-serie/226490-wandavision-ganhara-spin-off-focado-vila-agatha-harkness.htm', NULL, NULL, 0, '2021-10-07', '2022-04-28 23:25:22', '2022-04-28 23:25:22');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(119, 12, 'FALANDO SOBRE THE BATMAN (SEM SPOILERS) TÁ LIBERADO ALMOÇAR (Segunda 28/02) - STREAM AO VIVO', 'falando-sobre-the-batman-sem-spoilers-ta-liberado-almocar-segunda-2802-stream-ao-vivo', 'falando-sobre-the-batman-sem-spoilers-ta-liberado-almocar-segunda-2802-stream-ao-vivo-quatrocoisasyoutube', '/uploads/news/20220312021952_falando-sobre-the-batman-sem-spoilers-ta-liberado-almocar-segunda-2802-stream-ao-vivo-quatrocoisasyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=5gxaLxG8dHs', NULL, NULL, 0, '2022-02-28', '2022-03-12 02:19:52', '2022-03-12 02:19:52');
+	(119, 29, 'Ir para: Emmy 2021: WandaVision é esnobada e fãs da Marvel reclamam; veja reações!', 'ir-para-emmy-2021-wandavision-e-esnobada-e-fas-da-marvel-reclamam-veja-reacoes', 'ir-para-emmy-2021-wandavision-e-esnobada-e-fas-da-marvel-reclamam-veja-reacoes-tecmundosite', '/uploads/news/20220428112522_ir-para-emmy-2021-wandavision-e-esnobada-e-fas-da-marvel-reclamam-veja-reacoes-tecmundosite.jpg', NULL, 'show', 'https://www.tecmundo.com.br/minha-serie/225273-emmy-2021-wandavision-esnobada-fas-marvel-reclamam-veja-reacoes.htm', NULL, NULL, 0, '2021-09-20', '2022-04-28 23:25:23', '2022-04-28 23:25:23');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(120, 12, 'ANÁLISE TRAILER DE THE BATMAN!', 'analise-trailer-de-the-batman', 'analise-trailer-de-the-batman-quatrocoisasyoutube', '/uploads/news/20220312021954_analise-trailer-de-the-batman-quatrocoisasyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=Xnzkt4JwBVk', NULL, NULL, 0, '2021-10-17', '2022-03-12 02:19:55', '2022-03-12 02:19:55');
+	(120, 29, 'Ir para: WandaVision: roteiristas não entenderam trama da série da Marvel', 'ir-para-wandavision-roteiristas-nao-entenderam-trama-da-serie-da-marvel', 'ir-para-wandavision-roteiristas-nao-entenderam-trama-da-serie-da-marvel-tecmundosite', '/uploads/news/20220428112523_ir-para-wandavision-roteiristas-nao-entenderam-trama-da-serie-da-marvel-tecmundosite.jpg', NULL, 'show', 'https://www.tecmundo.com.br/minha-serie/220561-wandavision-roteiristas-nao-entenderam-trama-serie-marvel.htm', NULL, NULL, 0, '2021-07-06', '2022-04-28 23:25:23', '2022-04-28 23:25:23');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(121, 12, 'NÃO ASSISTE SEM VER: RECAP DE TODOS OS SPOTS DE THE BATMAN - O QUE SABEMOS ATÉ AQUI!', 'nao-assiste-sem-ver-recap-de-todos-os-spots-de-the-batman-o-que-sabemos-ate-aqui', 'nao-assiste-sem-ver-recap-de-todos-os-spots-de-the-batman-o-que-sabemos-ate-aqui-quatrocoisasyoutube', '/uploads/news/20220312021958_nao-assiste-sem-ver-recap-de-todos-os-spots-de-the-batman-o-que-sabemos-ate-aqui-quatrocoisasyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=tUZShiut9d8', NULL, NULL, 0, '2022-02-25', '2022-03-12 02:19:58', '2022-03-12 02:19:58');
+	(121, 29, 'Ir para: WandaVision: Kevin Feige fala sobre possível 2ª temporada', 'ir-para-wandavision-kevin-feige-fala-sobre-possivel-2a-temporada', 'ir-para-wandavision-kevin-feige-fala-sobre-possivel-2a-temporada-tecmundosite', '/uploads/news/20220428112523_ir-para-wandavision-kevin-feige-fala-sobre-possivel-2a-temporada-tecmundosite.jpg', NULL, 'show', 'https://www.tecmundo.com.br/minha-serie/219437-wandavision-kevin-feige-fala-possivel-2-temporada.htm', NULL, NULL, 0, '2021-06-17', '2022-04-28 23:25:24', '2022-04-28 23:25:24');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(122, 12, 'THE BATMAN - TRAILER 3 REAÇÃO', 'the-batman-trailer-3-reacao', 'the-batman-trailer-3-reacao-quatrocoisasyoutube', '/uploads/news/20220312022001_the-batman-trailer-3-reacao-quatrocoisasyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=LGzxeAH42wA', NULL, NULL, 0, '2021-12-27', '2022-03-12 02:20:02', '2022-03-12 02:20:02');
+	(122, 29, 'Ir para: Entre Facas e Segredos 2: atriz de WandaVision é confirmada na sequência', 'ir-para-entre-facas-e-segredos-2-atriz-de-wandavision-e-confirmada-na-sequencia', 'ir-para-entre-facas-e-segredos-2-atriz-de-wandavision-e-confirmada-na-sequencia-tecmundosite', '/uploads/news/20220428112524_ir-para-entre-facas-e-segredos-2-atriz-de-wandavision-e-confirmada-na-sequencia-tecmundosite.jpg', NULL, 'show', 'https://www.tecmundo.com.br/cultura-geek/217335-entre-facas-segredos-2-atriz-wandavision-confirmada-sequencia.htm', NULL, NULL, 0, '2021-05-14', '2022-04-28 23:25:24', '2022-04-28 23:25:24');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(123, 12, 'MARVEL, POR QUE CHORAS? THE BATMAN É LIBERADO NA CHINA', 'marvel-por-que-choras-the-batman-e-liberado-na-china', 'marvel-por-que-choras-the-batman-e-liberado-na-china-quatrocoisasyoutube', '/uploads/news/20220312022005_marvel-por-que-choras-the-batman-e-liberado-na-china-quatrocoisasyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=6VNyQ33YWew', NULL, NULL, 0, '2022-02-18', '2022-03-12 02:20:05', '2022-03-12 02:20:05');
+	(123, 29, 'Ir para: MTV Movie &amp; TV Awards: WandaVision e Borat 2 lideram indicações', 'ir-para-mtv-movie-amp-tv-awards-wandavision-e-borat-2-lideram-indicacoes', 'ir-para-mtv-movie-amp-tv-awards-wandavision-e-borat-2-lideram-indicacoes-tecmundosite', '/uploads/news/20220428112524_ir-para-mtv-movie-amp-tv-awards-wandavision-e-borat-2-lideram-indicacoes-tecmundosite.jpg', NULL, 'show', 'https://www.tecmundo.com.br/cultura-geek/215891-mtv-movie-tv-awards-wandavision-borat-2-lideram-indicacoes.htm', NULL, NULL, 0, '2021-04-20', '2022-04-28 23:25:25', '2022-04-28 23:25:25');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(124, 12, 'MATT REEVES RECUSOU O ROTEIRO DE BEN AFFLECK PARA THE BATMAN', 'matt-reeves-recusou-o-roteiro-de-ben-affleck-para-the-batman', 'matt-reeves-recusou-o-roteiro-de-ben-affleck-para-the-batman-quatrocoisasyoutube', '/uploads/news/20220312022007_matt-reeves-recusou-o-roteiro-de-ben-affleck-para-the-batman-quatrocoisasyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=vX-aIG7RDpg', NULL, NULL, 0, '2022-01-27', '2022-03-12 02:20:08', '2022-03-12 02:20:08');
+	(124, 29, 'Ir para: Marvel lança documentário dos bastidores de WandaVision: trailer', 'ir-para-marvel-lanca-documentario-dos-bastidores-de-wandavision-trailer', 'ir-para-marvel-lanca-documentario-dos-bastidores-de-wandavision-trailer-tecmundosite', '/uploads/news/20220428112525_ir-para-marvel-lanca-documentario-dos-bastidores-de-wandavision-trailer-tecmundosite.jpg', NULL, 'show', 'https://www.tecmundo.com.br/minha-serie/212704-marvel-lanca-documentario-bastidores-wandavision-trailer.htm', NULL, NULL, 0, '2021-03-12', '2022-04-28 23:25:26', '2022-04-28 23:25:26');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(125, 12, 'BOMBA! DIRETOR CONFIRMA CORINGA EM THE BATMAN!', 'bomba-diretor-confirma-coringa-em-the-batman', 'bomba-diretor-confirma-coringa-em-the-batman-quatrocoisasyoutube', '/uploads/news/20220312022011_bomba-diretor-confirma-coringa-em-the-batman-quatrocoisasyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=QTyeehyH65I', NULL, NULL, 0, '2022-03-05', '2022-03-12 02:20:12', '2022-03-12 02:20:12');
+	(125, 29, 'Ir para: WandaVision: diretor e roteirista falam dos momentos finais', 'ir-para-wandavision-diretor-e-roteirista-falam-dos-momentos-finais', 'ir-para-wandavision-diretor-e-roteirista-falam-dos-momentos-finais-tecmundosite', '/uploads/news/20220428112526_ir-para-wandavision-diretor-e-roteirista-falam-dos-momentos-finais-tecmundosite.jpg', NULL, 'show', 'https://www.tecmundo.com.br/minha-serie/212583-wandavision-diretor-roteirista-falam-momentos-finais.htm', NULL, NULL, 0, '2021-03-11', '2022-04-28 23:25:26', '2022-04-28 23:25:26');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(126, 12, 'THE BATMAN ESQUENTA A FANDOME! BATSINAL E BAT-ALVORADA', 'the-batman-esquenta-a-fandome-batsinal-e-bat-alvorada', 'the-batman-esquenta-a-fandome-batsinal-e-bat-alvorada-quatrocoisasyoutube', '/uploads/news/20220312022015_the-batman-esquenta-a-fandome-batsinal-e-bat-alvorada-quatrocoisasyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=C2KkX-VMyto', NULL, NULL, 0, '2021-10-14', '2022-03-12 02:20:16', '2022-03-12 02:20:16');
+	(126, 29, 'Ir para: WandaVision: o que aconteceu com os moradores de Westview?', 'ir-para-wandavision-o-que-aconteceu-com-os-moradores-de-westview', 'ir-para-wandavision-o-que-aconteceu-com-os-moradores-de-westview-tecmundosite', '/uploads/news/20220428112526_ir-para-wandavision-o-que-aconteceu-com-os-moradores-de-westview-tecmundosite.jpg', NULL, 'show', 'https://www.tecmundo.com.br/minha-serie/212500-wandavision-aconteceu-moradores-westview.htm', NULL, NULL, 0, '2021-03-10', '2022-04-28 23:25:26', '2022-04-28 23:25:26');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(127, 12, 'EXISTE SUPERMAN EM "THE BATMAN"? NOVELIZAÇÃO DIZ QUE SIM!', 'existe-superman-em-the-batman-novelizacao-diz-que-sim', 'existe-superman-em-the-batman-novelizacao-diz-que-sim-quatrocoisasyoutube', '/uploads/news/20220312022019_existe-superman-em-the-batman-novelizacao-diz-que-sim-quatrocoisasyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=fCjEAJI0BjM', NULL, NULL, 0, '2022-02-09', '2022-03-12 02:20:21', '2022-03-12 02:20:21');
+	(127, 29, 'Ir para: WandaVision: Agatha Harkness pode voltar ao MCU com Kathryn Hahn', 'ir-para-wandavision-agatha-harkness-pode-voltar-ao-mcu-com-kathryn-hahn', 'ir-para-wandavision-agatha-harkness-pode-voltar-ao-mcu-com-kathryn-hahn-tecmundosite', '/uploads/news/20220428112527_ir-para-wandavision-agatha-harkness-pode-voltar-ao-mcu-com-kathryn-hahn-tecmundosite.jpg', NULL, 'show', 'https://www.tecmundo.com.br/minha-serie/212424-wandavision-agatha-harkness-voltar-mcu-kathryn-hahn.htm', NULL, NULL, 0, '2021-03-09', '2022-04-28 23:25:27', '2022-04-28 23:25:27');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(128, 12, 'FÃS AINDA NÃO CONSEGUIRAM SUPERAR O TRAILER DE THE BATMAN DUBLADO!', 'fas-ainda-nao-conseguiram-superar-o-trailer-de-the-batman-dublado', 'fas-ainda-nao-conseguiram-superar-o-trailer-de-the-batman-dublado-quatrocoisasyoutube', '/uploads/news/20220312022023_fas-ainda-nao-conseguiram-superar-o-trailer-de-the-batman-dublado-quatrocoisasyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=sG5qpPYx-H8', NULL, NULL, 0, '2021-11-03', '2022-03-12 02:20:23', '2022-03-12 02:20:23');
+	(128, 30, 'WandaVision I Nomes dos personagens se tornam populares em bebês nascidos em 2021', 'wandavision-i-nomes-dos-personagens-se-tornam-populares-em-bebes-nascidos-em-2021', 'wandavision-i-nomes-dos-personagens-se-tornam-populares-em-bebes-nascidos-em-2021-poltronanerdsite', '/uploads/news/20220428112530_wandavision-i-nomes-dos-personagens-se-tornam-populares-em-bebes-nascidos-em-2021-poltronanerdsite.jpg', NULL, 'show', 'https://poltronanerd.com.br/series/wandavision-i-nomes-dos-personagens-se-tornam-populares-em-bebes-nascidos-em-2021-128515', NULL, NULL, 0, '2021-11-09', '2022-04-28 23:25:30', '2022-04-28 23:25:30');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(129, 12, 'THE BATMAN TERÁ QUASE 3 HORAS DE DURAÇÃO, SEGUNDO IMDB. É MUITO?', 'the-batman-tera-quase-3-horas-de-duracao-segundo-imdb-e-muito', 'the-batman-tera-quase-3-horas-de-duracao-segundo-imdb-e-muito-quatrocoisasyoutube', '/uploads/news/20220312022027_the-batman-tera-quase-3-horas-de-duracao-segundo-imdb-e-muito-quatrocoisasyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=l_YLSIrW-P4', NULL, NULL, 0, '2022-01-18', '2022-03-12 02:20:28', '2022-03-12 02:20:28');
+	(129, 30, 'WandaVision vai ganhar série derivada focada em Agatha Harkness', 'wandavision-vai-ganhar-serie-derivada-focada-em-agatha-harkness', 'wandavision-vai-ganhar-serie-derivada-focada-em-agatha-harkness-poltronanerdsite', '/uploads/news/20220428112530_wandavision-vai-ganhar-serie-derivada-focada-em-agatha-harkness-poltronanerdsite.jpg', NULL, 'show', 'https://poltronanerd.com.br/streaming/disney/wandavision-vai-ganhar-serie-derivada-focada-em-agatha-harkness-127172', NULL, NULL, 0, '2021-10-07', '2022-04-28 23:25:31', '2022-04-28 23:25:31');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(130, 12, 'THE BATMAN VEM AÍ E VAI CHEGAR ATROPELANDO', 'the-batman-vem-ai-e-vai-chegar-atropelando', 'the-batman-vem-ai-e-vai-chegar-atropelando-quatrocoisasyoutube', '/uploads/news/20220312022032_the-batman-vem-ai-e-vai-chegar-atropelando-quatrocoisasyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=w30qDkdSsL8', NULL, NULL, 0, '2022-02-28', '2022-03-12 02:20:33', '2022-03-12 02:20:33');
+	(130, 30, 'Marvel | Quais são os próximos projetos depois de WandaVision', 'marvel-quais-sao-os-proximos-projetos-depois-de-wandavision', 'marvel-quais-sao-os-proximos-projetos-depois-de-wandavision-poltronanerdsite', '/uploads/news/20220428112531_marvel-quais-sao-os-proximos-projetos-depois-de-wandavision-poltronanerdsite.jpg', NULL, 'show', 'https://poltronanerd.com.br/filmes/marvel-quais-sao-os-proximos-projetos-depois-de-wandavision-116571', NULL, NULL, 0, '2021-03-15', '2022-04-28 23:25:31', '2022-04-28 23:25:31');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(131, 12, 'REAÇÃO: PAINEL E TRAILER DE THE BATMAN - AO VIVO DA FANDOME', 'reacao-painel-e-trailer-de-the-batman-ao-vivo-da-fandome', 'reacao-painel-e-trailer-de-the-batman-ao-vivo-da-fandome-quatrocoisasyoutube', '/uploads/news/20220312022038_reacao-painel-e-trailer-de-the-batman-ao-vivo-da-fandome-quatrocoisasyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=uREIe-EI1OA', NULL, NULL, 0, '2021-10-17', '2022-03-12 02:20:38', '2022-03-12 02:20:38');
+	(131, 30, 'WandaVision | Confira os easter eggs do nono episódio da série', 'wandavision-confira-os-easter-eggs-do-nono-episodio-da-serie', 'wandavision-confira-os-easter-eggs-do-nono-episodio-da-serie-poltronanerdsite', '/uploads/news/20220428112531_wandavision-confira-os-easter-eggs-do-nono-episodio-da-serie-poltronanerdsite.jpg', NULL, 'show', 'https://poltronanerd.com.br/series/wandavision-confira-os-easter-eggs-do-nono-episodio-da-serie-116479', NULL, NULL, 0, '2021-03-06', '2022-04-28 23:25:32', '2022-04-28 23:25:32');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(132, 14, 'POLÊMICA: THE BATMAN É O MELHOR FILME DO BATMAN?', 'polemica-the-batman-e-o-melhor-filme-do-batman', 'polemica-the-batman-e-o-melhor-filme-do-batman-nerdrabugentoyoutube', '/uploads/news/20220312022045_polemica-the-batman-e-o-melhor-filme-do-batman-nerdrabugentoyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=F93HvdzoPt8', NULL, NULL, 0, '2022-03-01', '2022-03-12 02:20:46', '2022-03-12 02:20:46');
+	(132, 30, 'WandaVision | Diretor fala sobre teorias dos fãs para o último episódio', 'wandavision-diretor-fala-sobre-teorias-dos-fas-para-o-ultimo-episodio', 'wandavision-diretor-fala-sobre-teorias-dos-fas-para-o-ultimo-episodio-poltronanerdsite', '/uploads/news/20220428112532_wandavision-diretor-fala-sobre-teorias-dos-fas-para-o-ultimo-episodio-poltronanerdsite.jpg', NULL, 'show', 'https://poltronanerd.com.br/series/wandavision-diretor-fala-sobre-teorias-dos-fas-para-o-ultimo-episodio-116285', NULL, NULL, 0, '2021-03-03', '2022-04-28 23:25:32', '2022-04-28 23:25:32');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(133, 14, 'DEZ ERROS INCRÍVEIS EM THE BATMAN QUE VOCÊ NÃO PERCEBEU! - CORTES DO RABUGENTO', 'dez-erros-incriveis-em-the-batman-que-voce-nao-percebeu-cortes-do-rabugento', 'dez-erros-incriveis-em-the-batman-que-voce-nao-percebeu-cortes-do-rabugento-nerdrabugentoyoutube', '/uploads/news/20220312022050_dez-erros-incriveis-em-the-batman-que-voce-nao-percebeu-cortes-do-rabugento-nerdrabugentoyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=NAbnDUTD_lA', NULL, NULL, 0, '2022-03-11', '2022-03-12 02:20:50', '2022-03-12 02:20:50');
+	(133, 30, 'WandaVision ultrapassa Bridgerton como a série mais vista do streaming', 'wandavision-ultrapassa-bridgerton-como-a-serie-mais-vista-do-streaming', 'wandavision-ultrapassa-bridgerton-como-a-serie-mais-vista-do-streaming-poltronanerdsite', '/uploads/news/20220428112533_wandavision-ultrapassa-bridgerton-como-a-serie-mais-vista-do-streaming-poltronanerdsite.jpg', NULL, 'show', 'https://poltronanerd.com.br/series/wandavision-ultrapassa-bridgerton-como-a-serie-mais-vista-do-streaming-116092', NULL, NULL, 0, '2021-02-28', '2022-04-28 23:25:33', '2022-04-28 23:25:33');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(134, 14, 'THE BATMAN - REAÇÃO AO TRAILER DA DC FANDOME -  NERD RABUGENTO', 'the-batman-reacao-ao-trailer-da-dc-fandome-nerd-rabugento', 'the-batman-reacao-ao-trailer-da-dc-fandome-nerd-rabugento-nerdrabugentoyoutube', '/uploads/news/20220312022055_the-batman-reacao-ao-trailer-da-dc-fandome-nerd-rabugento-nerdrabugentoyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=NCJMcMxTluQ', NULL, NULL, 0, '2021-10-16', '2022-03-12 02:20:55', '2022-03-12 02:20:55');
+	(134, 30, 'WandaVision | Confira os easter eggs do oitavo episódio da série', 'wandavision-confira-os-easter-eggs-do-oitavo-episodio-da-serie', 'wandavision-confira-os-easter-eggs-do-oitavo-episodio-da-serie-poltronanerdsite', '/uploads/news/20220428112533_wandavision-confira-os-easter-eggs-do-oitavo-episodio-da-serie-poltronanerdsite.jpg', NULL, 'show', 'https://poltronanerd.com.br/series/wandavision-confira-os-easter-eggs-do-oitavo-episodio-da-serie-115991', NULL, NULL, 0, '2021-02-26', '2022-04-28 23:25:34', '2022-04-28 23:25:34');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(135, 14, 'TUDO DE ERRADO EM THE BATMAN!- AO VIVO - NERD RABUGENTO', 'tudo-de-errado-em-the-batman-ao-vivo-nerd-rabugento', 'tudo-de-errado-em-the-batman-ao-vivo-nerd-rabugento-nerdrabugentoyoutube', '/uploads/news/20220312022058_tudo-de-errado-em-the-batman-ao-vivo-nerd-rabugento-nerdrabugentoyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=Z8scj-4LnoY', NULL, NULL, 0, '2022-03-10', '2022-03-12 02:20:59', '2022-03-12 02:20:59');
+	(135, 30, 'WandaVision | Paul Bettany diz que um personagem secreto será revelado', 'wandavision-paul-bettany-diz-que-um-personagem-secreto-sera-revelado', 'wandavision-paul-bettany-diz-que-um-personagem-secreto-sera-revelado-poltronanerdsite', '/uploads/news/20220428112534_wandavision-paul-bettany-diz-que-um-personagem-secreto-sera-revelado-poltronanerdsite.jpg', NULL, 'show', 'https://poltronanerd.com.br/series/wandavision-paul-bettany-diz-que-um-personagem-secreto-sera-revelado-115577', NULL, NULL, 0, '2021-02-21', '2022-04-28 23:25:34', '2022-04-28 23:25:34');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(136, 14, 'THE BATMAN - FINAL EXPLICADO - NERD RABUGENTO', 'the-batman-final-explicado-nerd-rabugento', 'the-batman-final-explicado-nerd-rabugento-nerdrabugentoyoutube', '/uploads/news/20220312022102_the-batman-final-explicado-nerd-rabugento-nerdrabugentoyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=FVqb8SpBplI', NULL, NULL, 0, '2022-03-05', '2022-03-12 02:21:02', '2022-03-12 02:21:02');
+	(136, 30, 'WandaVision | Paul Bettany diz que falar sobre Mephisto pode levar à demissão', 'wandavision-paul-bettany-diz-que-falar-sobre-mephisto-pode-levar-a-demissao', 'wandavision-paul-bettany-diz-que-falar-sobre-mephisto-pode-levar-a-demissao-poltronanerdsite', '/uploads/news/20220428112534_wandavision-paul-bettany-diz-que-falar-sobre-mephisto-pode-levar-a-demissao-poltronanerdsite.jpg', NULL, 'show', 'https://poltronanerd.com.br/series/wandavision-paul-bettany-diz-que-falar-sobre-mephisto-pode-levar-a-demissao-115552', NULL, NULL, 0, '2021-02-20', '2022-04-28 23:25:35', '2022-04-28 23:25:35');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(137, 14, 'THE BATMAN FLOPOU NAS BILHETERIAS?- AO VIVO - NERD RABUGENTO', 'the-batman-flopou-nas-bilheterias-ao-vivo-nerd-rabugento', 'the-batman-flopou-nas-bilheterias-ao-vivo-nerd-rabugento-nerdrabugentoyoutube', '/uploads/news/20220312022107_the-batman-flopou-nas-bilheterias-ao-vivo-nerd-rabugento-nerdrabugentoyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=BfWwCIPvbTY', NULL, NULL, 0, '2022-03-06', '2022-03-12 02:21:07', '2022-03-12 02:21:07');
+	(137, 30, 'WandaVision | Confira os easter eggs do sétimo episódio da série', 'wandavision-confira-os-easter-eggs-do-setimo-episodio-da-serie', 'wandavision-confira-os-easter-eggs-do-setimo-episodio-da-serie-poltronanerdsite', '/uploads/news/20220428112535_wandavision-confira-os-easter-eggs-do-setimo-episodio-da-serie-poltronanerdsite.jpg', NULL, 'show', 'https://poltronanerd.com.br/series/wandavision-confira-os-easter-eggs-do-setimo-episodio-da-serie-115470', NULL, NULL, 0, '2021-02-19', '2022-04-28 23:25:35', '2022-04-28 23:25:35');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(138, 14, 'THE BATMAN: A DC NÃO DEIXA VAZAR NADA! - AO VIVO - NERD RABUGENTO', 'the-batman-a-dc-nao-deixa-vazar-nada-ao-vivo-nerd-rabugento', 'the-batman-a-dc-nao-deixa-vazar-nada-ao-vivo-nerd-rabugento-nerdrabugentoyoutube', '/uploads/news/20220312022109_the-batman-a-dc-nao-deixa-vazar-nada-ao-vivo-nerd-rabugento-nerdrabugentoyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=znthVRPxgmY', NULL, NULL, 0, '2022-02-01', '2022-03-12 02:21:10', '2022-03-12 02:21:10');
+	(138, 30, 'WandaVision | Wanda &8216;se pune&8217; com um tempo em casa no novo vídeo', 'wandavision-wanda-8216se-pune8217-com-um-tempo-em-casa-no-novo-video', 'wandavision-wanda-8216se-pune8217-com-um-tempo-em-casa-no-novo-video-poltronanerdsite', '/uploads/news/20220428112535_wandavision-wanda-8216se-pune8217-com-um-tempo-em-casa-no-novo-video-poltronanerdsite.jpg', NULL, 'show', 'https://poltronanerd.com.br/series/wandavision-wanda-se-pune-com-um-tempo-em-casa-no-novo-video-115455', NULL, NULL, 0, '2021-02-18', '2022-04-28 23:25:36', '2022-04-28 23:25:36');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(139, 14, 'THE BATMAN: FINAL EXPLICADO! - AO VIVO - NERD RABUGENTO', 'the-batman-final-explicado-ao-vivo-nerd-rabugento', 'the-batman-final-explicado-ao-vivo-nerd-rabugento-nerdrabugentoyoutube', '/uploads/news/20220312022113_the-batman-final-explicado-ao-vivo-nerd-rabugento-nerdrabugentoyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=4LHXEl_K6A4', NULL, NULL, 0, '2022-03-04', '2022-03-12 02:21:14', '2022-03-12 02:21:14');
+	(139, 30, 'WandaVision | Confira os easter eggs do sexto episódio da série', 'wandavision-confira-os-easter-eggs-do-sexto-episodio-da-serie', 'wandavision-confira-os-easter-eggs-do-sexto-episodio-da-serie-poltronanerdsite', '/uploads/news/20220428112536_wandavision-confira-os-easter-eggs-do-sexto-episodio-da-serie-poltronanerdsite.jpg', NULL, 'show', 'https://poltronanerd.com.br/series/wandavision-confira-os-easter-eggs-do-sexto-episodio-da-serie-115048', NULL, NULL, 0, '2021-02-12', '2022-04-28 23:25:36', '2022-04-28 23:25:36');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(140, 14, 'EU TENHO CERTEZA DE QUE THE BATMAN VAI FAZER MUITO DINHEIRO! - AO VIVO DE DOMINGO - NERD RABUGENTO', 'eu-tenho-certeza-de-que-the-batman-vai-fazer-muito-dinheiro-ao-vivo-de-domingo-nerd-rabugento', 'eu-tenho-certeza-de-que-the-batman-vai-fazer-muito-dinheiro-ao-vivo-de-domingo-nerd-rabugento-nerdrabugentoyoutube', '/uploads/news/20220312022117_eu-tenho-certeza-de-que-the-batman-vai-fazer-muito-dinheiro-ao-vivo-de-domingo-nerd-rabugento-nerdrabugentoyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=fM32oqBqRvk', NULL, NULL, 0, '2022-02-27', '2022-03-12 02:21:17', '2022-03-12 02:21:17');
+	(140, 30, 'WandaVision | Featurette mostra o que está por vir na série do Disney+', 'wandavision-featurette-mostra-o-que-esta-por-vir-na-serie-do-disney', 'wandavision-featurette-mostra-o-que-esta-por-vir-na-serie-do-disney-poltronanerdsite', '/uploads/news/20220428112536_wandavision-featurette-mostra-o-que-esta-por-vir-na-serie-do-disney-poltronanerdsite.jpg', NULL, 'show', 'https://poltronanerd.com.br/series/wandavision-featurette-mostra-o-que-esta-por-vir-na-serie-do-disney-115034', NULL, NULL, 0, '2021-02-11', '2022-04-28 23:25:37', '2022-04-28 23:25:37');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(141, 14, 'THE BATMAN E O COMPORTAMENTO DE MANADA - AO VIVO - NERD RABUGENTO', 'the-batman-e-o-comportamento-de-manada-ao-vivo-nerd-rabugento', 'the-batman-e-o-comportamento-de-manada-ao-vivo-nerd-rabugento-nerdrabugentoyoutube', '/uploads/news/20220312022119_the-batman-e-o-comportamento-de-manada-ao-vivo-nerd-rabugento-nerdrabugentoyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=vVsSArbM36I', NULL, NULL, 0, '2022-03-07', '2022-03-12 02:21:20', '2022-03-12 02:21:20');
+	(141, 30, 'WandaVision | Confira os easter eggs do quinto episódio da série', 'wandavision-confira-os-easter-eggs-do-quinto-episodio-da-serie', 'wandavision-confira-os-easter-eggs-do-quinto-episodio-da-serie-poltronanerdsite', '/uploads/news/20220428112537_wandavision-confira-os-easter-eggs-do-quinto-episodio-da-serie-poltronanerdsite.jpg', NULL, 'show', 'https://poltronanerd.com.br/series/wandavision-confira-os-easter-eggs-do-quinto-episodio-da-serie-114797', NULL, NULL, 0, '2021-02-06', '2022-04-28 23:25:37', '2022-04-28 23:25:37');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(142, 14, 'E SE THE BATMAN FOSSE DA MARVEL? - AO VIVO - NERD RABUGENTO', 'e-se-the-batman-fosse-da-marvel-ao-vivo-nerd-rabugento', 'e-se-the-batman-fosse-da-marvel-ao-vivo-nerd-rabugento-nerdrabugentoyoutube', '/uploads/news/20220312022123_e-se-the-batman-fosse-da-marvel-ao-vivo-nerd-rabugento-nerdrabugentoyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=fk_iZA_mkag', NULL, NULL, 0, '2022-03-08', '2022-03-12 02:21:24', '2022-03-12 02:21:24');
+	(142, 8, 'WANDAVISION - Contexto, curiosidades e segredos', 'wandavision-contexto-curiosidades-e-segredos', 'wandavision-contexto-curiosidades-e-segredos-superoitoyoutube', '/uploads/news/20220428112543_wandavision-contexto-curiosidades-e-segredos-superoitoyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=amwhiwADr8c', NULL, NULL, 0, '2021-02-12', '2022-04-28 23:25:43', '2022-04-28 23:25:43');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(143, 14, 'EU ACHEI THE BATMAN MUITO MELHOR QUE HOMEM-ARANHA: SEM VOLTA PARA CASA! - AO VIVO - NERD RABUGENTO', 'eu-achei-the-batman-muito-melhor-que-homem-aranha-sem-volta-para-casa-ao-vivo-nerd-rabugento', 'eu-achei-the-batman-muito-melhor-que-homem-aranha-sem-volta-para-casa-ao-vivo-nerd-rabugento-nerdrabugentoyoutube', '/uploads/news/20220312022127_eu-achei-the-batman-muito-melhor-que-homem-aranha-sem-volta-para-casa-ao-vivo-nerd-rabugento-nerdrabugentoyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=-lnCMQd59gY', NULL, NULL, 0, '2022-03-02', '2022-03-12 02:21:27', '2022-03-12 02:21:27');
+	(143, 4, 'EXPLICANDO O FINAL DE WANDAVISION FiqueEmCasa Comigo', 'explicando-o-final-de-wandavision-fiqueemcasa-comigo', 'explicando-o-final-de-wandavision-fiqueemcasa-comigo-omeleteyoutube', '/uploads/news/20220428112549_explicando-o-final-de-wandavision-fiqueemcasa-comigo-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=pZPH4VuKQPY', NULL, NULL, 0, '2021-03-06', '2022-04-28 23:25:49', '2022-04-28 23:25:49');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(144, 14, 'CONFIRMADO: THE BATMAN 2 VEM AI, E MAIS NOVAS SÉRIES! - AO VIVO - NERD RABUGENTO', 'confirmado-the-batman-2-vem-ai-e-mais-novas-series-ao-vivo-nerd-rabugento', 'confirmado-the-batman-2-vem-ai-e-mais-novas-series-ao-vivo-nerd-rabugento-nerdrabugentoyoutube', '/uploads/news/20220312022130_confirmado-the-batman-2-vem-ai-e-mais-novas-series-ao-vivo-nerd-rabugento-nerdrabugentoyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=eNFzjH_mGyE', NULL, NULL, 0, '2022-03-05', '2022-03-12 02:21:31', '2022-03-12 02:21:31');
+	(144, 4, 'QUEM É MONICA RAMBEAU E QUAL O FUTURO DA PERSONAGEM NO MCU DEPOIS DE WANDAVISION?', 'quem-e-monica-rambeau-e-qual-o-futuro-da-personagem-no-mcu-depois-de-wandavision', 'quem-e-monica-rambeau-e-qual-o-futuro-da-personagem-no-mcu-depois-de-wandavision-omeleteyoutube', '/uploads/news/20220428112554_quem-e-monica-rambeau-e-qual-o-futuro-da-personagem-no-mcu-depois-de-wandavision-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=co0XvGCCSfM', NULL, NULL, 0, '2021-02-02', '2022-04-28 23:25:54', '2022-04-28 23:25:54');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(145, 14, 'EU ACHEI TODOS OS FUROS DE ROTEIRO DE THE BATMAN! - AO VIVO - NERD RABUGENTO', 'eu-achei-todos-os-furos-de-roteiro-de-the-batman-ao-vivo-nerd-rabugento', 'eu-achei-todos-os-furos-de-roteiro-de-the-batman-ao-vivo-nerd-rabugento-nerdrabugentoyoutube', '/uploads/news/20220312022136_eu-achei-todos-os-furos-de-roteiro-de-the-batman-ao-vivo-nerd-rabugento-nerdrabugentoyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=TvzGuovknvI', NULL, NULL, 0, '2022-03-03', '2022-03-12 02:21:37', '2022-03-12 02:21:37');
+	(145, 4, 'WANDAVISON - O VEREDITO AO VIVO! FiqueEmCasa Comigo', 'wandavison-o-veredito-ao-vivo-fiqueemcasa-comigo', 'wandavison-o-veredito-ao-vivo-fiqueemcasa-comigo-omeleteyoutube', '/uploads/news/20220428112556_wandavison-o-veredito-ao-vivo-fiqueemcasa-comigo-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=-NDwmfvSPlU', NULL, NULL, 0, '2021-03-05', '2022-04-28 23:25:57', '2022-04-28 23:25:57');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(146, 14, 'SPOILERS: THE BATMAN FILME COMPLETO - AO VIVO', 'spoilers-the-batman-filme-completo-ao-vivo', 'spoilers-the-batman-filme-completo-ao-vivo-nerdrabugentoyoutube', '/uploads/news/20220312022141_spoilers-the-batman-filme-completo-ao-vivo-nerdrabugentoyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=h4snw2dNHh0', NULL, NULL, 0, '2022-03-01', '2022-03-12 02:21:41', '2022-03-12 02:21:41');
+	(146, 4, 'WANDAVISION: A HQ QUE VOCÊ PRECISA LER ANTES DE VER A SÉRIE DA MARVEL FiqueEmCasa Comigo', 'wandavision-a-hq-que-voce-precisa-ler-antes-de-ver-a-serie-da-marvel-fiqueemcasa-comigo', 'wandavision-a-hq-que-voce-precisa-ler-antes-de-ver-a-serie-da-marvel-fiqueemcasa-comigo-omeleteyoutube', '/uploads/news/20220428112600_wandavision-a-hq-que-voce-precisa-ler-antes-de-ver-a-serie-da-marvel-fiqueemcasa-comigo-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=jJ0rJ-OcyJM', NULL, NULL, 0, '2021-01-15', '2022-04-28 23:26:00', '2022-04-28 23:26:00');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(147, 14, 'THE BATMAN / DC FANDOME - NERD RABUGENTO AO VIVO', 'the-batman-dc-fandome-nerd-rabugento-ao-vivo', 'the-batman-dc-fandome-nerd-rabugento-ao-vivo-nerdrabugentoyoutube', '/uploads/news/20220312022144_the-batman-dc-fandome-nerd-rabugento-ao-vivo-nerdrabugentoyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=8GYUm9B7Jak', NULL, NULL, 0, '2020-08-20', '2022-03-12 02:21:45', '2022-03-12 02:21:45');
+	(147, 4, 'PRIMEIRAS IMPRESSÕES DE WANDAVISION FiqueEmCasa Comigo', 'primeiras-impressoes-de-wandavision-fiqueemcasa-comigo', 'primeiras-impressoes-de-wandavision-fiqueemcasa-comigo-omeleteyoutube', '/uploads/news/20220428112603_primeiras-impressoes-de-wandavision-fiqueemcasa-comigo-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=dqkhE5JQRl8', NULL, NULL, 0, '2021-01-15', '2022-04-28 23:26:04', '2022-04-28 23:26:04');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(148, 16, 'THE BATMAN  Entregou tudo o que prometeu? ft. Gabi Orsini e Dinho Lima', 'the-batman-entregou-tudo-o-que-prometeu-ft-gabi-orsini-e-dinho-lima', 'the-batman-entregou-tudo-o-que-prometeu-ft-gabi-orsini-e-dinho-lima-crispandayoutube', '/uploads/news/20220312022150_the-batman-entregou-tudo-o-que-prometeu-ft-gabi-orsini-e-dinho-lima-crispandayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=t8oSJ9tOMlg', NULL, NULL, 0, '2022-03-07', '2022-03-12 02:21:51', '2022-03-12 02:21:51');
+	(148, 4, '7 SEGREDOS DE WANDAVISION', '7-segredos-de-wandavision', '7-segredos-de-wandavision-omeleteyoutube', '/uploads/news/20220428112606_7-segredos-de-wandavision-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=M-H93YrQQz4', NULL, NULL, 0, '2020-02-04', '2022-04-28 23:26:07', '2022-04-28 23:26:07');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(149, 18, 'THE BATMAN - Isso é Cinema feat cacadorescult', 'the-batman-isso-e-cinema-feat-cacadorescult', 'the-batman-isso-e-cinema-feat-cacadorescult-caldeiraonerdyoutube', '/uploads/news/20220312022159_the-batman-isso-e-cinema-feat-cacadorescult-caldeiraonerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=XzQWS6GUAX0', NULL, NULL, 0, '2022-03-09', '2022-03-12 02:22:00', '2022-03-12 02:22:00');
+	(149, 4, 'VOCÊ ENTENDEU A REFERÊNCIA? PRINCIPAIS EASTER EGGS DE WANDAVISION', 'voce-entendeu-a-referencia-principais-easter-eggs-de-wandavision', 'voce-entendeu-a-referencia-principais-easter-eggs-de-wandavision-omeleteyoutube', '/uploads/news/20220428112609_voce-entendeu-a-referencia-principais-easter-eggs-de-wandavision-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=5PU94LvXsnY', NULL, NULL, 0, '2021-01-31', '2022-04-28 23:26:09', '2022-04-28 23:26:09');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(150, 19, 'THE BATMAN: Tudo o que já sabemos sobre o novo filme da DC | Arena Nerd', 'the-batman-tudo-o-que-ja-sabemos-sobre-o-novo-filme-da-dc-arena-nerd', 'the-batman-tudo-o-que-ja-sabemos-sobre-o-novo-filme-da-dc-arena-nerd-arenanerdyoutube', '/uploads/news/20220312022206_the-batman-tudo-o-que-ja-sabemos-sobre-o-novo-filme-da-dc-arena-nerd-arenanerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=9B0FTGqnX_8', NULL, NULL, 0, '2019-11-28', '2022-03-12 02:22:07', '2022-03-12 02:22:07');
+	(150, 4, 'WANDAVISION: O QUE É A SWORD NA SÉRIE DA MARVEL NO DISNEY+ ? FiqueEmCasa Comigo', 'wandavision-o-que-e-a-sword-na-serie-da-marvel-no-disney-fiqueemcasa-comigo', 'wandavision-o-que-e-a-sword-na-serie-da-marvel-no-disney-fiqueemcasa-comigo-omeleteyoutube', '/uploads/news/20220428112612_wandavision-o-que-e-a-sword-na-serie-da-marvel-no-disney-fiqueemcasa-comigo-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=nURlu1DYcu0', NULL, NULL, 0, '2021-01-19', '2022-04-28 23:26:13', '2022-04-28 23:26:13');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(151, 19, 'THE BATMAN | Visual do Batmóvel ficou bom? | Bate-Papo | Arena Filmes', 'the-batman-visual-do-batmovel-ficou-bom-bate-papo-arena-filmes', 'the-batman-visual-do-batmovel-ficou-bom-bate-papo-arena-filmes-arenanerdyoutube', '/uploads/news/20220312022211_the-batman-visual-do-batmovel-ficou-bom-bate-papo-arena-filmes-arenanerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=TlO2HJY5vTY', NULL, NULL, 0, '2020-03-13', '2022-03-12 02:22:11', '2022-03-12 02:22:11');
+	(151, 4, 'QUEM É A AGNES EM WANDAVISION? FiqueEmCasa Comigo', 'quem-e-a-agnes-em-wandavision-fiqueemcasa-comigo', 'quem-e-a-agnes-em-wandavision-fiqueemcasa-comigo-omeleteyoutube', '/uploads/news/20220428112615_quem-e-a-agnes-em-wandavision-fiqueemcasa-comigo-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=T5WbTuntyrw', NULL, NULL, 0, '2021-02-19', '2022-04-28 23:26:16', '2022-04-28 23:26:16');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(152, 19, 'The Batman Trailer Comentado | DC FanDome | Arena Filmes', 'the-batman-trailer-comentado-dc-fandome-arena-filmes', 'the-batman-trailer-comentado-dc-fandome-arena-filmes-arenanerdyoutube', '/uploads/news/20220312022216_the-batman-trailer-comentado-dc-fandome-arena-filmes-arenanerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=XU4OsoMnJnk', NULL, NULL, 0, '2020-09-01', '2022-03-12 02:22:17', '2022-03-12 02:22:17');
+	(152, 4, 'COMO WANDAVISION MUDOU O UNIVERSO MARVEL FiqueEmCasa Comigo', 'como-wandavision-mudou-o-universo-marvel-fiqueemcasa-comigo', 'como-wandavision-mudou-o-universo-marvel-fiqueemcasa-comigo-omeleteyoutube', '/uploads/news/20220428112620_como-wandavision-mudou-o-universo-marvel-fiqueemcasa-comigo-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=aNI1LPDv__g', NULL, NULL, 0, '2021-03-05', '2022-04-28 23:26:21', '2022-04-28 23:26:21');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(153, 19, '[LIVE] THE BATMAN: Robert Pattinson larga o treino para viver o personagem | Notícias Nerd', 'live-the-batman-robert-pattinson-larga-o-treino-para-viver-o-personagem-noticias-nerd', 'live-the-batman-robert-pattinson-larga-o-treino-para-viver-o-personagem-noticias-nerd-arenanerdyoutube', '/uploads/news/20220312022219_live-the-batman-robert-pattinson-larga-o-treino-para-viver-o-personagem-noticias-nerd-arenanerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=LhipQQq1K4c', NULL, NULL, 0, '2020-05-19', '2022-03-12 02:22:20', '2022-03-12 02:22:20');
+	(153, 4, 'WANDAVISION EM 2020! MARVEL EXPANDE UNIVERSO AINDA ESTE ANO FiqueEmCasa Comigo', 'wandavision-em-2020-marvel-expande-universo-ainda-este-ano-fiqueemcasa-comigo', 'wandavision-em-2020-marvel-expande-universo-ainda-este-ano-fiqueemcasa-comigo-omeleteyoutube', '/uploads/news/20220428112624_wandavision-em-2020-marvel-expande-universo-ainda-este-ano-fiqueemcasa-comigo-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=ijPRJhTfIeY', NULL, NULL, 0, '2020-09-16', '2022-04-28 23:26:24', '2022-04-28 23:26:24');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(154, 19, 'The Batman | Robert Pattinson vai ser um bom Batman? | Arena Nerd', 'the-batman-robert-pattinson-vai-ser-um-bom-batman-arena-nerd', 'the-batman-robert-pattinson-vai-ser-um-bom-batman-arena-nerd-arenanerdyoutube', '/uploads/news/20220312022222_the-batman-robert-pattinson-vai-ser-um-bom-batman-arena-nerd-arenanerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=sHhWf5NPjcU', NULL, NULL, 0, '2019-05-29', '2022-03-12 02:22:23', '2022-03-12 02:22:23');
+	(154, 4, 'WANDAVISION: A PRIMEIRA SITCOM DO MCU E SUAS INFLUÊNCIAS FiqueEmCasa Comigo', 'wandavision-a-primeira-sitcom-do-mcu-e-suas-influencias-fiqueemcasa-comigo', 'wandavision-a-primeira-sitcom-do-mcu-e-suas-influencias-fiqueemcasa-comigo-omeleteyoutube', '/uploads/news/20220428112628_wandavision-a-primeira-sitcom-do-mcu-e-suas-influencias-fiqueemcasa-comigo-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=-SpATgFBqGc', NULL, NULL, 0, '2021-01-16', '2022-04-28 23:26:28', '2022-04-28 23:26:28');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(155, 19, 'Gotham Central | A nova série spin-off de THE BATMAN | Arena News', 'gotham-central-a-nova-serie-spin-off-de-the-batman-arena-news', 'gotham-central-a-nova-serie-spin-off-de-the-batman-arena-news-arenanerdyoutube', '/uploads/news/20220312022226_gotham-central-a-nova-serie-spin-off-de-the-batman-arena-news-arenanerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=YD20uQHUItw', NULL, NULL, 0, '2020-07-14', '2022-03-12 02:22:26', '2022-03-12 02:22:26');
+	(155, 4, 'WANDAVISION GANHA TRAILER IMPRESSIONANTE! CONFIRA DETALHES DA SÉRIE MARVEL FiqueEmCasa Comigo', 'wandavision-ganha-trailer-impressionante-confira-detalhes-da-serie-marvel-fiqueemcasa-comigo', 'wandavision-ganha-trailer-impressionante-confira-detalhes-da-serie-marvel-fiqueemcasa-comigo-omeleteyoutube', '/uploads/news/20220428112633_wandavision-ganha-trailer-impressionante-confira-detalhes-da-serie-marvel-fiqueemcasa-comigo-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=dv-v_LCJRso', NULL, NULL, 0, '2020-09-21', '2022-04-28 23:26:34', '2022-04-28 23:26:34');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(156, 19, 'Novo Universo da DC nos Cinemas? | The Batman e O Coringa de Joaquin Phoenix | Arena News', 'novo-universo-da-dc-nos-cinemas-the-batman-e-o-coringa-de-joaquin-phoenix-arena-news', 'novo-universo-da-dc-nos-cinemas-the-batman-e-o-coringa-de-joaquin-phoenix-arena-news-arenanerdyoutube', '/uploads/news/20220312022228_novo-universo-da-dc-nos-cinemas-the-batman-e-o-coringa-de-joaquin-phoenix-arena-news-arenanerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=HBwLi1mFBnc', NULL, NULL, 0, '2018-06-25', '2022-03-12 02:22:30', '2022-03-12 02:22:30');
+	(156, 4, 'VISÃO BRANCO EM WANDAVISION! O QUE ESPERAR DO GRANDE FINAL FiqueEmCasa Comigo', 'visao-branco-em-wandavision-o-que-esperar-do-grande-final-fiqueemcasa-comigo', 'visao-branco-em-wandavision-o-que-esperar-do-grande-final-fiqueemcasa-comigo-omeleteyoutube', '/uploads/news/20220428112638_visao-branco-em-wandavision-o-que-esperar-do-grande-final-fiqueemcasa-comigo-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=JblTNXbsR9g', NULL, NULL, 0, '2021-02-27', '2022-04-28 23:26:38', '2022-04-28 23:26:38');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(157, 19, 'Resumão DC FanDome | Da Snyder Cut ao The Batman | Arena News LIVE', 'resumao-dc-fandome-da-snyder-cut-ao-the-batman-arena-news-live', 'resumao-dc-fandome-da-snyder-cut-ao-the-batman-arena-news-live-arenanerdyoutube', '/uploads/news/20220312022233_resumao-dc-fandome-da-snyder-cut-ao-the-batman-arena-news-live-arenanerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=XLRhugj8_ho', NULL, NULL, 0, '2020-08-25', '2022-03-12 02:22:34', '2022-03-12 02:22:34');
+	(157, 4, 'EXPECTATIVA WANDAVISION: O QUE ESPERAR DA NOVA SÉRIE FiqueEmCasa Comigo', 'expectativa-wandavision-o-que-esperar-da-nova-serie-fiqueemcasa-comigo', 'expectativa-wandavision-o-que-esperar-da-nova-serie-fiqueemcasa-comigo-omeleteyoutube', '/uploads/news/20220428112643_expectativa-wandavision-o-que-esperar-da-nova-serie-fiqueemcasa-comigo-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=tRouCDydYJ8', NULL, NULL, 0, '2021-01-12', '2022-04-28 23:26:43', '2022-04-28 23:26:43');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(158, 19, 'Henry Cavill Ainda É O Superman? | The Batman e The Walking Dead | Arena News 65', 'henry-cavill-ainda-e-o-superman-the-batman-e-the-walking-dead-arena-news-65', 'henry-cavill-ainda-e-o-superman-the-batman-e-the-walking-dead-arena-news-65-arenanerdyoutube', '/uploads/news/20220312022236_henry-cavill-ainda-e-o-superman-the-batman-e-the-walking-dead-arena-news-65-arenanerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=M9dHGB2IyOw', NULL, NULL, 0, '2018-09-17', '2022-03-12 02:22:37', '2022-03-12 02:22:37');
+	(158, 4, 'WANDAVISION, LOKI E FALCÃO: ERROS E ACERTOS DO MCU NA TV', 'wandavision-loki-e-falcao-erros-e-acertos-do-mcu-na-tv', 'wandavision-loki-e-falcao-erros-e-acertos-do-mcu-na-tv-omeleteyoutube', '/uploads/news/20220428112646_wandavision-loki-e-falcao-erros-e-acertos-do-mcu-na-tv-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=xdjyTmqroTQ', NULL, NULL, 0, '2021-05-27', '2022-04-28 23:26:47', '2022-04-28 23:26:47');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(159, 19, 'Notícias da Semana: The Batman, Série do Senhor dos Anéis e Final Space | Arena News 60', 'noticias-da-semana-the-batman-serie-do-senhor-dos-aneis-e-final-space-arena-news-60', 'noticias-da-semana-the-batman-serie-do-senhor-dos-aneis-e-final-space-arena-news-60-arenanerdyoutube', '/uploads/news/20220312022242_noticias-da-semana-the-batman-serie-do-senhor-dos-aneis-e-final-space-arena-news-60-arenanerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=-tOWXJUA65Y', NULL, NULL, 0, '2018-08-06', '2022-03-12 02:22:42', '2022-03-12 02:22:42');
+	(159, 4, 'NOVA HEROÍNA EM WANDAVISION?', 'nova-heroina-em-wandavision', 'nova-heroina-em-wandavision-omeleteyoutube', '/uploads/news/20220428112649_nova-heroina-em-wandavision-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=wN32hElOF_A', NULL, NULL, 0, '2019-12-17', '2022-04-28 23:26:49', '2022-04-28 23:26:49');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(160, 19, 'Notícias da Semana: Refilmagens de X-Men: Fênix Negra, The Batman e Supergirl | Arena News 61', 'noticias-da-semana-refilmagens-de-x-men-fenix-negra-the-batman-e-supergirl-arena-news-61', 'noticias-da-semana-refilmagens-de-x-men-fenix-negra-the-batman-e-supergirl-arena-news-61-arenanerdyoutube', '/uploads/news/20220312022246_noticias-da-semana-refilmagens-de-x-men-fenix-negra-the-batman-e-supergirl-arena-news-61-arenanerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=5fovW0oDCKY', NULL, NULL, 0, '2018-08-13', '2022-03-12 02:22:47', '2022-03-12 02:22:47');
+	(160, 4, 'WANDAVISION: DARCY, JIMMY WOO E A CONEXÃO COM O QUARTETO FANTÁSTICO FiqueEmCasa Comigo', 'wandavision-darcy-jimmy-woo-e-a-conexao-com-o-quarteto-fantastico-fiqueemcasa-comigo', 'wandavision-darcy-jimmy-woo-e-a-conexao-com-o-quarteto-fantastico-fiqueemcasa-comigo-omeleteyoutube', '/uploads/news/20220428112652_wandavision-darcy-jimmy-woo-e-a-conexao-com-o-quarteto-fantastico-fiqueemcasa-comigo-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=K9RdePLk9Sg', NULL, NULL, 0, '2021-02-03', '2022-04-28 23:26:53', '2022-04-28 23:26:53');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(161, 20, 'TODOS os DETALHES que você PERDEU em THE BATMAN (2022) | Easter eggs & Referências', 'todos-os-detalhes-que-voce-perdeu-em-the-batman-2022-easter-eggs-referencias', 'todos-os-detalhes-que-voce-perdeu-em-the-batman-2022-easter-eggs-referencias-sessaonerdyoutube', '/uploads/news/20220312022251_todos-os-detalhes-que-voce-perdeu-em-the-batman-2022-easter-eggs-referencias-sessaonerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=mpbgu3nn6yM', NULL, NULL, 0, '2022-03-05', '2022-03-12 02:22:52', '2022-03-12 02:22:52');
+	(161, 4, 'MULTIVERSO COMEÇANDO? ENTENDENDO O NOVO TRAILER DE WANDAVISION! FiqueEmCasa Comigo', 'multiverso-comecando-entendendo-o-novo-trailer-de-wandavision-fiqueemcasa-comigo', 'multiverso-comecando-entendendo-o-novo-trailer-de-wandavision-fiqueemcasa-comigo-omeleteyoutube', '/uploads/news/20220428112656_multiverso-comecando-entendendo-o-novo-trailer-de-wandavision-fiqueemcasa-comigo-omeleteyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=2rqazptbeU8', NULL, NULL, 0, '2020-12-16', '2022-04-28 23:26:56', '2022-04-28 23:26:56');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(162, 20, '23 DETALHES que você PERDEU no Trailer de THE BATMAN', '23-detalhes-que-voce-perdeu-no-trailer-de-the-batman', '23-detalhes-que-voce-perdeu-no-trailer-de-the-batman-sessaonerdyoutube', '/uploads/news/20220312022254_23-detalhes-que-voce-perdeu-no-trailer-de-the-batman-sessaonerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=cmLuYreU_Lk', NULL, NULL, 0, '2020-08-25', '2022-03-12 02:22:54', '2022-03-12 02:22:54');
+	(162, 7, 'WANDAVISION: FINAL EXPLICADO e o FUTURO da MARVEL! (+ CENAS PÓS-CRÉDITOS)', 'wandavision-final-explicado-e-o-futuro-da-marvel-cenas-pos-creditos', 'wandavision-final-explicado-e-o-futuro-da-marvel-cenas-pos-creditos-pipocandoyoutube', '/uploads/news/20220428112701_wandavision-final-explicado-e-o-futuro-da-marvel-cenas-pos-creditos-pipocandoyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=q81uqKDi_JE', NULL, NULL, 0, '2021-03-05', '2022-04-28 23:27:02', '2022-04-28 23:27:02');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(163, 21, 'PRIMEIRAS CRÍTICAS DE THE BATMAN! (FILME DE TERROR?!)', 'primeiras-criticas-de-the-batman-filme-de-terror', 'primeiras-criticas-de-the-batman-filme-de-terror-nerdnewsyoutube', '/uploads/news/20220312022259_primeiras-criticas-de-the-batman-filme-de-terror-nerdnewsyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=3woMARk2FO4', NULL, NULL, 0, '2021-08-31', '2022-03-12 02:23:00', '2022-03-12 02:23:00');
+	(163, 7, 'WANDAVISION EP 8: TUDO FEZ SENTIDO! - Teorias pro FINAL', 'wandavision-ep-8-tudo-fez-sentido-teorias-pro-final', 'wandavision-ep-8-tudo-fez-sentido-teorias-pro-final-pipocandoyoutube', '/uploads/news/20220428112705_wandavision-ep-8-tudo-fez-sentido-teorias-pro-final-pipocandoyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=5Q4JJdsJPek', NULL, NULL, 0, '2021-02-26', '2022-04-28 23:27:05', '2022-04-28 23:27:05');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(164, 21, 'THE BATMAN  O NOVO UNIFORME FICOU RIDÍCULO!!!', 'the-batman-o-novo-uniforme-ficou-ridiculo', 'the-batman-o-novo-uniforme-ficou-ridiculo-nerdnewsyoutube', '/uploads/news/20220312022303_the-batman-o-novo-uniforme-ficou-ridiculo-nerdnewsyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=TkMeUPVQMbk', NULL, NULL, 0, '2020-03-05', '2022-03-12 02:23:04', '2022-03-12 02:23:04');
+	(164, 5, 'WANDAVISON: RESUMO COMPLETO PARA IR PREPARADO VER DR. ESTRANHO 2', 'wandavison-resumo-completo-para-ir-preparado-ver-dr-estranho-2', 'wandavison-resumo-completo-para-ir-preparado-ver-dr-estranho-2-einerdyoutube', '/uploads/news/20220428112709_wandavison-resumo-completo-para-ir-preparado-ver-dr-estranho-2-einerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=dTx01hrx8pc', NULL, NULL, 0, '2022-04-26', '2022-04-28 23:27:10', '2022-04-28 23:27:10');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(165, 21, 'QUEM É QUEM NO FILME? TODOS OS PERSONAGENS DE THE BATMAN (ROBERT PATTINSON, 2021)', 'quem-e-quem-no-filme-todos-os-personagens-de-the-batman-robert-pattinson-2021', 'quem-e-quem-no-filme-todos-os-personagens-de-the-batman-robert-pattinson-2021-nerdnewsyoutube', '/uploads/news/20220312022308_quem-e-quem-no-filme-todos-os-personagens-de-the-batman-robert-pattinson-2021-nerdnewsyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=fN-79zNFvEA', NULL, NULL, 0, '2020-09-16', '2022-03-12 02:23:08', '2022-03-12 02:23:08');
+	(165, 5, 'O FINAL DE WANDAVISION E O FUTURO DA MARVEL!', 'o-final-de-wandavision-e-o-futuro-da-marvel', 'o-final-de-wandavision-e-o-futuro-da-marvel-einerdyoutube', '/uploads/news/20220428112713_o-final-de-wandavision-e-o-futuro-da-marvel-einerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=fk9hqe8FFmg', NULL, NULL, 0, '2021-03-05', '2022-04-28 23:27:13', '2022-04-28 23:27:13');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(166, 21, 'THE BATMAN: O MELHOR FILME SOLO DO BATMAN DA HISTÓRIA!', 'the-batman-o-melhor-filme-solo-do-batman-da-historia', 'the-batman-o-melhor-filme-solo-do-batman-da-historia-nerdnewsyoutube', '/uploads/news/20220312022312_the-batman-o-melhor-filme-solo-do-batman-da-historia-nerdnewsyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=asb1t1foFQc', NULL, NULL, 0, '2022-03-01', '2022-03-12 02:23:13', '2022-03-12 02:23:13');
+	(166, 5, 'WANDAVISION ESTREOU! FASE 4 COMEÇOU - ANÁLISE COMPLETA', 'wandavision-estreou-fase-4-comecou-analise-completa', 'wandavision-estreou-fase-4-comecou-analise-completa-einerdyoutube', '/uploads/news/20220428112716_wandavision-estreou-fase-4-comecou-analise-completa-einerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=2wGCLp6lZ2w', NULL, NULL, 0, '2021-01-16', '2022-04-28 23:27:17', '2022-04-28 23:27:17');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(167, 21, 'THE BATMAN  TUDO QUE VOCÊ PRECISA SABER SOBRE O ELENCO DO FILME!', 'the-batman-tudo-que-voce-precisa-saber-sobre-o-elenco-do-filme', 'the-batman-tudo-que-voce-precisa-saber-sobre-o-elenco-do-filme-nerdnewsyoutube', '/uploads/news/20220312022315_the-batman-tudo-que-voce-precisa-saber-sobre-o-elenco-do-filme-nerdnewsyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=NhSXR4FGiBA', NULL, NULL, 0, '2019-11-14', '2022-03-12 02:23:15', '2022-03-12 02:23:15');
+	(167, 5, 'WANDAVISION É HORRÍVEL MESMO?', 'wandavision-e-horrivel-mesmo', 'wandavision-e-horrivel-mesmo-einerdyoutube', '/uploads/news/20220428112721_wandavision-e-horrivel-mesmo-einerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=LxdAQIH3a_4', NULL, NULL, 0, '2021-01-17', '2022-04-28 23:27:22', '2022-04-28 23:27:22');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(168, 21, 'TRAILER OFICIAL THE BATMAN (2021)', 'trailer-oficial-the-batman-2021', 'trailer-oficial-the-batman-2021-nerdnewsyoutube', '/uploads/news/20220312022318_trailer-oficial-the-batman-2021-nerdnewsyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=dzR8wGiIfX8', NULL, NULL, 0, '2020-08-22', '2022-03-12 02:23:19', '2022-03-12 02:23:19');
+	(168, 5, '5 MISTÉRIOS QUE WANDAVISION ESQUECEU DE RESPONDER!', '5-misterios-que-wandavision-esqueceu-de-responder', '5-misterios-que-wandavision-esqueceu-de-responder-einerdyoutube', '/uploads/news/20220428112726_5-misterios-que-wandavision-esqueceu-de-responder-einerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=6d4QtIAqRM4', NULL, NULL, 0, '2021-03-13', '2022-04-28 23:27:26', '2022-04-28 23:27:26');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(169, 5, 'THE BATMAN: TEORIA EXPLICA QUE CHARADA FOI CRIADO POR BRUCE WAYNE (+ corte das corujas)', 'the-batman-teoria-explica-que-charada-foi-criado-por-bruce-wayne-corte-das-corujas', 'the-batman-teoria-explica-que-charada-foi-criado-por-bruce-wayne-corte-das-corujas-einerdyoutube', '/uploads/news/20220312022436_the-batman-teoria-explica-que-charada-foi-criado-por-bruce-wayne-corte-das-corujas-einerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=uxYR2nrgGgg', NULL, NULL, 0, '2020-08-27', '2022-03-12 02:24:38', '2022-03-12 02:24:38');
+	(169, 5, 'REVELADO: PORQUE O DR. ESTRANHO NÃO PARTICIPOU DE WANDAVISION!', 'revelado-porque-o-dr-estranho-nao-participou-de-wandavision', 'revelado-porque-o-dr-estranho-nao-participou-de-wandavision-einerdyoutube', '/uploads/news/20220428112729_revelado-porque-o-dr-estranho-nao-participou-de-wandavision-einerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=ujKroPSN2-s', NULL, NULL, 0, '2022-02-03', '2022-04-28 23:27:30', '2022-04-28 23:27:30');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(170, 9, 'CORINGA DO JOAQUIN PHOENIX ESTARÁ EM THE BATMAN?', 'coringa-do-joaquin-phoenix-estara-em-the-batman', 'coringa-do-joaquin-phoenix-estara-em-the-batman-cinemacomrapadurayoutube', '/uploads/news/20220312022448_coringa-do-joaquin-phoenix-estara-em-the-batman-cinemacomrapadurayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=vFUjTSFEeMU', NULL, NULL, 0, '2019-05-31', '2022-03-12 02:24:49', '2022-03-12 02:24:49');
+	(170, 5, 'MARVEL APONTOU O VILÃO DE WANDAVISION E VOCÊ NEM PERCEBEU!', 'marvel-apontou-o-vilao-de-wandavision-e-voce-nem-percebeu', 'marvel-apontou-o-vilao-de-wandavision-e-voce-nem-percebeu-einerdyoutube', '/uploads/news/20220428112734_marvel-apontou-o-vilao-de-wandavision-e-voce-nem-percebeu-einerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=SBDEePpqKTg', NULL, NULL, 0, '2021-02-18', '2022-04-28 23:27:35', '2022-04-28 23:27:35');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(171, 21, '5 COISAS QUE VOCÊ PRECISA SABER SOBRE THE BATMAN', '5-coisas-que-voce-precisa-saber-sobre-the-batman', '5-coisas-que-voce-precisa-saber-sobre-the-batman-nerdnewsyoutube', '/uploads/news/20220312022521_5-coisas-que-voce-precisa-saber-sobre-the-batman-nerdnewsyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=pCmezYb2fvY', NULL, NULL, 0, '2018-06-07', '2022-03-12 02:25:22', '2022-03-12 02:25:22');
+	(171, 5, 'WANDAVISION REVELA TODOS OS SEGREDOS DA WANDA!', 'wandavision-revela-todos-os-segredos-da-wanda', 'wandavision-revela-todos-os-segredos-da-wanda-einerdyoutube', '/uploads/news/20220428112738_wandavision-revela-todos-os-segredos-da-wanda-einerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=0BoB75vXWZ0', NULL, NULL, 0, '2021-02-26', '2022-04-28 23:27:38', '2022-04-28 23:27:38');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(172, 21, 'THE BATMAN: PRIMEIRAS IMPRESSÕES DO FILME REVELADAS', 'the-batman-primeiras-impressoes-do-filme-reveladas', 'the-batman-primeiras-impressoes-do-filme-reveladas-nerdnewsyoutube', '/uploads/news/20220312022524_the-batman-primeiras-impressoes-do-filme-reveladas-nerdnewsyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=nxQVK3DLm2c', NULL, NULL, 0, '2021-09-05', '2022-03-12 02:25:24', '2022-03-12 02:25:24');
+	(172, 5, 'JÁ ASSISTIRAM WANDAVISION - SERÁ QUE É ISSO TUDO MESMO?', 'ja-assistiram-wandavision-sera-que-e-isso-tudo-mesmo', 'ja-assistiram-wandavision-sera-que-e-isso-tudo-mesmo-einerdyoutube', '/uploads/news/20220428112743_ja-assistiram-wandavision-sera-que-e-isso-tudo-mesmo-einerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=kF7E8jDU8FE', NULL, NULL, 0, '2021-01-10', '2022-04-28 23:27:43', '2022-04-28 23:27:43');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(173, 21, 'THE BATMAN TERÁ ROBIN E TRÊS VILÕES CLÁSSICOS!!!', 'the-batman-tera-robin-e-tres-viloes-classicos', 'the-batman-tera-robin-e-tres-viloes-classicos-nerdnewsyoutube', '/uploads/news/20220312022528_the-batman-tera-robin-e-tres-viloes-classicos-nerdnewsyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=yj-TLuE8vWw', NULL, NULL, 0, '2019-06-03', '2022-03-12 02:25:29', '2022-03-12 02:25:29');
+	(173, 5, 'MEPHISTO ESTÁ EM WANDAVISION E VOCÊ NEM NOTOU!', 'mephisto-esta-em-wandavision-e-voce-nem-notou', 'mephisto-esta-em-wandavision-e-voce-nem-notou-einerdyoutube', '/uploads/news/20220428112747_mephisto-esta-em-wandavision-e-voce-nem-notou-einerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=uv-8yRC9vUE', NULL, NULL, 0, '2021-01-23', '2022-04-28 23:27:48', '2022-04-28 23:27:48');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(174, 21, 'THE BATMAN: O QUE ESPERAR DE ROBERT PATTINSON EM 2021?!', 'the-batman-o-que-esperar-de-robert-pattinson-em-2021', 'the-batman-o-que-esperar-de-robert-pattinson-em-2021-nerdnewsyoutube', '/uploads/news/20220312022532_the-batman-o-que-esperar-de-robert-pattinson-em-2021-nerdnewsyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=I20V0_rFSwE', NULL, NULL, 0, '2019-10-28', '2022-03-12 02:25:33', '2022-03-12 02:25:33');
+	(174, 5, 'REVELADO O MAIOR MISTÉRIO DE WANDAVISION!', 'revelado-o-maior-misterio-de-wandavision', 'revelado-o-maior-misterio-de-wandavision-einerdyoutube', '/uploads/news/20220428112752_revelado-o-maior-misterio-de-wandavision-einerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=iBOf2Ux5q0w', NULL, NULL, 0, '2021-02-10', '2022-04-28 23:27:53', '2022-04-28 23:27:53');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(175, 21, '5 COISAS QUE JÁ SABEMOS SOBRE THE BATMAN | Nerd News 72', '5-coisas-que-ja-sabemos-sobre-the-batman-nerd-news-72', '5-coisas-que-ja-sabemos-sobre-the-batman-nerd-news-72-nerdnewsyoutube', '/uploads/news/20220312022535_5-coisas-que-ja-sabemos-sobre-the-batman-nerd-news-72-nerdnewsyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=-q8mHcmPr_k', NULL, NULL, 0, '2016-12-08', '2022-03-12 02:25:36', '2022-03-12 02:25:36');
+	(175, 5, 'WANDAVISION DISNEY PLUS | TRAILER DUBLADO - REACT E PRIMEIRAS ANÁLISES', 'wandavision-disney-plus-trailer-dublado-react-e-primeiras-analises', 'wandavision-disney-plus-trailer-dublado-react-e-primeiras-analises-einerdyoutube', '/uploads/news/20220428112756_wandavision-disney-plus-trailer-dublado-react-e-primeiras-analises-einerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=sXXGj75YnFE', NULL, NULL, 0, '2020-09-21', '2022-04-28 23:27:56', '2022-04-28 23:27:56');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(176, 21, 'TODOS OS 6 FILMES DA DC ATÉ 2023! (TEM ATÉ THE BATMAN) shorts', 'todos-os-6-filmes-da-dc-ate-2023-tem-ate-the-batman-shorts', 'todos-os-6-filmes-da-dc-ate-2023-tem-ate-the-batman-shorts-nerdnewsyoutube', '/uploads/news/20220312022538_todos-os-6-filmes-da-dc-ate-2023-tem-ate-the-batman-shorts-nerdnewsyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=-brs5oT_r7I', NULL, NULL, 0, '2021-08-19', '2022-03-12 02:25:38', '2022-03-12 02:25:38');
+	(176, 5, 'O MERCÚRIO NÃO É UM X-MAN? WANDA ESTÁ NO CONTROLE DE TUDO? - ANÁLISE WANDAVISION EP. 6', 'o-mercurio-nao-e-um-x-man-wanda-esta-no-controle-de-tudo-analise-wandavision-ep-6', 'o-mercurio-nao-e-um-x-man-wanda-esta-no-controle-de-tudo-analise-wandavision-ep-6-einerdyoutube', '/uploads/news/20220428112800_o-mercurio-nao-e-um-x-man-wanda-esta-no-controle-de-tudo-analise-wandavision-ep-6-einerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=ivRwW2RoHMU', NULL, NULL, 0, '2021-02-12', '2022-04-28 23:28:00', '2022-04-28 23:28:00');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(177, 21, 'BEN AFFLECK AMARELOU NO FILME THE BATMAN? | Falando Nerda 16', 'ben-affleck-amarelou-no-filme-the-batman-falando-nerda-16', 'ben-affleck-amarelou-no-filme-the-batman-falando-nerda-16-nerdnewsyoutube', '/uploads/news/20220312022541_ben-affleck-amarelou-no-filme-the-batman-falando-nerda-16-nerdnewsyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=U0jZI8E-jUY', NULL, NULL, 0, '2017-02-01', '2022-03-12 02:25:42', '2022-03-12 02:25:42');
+	(177, 6, 'WANDAVISION! PORQUE NENHUM VINGADOR APARECEU PARA AJUDAR', 'wandavision-porque-nenhum-vingador-apareceu-para-ajudar', 'wandavision-porque-nenhum-vingador-apareceu-para-ajudar-nerdlandyoutube', '/uploads/news/20220428112806_wandavision-porque-nenhum-vingador-apareceu-para-ajudar-nerdlandyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=mttR-K4bK-4', NULL, NULL, 0, '2021-02-15', '2022-04-28 23:28:07', '2022-04-28 23:28:07');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(178, 21, 'CONFIRMADO O NOVO DIRETOR DE THE BATMAN | Nerd News Drops 19', 'confirmado-o-novo-diretor-de-the-batman-nerd-news-drops-19', 'confirmado-o-novo-diretor-de-the-batman-nerd-news-drops-19-nerdnewsyoutube', '/uploads/news/20220312022545_confirmado-o-novo-diretor-de-the-batman-nerd-news-drops-19-nerdnewsyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=viV4ibpU6uk', NULL, NULL, 0, '2017-02-24', '2022-03-12 02:25:47', '2022-03-12 02:25:47');
+	(178, 6, 'EXPLICADO COMO MERCURIO DE X MEN NO FINAL DE WANDAVISION É O RALPH!', 'explicado-como-mercurio-de-x-men-no-final-de-wandavision-e-o-ralph', 'explicado-como-mercurio-de-x-men-no-final-de-wandavision-e-o-ralph-nerdlandyoutube', '/uploads/news/20220428112811_explicado-como-mercurio-de-x-men-no-final-de-wandavision-e-o-ralph-nerdlandyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=k1q4gIlV-Ok', NULL, NULL, 0, '2021-03-09', '2022-04-28 23:28:12', '2022-04-28 23:28:12');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(179, 21, 'THE BATMAN: NOVO DIRETOR DO FILME FALA SOBRE O HERÓI! | Nerd News Drops 46', 'the-batman-novo-diretor-do-filme-fala-sobre-o-heroi-nerd-news-drops-46', 'the-batman-novo-diretor-do-filme-fala-sobre-o-heroi-nerd-news-drops-46-nerdnewsyoutube', '/uploads/news/20220312022550_the-batman-novo-diretor-do-filme-fala-sobre-o-heroi-nerd-news-drops-46-nerdnewsyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=2Uy8GigavpQ', NULL, NULL, 0, '2017-05-04', '2022-03-12 02:25:50', '2022-03-12 02:25:50');
+	(179, 6, 'WANDAVISION EP. 9 FINAL EXPLICADO (SEGREDOS + ANÁLISE + TEORIA)', 'wandavision-ep-9-final-explicado-segredos-analise-teoria', 'wandavision-ep-9-final-explicado-segredos-analise-teoria-nerdlandyoutube', '/uploads/news/20220428112814_wandavision-ep-9-final-explicado-segredos-analise-teoria-nerdlandyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=V9JwaS88KKs', NULL, NULL, 0, '2021-03-05', '2022-04-28 23:28:15', '2022-04-28 23:28:15');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(180, 21, 'BEN AFFLECK FORA DO ROTEIRO DE THE BATMAN? | Nerd News Drops 7', 'ben-affleck-fora-do-roteiro-de-the-batman-nerd-news-drops-7', 'ben-affleck-fora-do-roteiro-de-the-batman-nerd-news-drops-7-nerdnewsyoutube', '/uploads/news/20220312022553_ben-affleck-fora-do-roteiro-de-the-batman-nerd-news-drops-7-nerdnewsyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=wx5iMIcMlvE', NULL, NULL, 0, '2017-02-01', '2022-03-12 02:25:55', '2022-03-12 02:25:55');
+	(180, 6, 'WANDAVISION EP. 5 EXPLICADO (FINAL + ANÁLISE + TEORIA)', 'wandavision-ep-5-explicado-final-analise-teoria', 'wandavision-ep-5-explicado-final-analise-teoria-nerdlandyoutube', '/uploads/news/20220428112816_wandavision-ep-5-explicado-final-analise-teoria-nerdlandyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=CGnFutTvrSk', NULL, NULL, 0, '2021-02-05', '2022-04-28 23:28:17', '2022-04-28 23:28:17');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(181, 21, 'ZACK SNYDER DIRETOR EM THE BATMAN? | Nerd News Drops 8', 'zack-snyder-diretor-em-the-batman-nerd-news-drops-8', 'zack-snyder-diretor-em-the-batman-nerd-news-drops-8-nerdnewsyoutube', '/uploads/news/20220312022559_zack-snyder-diretor-em-the-batman-nerd-news-drops-8-nerdnewsyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=bBVESLg9ofA', NULL, NULL, 0, '2017-02-03', '2022-03-12 02:26:00', '2022-03-12 02:26:00');
+	(181, 6, 'WANDAVISION EP. 3 EXPLICADO (FINAL + ANÁLISE + TEORIA)', 'wandavision-ep-3-explicado-final-analise-teoria', 'wandavision-ep-3-explicado-final-analise-teoria-nerdlandyoutube', '/uploads/news/20220428112821_wandavision-ep-3-explicado-final-analise-teoria-nerdlandyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=FjRBaMbkv_U', NULL, NULL, 0, '2021-01-22', '2022-04-28 23:28:22', '2022-04-28 23:28:22');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(182, 22, 'THE BATMAN | CRÍTICA COM SPOILER', 'the-batman-critica-com-spoiler', 'the-batman-critica-com-spoiler-thiagoromarizyoutube', '/uploads/news/20220312022607_the-batman-critica-com-spoiler-thiagoromarizyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=buE5IH5Rxpo', NULL, NULL, 0, '2022-03-01', '2022-03-12 02:26:07', '2022-03-12 02:26:07');
+	(182, 6, '54 DETALHES QUE VOCÊ PERDEU! WANDAVISION EP. 9 FINAL (EASTER EGGS + REFERÊNCIAS + SEGREDOS)', '54-detalhes-que-voce-perdeu-wandavision-ep-9-final-easter-eggs-referencias-segredos', '54-detalhes-que-voce-perdeu-wandavision-ep-9-final-easter-eggs-referencias-segredos-nerdlandyoutube', '/uploads/news/20220428112825_54-detalhes-que-voce-perdeu-wandavision-ep-9-final-easter-eggs-referencias-segredos-nerdlandyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=1CqrpZpQfRE', NULL, NULL, 0, '2021-03-05', '2022-04-28 23:28:26', '2022-04-28 23:28:26');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(183, 22, 'THE BATMAN | CRÍTICA SEM SPOILER', 'the-batman-critica-sem-spoiler', 'the-batman-critica-sem-spoiler-thiagoromarizyoutube', '/uploads/news/20220312022611_the-batman-critica-sem-spoiler-thiagoromarizyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=vk80XT3ZwTg', NULL, NULL, 0, '2022-02-28', '2022-03-12 02:26:11', '2022-03-12 02:26:11');
+	(183, 6, 'WANDAVISION EPISÓDIO 6! COMERCIAL EXPLICADO!', 'wandavision-episodio-6-comercial-explicado', 'wandavision-episodio-6-comercial-explicado-nerdlandyoutube', '/uploads/news/20220428112829_wandavision-episodio-6-comercial-explicado-nerdlandyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=HroyBXResFo', NULL, NULL, 0, '2021-02-12', '2022-04-28 23:28:30', '2022-04-28 23:28:30');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(184, 22, 'EU ASSISTI THE BATMAN E MEU DEUS DO CÉU!!!!!!', 'eu-assisti-the-batman-e-meu-deus-do-ceu', 'eu-assisti-the-batman-e-meu-deus-do-ceu-thiagoromarizyoutube', '/uploads/news/20220312022615_eu-assisti-the-batman-e-meu-deus-do-ceu-thiagoromarizyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=qCZ0yiUHDQQ', NULL, NULL, 0, '2022-02-28', '2022-03-12 02:26:16', '2022-03-12 02:26:16');
+	(184, 6, 'ESSE FINAL DE WANDAVISION É FALSO! Shorts', 'esse-final-de-wandavision-e-falso-shorts', 'esse-final-de-wandavision-e-falso-shorts-nerdlandyoutube', '/uploads/news/20220428112834_esse-final-de-wandavision-e-falso-shorts-nerdlandyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=Xoil8LS_U_c', NULL, NULL, 0, '2021-09-04', '2022-04-28 23:28:34', '2022-04-28 23:28:34');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(185, 22, 'THE BATMAN: FINAL EXPLICADO + CENA PÓS-CRÉDITOS', 'the-batman-final-explicado-cena-pos-creditos', 'the-batman-final-explicado-cena-pos-creditos-thiagoromarizyoutube', '/uploads/news/20220312022618_the-batman-final-explicado-cena-pos-creditos-thiagoromarizyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=ofFQ21fpleA', NULL, NULL, 0, '2022-03-03', '2022-03-12 02:26:18', '2022-03-12 02:26:18');
+	(185, 6, 'WANDAVISION SEM EFEITOS ESPECIAIS! HILÁRIO!', 'wandavision-sem-efeitos-especiais-hilario', 'wandavision-sem-efeitos-especiais-hilario-nerdlandyoutube', '/uploads/news/20220428112838_wandavision-sem-efeitos-especiais-hilario-nerdlandyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=dmM3FqxmsnU', NULL, NULL, 0, '2021-03-16', '2022-04-28 23:28:38', '2022-04-28 23:28:38');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(186, 22, 'THE BATMAN: O MAIOR FILME DA DC!', 'the-batman-o-maior-filme-da-dc', 'the-batman-o-maior-filme-da-dc-thiagoromarizyoutube', '/uploads/news/20220312022621_the-batman-o-maior-filme-da-dc-thiagoromarizyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=v41x7Eg-cak', NULL, NULL, 0, '2022-01-20', '2022-03-12 02:26:22', '2022-03-12 02:26:22');
+	(186, 6, 'WANDAVISION! NOVA CENA PÓS CRÉDITOS! DR. ESTRANHO APARECEU EXPLICADO!', 'wandavision-nova-cena-pos-creditos-dr-estranho-apareceu-explicado', 'wandavision-nova-cena-pos-creditos-dr-estranho-apareceu-explicado-nerdlandyoutube', '/uploads/news/20220428112842_wandavision-nova-cena-pos-creditos-dr-estranho-apareceu-explicado-nerdlandyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=cQuPXxcNvwY', NULL, NULL, 0, '2021-06-28', '2022-04-28 23:28:42', '2022-04-28 23:28:42');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(187, 22, 'THE BATMAN - CLIPE OFICIAL "BATMAN vs GORDON"', 'the-batman-clipe-oficial-batman-vs-gordon', 'the-batman-clipe-oficial-batman-vs-gordon-thiagoromarizyoutube', '/uploads/news/20220312022625_the-batman-clipe-oficial-batman-vs-gordon-thiagoromarizyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=8XFS3RLsl4Q', NULL, NULL, 0, '2022-02-17', '2022-03-12 02:26:26', '2022-03-12 02:26:26');
+	(187, 6, 'WANDAVISION EP. 1 E 2 EXPLICADO (FINAL + ANÁLISE + TEORIA)', 'wandavision-ep-1-e-2-explicado-final-analise-teoria', 'wandavision-ep-1-e-2-explicado-final-analise-teoria-nerdlandyoutube', '/uploads/news/20220428112847_wandavision-ep-1-e-2-explicado-final-analise-teoria-nerdlandyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=w7kX29s_83M', NULL, NULL, 0, '2021-01-15', '2022-04-28 23:28:47', '2022-04-28 23:28:47');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(188, 22, 'THE BATMAN | TRAILER OFICIAL: A Gata e o Morcego', 'the-batman-trailer-oficial-a-gata-e-o-morcego', 'the-batman-trailer-oficial-a-gata-e-o-morcego-thiagoromarizyoutube', '/uploads/news/20220312022628_the-batman-trailer-oficial-a-gata-e-o-morcego-thiagoromarizyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=ustGB6CVc5A', NULL, NULL, 0, '2021-12-27', '2022-03-12 02:26:28', '2022-03-12 02:26:28');
+	(188, 6, 'WANDAVISION! QUEM A WANDA VIU NA EXPLOSÃO DA JOIA DO INFINITO EXPLICADO!', 'wandavision-quem-a-wanda-viu-na-explosao-da-joia-do-infinito-explicado', 'wandavision-quem-a-wanda-viu-na-explosao-da-joia-do-infinito-explicado-nerdlandyoutube', '/uploads/news/20220428112850_wandavision-quem-a-wanda-viu-na-explosao-da-joia-do-infinito-explicado-nerdlandyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=B7zFMSvq4Us', NULL, NULL, 0, '2021-03-02', '2022-04-28 23:28:51', '2022-04-28 23:28:51');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(189, 22, 'THE BATMAN | TRAILER OFICIAL | REAÇÃO', 'the-batman-trailer-oficial-reacao', 'the-batman-trailer-oficial-reacao-thiagoromarizyoutube', '/uploads/news/20220312022632_the-batman-trailer-oficial-reacao-thiagoromarizyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=pjFiae6Y-Uk', NULL, NULL, 0, '2021-10-16', '2022-03-12 02:26:33', '2022-03-12 02:26:33');
+	(189, 6, 'WANDA É A VERDADEIRA VILÃ DE WANDAVISION', 'wanda-e-a-verdadeira-vila-de-wandavision', 'wanda-e-a-verdadeira-vila-de-wandavision-nerdlandyoutube', '/uploads/news/20220428112855_wanda-e-a-verdadeira-vila-de-wandavision-nerdlandyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=gh2whLgfNEE', NULL, NULL, 0, '2021-02-03', '2022-04-28 23:28:56', '2022-04-28 23:28:56');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(190, 22, 'THE BATMAN | CLIPE OFICIAL: Charada no Funeral | ANÁLISE e REAÇÃO', 'the-batman-clipe-oficial-charada-no-funeral-analise-e-reacao', 'the-batman-clipe-oficial-charada-no-funeral-analise-e-reacao-thiagoromarizyoutube', '/uploads/news/20220312022637_the-batman-clipe-oficial-charada-no-funeral-analise-e-reacao-thiagoromarizyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=CeBW_B4UBmM', NULL, NULL, 0, '2022-01-23', '2022-03-12 02:26:37', '2022-03-12 02:26:37');
+	(190, 6, 'VAZOU CENA DELETADA ÉPICA DO FINAL DE WANDAVISION EP 9', 'vazou-cena-deletada-epica-do-final-de-wandavision-ep-9', 'vazou-cena-deletada-epica-do-final-de-wandavision-ep-9-nerdlandyoutube', '/uploads/news/20220428112859_vazou-cena-deletada-epica-do-final-de-wandavision-ep-9-nerdlandyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=SsL0KcHnC9g', NULL, NULL, 0, '2021-03-08', '2022-04-28 23:28:59', '2022-04-28 23:28:59');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(191, 22, 'THE BATMAN: QUANDO EU ASSISTIREI AO FILME!', 'the-batman-quando-eu-assistirei-ao-filme', 'the-batman-quando-eu-assistirei-ao-filme-thiagoromarizyoutube', '/uploads/news/20220312022642_the-batman-quando-eu-assistirei-ao-filme-thiagoromarizyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=nPQWNt0XGYg', NULL, NULL, 0, '2022-02-09', '2022-03-12 02:26:42', '2022-03-12 02:26:42');
+	(191, 6, 'WANDAVISION EXPLICADO! COMO A MONICA SOBREVIVEU AO ATAQUE DA WANDA', 'wandavision-explicado-como-a-monica-sobreviveu-ao-ataque-da-wanda', 'wandavision-explicado-como-a-monica-sobreviveu-ao-ataque-da-wanda-nerdlandyoutube', '/uploads/news/20220428112901_wandavision-explicado-como-a-monica-sobreviveu-ao-ataque-da-wanda-nerdlandyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=ELXt5CFuMW8', NULL, NULL, 0, '2021-02-04', '2022-04-28 23:29:02', '2022-04-28 23:29:02');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(192, 22, 'THE BATMAN | TRAILER FINAL NBA 2022 OFICIAL', 'the-batman-trailer-final-nba-2022-oficial', 'the-batman-trailer-final-nba-2022-oficial-thiagoromarizyoutube', '/uploads/news/20220312022646_the-batman-trailer-final-nba-2022-oficial-thiagoromarizyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=hob8M_R0f40', NULL, NULL, 0, '2022-02-21', '2022-03-12 02:26:47', '2022-03-12 02:26:47');
+	(192, 6, 'COMERCIAIS DE WANDAVISION EXPLICADO! A Ligação com as JOIAS DO INFINITO!', 'comerciais-de-wandavision-explicado-a-ligacao-com-as-joias-do-infinito', 'comerciais-de-wandavision-explicado-a-ligacao-com-as-joias-do-infinito-nerdlandyoutube', '/uploads/news/20220428112906_comerciais-de-wandavision-explicado-a-ligacao-com-as-joias-do-infinito-nerdlandyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=i09r_fw1Dro', NULL, NULL, 0, '2021-02-09', '2022-04-28 23:29:06', '2022-04-28 23:29:06');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(193, 23, 'THE BATMAN | REVIEW COM SPOILERS | EASTER EGGS e REFERÊNCIAS aos QUADRINHOS (EXPLICADO)', 'the-batman-review-com-spoilers-easter-eggs-e-referencias-aos-quadrinhos-explicado', 'the-batman-review-com-spoilers-easter-eggs-e-referencias-aos-quadrinhos-explicado-gustavocunhayoutube', '/uploads/news/20220312022652_the-batman-review-com-spoilers-easter-eggs-e-referencias-aos-quadrinhos-explicado-gustavocunhayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=IkMl_-WPgGg', NULL, NULL, 0, '2022-03-06', '2022-03-12 02:26:52', '2022-03-12 02:26:52');
+	(193, 6, 'OS FILHOS DA WANDA VAO VOLTAR EM DR ESTRANHO 2? FINAL WANDAVISION EXPLICADO!', 'os-filhos-da-wanda-vao-voltar-em-dr-estranho-2-final-wandavision-explicado', 'os-filhos-da-wanda-vao-voltar-em-dr-estranho-2-final-wandavision-explicado-nerdlandyoutube', '/uploads/news/20220428112908_os-filhos-da-wanda-vao-voltar-em-dr-estranho-2-final-wandavision-explicado-nerdlandyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=dK4byRwk7AE', NULL, NULL, 0, '2021-03-09', '2022-04-28 23:29:09', '2022-04-28 23:29:09');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(194, 23, 'THE BATMAN | REVIEW SEM SPOILERS', 'the-batman-review-sem-spoilers', 'the-batman-review-sem-spoilers-gustavocunhayoutube', '/uploads/news/20220312022655_the-batman-review-sem-spoilers-gustavocunhayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=xqwm-yQuNhk', NULL, NULL, 0, '2022-03-03', '2022-03-12 02:26:56', '2022-03-12 02:26:56');
+	(194, 6, '44 DETALHES QUE VOCÊ PERDEU! WANDAVISION EPISÓDIO 6', '44-detalhes-que-voce-perdeu-wandavision-episodio-6', '44-detalhes-que-voce-perdeu-wandavision-episodio-6-nerdlandyoutube', '/uploads/news/20220428112912_44-detalhes-que-voce-perdeu-wandavision-episodio-6-nerdlandyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=VeGhOTBEOg0', NULL, NULL, 0, '2021-02-12', '2022-04-28 23:29:12', '2022-04-28 23:29:12');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(195, 23, 'THE BATMAN | O PERSONAGEM MISTERIOSO EXPLICADO e SÉRIE do ASILO ARKHAM', 'the-batman-o-personagem-misterioso-explicado-e-serie-do-asilo-arkham', 'the-batman-o-personagem-misterioso-explicado-e-serie-do-asilo-arkham-gustavocunhayoutube', '/uploads/news/20220312022700_the-batman-o-personagem-misterioso-explicado-e-serie-do-asilo-arkham-gustavocunhayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=EVMXnjLkdX0', NULL, NULL, 0, '2022-03-09', '2022-03-12 02:27:00', '2022-03-12 02:27:00');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(196, 23, 'BATMAN UNIFORME NOVO | que EMBLEMA é ESSE? BATMAN 2021 TEASER', 'batman-uniforme-novo-que-emblema-e-esse-batman-2021-teaser', 'batman-uniforme-novo-que-emblema-e-esse-batman-2021-teaser-gustavocunhayoutube', '/uploads/news/20220312022704_batman-uniforme-novo-que-emblema-e-esse-batman-2021-teaser-gustavocunhayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=F4zB1ZrNLZU', NULL, NULL, 0, '2020-02-16', '2022-03-12 02:27:05', '2022-03-12 02:27:05');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(197, 24, 'SÓ UM DEFEITO!!! JÁ VI THE BATMAN E MORRI', 'so-um-defeito-ja-vi-the-batman-e-morri', 'so-um-defeito-ja-vi-the-batman-e-morri-miguellokiayoutube', '/uploads/news/20220312022709_so-um-defeito-ja-vi-the-batman-e-morri-miguellokiayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=wydb3-0niLI', NULL, NULL, 0, '2022-02-28', '2022-03-12 02:27:10', '2022-03-12 02:27:10');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(198, 24, 'THE BATMAN: TRAILER OFICIAL DC FANDOME - ANÁLISE COMPLETA e RESUMO', 'the-batman-trailer-oficial-dc-fandome-analise-completa-e-resumo', 'the-batman-trailer-oficial-dc-fandome-analise-completa-e-resumo-miguellokiayoutube', '/uploads/news/20220312022713_the-batman-trailer-oficial-dc-fandome-analise-completa-e-resumo-miguellokiayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=bfnKFJ87IM4', NULL, NULL, 0, '2021-10-16', '2022-03-12 02:27:14', '2022-03-12 02:27:14');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(199, 24, 'THE BATMAN 2: DATA, TEASER OFICIAL e COMO VAI SER', 'the-batman-2-data-teaser-oficial-e-como-vai-ser', 'the-batman-2-data-teaser-oficial-e-como-vai-ser-miguellokiayoutube', '/uploads/news/20220312022718_the-batman-2-data-teaser-oficial-e-como-vai-ser-miguellokiayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=T313TqvdHf0', NULL, NULL, 0, '2022-03-03', '2022-03-12 02:27:19', '2022-03-12 02:27:19');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(200, 24, 'THE BATMAN DUBLADO CONFUNDIU TUDO! TRAILER COM WENDEL BEZERRA E QUE VOZ É ESSA?', 'the-batman-dublado-confundiu-tudo-trailer-com-wendel-bezerra-e-que-voz-e-essa', 'the-batman-dublado-confundiu-tudo-trailer-com-wendel-bezerra-e-que-voz-e-essa-miguellokiayoutube', '/uploads/news/20220312022722_the-batman-dublado-confundiu-tudo-trailer-com-wendel-bezerra-e-que-voz-e-essa-miguellokiayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=BRlgKSXyKbQ', NULL, NULL, 0, '2020-09-03', '2022-03-12 02:27:22', '2022-03-12 02:27:22');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(201, 24, 'VOCÊ VIU O PINGUIM EM THE BATMAN? - TRAILER DC FANDOME', 'voce-viu-o-pinguim-em-the-batman-trailer-dc-fandome', 'voce-viu-o-pinguim-em-the-batman-trailer-dc-fandome-miguellokiayoutube', '/uploads/news/20220312022727_voce-viu-o-pinguim-em-the-batman-trailer-dc-fandome-miguellokiayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=6zrxuzlisjI', NULL, NULL, 0, '2020-08-23', '2022-03-12 02:27:28', '2022-03-12 02:27:28');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(202, 24, 'THE BATMAN MENTIU PRA GENTE?', 'the-batman-mentiu-pra-gente', 'the-batman-mentiu-pra-gente-miguellokiayoutube', '/uploads/news/20220312022732_the-batman-mentiu-pra-gente-miguellokiayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=5KDAv6iofdc', NULL, NULL, 0, '2020-10-19', '2022-03-12 02:27:33', '2022-03-12 02:27:33');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(203, 24, 'THE BATMAN REVELA BATMÓVEL DE VELOZES E FURIOSOS', 'the-batman-revela-batmovel-de-velozes-e-furiosos', 'the-batman-revela-batmovel-de-velozes-e-furiosos-miguellokiayoutube', '/uploads/news/20220312022734_the-batman-revela-batmovel-de-velozes-e-furiosos-miguellokiayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=QpgBocl3iSQ', NULL, NULL, 0, '2020-03-04', '2022-03-12 02:27:35', '2022-03-12 02:27:35');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(204, 24, 'AGORA TEMOS PROVAS! TODAS AS INFLUÊNCIAS INCRÍVEIS POR TRÁS DE THE BATMAN', 'agora-temos-provas-todas-as-influencias-incriveis-por-tras-de-the-batman', 'agora-temos-provas-todas-as-influencias-incriveis-por-tras-de-the-batman-miguellokiayoutube', '/uploads/news/20220312022737_agora-temos-provas-todas-as-influencias-incriveis-por-tras-de-the-batman-miguellokiayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=5y3cnx-oN-Q', NULL, NULL, 0, '2020-09-04', '2022-03-12 02:27:38', '2022-03-12 02:27:38');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(205, 24, 'EU NÃO ESPERAVA POR ISSO! THE BATMAN (2021) TRAILER ANÁLISE COMPLETA!', 'eu-nao-esperava-por-isso-the-batman-2021-trailer-analise-completa', 'eu-nao-esperava-por-isso-the-batman-2021-trailer-analise-completa-miguellokiayoutube', '/uploads/news/20220312022742_eu-nao-esperava-por-isso-the-batman-2021-trailer-analise-completa-miguellokiayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=PArNr5PCkVQ', NULL, NULL, 0, '2020-08-22', '2022-03-12 02:27:43', '2022-03-12 02:27:43');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(206, 24, 'THE BATMAN ESTÁ COM PROBLEMAS AGORA', 'the-batman-esta-com-problemas-agora', 'the-batman-esta-com-problemas-agora-miguellokiayoutube', '/uploads/news/20220312022745_the-batman-esta-com-problemas-agora-miguellokiayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=3iSV4GOh86g', NULL, NULL, 0, '2019-11-26', '2022-03-12 02:27:46', '2022-03-12 02:27:46');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(207, 24, 'PRECISÁVAMOS DESSA BOA NOTÍCIA SOBRE THE BATMAN', 'precisavamos-dessa-boa-noticia-sobre-the-batman', 'precisavamos-dessa-boa-noticia-sobre-the-batman-miguellokiayoutube', '/uploads/news/20220312022750_precisavamos-dessa-boa-noticia-sobre-the-batman-miguellokiayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=UGv8mF6P1kg', NULL, NULL, 0, '2020-09-18', '2022-03-12 02:27:51', '2022-03-12 02:27:51');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(208, 24, 'AH NÃO! THE BATMAN PAROU! ROBERT PATTINSON TESTA POSITIVO!', 'ah-nao-the-batman-parou-robert-pattinson-testa-positivo', 'ah-nao-the-batman-parou-robert-pattinson-testa-positivo-miguellokiayoutube', '/uploads/news/20220312022753_ah-nao-the-batman-parou-robert-pattinson-testa-positivo-miguellokiayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=oUs1S49cM3U', NULL, NULL, 0, '2020-09-03', '2022-03-12 02:27:53', '2022-03-12 02:27:53');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(209, 25, 'JÁ VIMOS THE BATMAN! - Análise SEM SPOILERS', 'ja-vimos-the-batman-analise-sem-spoilers', 'ja-vimos-the-batman-analise-sem-spoilers-entremigasyoutube', '/uploads/news/20220312022758_ja-vimos-the-batman-analise-sem-spoilers-entremigasyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=-8wHICUUoLE', NULL, NULL, 0, '2022-02-28', '2022-03-12 02:27:59', '2022-03-12 02:27:59');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(210, 25, 'COM SPOILERS: THE BATMAN | Análise Honesta', 'com-spoilers-the-batman-analise-honesta', 'com-spoilers-the-batman-analise-honesta-entremigasyoutube', '/uploads/news/20220312022803_com-spoilers-the-batman-analise-honesta-entremigasyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=pIg4imCuTSs', NULL, NULL, 0, '2022-03-01', '2022-03-12 02:28:04', '2022-03-12 02:28:04');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(211, 25, 'THE BATMAN: TRAILER COMPLETO + REACT E PRIMEIRAS IMPRESSÕES', 'the-batman-trailer-completo-react-e-primeiras-impressoes', 'the-batman-trailer-completo-react-e-primeiras-impressoes-entremigasyoutube', '/uploads/news/20220312022806_the-batman-trailer-completo-react-e-primeiras-impressoes-entremigasyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=GccJkJmxLXA', NULL, NULL, 0, '2021-10-16', '2022-03-12 02:28:07', '2022-03-12 02:28:07');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(212, 29, 'Ir para: The Batman: onde está Gotham na vida real? Conheça cenários do filme!', 'ir-para-the-batman-onde-esta-gotham-na-vida-real-conheca-cenarios-do-filme', 'ir-para-the-batman-onde-esta-gotham-na-vida-real-conheca-cenarios-do-filme-tecmundosite', '/uploads/news/20220313041758_ir-para-the-batman-onde-esta-gotham-na-vida-real-conheca-cenarios-do-filme-tecmundosite.jpg', NULL, 'show', 'https://www.tecmundo.com.br/minha-serie/235096-the-batman-gotham-vida-real-cenarios-filme.htm', NULL, NULL, 0, '2022-03-12', '2022-03-13 16:17:58', '2022-03-13 16:17:58');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(213, 12, 'PREÇO DE BALA! O ORÇAMENTO DE THE BATMAN É ESCANDALOSAMENTE BAIXO!', 'preco-de-bala-o-orcamento-de-the-batman-e-escandalosamente-baixo', 'preco-de-bala-o-orcamento-de-the-batman-e-escandalosamente-baixo-quatrocoisasyoutube', '/uploads/news/20220313041859_preco-de-bala-o-orcamento-de-the-batman-e-escandalosamente-baixo-quatrocoisasyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=L8JPhAOTs20', NULL, NULL, 0, '2021-11-16', '2022-03-13 16:18:59', '2022-03-13 16:18:59');
+	(195, 6, 'FINAL DE WANDAVISION! PORQUE A DARCY SUMIU', 'final-de-wandavision-porque-a-darcy-sumiu', 'final-de-wandavision-porque-a-darcy-sumiu-nerdlandyoutube', '/uploads/news/20220428112916_final-de-wandavision-porque-a-darcy-sumiu-nerdlandyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=0BLJ5e0qeKQ', NULL, NULL, 0, '2021-02-16', '2022-04-28 23:29:17', '2022-04-28 23:29:17');
 /*!40000 ALTER TABLE `news` ENABLE KEYS */;
 
 -- Copiando estrutura para tabela meuhype.news_tags
@@ -688,2384 +652,404 @@ CREATE TABLE IF NOT EXISTS `news_tags` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1188 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=198 DEFAULT CHARSET=utf8mb4;
 
--- Copiando dados para a tabela meuhype.news_tags: ~1.114 rows (aproximadamente)
+-- Copiando dados para a tabela meuhype.news_tags: ~195 rows (aproximadamente)
 /*!40000 ALTER TABLE `news_tags` DISABLE KEYS */;
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1, 1, 10, '2021-09-09 23:32:34', '2021-09-09 23:32:34');
+	(1, 1, 11, '2022-04-28 23:17:16', '2022-04-28 23:17:16');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(2, 2, 10, '2021-09-09 23:32:35', '2021-09-09 23:32:35');
+	(2, 2, 11, '2022-04-28 23:17:16', '2022-04-28 23:17:16');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(3, 3, 10, '2021-09-09 23:32:37', '2021-09-09 23:32:37');
+	(3, 3, 11, '2022-04-28 23:17:17', '2022-04-28 23:17:17');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(4, 4, 10, '2021-09-09 23:32:40', '2021-09-09 23:32:40');
+	(4, 4, 11, '2022-04-28 23:17:17', '2022-04-28 23:17:17');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(5, 5, 10, '2021-09-09 23:32:46', '2021-09-09 23:32:46');
+	(5, 5, 11, '2022-04-28 23:17:17', '2022-04-28 23:17:17');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(6, 6, 10, '2021-09-09 23:32:47', '2021-09-09 23:32:47');
+	(6, 6, 11, '2022-04-28 23:17:18', '2022-04-28 23:17:18');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(7, 7, 10, '2021-09-09 23:32:47', '2021-09-09 23:32:47');
+	(7, 7, 11, '2022-04-28 23:17:18', '2022-04-28 23:17:18');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(8, 8, 10, '2021-09-10 00:28:34', '2021-09-10 00:28:34');
+	(8, 8, 11, '2022-04-28 23:17:19', '2022-04-28 23:17:19');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(9, 9, 10, '2021-09-10 00:33:07', '2021-09-10 00:33:07');
+	(9, 9, 11, '2022-04-28 23:17:19', '2022-04-28 23:17:19');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(10, 10, 10, '2021-09-10 00:33:08', '2021-09-10 00:33:08');
+	(10, 10, 11, '2022-04-28 23:17:24', '2022-04-28 23:17:24');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(11, 11, 10, '2021-09-10 00:33:09', '2021-09-10 00:33:09');
+	(11, 11, 11, '2022-04-28 23:17:25', '2022-04-28 23:17:25');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(12, 12, 10, '2021-09-10 00:33:09', '2021-09-10 00:33:09');
+	(12, 12, 11, '2022-04-28 23:17:26', '2022-04-28 23:17:26');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(13, 13, 10, '2021-09-10 00:33:09', '2021-09-10 00:33:09');
+	(13, 13, 11, '2022-04-28 23:17:28', '2022-04-28 23:17:28');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(14, 14, 10, '2021-09-10 00:33:11', '2021-09-10 00:33:11');
+	(14, 14, 11, '2022-04-28 23:17:29', '2022-04-28 23:17:29');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(15, 15, 10, '2021-09-10 00:33:11', '2021-09-10 00:33:11');
+	(15, 15, 11, '2022-04-28 23:17:30', '2022-04-28 23:17:30');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(16, 16, 10, '2021-09-10 00:33:11', '2021-09-10 00:33:11');
+	(16, 16, 11, '2022-04-28 23:17:31', '2022-04-28 23:17:31');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(17, 17, 10, '2021-09-10 00:33:12', '2021-09-10 00:33:12');
+	(17, 17, 11, '2022-04-28 23:17:32', '2022-04-28 23:17:32');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(18, 18, 10, '2021-09-10 00:33:12', '2021-09-10 00:33:12');
+	(18, 18, 11, '2022-04-28 23:17:33', '2022-04-28 23:17:33');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(19, 19, 10, '2021-09-10 00:33:12', '2021-09-10 00:33:12');
+	(19, 19, 11, '2022-04-28 23:17:34', '2022-04-28 23:17:34');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(20, 20, 10, '2021-09-10 00:33:13', '2021-09-10 00:33:13');
+	(20, 20, 11, '2022-04-28 23:17:35', '2022-04-28 23:17:35');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(21, 21, 10, '2021-09-10 00:33:13', '2021-09-10 00:33:13');
+	(21, 21, 11, '2022-04-28 23:17:37', '2022-04-28 23:17:37');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(22, 22, 10, '2021-09-10 00:33:13', '2021-09-10 00:33:13');
+	(22, 22, 11, '2022-04-28 23:17:38', '2022-04-28 23:17:38');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(23, 23, 10, '2021-09-10 00:33:14', '2021-09-10 00:33:14');
+	(23, 23, 11, '2022-04-28 23:17:39', '2022-04-28 23:17:39');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(24, 24, 10, '2021-09-10 00:33:14', '2021-09-10 00:33:14');
+	(24, 24, 11, '2022-04-28 23:17:40', '2022-04-28 23:17:40');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(25, 25, 10, '2021-09-10 00:33:15', '2021-09-10 00:33:15');
+	(25, 25, 11, '2022-04-28 23:17:41', '2022-04-28 23:17:41');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(26, 26, 10, '2021-09-10 00:33:15', '2021-09-10 00:33:15');
+	(26, 26, 11, '2022-04-28 23:17:42', '2022-04-28 23:17:42');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(27, 27, 10, '2021-09-10 00:33:15', '2021-09-10 00:33:15');
+	(27, 27, 11, '2022-04-28 23:17:43', '2022-04-28 23:17:43');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(28, 28, 10, '2021-09-10 00:33:16', '2021-09-10 00:33:16');
+	(28, 28, 11, '2022-04-28 23:17:44', '2022-04-28 23:17:44');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(29, 29, 10, '2021-09-10 00:33:16', '2021-09-10 00:33:16');
+	(29, 29, 11, '2022-04-28 23:17:45', '2022-04-28 23:17:45');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(30, 30, 10, '2021-09-10 00:33:17', '2021-09-10 00:33:17');
+	(30, 30, 11, '2022-04-28 23:17:46', '2022-04-28 23:17:46');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(31, 31, 10, '2021-09-10 00:33:17', '2021-09-10 00:33:17');
+	(31, 31, 11, '2022-04-28 23:17:47', '2022-04-28 23:17:47');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(32, 32, 10, '2021-09-10 00:33:17', '2021-09-10 00:33:17');
+	(32, 32, 11, '2022-04-28 23:17:48', '2022-04-28 23:17:48');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(33, 33, 10, '2021-09-10 00:33:18', '2021-09-10 00:33:18');
+	(33, 33, 11, '2022-04-28 23:17:49', '2022-04-28 23:17:49');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(34, 34, 10, '2021-09-10 00:33:18', '2021-09-10 00:33:18');
+	(34, 34, 11, '2022-04-28 23:17:50', '2022-04-28 23:17:50');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(35, 35, 10, '2021-09-10 00:33:18', '2021-09-10 00:33:18');
+	(35, 35, 11, '2022-04-28 23:17:51', '2022-04-28 23:17:51');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(36, 36, 10, '2021-09-10 00:33:20', '2021-09-10 00:33:20');
+	(36, 36, 11, '2022-04-28 23:17:53', '2022-04-28 23:17:53');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(37, 37, 10, '2021-09-10 00:38:42', '2021-09-10 00:38:42');
+	(37, 37, 11, '2022-04-28 23:17:53', '2022-04-28 23:17:53');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(38, 38, 12, '2021-09-12 19:22:48', '2021-09-12 19:22:48');
+	(38, 38, 11, '2022-04-28 23:17:56', '2022-04-28 23:17:56');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(39, 39, 12, '2021-09-12 19:22:50', '2021-09-12 19:22:50');
+	(39, 39, 11, '2022-04-28 23:17:56', '2022-04-28 23:17:56');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(40, 40, 12, '2021-09-12 19:22:56', '2021-09-12 19:22:56');
+	(40, 40, 11, '2022-04-28 23:17:57', '2022-04-28 23:17:57');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(41, 41, 12, '2021-09-12 19:22:57', '2021-09-12 19:22:57');
+	(41, 41, 11, '2022-04-28 23:17:57', '2022-04-28 23:17:57');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(42, 42, 12, '2021-09-12 19:22:58', '2021-09-12 19:22:58');
+	(42, 42, 11, '2022-04-28 23:17:58', '2022-04-28 23:17:58');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(43, 43, 12, '2021-09-12 19:22:59', '2021-09-12 19:22:59');
+	(43, 43, 11, '2022-04-28 23:17:59', '2022-04-28 23:17:59');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(44, 44, 12, '2021-09-12 19:22:59', '2021-09-12 19:22:59');
+	(44, 44, 11, '2022-04-28 23:17:59', '2022-04-28 23:17:59');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(45, 45, 12, '2021-09-12 19:23:04', '2021-09-12 19:23:04');
+	(45, 45, 11, '2022-04-28 23:18:00', '2022-04-28 23:18:00');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(46, 46, 12, '2021-09-12 19:23:05', '2021-09-12 19:23:05');
+	(46, 46, 11, '2022-04-28 23:18:00', '2022-04-28 23:18:00');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(47, 47, 12, '2021-09-12 19:23:06', '2021-09-12 19:23:06');
+	(47, 47, 11, '2022-04-28 23:18:01', '2022-04-28 23:18:01');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(48, 48, 12, '2021-09-12 19:23:07', '2021-09-12 19:23:07');
+	(48, 48, 11, '2022-04-28 23:18:05', '2022-04-28 23:18:05');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(49, 49, 12, '2021-09-12 19:23:08', '2021-09-12 19:23:08');
+	(49, 49, 11, '2022-04-28 23:18:05', '2022-04-28 23:18:05');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(50, 50, 12, '2021-09-12 19:23:08', '2021-09-12 19:23:08');
+	(50, 50, 11, '2022-04-28 23:18:06', '2022-04-28 23:18:06');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(51, 51, 12, '2021-09-12 19:23:09', '2021-09-12 19:23:09');
+	(51, 51, 11, '2022-04-28 23:18:06', '2022-04-28 23:18:06');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(52, 52, 12, '2021-09-12 19:23:10', '2021-09-12 19:23:10');
+	(52, 52, 11, '2022-04-28 23:18:07', '2022-04-28 23:18:07');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(53, 53, 12, '2021-09-12 19:23:11', '2021-09-12 19:23:11');
+	(53, 53, 11, '2022-04-28 23:18:07', '2022-04-28 23:18:07');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(54, 54, 12, '2021-09-12 19:23:13', '2021-09-12 19:23:13');
+	(54, 54, 11, '2022-04-28 23:18:08', '2022-04-28 23:18:08');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(55, 55, 12, '2021-09-12 19:23:14', '2021-09-12 19:23:14');
+	(55, 55, 11, '2022-04-28 23:18:09', '2022-04-28 23:18:09');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(56, 56, 12, '2021-09-12 19:23:15', '2021-09-12 19:23:15');
+	(56, 56, 11, '2022-04-28 23:18:09', '2022-04-28 23:18:09');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(57, 57, 12, '2021-09-12 19:23:15', '2021-09-12 19:23:15');
+	(57, 57, 11, '2022-04-28 23:18:10', '2022-04-28 23:18:10');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(58, 58, 12, '2021-09-12 19:23:21', '2021-09-12 19:23:21');
+	(58, 58, 11, '2022-04-28 23:18:10', '2022-04-28 23:18:10');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(59, 59, 12, '2021-09-12 19:23:22', '2021-09-12 19:23:22');
+	(59, 59, 11, '2022-04-28 23:18:11', '2022-04-28 23:18:11');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(60, 60, 12, '2021-09-12 19:23:22', '2021-09-12 19:23:22');
+	(60, 60, 11, '2022-04-28 23:18:18', '2022-04-28 23:18:18');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(61, 61, 12, '2021-09-12 19:23:23', '2021-09-12 19:23:23');
+	(61, 61, 11, '2022-04-28 23:18:22', '2022-04-28 23:18:22');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(62, 62, 12, '2021-09-12 19:23:24', '2021-09-12 19:23:24');
+	(62, 62, 11, '2022-04-28 23:18:27', '2022-04-28 23:18:27');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(63, 63, 12, '2021-09-12 19:23:25', '2021-09-12 19:23:25');
+	(63, 63, 11, '2022-04-28 23:18:32', '2022-04-28 23:18:32');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(64, 64, 12, '2021-09-12 19:23:26', '2021-09-12 19:23:26');
+	(64, 64, 11, '2022-04-28 23:18:35', '2022-04-28 23:18:35');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(65, 65, 12, '2021-09-12 19:23:28', '2021-09-12 19:23:28');
+	(65, 65, 11, '2022-04-28 23:18:38', '2022-04-28 23:18:38');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(66, 66, 12, '2021-09-12 19:25:23', '2021-09-12 19:25:23');
+	(66, 66, 11, '2022-04-28 23:18:43', '2022-04-28 23:18:43');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(67, 67, 12, '2021-09-12 19:25:26', '2021-09-12 19:25:26');
+	(67, 67, 11, '2022-04-28 23:18:45', '2022-04-28 23:18:45');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(68, 68, 12, '2021-09-12 19:25:29', '2021-09-12 19:25:29');
+	(68, 68, 11, '2022-04-28 23:18:49', '2022-04-28 23:18:49');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(69, 69, 12, '2021-09-12 19:25:34', '2021-09-12 19:25:34');
+	(69, 69, 11, '2022-04-28 23:18:51', '2022-04-28 23:18:51');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(70, 70, 12, '2021-09-12 19:25:36', '2021-09-12 19:25:36');
+	(70, 70, 11, '2022-04-28 23:18:54', '2022-04-28 23:18:54');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(71, 71, 12, '2021-09-12 19:25:41', '2021-09-12 19:25:41');
+	(71, 71, 11, '2022-04-28 23:18:58', '2022-04-28 23:18:58');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(72, 72, 12, '2021-09-12 19:25:45', '2021-09-12 19:25:45');
+	(72, 72, 11, '2022-04-28 23:19:02', '2022-04-28 23:19:02');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(73, 73, 12, '2021-09-12 19:25:50', '2021-09-12 19:25:50');
+	(73, 73, 11, '2022-04-28 23:19:07', '2022-04-28 23:19:07');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(74, 74, 12, '2021-09-12 19:25:54', '2021-09-12 19:25:54');
+	(74, 74, 11, '2022-04-28 23:19:10', '2022-04-28 23:19:10');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(75, 75, 12, '2021-09-12 19:25:59', '2021-09-12 19:25:59');
+	(75, 75, 11, '2022-04-28 23:19:15', '2022-04-28 23:19:15');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(76, 76, 12, '2021-09-12 19:26:03', '2021-09-12 19:26:03');
+	(76, 76, 11, '2022-04-28 23:19:19', '2022-04-28 23:19:19');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(77, 77, 12, '2021-09-12 19:26:06', '2021-09-12 19:26:06');
+	(77, 77, 11, '2022-04-28 23:19:23', '2022-04-28 23:19:23');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(78, 78, 12, '2021-09-12 19:26:09', '2021-09-12 19:26:09');
+	(78, 78, 11, '2022-04-28 23:19:26', '2022-04-28 23:19:26');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(79, 79, 12, '2021-09-12 19:26:14', '2021-09-12 19:26:14');
+	(79, 79, 11, '2022-04-28 23:19:30', '2022-04-28 23:19:30');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(80, 80, 12, '2021-09-12 19:26:19', '2021-09-12 19:26:19');
+	(80, 80, 11, '2022-04-28 23:19:34', '2022-04-28 23:19:34');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(81, 81, 12, '2021-09-12 19:54:11', '2021-09-12 19:54:11');
+	(81, 81, 11, '2022-04-28 23:19:39', '2022-04-28 23:19:39');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(82, 82, 12, '2021-09-12 19:54:15', '2021-09-12 19:54:15');
+	(82, 82, 11, '2022-04-28 23:19:46', '2022-04-28 23:19:46');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(83, 83, 12, '2021-09-12 19:54:20', '2021-09-12 19:54:20');
+	(83, 83, 11, '2022-04-28 23:19:49', '2022-04-28 23:19:49');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(84, 84, 12, '2021-09-12 19:54:22', '2021-09-12 19:54:22');
+	(84, 84, 11, '2022-04-28 23:19:54', '2022-04-28 23:19:54');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(85, 85, 12, '2021-09-12 19:54:25', '2021-09-12 19:54:25');
+	(85, 85, 11, '2022-04-28 23:19:59', '2022-04-28 23:19:59');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(86, 86, 12, '2021-09-21 23:08:40', '2021-09-21 23:08:40');
+	(86, 86, 11, '2022-04-28 23:20:02', '2022-04-28 23:20:02');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(87, 87, 12, '2021-09-21 23:08:41', '2021-09-21 23:08:41');
+	(87, 87, 12, '2022-04-28 23:24:47', '2022-04-28 23:24:47');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(88, 88, 12, '2021-09-21 23:08:42', '2021-09-21 23:08:42');
+	(88, 88, 12, '2022-04-28 23:24:47', '2022-04-28 23:24:47');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(89, 89, 12, '2021-09-21 23:08:43', '2021-09-21 23:08:43');
+	(89, 89, 12, '2022-04-28 23:24:47', '2022-04-28 23:24:47');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(90, 90, 12, '2021-09-21 23:08:44', '2021-09-21 23:08:44');
+	(90, 90, 12, '2022-04-28 23:24:48', '2022-04-28 23:24:48');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(91, 91, 12, '2021-09-21 23:08:46', '2021-09-21 23:08:46');
+	(91, 26, 12, '2022-04-28 23:24:51', '2022-04-28 23:24:51');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(92, 92, 12, '2021-09-21 23:08:47', '2021-09-21 23:08:47');
+	(92, 91, 12, '2022-04-28 23:24:52', '2022-04-28 23:24:52');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(93, 93, 12, '2021-09-21 23:08:48', '2021-09-21 23:08:48');
+	(93, 92, 12, '2022-04-28 23:24:53', '2022-04-28 23:24:53');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(94, 94, 12, '2021-09-21 23:08:49', '2021-09-21 23:08:49');
+	(94, 93, 12, '2022-04-28 23:24:54', '2022-04-28 23:24:54');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(95, 95, 12, '2021-09-21 23:08:50', '2021-09-21 23:08:50');
+	(95, 94, 12, '2022-04-28 23:24:55', '2022-04-28 23:24:55');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(96, 96, 12, '2021-09-22 00:15:09', '2021-09-22 00:15:09');
+	(96, 95, 12, '2022-04-28 23:24:56', '2022-04-28 23:24:56');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(97, 97, 12, '2021-09-22 00:15:09', '2021-09-22 00:15:09');
+	(97, 96, 12, '2022-04-28 23:24:57', '2022-04-28 23:24:57');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(98, 98, 12, '2021-09-22 00:15:10', '2021-09-22 00:15:10');
+	(98, 97, 12, '2022-04-28 23:24:58', '2022-04-28 23:24:58');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(99, 99, 12, '2021-09-22 00:15:10', '2021-09-22 00:15:10');
+	(99, 98, 12, '2022-04-28 23:24:59', '2022-04-28 23:24:59');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(100, 100, 12, '2021-09-22 00:15:10', '2021-09-22 00:15:10');
+	(100, 99, 12, '2022-04-28 23:25:01', '2022-04-28 23:25:01');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(101, 101, 12, '2021-09-22 00:15:11', '2021-09-22 00:15:11');
+	(101, 100, 12, '2022-04-28 23:25:01', '2022-04-28 23:25:01');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(102, 102, 12, '2021-09-22 00:15:11', '2021-09-22 00:15:11');
+	(102, 101, 12, '2022-04-28 23:25:02', '2022-04-28 23:25:02');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(103, 103, 12, '2021-09-22 00:15:11', '2021-09-22 00:15:11');
+	(103, 102, 12, '2022-04-28 23:25:03', '2022-04-28 23:25:03');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(104, 104, 12, '2021-09-22 00:15:11', '2021-09-22 00:15:11');
+	(104, 103, 12, '2022-04-28 23:25:04', '2022-04-28 23:25:04');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(105, 105, 12, '2021-09-22 00:15:12', '2021-09-22 00:15:12');
+	(105, 104, 12, '2022-04-28 23:25:05', '2022-04-28 23:25:05');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(106, 106, 12, '2021-09-22 00:15:12', '2021-09-22 00:15:12');
+	(106, 105, 12, '2022-04-28 23:25:07', '2022-04-28 23:25:07');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(107, 107, 12, '2021-09-22 00:15:13', '2021-09-22 00:15:13');
+	(107, 106, 12, '2022-04-28 23:25:07', '2022-04-28 23:25:07');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(108, 108, 12, '2021-09-22 00:15:13', '2021-09-22 00:15:13');
+	(108, 107, 12, '2022-04-28 23:25:08', '2022-04-28 23:25:08');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(109, 109, 12, '2021-09-22 00:15:13', '2021-09-22 00:15:13');
+	(109, 108, 12, '2022-04-28 23:25:09', '2022-04-28 23:25:09');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(110, 110, 12, '2021-09-22 00:25:53', '2021-09-22 00:25:53');
+	(110, 109, 12, '2022-04-28 23:25:10', '2022-04-28 23:25:10');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(111, 111, 12, '2021-09-22 00:25:53', '2021-09-22 00:25:53');
+	(111, 110, 12, '2022-04-28 23:25:11', '2022-04-28 23:25:11');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(112, 112, 12, '2021-09-22 00:25:53', '2021-09-22 00:25:53');
+	(112, 111, 12, '2022-04-28 23:25:12', '2022-04-28 23:25:12');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(113, 113, 12, '2021-09-22 00:25:53', '2021-09-22 00:25:53');
+	(113, 112, 12, '2022-04-28 23:25:14', '2022-04-28 23:25:14');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(114, 114, 12, '2021-09-22 00:25:53', '2021-09-22 00:25:53');
+	(114, 113, 12, '2022-04-28 23:25:15', '2022-04-28 23:25:15');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(115, 115, 12, '2021-09-22 00:25:53', '2021-09-22 00:25:53');
+	(115, 114, 12, '2022-04-28 23:25:15', '2022-04-28 23:25:15');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(116, 116, 12, '2021-09-22 00:25:54', '2021-09-22 00:25:54');
+	(116, 115, 12, '2022-04-28 23:25:17', '2022-04-28 23:25:17');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(117, 117, 12, '2021-09-22 00:25:54', '2021-09-22 00:25:54');
+	(117, 116, 12, '2022-04-28 23:25:18', '2022-04-28 23:25:18');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(118, 118, 12, '2021-09-22 00:25:54', '2021-09-22 00:25:54');
+	(118, 117, 12, '2022-04-28 23:25:19', '2022-04-28 23:25:19');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(119, 119, 12, '2021-09-22 00:25:54', '2021-09-22 00:25:54');
+	(119, 118, 12, '2022-04-28 23:25:22', '2022-04-28 23:25:22');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(120, 120, 12, '2021-09-22 00:25:54', '2021-09-22 00:25:54');
+	(120, 119, 12, '2022-04-28 23:25:23', '2022-04-28 23:25:23');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(121, 121, 12, '2021-09-22 00:25:54', '2021-09-22 00:25:54');
+	(121, 120, 12, '2022-04-28 23:25:23', '2022-04-28 23:25:23');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(122, 122, 12, '2021-09-22 00:25:55', '2021-09-22 00:25:55');
+	(122, 121, 12, '2022-04-28 23:25:24', '2022-04-28 23:25:24');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(123, 123, 12, '2021-09-22 00:25:55', '2021-09-22 00:25:55');
+	(123, 122, 12, '2022-04-28 23:25:24', '2022-04-28 23:25:24');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(124, 124, 14, '2021-09-22 21:01:49', '2021-09-22 21:01:49');
+	(124, 123, 12, '2022-04-28 23:25:25', '2022-04-28 23:25:25');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(125, 125, 14, '2021-09-22 21:01:51', '2021-09-22 21:01:51');
+	(125, 124, 12, '2022-04-28 23:25:26', '2022-04-28 23:25:26');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(126, 126, 14, '2021-09-22 21:01:51', '2021-09-22 21:01:51');
+	(126, 125, 12, '2022-04-28 23:25:26', '2022-04-28 23:25:26');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(127, 127, 14, '2021-09-22 21:01:52', '2021-09-22 21:01:52');
+	(127, 126, 12, '2022-04-28 23:25:27', '2022-04-28 23:25:27');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(128, 128, 14, '2021-09-22 21:01:54', '2021-09-22 21:01:54');
+	(128, 127, 12, '2022-04-28 23:25:28', '2022-04-28 23:25:28');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(129, 129, 14, '2021-09-22 21:01:59', '2021-09-22 21:01:59');
+	(129, 128, 12, '2022-04-28 23:25:30', '2022-04-28 23:25:30');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(130, 130, 14, '2021-09-22 21:01:59', '2021-09-22 21:01:59');
+	(130, 129, 12, '2022-04-28 23:25:31', '2022-04-28 23:25:31');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(131, 131, 14, '2021-09-22 21:02:02', '2021-09-22 21:02:02');
+	(131, 130, 12, '2022-04-28 23:25:31', '2022-04-28 23:25:31');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(132, 132, 14, '2021-09-22 21:02:03', '2021-09-22 21:02:03');
+	(132, 131, 12, '2022-04-28 23:25:32', '2022-04-28 23:25:32');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(133, 133, 14, '2021-09-22 21:02:08', '2021-09-22 21:02:08');
+	(133, 132, 12, '2022-04-28 23:25:32', '2022-04-28 23:25:32');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(134, 134, 14, '2021-09-22 21:02:12', '2021-09-22 21:02:12');
+	(134, 133, 12, '2022-04-28 23:25:33', '2022-04-28 23:25:33');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(135, 135, 14, '2021-09-22 21:02:15', '2021-09-22 21:02:15');
+	(135, 134, 12, '2022-04-28 23:25:34', '2022-04-28 23:25:34');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(136, 136, 14, '2021-09-22 21:02:16', '2021-09-22 21:02:16');
+	(136, 135, 12, '2022-04-28 23:25:34', '2022-04-28 23:25:34');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(137, 137, 14, '2021-09-22 21:02:17', '2021-09-22 21:02:17');
+	(137, 136, 12, '2022-04-28 23:25:35', '2022-04-28 23:25:35');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(138, 138, 14, '2021-09-22 21:02:19', '2021-09-22 21:02:19');
+	(138, 137, 12, '2022-04-28 23:25:35', '2022-04-28 23:25:35');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(139, 139, 14, '2021-09-22 21:02:22', '2021-09-22 21:02:22');
+	(139, 138, 12, '2022-04-28 23:25:36', '2022-04-28 23:25:36');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(140, 140, 14, '2021-09-22 21:02:24', '2021-09-22 21:02:24');
+	(140, 139, 12, '2022-04-28 23:25:36', '2022-04-28 23:25:36');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(141, 141, 14, '2021-09-22 21:02:26', '2021-09-22 21:02:26');
+	(141, 140, 12, '2022-04-28 23:25:37', '2022-04-28 23:25:37');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(142, 142, 14, '2021-09-22 21:02:27', '2021-09-22 21:02:27');
+	(142, 141, 12, '2022-04-28 23:25:37', '2022-04-28 23:25:37');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(143, 143, 14, '2021-09-22 21:02:29', '2021-09-22 21:02:29');
+	(143, 142, 12, '2022-04-28 23:25:43', '2022-04-28 23:25:43');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(144, 144, 14, '2021-09-22 21:02:31', '2021-09-22 21:02:31');
+	(144, 143, 12, '2022-04-28 23:25:49', '2022-04-28 23:25:49');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(145, 145, 14, '2021-09-22 21:02:33', '2021-09-22 21:02:33');
+	(145, 144, 12, '2022-04-28 23:25:54', '2022-04-28 23:25:54');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(146, 146, 14, '2021-09-22 21:02:35', '2021-09-22 21:02:35');
+	(146, 145, 12, '2022-04-28 23:25:57', '2022-04-28 23:25:57');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(147, 147, 14, '2021-09-22 21:02:38', '2021-09-22 21:02:38');
+	(147, 146, 12, '2022-04-28 23:26:00', '2022-04-28 23:26:00');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(148, 148, 14, '2021-09-22 21:02:39', '2021-09-22 21:02:39');
+	(148, 147, 12, '2022-04-28 23:26:04', '2022-04-28 23:26:04');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(149, 149, 14, '2021-09-22 21:02:39', '2021-09-22 21:02:39');
+	(149, 148, 12, '2022-04-28 23:26:07', '2022-04-28 23:26:07');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(150, 150, 14, '2021-09-22 21:02:42', '2021-09-22 21:02:42');
+	(150, 149, 12, '2022-04-28 23:26:09', '2022-04-28 23:26:09');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(151, 151, 14, '2021-09-22 21:02:42', '2021-09-22 21:02:42');
+	(151, 150, 12, '2022-04-28 23:26:13', '2022-04-28 23:26:13');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(152, 152, 14, '2021-09-22 21:08:17', '2021-09-22 21:08:17');
+	(152, 151, 12, '2022-04-28 23:26:16', '2022-04-28 23:26:16');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(153, 153, 14, '2021-09-22 21:08:26', '2021-09-22 21:08:26');
+	(153, 152, 12, '2022-04-28 23:26:21', '2022-04-28 23:26:21');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(154, 154, 14, '2021-09-22 21:08:29', '2021-09-22 21:08:29');
+	(154, 153, 12, '2022-04-28 23:26:24', '2022-04-28 23:26:24');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(155, 155, 14, '2021-09-22 21:08:33', '2021-09-22 21:08:33');
+	(155, 154, 12, '2022-04-28 23:26:28', '2022-04-28 23:26:28');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(156, 156, 14, '2021-09-22 21:08:34', '2021-09-22 21:08:34');
+	(156, 79, 12, '2022-04-28 23:26:28', '2022-04-28 23:26:28');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(157, 157, 14, '2021-09-22 21:08:36', '2021-09-22 21:08:36');
+	(157, 155, 12, '2022-04-28 23:26:34', '2022-04-28 23:26:34');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(158, 158, 14, '2021-09-22 21:08:41', '2021-09-22 21:08:41');
+	(158, 156, 12, '2022-04-28 23:26:38', '2022-04-28 23:26:38');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(159, 159, 14, '2021-09-22 21:08:44', '2021-09-22 21:08:44');
+	(159, 157, 12, '2022-04-28 23:26:43', '2022-04-28 23:26:43');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(160, 160, 14, '2021-09-22 21:08:47', '2021-09-22 21:08:47');
+	(160, 158, 12, '2022-04-28 23:26:47', '2022-04-28 23:26:47');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(161, 161, 14, '2021-09-22 21:08:52', '2021-09-22 21:08:52');
+	(161, 159, 12, '2022-04-28 23:26:49', '2022-04-28 23:26:49');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(162, 162, 14, '2021-09-22 21:11:59', '2021-09-22 21:11:59');
+	(162, 160, 12, '2022-04-28 23:26:53', '2022-04-28 23:26:53');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(163, 163, 14, '2021-09-22 21:12:04', '2021-09-22 21:12:04');
+	(163, 161, 12, '2022-04-28 23:26:56', '2022-04-28 23:26:56');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(164, 164, 14, '2021-09-22 21:12:07', '2021-09-22 21:12:07');
+	(164, 162, 12, '2022-04-28 23:27:02', '2022-04-28 23:27:02');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(165, 165, 14, '2021-09-22 21:12:11', '2021-09-22 21:12:11');
+	(165, 163, 12, '2022-04-28 23:27:05', '2022-04-28 23:27:05');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(166, 166, 14, '2021-09-22 21:12:16', '2021-09-22 21:12:16');
+	(166, 164, 12, '2022-04-28 23:27:10', '2022-04-28 23:27:10');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(167, 167, 14, '2021-09-22 21:12:22', '2021-09-22 21:12:22');
+	(167, 165, 12, '2022-04-28 23:27:13', '2022-04-28 23:27:13');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(168, 168, 14, '2021-09-22 21:12:26', '2021-09-22 21:12:26');
+	(168, 166, 12, '2022-04-28 23:27:17', '2022-04-28 23:27:17');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(169, 169, 14, '2021-09-22 21:12:29', '2021-09-22 21:12:29');
+	(169, 167, 12, '2022-04-28 23:27:22', '2022-04-28 23:27:22');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(170, 170, 14, '2021-09-22 21:12:32', '2021-09-22 21:12:32');
+	(170, 168, 12, '2022-04-28 23:27:26', '2022-04-28 23:27:26');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(171, 171, 14, '2021-09-22 21:12:42', '2021-09-22 21:12:42');
+	(171, 169, 12, '2022-04-28 23:27:30', '2022-04-28 23:27:30');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(172, 172, 14, '2021-09-22 21:12:46', '2021-09-22 21:12:46');
+	(172, 170, 12, '2022-04-28 23:27:35', '2022-04-28 23:27:35');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(173, 173, 14, '2021-09-22 21:12:49', '2021-09-22 21:12:49');
+	(173, 171, 12, '2022-04-28 23:27:38', '2022-04-28 23:27:38');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(174, 174, 14, '2021-09-22 21:12:51', '2021-09-22 21:12:51');
+	(174, 172, 12, '2022-04-28 23:27:43', '2022-04-28 23:27:43');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(175, 175, 14, '2021-09-22 21:12:55', '2021-09-22 21:12:55');
+	(175, 173, 12, '2022-04-28 23:27:48', '2022-04-28 23:27:48');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(176, 176, 14, '2021-09-22 21:12:59', '2021-09-22 21:12:59');
+	(176, 174, 12, '2022-04-28 23:27:53', '2022-04-28 23:27:53');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(177, 177, 14, '2021-09-22 21:13:01', '2021-09-22 21:13:01');
+	(177, 175, 12, '2022-04-28 23:27:56', '2022-04-28 23:27:56');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(178, 178, 14, '2021-09-22 21:13:07', '2021-09-22 21:13:07');
+	(178, 176, 12, '2022-04-28 23:28:00', '2022-04-28 23:28:00');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(179, 179, 14, '2021-09-22 21:13:14', '2021-09-22 21:13:14');
+	(179, 177, 12, '2022-04-28 23:28:07', '2022-04-28 23:28:07');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(180, 180, 14, '2021-09-22 21:13:19', '2021-09-22 21:13:19');
+	(180, 178, 12, '2022-04-28 23:28:12', '2022-04-28 23:28:12');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(181, 181, 14, '2021-09-22 21:13:26', '2021-09-22 21:13:26');
+	(181, 179, 12, '2022-04-28 23:28:15', '2022-04-28 23:28:15');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(182, 182, 14, '2021-09-22 21:13:30', '2021-09-22 21:13:30');
+	(182, 180, 12, '2022-04-28 23:28:17', '2022-04-28 23:28:17');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(183, 183, 14, '2021-09-22 21:13:34', '2021-09-22 21:13:34');
+	(183, 181, 12, '2022-04-28 23:28:22', '2022-04-28 23:28:22');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(184, 184, 14, '2021-09-22 21:13:39', '2021-09-22 21:13:39');
+	(184, 182, 12, '2022-04-28 23:28:26', '2022-04-28 23:28:26');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(185, 185, 14, '2021-09-22 21:13:42', '2021-09-22 21:13:42');
+	(185, 183, 12, '2022-04-28 23:28:31', '2022-04-28 23:28:31');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(186, 186, 14, '2021-09-22 21:13:47', '2021-09-22 21:13:47');
+	(186, 184, 12, '2022-04-28 23:28:34', '2022-04-28 23:28:34');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(187, 187, 14, '2021-09-22 21:13:52', '2021-09-22 21:13:52');
+	(187, 185, 12, '2022-04-28 23:28:38', '2022-04-28 23:28:38');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(188, 188, 14, '2021-09-22 21:13:55', '2021-09-22 21:13:55');
+	(188, 186, 12, '2022-04-28 23:28:42', '2022-04-28 23:28:42');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(189, 189, 14, '2021-09-22 21:13:58', '2021-09-22 21:13:58');
+	(189, 187, 12, '2022-04-28 23:28:47', '2022-04-28 23:28:47');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(190, 190, 14, '2021-09-22 21:14:03', '2021-09-22 21:14:03');
+	(190, 188, 12, '2022-04-28 23:28:51', '2022-04-28 23:28:51');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(191, 191, 14, '2021-09-22 21:14:09', '2021-09-22 21:14:09');
+	(191, 189, 12, '2022-04-28 23:28:56', '2022-04-28 23:28:56');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(192, 192, 14, '2021-09-22 21:14:11', '2021-09-22 21:14:11');
+	(192, 190, 12, '2022-04-28 23:28:59', '2022-04-28 23:28:59');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(193, 193, 14, '2021-09-22 21:14:14', '2021-09-22 21:14:14');
+	(193, 191, 12, '2022-04-28 23:29:02', '2022-04-28 23:29:02');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(194, 194, 14, '2021-09-22 21:14:17', '2021-09-22 21:14:17');
+	(194, 192, 12, '2022-04-28 23:29:06', '2022-04-28 23:29:06');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(195, 195, 14, '2021-09-22 21:14:22', '2021-09-22 21:14:22');
+	(195, 193, 12, '2022-04-28 23:29:09', '2022-04-28 23:29:09');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(196, 196, 14, '2021-09-22 21:14:24', '2021-09-22 21:14:24');
+	(196, 194, 12, '2022-04-28 23:29:12', '2022-04-28 23:29:12');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(197, 197, 14, '2021-09-22 21:14:28', '2021-09-22 21:14:28');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(198, 198, 14, '2021-09-22 21:14:31', '2021-09-22 21:14:31');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(199, 199, 14, '2021-09-22 21:14:35', '2021-09-22 21:14:35');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(200, 200, 14, '2021-09-22 21:14:39', '2021-09-22 21:14:39');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(201, 201, 14, '2021-09-22 21:14:41', '2021-09-22 21:14:41');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(202, 202, 14, '2021-09-22 21:14:43', '2021-09-22 21:14:43');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(203, 203, 14, '2021-10-25 21:03:31', '2021-10-25 21:03:31');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(204, 204, 14, '2021-10-25 21:03:34', '2021-10-25 21:03:34');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(205, 205, 14, '2021-10-25 21:03:35', '2021-10-25 21:03:35');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(206, 206, 14, '2021-10-25 21:03:41', '2021-10-25 21:03:41');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(207, 207, 14, '2021-10-25 21:03:42', '2021-10-25 21:03:42');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(208, 208, 14, '2021-10-25 21:03:44', '2021-10-25 21:03:44');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(209, 209, 14, '2021-10-25 21:03:45', '2021-10-25 21:03:45');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(210, 210, 14, '2021-10-25 21:03:47', '2021-10-25 21:03:47');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(211, 211, 14, '2021-10-25 21:03:48', '2021-10-25 21:03:48');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(212, 212, 14, '2021-10-25 21:03:50', '2021-10-25 21:03:50');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(213, 213, 14, '2021-10-25 21:03:50', '2021-10-25 21:03:50');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(214, 214, 14, '2021-10-25 21:04:02', '2021-10-25 21:04:02');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(215, 215, 14, '2021-10-25 21:04:05', '2021-10-25 21:04:05');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(216, 216, 14, '2021-10-25 21:04:08', '2021-10-25 21:04:08');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(217, 217, 14, '2021-10-25 21:04:11', '2021-10-25 21:04:11');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(218, 218, 14, '2021-10-25 21:04:14', '2021-10-25 21:04:14');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(219, 219, 14, '2021-10-25 21:04:17', '2021-10-25 21:04:17');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(220, 220, 14, '2021-10-25 21:04:20', '2021-10-25 21:04:20');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(221, 221, 14, '2021-10-25 21:04:26', '2021-10-25 21:04:26');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(222, 222, 14, '2021-10-25 21:04:30', '2021-10-25 21:04:30');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(223, 223, 14, '2021-10-25 21:04:35', '2021-10-25 21:04:35');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(224, 224, 14, '2021-10-25 21:04:38', '2021-10-25 21:04:38');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(225, 225, 9, '2021-10-25 21:36:28', '2021-10-25 21:36:28');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(226, 226, 9, '2021-10-25 21:36:29', '2021-10-25 21:36:29');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(227, 227, 9, '2021-10-25 21:36:30', '2021-10-25 21:36:30');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(228, 228, 9, '2021-10-25 21:36:31', '2021-10-25 21:36:31');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(229, 229, 9, '2021-10-25 21:36:31', '2021-10-25 21:36:31');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(230, 230, 9, '2021-10-25 21:36:33', '2021-10-25 21:36:33');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(231, 231, 9, '2021-10-25 21:36:33', '2021-10-25 21:36:33');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(232, 232, 9, '2021-10-25 21:36:34', '2021-10-25 21:36:34');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(233, 233, 9, '2021-10-25 21:36:39', '2021-10-25 21:36:39');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(234, 234, 9, '2021-10-25 21:36:40', '2021-10-25 21:36:40');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(235, 235, 9, '2021-10-25 21:36:41', '2021-10-25 21:36:41');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(236, 236, 9, '2021-10-25 21:36:43', '2021-10-25 21:36:43');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(237, 237, 9, '2021-10-25 21:36:45', '2021-10-25 21:36:45');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(238, 238, 9, '2021-10-25 21:36:47', '2021-10-25 21:36:47');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(239, 239, 9, '2021-10-25 21:36:58', '2021-10-25 21:36:58');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(240, 240, 9, '2021-10-25 21:37:01', '2021-10-25 21:37:01');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(241, 241, 9, '2021-10-25 21:37:03', '2021-10-25 21:37:03');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(242, 242, 9, '2021-10-25 21:37:04', '2021-10-25 21:37:04');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(243, 243, 9, '2021-10-25 21:37:05', '2021-10-25 21:37:05');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(244, 244, 9, '2021-10-25 21:37:12', '2021-10-25 21:37:12');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(245, 245, 9, '2021-10-25 21:37:13', '2021-10-25 21:37:13');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(246, 246, 9, '2021-10-25 21:37:16', '2021-10-25 21:37:16');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(247, 247, 9, '2021-10-25 21:37:22', '2021-10-25 21:37:22');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(248, 248, 9, '2021-10-25 21:37:25', '2021-10-25 21:37:25');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(249, 249, 9, '2021-10-25 21:37:27', '2021-10-25 21:37:27');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(250, 250, 9, '2021-10-25 21:37:29', '2021-10-25 21:37:29');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(251, 251, 9, '2021-10-25 21:37:30', '2021-10-25 21:37:30');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(252, 252, 9, '2021-10-25 21:37:33', '2021-10-25 21:37:33');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(253, 253, 9, '2021-10-25 21:37:34', '2021-10-25 21:37:34');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(254, 254, 9, '2021-10-25 21:37:35', '2021-10-25 21:37:35');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(255, 255, 9, '2021-10-25 21:37:37', '2021-10-25 21:37:37');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(256, 256, 9, '2021-10-25 21:37:39', '2021-10-25 21:37:39');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(257, 257, 9, '2021-10-25 21:37:40', '2021-10-25 21:37:40');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(258, 258, 9, '2021-10-25 21:37:42', '2021-10-25 21:37:42');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(259, 259, 9, '2021-10-25 21:37:43', '2021-10-25 21:37:43');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(260, 260, 9, '2021-10-25 21:37:45', '2021-10-25 21:37:45');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(261, 261, 9, '2021-10-25 21:37:46', '2021-10-25 21:37:46');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(262, 262, 9, '2021-10-25 21:37:47', '2021-10-25 21:37:47');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(263, 263, 9, '2021-10-25 21:37:48', '2021-10-25 21:37:48');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(264, 264, 9, '2021-10-25 21:37:48', '2021-10-25 21:37:48');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(265, 265, 9, '2021-10-25 21:37:49', '2021-10-25 21:37:49');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(266, 266, 9, '2021-10-25 21:37:49', '2021-10-25 21:37:49');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(267, 267, 9, '2021-10-25 21:37:50', '2021-10-25 21:37:50');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(268, 268, 9, '2021-10-25 21:37:51', '2021-10-25 21:37:51');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(269, 269, 9, '2021-10-25 21:37:51', '2021-10-25 21:37:51');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(270, 270, 9, '2021-10-25 21:37:52', '2021-10-25 21:37:52');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(271, 271, 9, '2021-10-25 21:37:58', '2021-10-25 21:37:58');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(272, 272, 9, '2021-10-25 21:38:01', '2021-10-25 21:38:01');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(273, 273, 9, '2021-10-25 21:38:03', '2021-10-25 21:38:03');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(274, 274, 9, '2021-10-25 21:38:08', '2021-10-25 21:38:08');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(275, 275, 9, '2021-10-25 21:38:09', '2021-10-25 21:38:09');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(276, 276, 9, '2021-10-25 21:38:10', '2021-10-25 21:38:10');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(277, 277, 9, '2021-10-25 21:38:17', '2021-10-25 21:38:17');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(278, 278, 9, '2021-10-25 21:38:19', '2021-10-25 21:38:19');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(279, 279, 9, '2021-10-25 21:38:20', '2021-10-25 21:38:20');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(280, 280, 9, '2021-10-25 21:38:22', '2021-10-25 21:38:22');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(281, 281, 9, '2021-10-25 21:38:36', '2021-10-25 21:38:36');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(282, 282, 9, '2021-10-25 21:38:41', '2021-10-25 21:38:41');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(283, 283, 9, '2021-10-25 21:38:45', '2021-10-25 21:38:45');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(284, 284, 9, '2021-10-25 21:38:49', '2021-10-25 21:38:49');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(285, 285, 9, '2021-10-25 21:38:52', '2021-10-25 21:38:52');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(286, 286, 9, '2021-10-25 21:38:55', '2021-10-25 21:38:55');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(287, 287, 9, '2021-10-25 21:39:00', '2021-10-25 21:39:00');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(288, 288, 9, '2021-10-25 21:39:03', '2021-10-25 21:39:03');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(289, 289, 9, '2021-10-25 21:39:06', '2021-10-25 21:39:06');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(290, 290, 9, '2021-10-25 21:39:13', '2021-10-25 21:39:13');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(291, 291, 9, '2021-10-25 21:39:18', '2021-10-25 21:39:18');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(292, 292, 9, '2021-10-25 21:39:22', '2021-10-25 21:39:22');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(293, 293, 9, '2021-10-25 21:39:33', '2021-10-25 21:39:33');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(294, 294, 9, '2021-10-25 21:39:38', '2021-10-25 21:39:38');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(295, 295, 9, '2021-10-25 21:39:40', '2021-10-25 21:39:40');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(296, 296, 9, '2021-10-25 21:39:44', '2021-10-25 21:39:44');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(297, 297, 9, '2021-10-25 21:39:49', '2021-10-25 21:39:49');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(298, 298, 9, '2021-10-25 21:39:52', '2021-10-25 21:39:52');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(299, 299, 9, '2021-10-25 21:39:57', '2021-10-25 21:39:57');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(300, 300, 9, '2021-10-25 21:40:03', '2021-10-25 21:40:03');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(301, 301, 9, '2021-10-25 21:40:08', '2021-10-25 21:40:08');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(302, 302, 9, '2021-10-25 21:40:14', '2021-10-25 21:40:14');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(303, 303, 9, '2021-10-25 21:40:17', '2021-10-25 21:40:17');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(304, 304, 9, '2021-10-25 21:40:21', '2021-10-25 21:40:21');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(305, 305, 9, '2021-10-25 21:40:24', '2021-10-25 21:40:24');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(306, 306, 9, '2021-10-25 21:40:28', '2021-10-25 21:40:28');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(307, 307, 9, '2021-10-25 21:40:31', '2021-10-25 21:40:31');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(308, 308, 9, '2021-10-25 21:40:34', '2021-10-25 21:40:34');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(309, 309, 9, '2021-10-25 21:40:39', '2021-10-25 21:40:39');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(310, 310, 9, '2021-10-25 21:40:43', '2021-10-25 21:40:43');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(311, 311, 9, '2021-10-25 21:40:51', '2021-10-25 21:40:51');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(312, 312, 9, '2021-10-25 21:40:56', '2021-10-25 21:40:56');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(313, 313, 9, '2021-10-25 21:41:01', '2021-10-25 21:41:01');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(314, 314, 9, '2021-10-25 21:41:05', '2021-10-25 21:41:05');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(315, 315, 9, '2021-10-25 21:41:07', '2021-10-25 21:41:07');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(316, 316, 9, '2021-10-25 21:41:10', '2021-10-25 21:41:10');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(317, 317, 9, '2021-10-25 21:49:33', '2021-10-25 21:49:33');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(318, 318, 9, '2021-10-25 21:49:37', '2021-10-25 21:49:37');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(319, 319, 9, '2021-10-25 21:49:41', '2021-10-25 21:49:41');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(320, 320, 9, '2021-10-25 21:49:44', '2021-10-25 21:49:44');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(321, 321, 9, '2021-10-25 21:49:48', '2021-10-25 21:49:48');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(322, 322, 9, '2021-10-25 21:49:53', '2021-10-25 21:49:53');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(323, 323, 9, '2021-10-25 21:49:58', '2021-10-25 21:49:58');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(324, 324, 9, '2021-10-25 21:50:01', '2021-10-25 21:50:01');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(325, 325, 9, '2021-10-25 21:50:06', '2021-10-25 21:50:06');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(326, 326, 9, '2021-10-25 21:50:10', '2021-10-25 21:50:10');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(327, 327, 9, '2021-10-25 21:50:13', '2021-10-25 21:50:13');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(328, 328, 9, '2021-10-25 21:50:16', '2021-10-25 21:50:16');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(329, 329, 9, '2021-10-25 21:50:20', '2021-10-25 21:50:20');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(330, 330, 9, '2021-10-25 21:50:25', '2021-10-25 21:50:25');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(331, 331, 9, '2021-10-25 21:50:30', '2021-10-25 21:50:30');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(332, 332, 9, '2021-10-25 21:50:39', '2021-10-25 21:50:39');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(333, 333, 9, '2022-03-03 21:43:40', '2022-03-03 21:43:40');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(334, 334, 9, '2022-03-03 21:43:41', '2022-03-03 21:43:41');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(335, 335, 9, '2022-03-03 21:43:43', '2022-03-03 21:43:43');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(336, 336, 9, '2022-03-03 21:43:43', '2022-03-03 21:43:43');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(337, 337, 9, '2022-03-03 21:43:46', '2022-03-03 21:43:46');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(338, 338, 9, '2022-03-03 21:43:47', '2022-03-03 21:43:47');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(339, 339, 9, '2022-03-03 21:43:47', '2022-03-03 21:43:47');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(340, 340, 9, '2022-03-03 21:43:47', '2022-03-03 21:43:47');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(341, 341, 9, '2022-03-03 21:43:48', '2022-03-03 21:43:48');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(342, 342, 9, '2022-03-03 21:43:53', '2022-03-03 21:43:53');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(343, 343, 9, '2022-03-03 21:43:55', '2022-03-03 21:43:55');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(344, 344, 9, '2022-03-03 21:43:56', '2022-03-03 21:43:56');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(345, 345, 9, '2022-03-03 21:43:58', '2022-03-03 21:43:58');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(346, 346, 9, '2022-03-03 21:43:59', '2022-03-03 21:43:59');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(347, 347, 9, '2022-03-03 21:44:00', '2022-03-03 21:44:00');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(348, 348, 9, '2022-03-03 21:44:02', '2022-03-03 21:44:02');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(349, 349, 9, '2022-03-03 21:44:02', '2022-03-03 21:44:02');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(350, 350, 9, '2022-03-03 21:44:03', '2022-03-03 21:44:03');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(351, 351, 9, '2022-03-03 21:44:04', '2022-03-03 21:44:04');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(352, 352, 9, '2022-03-03 21:44:05', '2022-03-03 21:44:05');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(353, 353, 9, '2022-03-03 21:44:20', '2022-03-03 21:44:20');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(354, 354, 9, '2022-03-03 21:44:20', '2022-03-03 21:44:20');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(355, 356, 9, '2022-03-03 21:44:21', '2022-03-03 21:44:21');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(356, 355, 9, '2022-03-03 21:44:21', '2022-03-03 21:44:21');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(357, 357, 9, '2022-03-03 21:44:22', '2022-03-03 21:44:22');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(358, 358, 9, '2022-03-03 21:44:22', '2022-03-03 21:44:22');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(359, 359, 9, '2022-03-03 21:44:24', '2022-03-03 21:44:24');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(360, 360, 9, '2022-03-03 21:44:24', '2022-03-03 21:44:24');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(361, 361, 9, '2022-03-03 21:44:25', '2022-03-03 21:44:25');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(362, 362, 9, '2022-03-03 21:44:25', '2022-03-03 21:44:25');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(363, 363, 9, '2022-03-03 21:44:26', '2022-03-03 21:44:26');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(364, 364, 9, '2022-03-03 21:44:26', '2022-03-03 21:44:26');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(365, 365, 9, '2022-03-03 21:44:27', '2022-03-03 21:44:27');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(366, 366, 9, '2022-03-03 21:44:27', '2022-03-03 21:44:27');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(367, 367, 9, '2022-03-03 21:44:28', '2022-03-03 21:44:28');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(368, 368, 9, '2022-03-03 21:44:29', '2022-03-03 21:44:29');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(369, 369, 9, '2022-03-03 21:45:31', '2022-03-03 21:45:31');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(370, 370, 9, '2022-03-03 21:45:41', '2022-03-03 21:45:41');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(371, 371, 15, '2022-03-03 21:48:54', '2022-03-03 21:48:54');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(372, 372, 15, '2022-03-03 21:49:00', '2022-03-03 21:49:00');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(373, 373, 15, '2022-03-03 21:49:00', '2022-03-03 21:49:00');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(374, 374, 15, '2022-03-03 21:49:02', '2022-03-03 21:49:02');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(375, 375, 15, '2022-03-03 21:49:03', '2022-03-03 21:49:03');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(376, 376, 15, '2022-03-03 21:49:05', '2022-03-03 21:49:05');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(377, 377, 15, '2022-03-03 21:49:06', '2022-03-03 21:49:06');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(378, 378, 15, '2022-03-03 21:49:07', '2022-03-03 21:49:07');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(379, 379, 15, '2022-03-03 21:49:08', '2022-03-03 21:49:08');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(380, 380, 15, '2022-03-03 21:49:09', '2022-03-03 21:49:09');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(381, 381, 15, '2022-03-03 21:49:10', '2022-03-03 21:49:10');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(382, 382, 15, '2022-03-03 21:49:11', '2022-03-03 21:49:11');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(383, 383, 15, '2022-03-03 21:49:12', '2022-03-03 21:49:12');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(384, 384, 15, '2022-03-03 21:49:13', '2022-03-03 21:49:13');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(385, 385, 15, '2022-03-03 21:49:14', '2022-03-03 21:49:14');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(386, 386, 15, '2022-03-03 21:49:17', '2022-03-03 21:49:17');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(387, 387, 15, '2022-03-03 21:49:18', '2022-03-03 21:49:18');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(388, 388, 15, '2022-03-03 21:49:19', '2022-03-03 21:49:19');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(389, 389, 15, '2022-03-03 21:49:20', '2022-03-03 21:49:20');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(390, 390, 15, '2022-03-03 21:49:24', '2022-03-03 21:49:24');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(391, 391, 15, '2022-03-03 21:49:25', '2022-03-03 21:49:25');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(392, 392, 15, '2022-03-03 21:49:27', '2022-03-03 21:49:27');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(393, 393, 15, '2022-03-03 21:49:28', '2022-03-03 21:49:28');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(394, 394, 15, '2022-03-03 21:49:30', '2022-03-03 21:49:30');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(395, 395, 15, '2022-03-03 21:49:32', '2022-03-03 21:49:32');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(396, 396, 15, '2022-03-03 21:49:33', '2022-03-03 21:49:33');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(397, 397, 15, '2022-03-03 21:49:34', '2022-03-03 21:49:34');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(398, 398, 15, '2022-03-03 21:49:35', '2022-03-03 21:49:35');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(399, 399, 15, '2022-03-03 21:49:36', '2022-03-03 21:49:36');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(400, 400, 15, '2022-03-03 21:49:44', '2022-03-03 21:49:44');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(401, 401, 15, '2022-03-03 21:49:49', '2022-03-03 21:49:49');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(402, 402, 15, '2022-03-03 21:49:52', '2022-03-03 21:49:52');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(403, 403, 15, '2022-03-03 21:49:57', '2022-03-03 21:49:57');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(404, 404, 15, '2022-03-03 22:58:09', '2022-03-03 22:58:09');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(405, 405, 15, '2022-03-03 22:58:13', '2022-03-03 22:58:13');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(406, 406, 15, '2022-03-03 22:58:17', '2022-03-03 22:58:17');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(407, 407, 15, '2022-03-03 22:58:20', '2022-03-03 22:58:20');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(408, 408, 15, '2022-03-03 22:58:25', '2022-03-03 22:58:25');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(409, 409, 15, '2022-03-03 22:58:28', '2022-03-03 22:58:28');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(410, 410, 15, '2022-03-03 22:58:30', '2022-03-03 22:58:30');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(411, 411, 15, '2022-03-03 22:58:33', '2022-03-03 22:58:33');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(412, 412, 15, '2022-03-03 22:58:35', '2022-03-03 22:58:35');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(413, 413, 15, '2022-03-03 22:58:37', '2022-03-03 22:58:37');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(414, 414, 15, '2022-03-03 22:58:40', '2022-03-03 22:58:40');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(415, 415, 15, '2022-03-03 22:58:43', '2022-03-03 22:58:43');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(416, 416, 15, '2022-03-03 22:58:48', '2022-03-03 22:58:48');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(417, 417, 15, '2022-03-03 23:01:47', '2022-03-03 23:01:47');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(418, 418, 15, '2022-03-03 23:01:51', '2022-03-03 23:01:51');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(419, 419, 15, '2022-03-03 23:05:54', '2022-03-03 23:05:54');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(420, 420, 15, '2022-03-03 23:05:58', '2022-03-03 23:05:58');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(421, 421, 15, '2022-03-03 23:11:23', '2022-03-03 23:11:23');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(422, 422, 15, '2022-03-03 23:13:08', '2022-03-03 23:13:08');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(423, 423, 15, '2022-03-03 23:23:49', '2022-03-03 23:23:49');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(424, 424, 15, '2022-03-03 23:23:51', '2022-03-03 23:23:51');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(425, 425, 15, '2022-03-08 21:56:23', '2022-03-08 21:56:23');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(426, 426, 15, '2022-03-08 21:56:24', '2022-03-08 21:56:24');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(427, 427, 15, '2022-03-08 21:56:28', '2022-03-08 21:56:28');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(428, 428, 15, '2022-03-08 21:56:29', '2022-03-08 21:56:29');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(429, 429, 15, '2022-03-08 21:59:51', '2022-03-08 21:59:51');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(430, 430, 15, '2022-03-08 21:59:54', '2022-03-08 21:59:54');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(431, 431, 15, '2022-03-08 21:59:55', '2022-03-08 21:59:55');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(432, 432, 15, '2022-03-08 21:59:56', '2022-03-08 21:59:56');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(433, 433, 15, '2022-03-08 22:17:12', '2022-03-08 22:17:12');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(434, 434, 15, '2022-03-08 22:25:41', '2022-03-08 22:25:41');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(435, 435, 15, '2022-03-08 22:25:46', '2022-03-08 22:25:46');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(436, 436, 15, '2022-03-08 22:25:51', '2022-03-08 22:25:51');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(437, 437, 15, '2022-03-08 22:25:57', '2022-03-08 22:25:57');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(438, 438, 15, '2022-03-08 22:26:43', '2022-03-08 22:26:43');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(439, 439, 15, '2022-03-08 22:26:46', '2022-03-08 22:26:46');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(440, 440, 15, '2022-03-08 22:26:50', '2022-03-08 22:26:50');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(441, 441, 15, '2022-03-08 22:26:55', '2022-03-08 22:26:55');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(442, 442, 15, '2022-03-11 22:17:13', '2022-03-11 22:17:13');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(443, 443, 15, '2022-03-11 22:17:34', '2022-03-11 22:17:34');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(444, 444, 15, '2022-03-11 22:17:44', '2022-03-11 22:17:44');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(445, 445, 15, '2022-03-11 22:17:47', '2022-03-11 22:17:47');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(446, 446, 15, '2022-03-11 22:17:50', '2022-03-11 22:17:50');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(447, 447, 15, '2022-03-11 22:17:55', '2022-03-11 22:17:55');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(448, 448, 15, '2022-03-11 22:18:03', '2022-03-11 22:18:03');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(449, 449, 15, '2022-03-11 22:18:08', '2022-03-11 22:18:08');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(450, 450, 15, '2022-03-11 22:18:12', '2022-03-11 22:18:12');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(451, 451, 15, '2022-03-11 22:18:17', '2022-03-11 22:18:17');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(452, 452, 15, '2022-03-11 22:22:28', '2022-03-11 22:22:28');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(453, 453, 15, '2022-03-11 22:22:34', '2022-03-11 22:22:34');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(454, 454, 15, '2022-03-11 22:22:36', '2022-03-11 22:22:36');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(455, 455, 15, '2022-03-11 22:44:02', '2022-03-11 22:44:02');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(456, 456, 15, '2022-03-11 22:44:09', '2022-03-11 22:44:09');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(457, 457, 15, '2022-03-11 22:44:14', '2022-03-11 22:44:14');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(458, 458, 15, '2022-03-11 22:44:17', '2022-03-11 22:44:17');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(459, 459, 15, '2022-03-11 22:44:21', '2022-03-11 22:44:21');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(460, 460, 15, '2022-03-11 22:44:24', '2022-03-11 22:44:24');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(461, 461, 15, '2022-03-11 22:44:27', '2022-03-11 22:44:27');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(462, 462, 15, '2022-03-11 22:44:30', '2022-03-11 22:44:30');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(463, 463, 15, '2022-03-11 22:44:36', '2022-03-11 22:44:36');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(464, 464, 15, '2022-03-11 22:44:40', '2022-03-11 22:44:40');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(465, 465, 15, '2022-03-11 22:44:42', '2022-03-11 22:44:42');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(466, 466, 15, '2022-03-11 22:44:48', '2022-03-11 22:44:48');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(467, 467, 15, '2022-03-11 22:44:50', '2022-03-11 22:44:50');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(468, 468, 15, '2022-03-11 22:52:39', '2022-03-11 22:52:39');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(469, 469, 15, '2022-03-11 22:52:47', '2022-03-11 22:52:47');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(470, 470, 15, '2022-03-11 22:52:50', '2022-03-11 22:52:50');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(471, 471, 15, '2022-03-11 22:52:51', '2022-03-11 22:52:51');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(472, 472, 15, '2022-03-11 22:52:57', '2022-03-11 22:52:57');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(473, 473, 15, '2022-03-11 22:53:01', '2022-03-11 22:53:01');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(474, 474, 15, '2022-03-11 22:53:05', '2022-03-11 22:53:05');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(475, 475, 15, '2022-03-11 22:53:09', '2022-03-11 22:53:09');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(476, 476, 15, '2022-03-11 22:53:15', '2022-03-11 22:53:15');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(477, 477, 15, '2022-03-11 22:53:17', '2022-03-11 22:53:17');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(478, 478, 15, '2022-03-11 22:53:21', '2022-03-11 22:53:21');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(479, 479, 15, '2022-03-11 22:53:23', '2022-03-11 22:53:23');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(480, 480, 15, '2022-03-11 22:53:28', '2022-03-11 22:53:28');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(481, 481, 15, '2022-03-11 22:59:40', '2022-03-11 22:59:40');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(482, 482, 15, '2022-03-11 22:59:47', '2022-03-11 22:59:47');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(483, 483, 15, '2022-03-11 22:59:52', '2022-03-11 22:59:52');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(484, 484, 15, '2022-03-11 22:59:54', '2022-03-11 22:59:54');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(485, 485, 15, '2022-03-11 22:59:59', '2022-03-11 22:59:59');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(486, 486, 15, '2022-03-11 23:00:04', '2022-03-11 23:00:04');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(487, 487, 15, '2022-03-11 23:00:09', '2022-03-11 23:00:09');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(488, 488, 15, '2022-03-11 23:00:14', '2022-03-11 23:00:14');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(489, 489, 15, '2022-03-11 23:00:19', '2022-03-11 23:00:19');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(490, 490, 15, '2022-03-11 23:00:24', '2022-03-11 23:00:24');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(491, 491, 15, '2022-03-11 23:00:29', '2022-03-11 23:00:29');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(492, 492, 15, '2022-03-11 23:00:34', '2022-03-11 23:00:34');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(493, 493, 15, '2022-03-11 23:00:39', '2022-03-11 23:00:39');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(494, 494, 15, '2022-03-12 00:01:56', '2022-03-12 00:01:56');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(495, 495, 15, '2022-03-12 00:02:00', '2022-03-12 00:02:00');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(496, 496, 15, '2022-03-12 00:07:14', '2022-03-12 00:07:14');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(497, 497, 15, '2022-03-12 00:07:18', '2022-03-12 00:07:18');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(498, 498, 15, '2022-03-12 00:17:28', '2022-03-12 00:17:28');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(499, 499, 15, '2022-03-12 00:22:39', '2022-03-12 00:22:39');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(500, 500, 15, '2022-03-12 00:22:41', '2022-03-12 00:22:41');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(501, 501, 15, '2022-03-12 00:22:47', '2022-03-12 00:22:47');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(502, 502, 15, '2022-03-12 00:22:52', '2022-03-12 00:22:52');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(503, 503, 15, '2022-03-12 00:22:55', '2022-03-12 00:22:55');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(504, 504, 15, '2022-03-12 00:23:00', '2022-03-12 00:23:00');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(505, 505, 15, '2022-03-12 00:23:02', '2022-03-12 00:23:02');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(506, 506, 15, '2022-03-12 00:23:07', '2022-03-12 00:23:07');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(507, 507, 15, '2022-03-12 00:23:10', '2022-03-12 00:23:10');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(508, 508, 15, '2022-03-12 00:26:10', '2022-03-12 00:26:10');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(509, 509, 15, '2022-03-12 00:26:17', '2022-03-12 00:26:17');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(510, 510, 15, '2022-03-12 00:26:21', '2022-03-12 00:26:21');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(511, 511, 15, '2022-03-12 00:26:24', '2022-03-12 00:26:24');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(512, 512, 15, '2022-03-12 00:26:30', '2022-03-12 00:26:30');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(513, 513, 15, '2022-03-12 00:26:34', '2022-03-12 00:26:34');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(514, 514, 15, '2022-03-12 00:26:38', '2022-03-12 00:26:38');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(515, 515, 15, '2022-03-12 00:26:40', '2022-03-12 00:26:40');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(516, 516, 15, '2022-03-12 00:26:45', '2022-03-12 00:26:45');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(517, 517, 15, '2022-03-12 00:26:48', '2022-03-12 00:26:48');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(518, 518, 15, '2022-03-12 00:26:51', '2022-03-12 00:26:51');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(519, 519, 15, '2022-03-12 00:26:53', '2022-03-12 00:26:53');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(520, 520, 15, '2022-03-12 00:26:56', '2022-03-12 00:26:56');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(521, 521, 15, '2022-03-12 00:33:53', '2022-03-12 00:33:53');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(522, 522, 15, '2022-03-12 00:34:01', '2022-03-12 00:34:01');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(523, 523, 15, '2022-03-12 00:34:04', '2022-03-12 00:34:04');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(524, 524, 15, '2022-03-12 00:34:05', '2022-03-12 00:34:05');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(525, 525, 15, '2022-03-12 00:34:11', '2022-03-12 00:34:11');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(526, 526, 15, '2022-03-12 00:34:15', '2022-03-12 00:34:15');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(527, 527, 15, '2022-03-12 00:34:18', '2022-03-12 00:34:18');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(528, 528, 15, '2022-03-12 00:34:21', '2022-03-12 00:34:21');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(529, 529, 15, '2022-03-12 00:34:24', '2022-03-12 00:34:24');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(530, 530, 15, '2022-03-12 00:34:30', '2022-03-12 00:34:30');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(531, 531, 15, '2022-03-12 00:34:32', '2022-03-12 00:34:32');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(532, 532, 15, '2022-03-12 00:34:34', '2022-03-12 00:34:34');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(533, 533, 15, '2022-03-12 00:34:35', '2022-03-12 00:34:35');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(534, 534, 15, '2022-03-12 00:45:08', '2022-03-12 00:45:08');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(535, 535, 15, '2022-03-12 00:45:11', '2022-03-12 00:45:11');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(536, 536, 15, '2022-03-12 00:45:12', '2022-03-12 00:45:12');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(537, 537, 15, '2022-03-12 00:45:17', '2022-03-12 00:45:17');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(538, 538, 15, '2022-03-12 00:45:20', '2022-03-12 00:45:20');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(539, 539, 15, '2022-03-12 00:45:24', '2022-03-12 00:45:24');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(540, 540, 15, '2022-03-12 00:45:28', '2022-03-12 00:45:28');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(541, 541, 15, '2022-03-12 00:45:32', '2022-03-12 00:45:32');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(542, 542, 15, '2022-03-12 00:45:36', '2022-03-12 00:45:36');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(543, 543, 15, '2022-03-12 00:45:39', '2022-03-12 00:45:39');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(544, 544, 15, '2022-03-12 00:45:44', '2022-03-12 00:45:44');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(545, 545, 15, '2022-03-12 00:45:46', '2022-03-12 00:45:46');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(546, 546, 15, '2022-03-12 00:48:08', '2022-03-12 00:48:08');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(547, 547, 15, '2022-03-12 00:48:11', '2022-03-12 00:48:11');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(548, 548, 15, '2022-03-12 00:48:12', '2022-03-12 00:48:12');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(549, 549, 15, '2022-03-12 00:48:19', '2022-03-12 00:48:19');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(550, 550, 15, '2022-03-12 00:48:25', '2022-03-12 00:48:25');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(551, 551, 15, '2022-03-12 00:48:34', '2022-03-12 00:48:34');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(552, 552, 15, '2022-03-12 00:48:40', '2022-03-12 00:48:40');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(553, 553, 15, '2022-03-12 00:48:44', '2022-03-12 00:48:44');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(554, 554, 15, '2022-03-12 00:48:48', '2022-03-12 00:48:48');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(555, 555, 15, '2022-03-12 00:48:53', '2022-03-12 00:48:53');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(556, 556, 15, '2022-03-12 00:48:59', '2022-03-12 00:48:59');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(557, 557, 15, '2022-03-12 00:49:06', '2022-03-12 00:49:06');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(558, 558, 15, '2022-03-12 01:06:33', '2022-03-12 01:06:33');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(559, 559, 15, '2022-03-12 01:06:36', '2022-03-12 01:06:36');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(560, 560, 15, '2022-03-12 01:06:37', '2022-03-12 01:06:37');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(561, 561, 15, '2022-03-12 01:06:43', '2022-03-12 01:06:43');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(562, 562, 15, '2022-03-12 01:06:45', '2022-03-12 01:06:45');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(563, 563, 15, '2022-03-12 01:06:50', '2022-03-12 01:06:50');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(564, 564, 15, '2022-03-12 01:06:54', '2022-03-12 01:06:54');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(565, 565, 15, '2022-03-12 01:06:57', '2022-03-12 01:06:57');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(566, 566, 15, '2022-03-12 01:07:01', '2022-03-12 01:07:01');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(567, 567, 15, '2022-03-12 01:07:05', '2022-03-12 01:07:05');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(568, 568, 15, '2022-03-12 01:07:09', '2022-03-12 01:07:09');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(569, 569, 15, '2022-03-12 01:07:11', '2022-03-12 01:07:11');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(570, 570, 15, '2022-03-12 01:26:18', '2022-03-12 01:26:18');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(571, 571, 15, '2022-03-12 01:26:21', '2022-03-12 01:26:21');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(572, 572, 15, '2022-03-12 01:26:22', '2022-03-12 01:26:22');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(573, 573, 15, '2022-03-12 01:26:27', '2022-03-12 01:26:27');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(574, 574, 15, '2022-03-12 01:26:32', '2022-03-12 01:26:32');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(575, 575, 15, '2022-03-12 01:26:36', '2022-03-12 01:26:36');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(576, 576, 15, '2022-03-12 01:26:41', '2022-03-12 01:26:41');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(577, 577, 15, '2022-03-12 01:26:45', '2022-03-12 01:26:45');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(578, 578, 15, '2022-03-12 01:26:49', '2022-03-12 01:26:49');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(579, 579, 15, '2022-03-12 01:26:54', '2022-03-12 01:26:54');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(580, 580, 15, '2022-03-12 01:26:58', '2022-03-12 01:26:58');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(581, 581, 15, '2022-03-12 01:27:00', '2022-03-12 01:27:00');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(582, 582, 15, '2022-03-12 01:28:21', '2022-03-12 01:28:21');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(583, 583, 15, '2022-03-12 01:28:24', '2022-03-12 01:28:24');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(584, 584, 15, '2022-03-12 01:28:25', '2022-03-12 01:28:25');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(585, 585, 15, '2022-03-12 01:28:33', '2022-03-12 01:28:33');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(586, 586, 15, '2022-03-12 01:28:37', '2022-03-12 01:28:37');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(587, 587, 15, '2022-03-12 01:28:43', '2022-03-12 01:28:43');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(588, 588, 15, '2022-03-12 01:28:47', '2022-03-12 01:28:47');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(589, 589, 15, '2022-03-12 01:28:52', '2022-03-12 01:28:52');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(590, 590, 15, '2022-03-12 01:28:55', '2022-03-12 01:28:55');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(591, 591, 15, '2022-03-12 01:28:59', '2022-03-12 01:28:59');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(592, 592, 15, '2022-03-12 01:29:03', '2022-03-12 01:29:03');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(593, 593, 15, '2022-03-12 01:31:48', '2022-03-12 01:31:48');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(594, 594, 15, '2022-03-12 01:31:49', '2022-03-12 01:31:49');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(595, 595, 15, '2022-03-12 01:31:57', '2022-03-12 01:31:57');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(596, 596, 15, '2022-03-12 01:38:05', '2022-03-12 01:38:05');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(597, 597, 15, '2022-03-12 01:38:09', '2022-03-12 01:38:09');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(598, 598, 15, '2022-03-12 01:39:33', '2022-03-12 01:39:33');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(599, 599, 15, '2022-03-12 01:39:40', '2022-03-12 01:39:40');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(600, 600, 15, '2022-03-12 01:39:46', '2022-03-12 01:39:46');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(601, 601, 15, '2022-03-12 01:39:51', '2022-03-12 01:39:51');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(602, 602, 15, '2022-03-12 01:39:59', '2022-03-12 01:39:59');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(603, 603, 15, '2022-03-12 01:40:04', '2022-03-12 01:40:04');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(604, 604, 15, '2022-03-12 01:40:09', '2022-03-12 01:40:09');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(605, 605, 15, '2022-03-12 01:40:13', '2022-03-12 01:40:13');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(606, 606, 15, '2022-03-12 01:40:18', '2022-03-12 01:40:18');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(607, 607, 15, '2022-03-12 01:40:23', '2022-03-12 01:40:23');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(608, 608, 15, '2022-03-12 01:40:27', '2022-03-12 01:40:27');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(609, 609, 15, '2022-03-12 01:40:32', '2022-03-12 01:40:32');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(610, 610, 15, '2022-03-12 01:40:37', '2022-03-12 01:40:37');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(611, 611, 15, '2022-03-12 01:43:00', '2022-03-12 01:43:00');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(612, 612, 15, '2022-03-12 01:43:02', '2022-03-12 01:43:02');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(613, 613, 15, '2022-03-12 01:43:02', '2022-03-12 01:43:02');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(614, 614, 15, '2022-03-12 01:43:03', '2022-03-12 01:43:03');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(615, 615, 15, '2022-03-12 01:43:03', '2022-03-12 01:43:03');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(616, 616, 15, '2022-03-12 01:43:03', '2022-03-12 01:43:03');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(617, 617, 15, '2022-03-12 01:43:04', '2022-03-12 01:43:04');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(618, 618, 15, '2022-03-12 01:43:04', '2022-03-12 01:43:04');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(619, 619, 15, '2022-03-12 01:43:04', '2022-03-12 01:43:04');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(620, 620, 15, '2022-03-12 01:43:05', '2022-03-12 01:43:05');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(621, 621, 15, '2022-03-12 01:43:05', '2022-03-12 01:43:05');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(622, 622, 15, '2022-03-12 01:43:16', '2022-03-12 01:43:16');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(623, 623, 15, '2022-03-12 01:43:17', '2022-03-12 01:43:17');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(624, 624, 15, '2022-03-12 01:43:18', '2022-03-12 01:43:18');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(625, 625, 15, '2022-03-12 01:43:18', '2022-03-12 01:43:18');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(626, 626, 15, '2022-03-12 01:43:18', '2022-03-12 01:43:18');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(627, 627, 15, '2022-03-12 01:43:19', '2022-03-12 01:43:19');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(628, 628, 15, '2022-03-12 01:43:19', '2022-03-12 01:43:19');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(629, 629, 15, '2022-03-12 01:43:20', '2022-03-12 01:43:20');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(630, 630, 15, '2022-03-12 01:43:20', '2022-03-12 01:43:20');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(631, 631, 15, '2022-03-12 01:43:21', '2022-03-12 01:43:21');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(632, 632, 15, '2022-03-12 01:43:22', '2022-03-12 01:43:22');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(633, 633, 15, '2022-03-12 01:43:22', '2022-03-12 01:43:22');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(634, 634, 15, '2022-03-12 01:43:23', '2022-03-12 01:43:23');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(635, 635, 15, '2022-03-12 01:43:38', '2022-03-12 01:43:38');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(636, 636, 15, '2022-03-12 01:43:43', '2022-03-12 01:43:43');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(637, 637, 15, '2022-03-12 01:43:47', '2022-03-12 01:43:47');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(638, 638, 15, '2022-03-12 01:43:50', '2022-03-12 01:43:50');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(639, 639, 15, '2022-03-12 01:43:53', '2022-03-12 01:43:53');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(640, 640, 15, '2022-03-12 01:43:57', '2022-03-12 01:43:57');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(641, 641, 15, '2022-03-12 01:44:02', '2022-03-12 01:44:02');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(642, 642, 15, '2022-03-12 01:44:04', '2022-03-12 01:44:04');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(643, 643, 15, '2022-03-12 01:44:08', '2022-03-12 01:44:08');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(644, 644, 15, '2022-03-12 01:44:12', '2022-03-12 01:44:12');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(645, 645, 15, '2022-03-12 01:44:17', '2022-03-12 01:44:17');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(646, 646, 15, '2022-03-12 01:44:21', '2022-03-12 01:44:21');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(647, 647, 15, '2022-03-12 01:44:26', '2022-03-12 01:44:26');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(648, 648, 15, '2022-03-12 01:44:33', '2022-03-12 01:44:33');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(649, 649, 15, '2022-03-12 01:44:37', '2022-03-12 01:44:37');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(650, 650, 15, '2022-03-12 01:44:40', '2022-03-12 01:44:40');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(651, 651, 15, '2022-03-12 01:44:45', '2022-03-12 01:44:45');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(652, 652, 15, '2022-03-12 01:44:48', '2022-03-12 01:44:48');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(653, 653, 15, '2022-03-12 01:44:51', '2022-03-12 01:44:51');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(654, 654, 15, '2022-03-12 01:44:54', '2022-03-12 01:44:54');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(655, 655, 15, '2022-03-12 01:44:58', '2022-03-12 01:44:58');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(656, 656, 15, '2022-03-12 01:45:03', '2022-03-12 01:45:03');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(657, 657, 15, '2022-03-12 01:45:08', '2022-03-12 01:45:08');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(658, 658, 15, '2022-03-12 01:45:13', '2022-03-12 01:45:13');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(659, 659, 15, '2022-03-12 01:45:16', '2022-03-12 01:45:16');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(660, 660, 15, '2022-03-12 01:45:21', '2022-03-12 01:45:21');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(661, 661, 15, '2022-03-12 01:45:25', '2022-03-12 01:45:25');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(662, 662, 15, '2022-03-12 01:45:30', '2022-03-12 01:45:30');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(663, 663, 15, '2022-03-12 01:45:36', '2022-03-12 01:45:36');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(664, 664, 15, '2022-03-12 01:45:40', '2022-03-12 01:45:40');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(665, 665, 15, '2022-03-12 01:45:45', '2022-03-12 01:45:45');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(666, 666, 15, '2022-03-12 01:45:49', '2022-03-12 01:45:49');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(667, 667, 15, '2022-03-12 01:45:55', '2022-03-12 01:45:55');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(668, 668, 15, '2022-03-12 01:46:00', '2022-03-12 01:46:00');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(669, 669, 15, '2022-03-12 01:46:05', '2022-03-12 01:46:05');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(670, 670, 15, '2022-03-12 01:46:08', '2022-03-12 01:46:08');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(671, 671, 15, '2022-03-12 01:46:12', '2022-03-12 01:46:12');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(672, 672, 15, '2022-03-12 01:46:15', '2022-03-12 01:46:15');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(673, 673, 15, '2022-03-12 01:46:22', '2022-03-12 01:46:22');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(674, 674, 15, '2022-03-12 01:46:26', '2022-03-12 01:46:26');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(675, 675, 15, '2022-03-12 01:46:35', '2022-03-12 01:46:35');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(676, 676, 15, '2022-03-12 01:46:41', '2022-03-12 01:46:41');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(677, 677, 15, '2022-03-12 01:46:46', '2022-03-12 01:46:46');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(678, 678, 15, '2022-03-12 01:46:51', '2022-03-12 01:46:51');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(679, 679, 15, '2022-03-12 01:46:54', '2022-03-12 01:46:54');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(680, 680, 15, '2022-03-12 01:46:59', '2022-03-12 01:46:59');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(681, 681, 15, '2022-03-12 01:47:02', '2022-03-12 01:47:02');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(682, 682, 15, '2022-03-12 01:47:05', '2022-03-12 01:47:05');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(683, 683, 15, '2022-03-12 01:47:09', '2022-03-12 01:47:09');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(684, 684, 15, '2022-03-12 01:47:11', '2022-03-12 01:47:11');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(685, 685, 15, '2022-03-12 01:47:16', '2022-03-12 01:47:16');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(686, 686, 15, '2022-03-12 01:47:19', '2022-03-12 01:47:19');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(687, 687, 15, '2022-03-12 01:47:25', '2022-03-12 01:47:25');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(688, 688, 15, '2022-03-12 01:47:28', '2022-03-12 01:47:28');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(689, 689, 15, '2022-03-12 01:47:34', '2022-03-12 01:47:34');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(690, 690, 15, '2022-03-12 01:47:37', '2022-03-12 01:47:37');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(691, 691, 15, '2022-03-12 01:47:42', '2022-03-12 01:47:42');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(692, 692, 15, '2022-03-12 01:47:46', '2022-03-12 01:47:46');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(693, 693, 12, '2022-03-12 01:54:59', '2022-03-12 01:54:59');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(694, 694, 12, '2022-03-12 01:55:00', '2022-03-12 01:55:00');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(695, 695, 12, '2022-03-12 01:55:00', '2022-03-12 01:55:00');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(696, 696, 12, '2022-03-12 01:55:02', '2022-03-12 01:55:02');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(697, 697, 12, '2022-03-12 01:55:09', '2022-03-12 01:55:09');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(698, 698, 12, '2022-03-12 01:55:10', '2022-03-12 01:55:10');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(699, 699, 12, '2022-03-12 01:55:12', '2022-03-12 01:55:12');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(700, 700, 12, '2022-03-12 01:55:13', '2022-03-12 01:55:13');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(701, 701, 12, '2022-03-12 01:55:14', '2022-03-12 01:55:14');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(702, 702, 12, '2022-03-12 01:55:15', '2022-03-12 01:55:15');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(703, 703, 12, '2022-03-12 01:55:16', '2022-03-12 01:55:16');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(704, 704, 12, '2022-03-12 01:55:17', '2022-03-12 01:55:17');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(705, 705, 12, '2022-03-12 01:55:18', '2022-03-12 01:55:18');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(706, 706, 12, '2022-03-12 01:55:19', '2022-03-12 01:55:19');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(707, 707, 12, '2022-03-12 01:55:22', '2022-03-12 01:55:22');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(708, 708, 12, '2022-03-12 01:55:26', '2022-03-12 01:55:26');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(709, 709, 12, '2022-03-12 01:55:27', '2022-03-12 01:55:27');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(710, 710, 12, '2022-03-12 01:55:33', '2022-03-12 01:55:33');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(711, 711, 12, '2022-03-12 01:55:44', '2022-03-12 01:55:44');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(712, 712, 12, '2022-03-12 01:55:47', '2022-03-12 01:55:47');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(713, 713, 12, '2022-03-12 01:55:50', '2022-03-12 01:55:50');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(714, 714, 12, '2022-03-12 01:55:56', '2022-03-12 01:55:56');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(715, 715, 12, '2022-03-12 01:56:01', '2022-03-12 01:56:01');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(716, 716, 12, '2022-03-12 01:56:05', '2022-03-12 01:56:05');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(717, 717, 12, '2022-03-12 01:56:09', '2022-03-12 01:56:09');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(718, 718, 12, '2022-03-12 01:56:12', '2022-03-12 01:56:12');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(719, 719, 12, '2022-03-12 01:56:18', '2022-03-12 01:56:18');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(720, 720, 12, '2022-03-12 01:56:22', '2022-03-12 01:56:22');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(721, 721, 12, '2022-03-12 01:56:26', '2022-03-12 01:56:26');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(722, 722, 12, '2022-03-12 01:56:30', '2022-03-12 01:56:30');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(723, 723, 12, '2022-03-12 01:56:33', '2022-03-12 01:56:33');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(724, 724, 12, '2022-03-12 01:56:38', '2022-03-12 01:56:38');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(725, 725, 12, '2022-03-12 01:56:43', '2022-03-12 01:56:43');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(726, 726, 12, '2022-03-12 01:56:48', '2022-03-12 01:56:48');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(727, 727, 12, '2022-03-12 01:56:52', '2022-03-12 01:56:52');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(728, 728, 12, '2022-03-12 01:57:00', '2022-03-12 01:57:00');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(729, 729, 12, '2022-03-12 01:57:05', '2022-03-12 01:57:05');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(730, 730, 12, '2022-03-12 01:57:08', '2022-03-12 01:57:08');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(731, 731, 12, '2022-03-12 01:57:15', '2022-03-12 01:57:15');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(732, 732, 12, '2022-03-12 01:57:18', '2022-03-12 01:57:18');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(733, 733, 12, '2022-03-12 01:57:24', '2022-03-12 01:57:24');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(734, 734, 12, '2022-03-12 01:57:26', '2022-03-12 01:57:26');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(735, 735, 12, '2022-03-12 01:57:31', '2022-03-12 01:57:31');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(736, 736, 12, '2022-03-12 01:57:35', '2022-03-12 01:57:35');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(737, 737, 12, '2022-03-12 01:57:39', '2022-03-12 01:57:39');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(738, 738, 12, '2022-03-12 01:57:46', '2022-03-12 01:57:46');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(739, 739, 12, '2022-03-12 01:57:49', '2022-03-12 01:57:49');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(740, 740, 12, '2022-03-12 01:57:53', '2022-03-12 01:57:53');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(741, 741, 12, '2022-03-12 01:57:57', '2022-03-12 01:57:57');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(742, 742, 12, '2022-03-12 01:58:01', '2022-03-12 01:58:01');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(743, 743, 12, '2022-03-12 01:58:05', '2022-03-12 01:58:05');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(744, 744, 12, '2022-03-12 01:58:08', '2022-03-12 01:58:08');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(745, 745, 12, '2022-03-12 01:58:11', '2022-03-12 01:58:11');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(746, 746, 12, '2022-03-12 01:58:18', '2022-03-12 01:58:18');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(747, 747, 12, '2022-03-12 01:58:21', '2022-03-12 01:58:21');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(748, 748, 12, '2022-03-12 01:58:25', '2022-03-12 01:58:25');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(749, 749, 12, '2022-03-12 01:58:30', '2022-03-12 01:58:30');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(750, 750, 12, '2022-03-12 01:58:35', '2022-03-12 01:58:35');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(751, 751, 12, '2022-03-12 01:58:41', '2022-03-12 01:58:41');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(752, 752, 12, '2022-03-12 01:58:45', '2022-03-12 01:58:45');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(753, 753, 12, '2022-03-12 01:58:47', '2022-03-12 01:58:47');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(754, 754, 12, '2022-03-12 01:58:51', '2022-03-12 01:58:51');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(755, 755, 12, '2022-03-12 01:58:54', '2022-03-12 01:58:54');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(756, 756, 12, '2022-03-12 01:58:57', '2022-03-12 01:58:57');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(757, 757, 12, '2022-03-12 01:59:02', '2022-03-12 01:59:02');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(758, 758, 12, '2022-03-12 01:59:04', '2022-03-12 01:59:04');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(759, 759, 12, '2022-03-12 01:59:09', '2022-03-12 01:59:09');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(760, 760, 12, '2022-03-12 01:59:12', '2022-03-12 01:59:12');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(761, 761, 12, '2022-03-12 01:59:15', '2022-03-12 01:59:15');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(762, 762, 12, '2022-03-12 01:59:18', '2022-03-12 01:59:18');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(763, 763, 12, '2022-03-12 01:59:21', '2022-03-12 01:59:21');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(764, 764, 12, '2022-03-12 01:59:27', '2022-03-12 01:59:27');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(765, 765, 12, '2022-03-12 01:59:32', '2022-03-12 01:59:32');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(766, 766, 12, '2022-03-12 01:59:38', '2022-03-12 01:59:38');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(767, 767, 12, '2022-03-12 01:59:43', '2022-03-12 01:59:43');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(768, 768, 12, '2022-03-12 01:59:47', '2022-03-12 01:59:47');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(769, 769, 12, '2022-03-12 01:59:54', '2022-03-12 01:59:54');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(770, 770, 12, '2022-03-12 01:59:58', '2022-03-12 01:59:58');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(771, 771, 12, '2022-03-12 02:00:04', '2022-03-12 02:00:04');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(772, 772, 12, '2022-03-12 02:00:07', '2022-03-12 02:00:07');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(773, 773, 12, '2022-03-12 02:00:12', '2022-03-12 02:00:12');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(774, 774, 12, '2022-03-12 02:00:17', '2022-03-12 02:00:17');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(775, 775, 12, '2022-03-12 02:00:21', '2022-03-12 02:00:21');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(776, 776, 12, '2022-03-12 02:00:27', '2022-03-12 02:00:27');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(777, 777, 12, '2022-03-12 02:00:32', '2022-03-12 02:00:32');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(778, 778, 12, '2022-03-12 02:00:34', '2022-03-12 02:00:34');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(779, 779, 12, '2022-03-12 02:00:38', '2022-03-12 02:00:38');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(780, 780, 12, '2022-03-12 02:00:43', '2022-03-12 02:00:43');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(781, 781, 12, '2022-03-12 02:00:48', '2022-03-12 02:00:48');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(782, 782, 12, '2022-03-12 02:00:54', '2022-03-12 02:00:54');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(783, 783, 12, '2022-03-12 02:00:59', '2022-03-12 02:00:59');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(784, 784, 12, '2022-03-12 02:01:03', '2022-03-12 02:01:03');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(785, 785, 12, '2022-03-12 02:01:08', '2022-03-12 02:01:08');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(786, 786, 12, '2022-03-12 02:01:12', '2022-03-12 02:01:12');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(787, 787, 12, '2022-03-12 02:01:17', '2022-03-12 02:01:17');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(788, 788, 12, '2022-03-12 02:01:21', '2022-03-12 02:01:21');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(789, 789, 12, '2022-03-12 02:01:26', '2022-03-12 02:01:26');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(790, 790, 12, '2022-03-12 02:01:31', '2022-03-12 02:01:31');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(791, 791, 12, '2022-03-12 02:01:35', '2022-03-12 02:01:35');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(792, 792, 12, '2022-03-12 02:01:37', '2022-03-12 02:01:37');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(793, 793, 12, '2022-03-12 02:01:42', '2022-03-12 02:01:42');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(794, 794, 12, '2022-03-12 02:01:42', '2022-03-12 02:01:42');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(795, 795, 12, '2022-03-12 02:01:48', '2022-03-12 02:01:48');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(796, 796, 12, '2022-03-12 02:01:50', '2022-03-12 02:01:50');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(797, 798, 12, '2022-03-12 02:01:52', '2022-03-12 02:01:52');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(798, 797, 12, '2022-03-12 02:01:52', '2022-03-12 02:01:52');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(799, 799, 12, '2022-03-12 02:01:58', '2022-03-12 02:01:58');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(800, 800, 12, '2022-03-12 02:02:03', '2022-03-12 02:02:03');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(801, 801, 12, '2022-03-12 02:02:08', '2022-03-12 02:02:08');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(802, 802, 12, '2022-03-12 02:02:11', '2022-03-12 02:02:11');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(803, 803, 12, '2022-03-12 02:02:13', '2022-03-12 02:02:13');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(804, 804, 12, '2022-03-12 02:02:19', '2022-03-12 02:02:19');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(805, 805, 12, '2022-03-12 02:02:19', '2022-03-12 02:02:19');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(806, 806, 12, '2022-03-12 02:02:23', '2022-03-12 02:02:23');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(807, 807, 12, '2022-03-12 02:02:24', '2022-03-12 02:02:24');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(808, 808, 12, '2022-03-12 02:02:27', '2022-03-12 02:02:27');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(809, 809, 12, '2022-03-12 02:02:28', '2022-03-12 02:02:28');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(810, 810, 12, '2022-03-12 02:02:31', '2022-03-12 02:02:31');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(811, 811, 12, '2022-03-12 02:02:33', '2022-03-12 02:02:33');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(812, 812, 12, '2022-03-12 02:02:34', '2022-03-12 02:02:34');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(813, 813, 12, '2022-03-12 02:02:39', '2022-03-12 02:02:39');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(814, 814, 12, '2022-03-12 02:02:39', '2022-03-12 02:02:39');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(815, 815, 12, '2022-03-12 02:02:43', '2022-03-12 02:02:43');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(816, 816, 12, '2022-03-12 02:02:45', '2022-03-12 02:02:45');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(817, 817, 12, '2022-03-12 02:02:46', '2022-03-12 02:02:46');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(818, 818, 12, '2022-03-12 02:02:48', '2022-03-12 02:02:48');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(819, 819, 12, '2022-03-12 02:02:50', '2022-03-12 02:02:50');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(820, 820, 12, '2022-03-12 02:02:52', '2022-03-12 02:02:52');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(821, 821, 12, '2022-03-12 02:02:52', '2022-03-12 02:02:52');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(822, 822, 12, '2022-03-12 02:02:55', '2022-03-12 02:02:55');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(823, 823, 12, '2022-03-12 02:02:56', '2022-03-12 02:02:56');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(824, 824, 12, '2022-03-12 02:02:59', '2022-03-12 02:02:59');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(825, 825, 12, '2022-03-12 02:03:00', '2022-03-12 02:03:00');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(826, 826, 12, '2022-03-12 02:03:06', '2022-03-12 02:03:06');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(827, 827, 12, '2022-03-12 02:03:11', '2022-03-12 02:03:11');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(828, 828, 12, '2022-03-12 02:03:11', '2022-03-12 02:03:11');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(829, 829, 12, '2022-03-12 02:03:14', '2022-03-12 02:03:14');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(830, 830, 12, '2022-03-12 02:03:16', '2022-03-12 02:03:16');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(831, 831, 12, '2022-03-12 02:03:18', '2022-03-12 02:03:18');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(832, 832, 12, '2022-03-12 02:03:19', '2022-03-12 02:03:19');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(833, 833, 12, '2022-03-12 02:03:22', '2022-03-12 02:03:22');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(834, 834, 12, '2022-03-12 02:03:23', '2022-03-12 02:03:23');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(835, 835, 12, '2022-03-12 02:03:24', '2022-03-12 02:03:24');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(836, 836, 12, '2022-03-12 02:03:27', '2022-03-12 02:03:27');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(837, 838, 12, '2022-03-12 02:03:31', '2022-03-12 02:03:31');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(838, 837, 12, '2022-03-12 02:03:31', '2022-03-12 02:03:31');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(839, 839, 12, '2022-03-12 02:03:35', '2022-03-12 02:03:35');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(840, 840, 12, '2022-03-12 02:03:35', '2022-03-12 02:03:35');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(841, 842, 12, '2022-03-12 02:03:40', '2022-03-12 02:03:40');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(842, 841, 12, '2022-03-12 02:03:40', '2022-03-12 02:03:40');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(843, 843, 12, '2022-03-12 02:03:43', '2022-03-12 02:03:43');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(844, 844, 12, '2022-03-12 02:03:43', '2022-03-12 02:03:43');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(845, 845, 12, '2022-03-12 02:03:47', '2022-03-12 02:03:47');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(846, 846, 12, '2022-03-12 02:03:49', '2022-03-12 02:03:49');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(847, 847, 12, '2022-03-12 02:03:50', '2022-03-12 02:03:50');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(848, 848, 12, '2022-03-12 02:03:54', '2022-03-12 02:03:54');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(849, 849, 12, '2022-03-12 02:03:55', '2022-03-12 02:03:55');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(850, 850, 12, '2022-03-12 02:03:58', '2022-03-12 02:03:58');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(851, 851, 12, '2022-03-12 02:04:00', '2022-03-12 02:04:00');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(852, 852, 12, '2022-03-12 02:04:01', '2022-03-12 02:04:01');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(853, 853, 12, '2022-03-12 02:04:04', '2022-03-12 02:04:04');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(854, 854, 12, '2022-03-12 02:04:07', '2022-03-12 02:04:07');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(855, 855, 12, '2022-03-12 02:04:07', '2022-03-12 02:04:07');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(856, 856, 12, '2022-03-12 02:04:10', '2022-03-12 02:04:10');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(857, 857, 12, '2022-03-12 02:04:15', '2022-03-12 02:04:15');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(858, 858, 12, '2022-03-12 02:04:16', '2022-03-12 02:04:16');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(859, 859, 12, '2022-03-12 02:04:22', '2022-03-12 02:04:22');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(860, 860, 12, '2022-03-12 02:04:23', '2022-03-12 02:04:23');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(861, 861, 12, '2022-03-12 02:04:25', '2022-03-12 02:04:25');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(862, 862, 12, '2022-03-12 02:04:27', '2022-03-12 02:04:27');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(863, 863, 12, '2022-03-12 02:04:28', '2022-03-12 02:04:28');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(864, 864, 12, '2022-03-12 02:04:30', '2022-03-12 02:04:30');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(865, 865, 12, '2022-03-12 02:04:32', '2022-03-12 02:04:32');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(866, 866, 12, '2022-03-12 02:04:35', '2022-03-12 02:04:35');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(867, 867, 12, '2022-03-12 02:04:36', '2022-03-12 02:04:36');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(868, 868, 12, '2022-03-12 02:04:40', '2022-03-12 02:04:40');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(869, 869, 12, '2022-03-12 02:04:41', '2022-03-12 02:04:41');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(870, 870, 12, '2022-03-12 02:04:43', '2022-03-12 02:04:43');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(871, 871, 12, '2022-03-12 02:04:45', '2022-03-12 02:04:45');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(872, 872, 12, '2022-03-12 02:04:46', '2022-03-12 02:04:46');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(873, 873, 12, '2022-03-12 02:04:49', '2022-03-12 02:04:49');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(874, 874, 12, '2022-03-12 02:04:50', '2022-03-12 02:04:50');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(875, 875, 12, '2022-03-12 02:04:54', '2022-03-12 02:04:54');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(876, 876, 12, '2022-03-12 02:04:57', '2022-03-12 02:04:57');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(877, 877, 12, '2022-03-12 02:05:06', '2022-03-12 02:05:06');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(878, 878, 12, '2022-03-12 02:05:11', '2022-03-12 02:05:11');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(879, 879, 12, '2022-03-12 02:05:18', '2022-03-12 02:05:18');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(880, 880, 12, '2022-03-12 02:05:22', '2022-03-12 02:05:22');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(881, 881, 12, '2022-03-12 02:05:25', '2022-03-12 02:05:25');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(882, 882, 12, '2022-03-12 02:05:27', '2022-03-12 02:05:27');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(883, 883, 12, '2022-03-12 02:05:31', '2022-03-12 02:05:31');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(884, 884, 12, '2022-03-12 02:05:34', '2022-03-12 02:05:34');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(885, 885, 12, '2022-03-12 02:05:38', '2022-03-12 02:05:38');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(886, 886, 12, '2022-03-12 02:05:42', '2022-03-12 02:05:42');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(887, 887, 12, '2022-03-12 02:05:46', '2022-03-12 02:05:46');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(888, 888, 12, '2022-03-12 02:05:50', '2022-03-12 02:05:50');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(889, 889, 12, '2022-03-12 02:05:57', '2022-03-12 02:05:57');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(890, 890, 12, '2022-03-12 02:06:01', '2022-03-12 02:06:01');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(891, 891, 12, '2022-03-12 02:06:04', '2022-03-12 02:06:04');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(892, 892, 12, '2022-03-12 02:06:08', '2022-03-12 02:06:08');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(893, 893, 12, '2022-03-12 02:06:11', '2022-03-12 02:06:11');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(894, 894, 12, '2022-03-12 02:06:16', '2022-03-12 02:06:16');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(895, 895, 12, '2022-03-12 02:06:19', '2022-03-12 02:06:19');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(896, 896, 12, '2022-03-12 02:06:24', '2022-03-12 02:06:24');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(897, 897, 12, '2022-03-12 02:06:27', '2022-03-12 02:06:27');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(898, 898, 12, '2022-03-12 02:06:31', '2022-03-12 02:06:31');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(899, 899, 12, '2022-03-12 02:06:47', '2022-03-12 02:06:47');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(900, 900, 12, '2022-03-12 02:06:53', '2022-03-12 02:06:53');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(901, 901, 12, '2022-03-12 02:06:55', '2022-03-12 02:06:55');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(902, 902, 12, '2022-03-12 02:07:00', '2022-03-12 02:07:00');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(903, 903, 12, '2022-03-12 02:07:01', '2022-03-12 02:07:01');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(904, 904, 12, '2022-03-12 02:07:05', '2022-03-12 02:07:05');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(905, 905, 12, '2022-03-12 02:07:10', '2022-03-12 02:07:10');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(906, 906, 12, '2022-03-12 02:07:14', '2022-03-12 02:07:14');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(907, 907, 12, '2022-03-12 02:07:15', '2022-03-12 02:07:15');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(908, 908, 12, '2022-03-12 02:07:17', '2022-03-12 02:07:17');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(909, 909, 12, '2022-03-12 02:07:20', '2022-03-12 02:07:20');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(910, 910, 12, '2022-03-12 02:07:23', '2022-03-12 02:07:23');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(911, 911, 12, '2022-03-12 02:07:29', '2022-03-12 02:07:29');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(912, 912, 12, '2022-03-12 02:07:32', '2022-03-12 02:07:32');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(913, 913, 12, '2022-03-12 02:07:34', '2022-03-12 02:07:34');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(914, 914, 12, '2022-03-12 02:07:37', '2022-03-12 02:07:37');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(915, 915, 12, '2022-03-12 02:07:38', '2022-03-12 02:07:38');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(916, 916, 12, '2022-03-12 02:07:43', '2022-03-12 02:07:43');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(917, 917, 12, '2022-03-12 02:07:48', '2022-03-12 02:07:48');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(918, 918, 12, '2022-03-12 02:07:52', '2022-03-12 02:07:52');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(919, 919, 12, '2022-03-12 02:07:56', '2022-03-12 02:07:56');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(920, 920, 12, '2022-03-12 02:08:02', '2022-03-12 02:08:02');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(921, 921, 12, '2022-03-12 02:08:06', '2022-03-12 02:08:06');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(922, 922, 12, '2022-03-12 02:08:07', '2022-03-12 02:08:07');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(923, 923, 12, '2022-03-12 02:08:11', '2022-03-12 02:08:11');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(924, 924, 12, '2022-03-12 02:08:16', '2022-03-12 02:08:16');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(925, 925, 12, '2022-03-12 02:08:17', '2022-03-12 02:08:17');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(926, 926, 12, '2022-03-12 02:08:21', '2022-03-12 02:08:21');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(927, 927, 12, '2022-03-12 02:08:21', '2022-03-12 02:08:21');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(928, 928, 12, '2022-03-12 02:08:26', '2022-03-12 02:08:26');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(929, 929, 12, '2022-03-12 02:08:26', '2022-03-12 02:08:26');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(930, 930, 12, '2022-03-12 02:08:29', '2022-03-12 02:08:29');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(931, 931, 12, '2022-03-12 02:08:31', '2022-03-12 02:08:31');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(932, 932, 12, '2022-03-12 02:08:32', '2022-03-12 02:08:32');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(933, 933, 12, '2022-03-12 02:08:35', '2022-03-12 02:08:35');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(934, 934, 12, '2022-03-12 02:08:36', '2022-03-12 02:08:36');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(935, 935, 12, '2022-03-12 02:08:40', '2022-03-12 02:08:40');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(936, 936, 12, '2022-03-12 02:08:40', '2022-03-12 02:08:40');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(937, 937, 12, '2022-03-12 02:08:45', '2022-03-12 02:08:45');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(938, 938, 12, '2022-03-12 02:08:46', '2022-03-12 02:08:46');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(939, 939, 12, '2022-03-12 02:08:49', '2022-03-12 02:08:49');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(940, 940, 12, '2022-03-12 02:08:50', '2022-03-12 02:08:50');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(941, 941, 12, '2022-03-12 02:08:54', '2022-03-12 02:08:54');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(942, 942, 12, '2022-03-12 02:08:56', '2022-03-12 02:08:56');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(943, 943, 12, '2022-03-12 02:08:59', '2022-03-12 02:08:59');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(944, 944, 12, '2022-03-12 02:09:00', '2022-03-12 02:09:00');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(945, 945, 12, '2022-03-12 02:09:04', '2022-03-12 02:09:04');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(946, 946, 12, '2022-03-12 02:09:05', '2022-03-12 02:09:05');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(947, 947, 12, '2022-03-12 02:09:08', '2022-03-12 02:09:08');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(948, 948, 12, '2022-03-12 02:09:09', '2022-03-12 02:09:09');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(949, 949, 12, '2022-03-12 02:09:14', '2022-03-12 02:09:14');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(950, 950, 12, '2022-03-12 02:09:15', '2022-03-12 02:09:15');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(951, 951, 12, '2022-03-12 02:09:21', '2022-03-12 02:09:21');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(952, 952, 12, '2022-03-12 02:09:21', '2022-03-12 02:09:21');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(953, 953, 12, '2022-03-12 02:09:24', '2022-03-12 02:09:24');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(954, 954, 12, '2022-03-12 02:09:26', '2022-03-12 02:09:26');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(955, 955, 12, '2022-03-12 02:09:28', '2022-03-12 02:09:28');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(956, 956, 12, '2022-03-12 02:09:31', '2022-03-12 02:09:31');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(957, 957, 12, '2022-03-12 02:09:33', '2022-03-12 02:09:33');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(958, 958, 12, '2022-03-12 02:09:37', '2022-03-12 02:09:37');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(959, 959, 12, '2022-03-12 02:09:40', '2022-03-12 02:09:40');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(960, 960, 12, '2022-03-12 02:09:41', '2022-03-12 02:09:41');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(961, 961, 12, '2022-03-12 02:09:44', '2022-03-12 02:09:44');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(962, 962, 12, '2022-03-12 02:09:45', '2022-03-12 02:09:45');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(963, 963, 12, '2022-03-12 02:09:50', '2022-03-12 02:09:50');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(964, 964, 12, '2022-03-12 02:09:50', '2022-03-12 02:09:50');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(965, 965, 12, '2022-03-12 02:09:54', '2022-03-12 02:09:54');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(966, 966, 12, '2022-03-12 02:09:55', '2022-03-12 02:09:55');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(967, 967, 12, '2022-03-12 02:10:00', '2022-03-12 02:10:00');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(968, 968, 12, '2022-03-12 02:10:00', '2022-03-12 02:10:00');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(969, 969, 12, '2022-03-12 02:10:12', '2022-03-12 02:10:12');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(970, 970, 12, '2022-03-12 02:10:13', '2022-03-12 02:10:13');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(971, 971, 12, '2022-03-12 02:10:16', '2022-03-12 02:10:16');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(972, 972, 12, '2022-03-12 02:10:17', '2022-03-12 02:10:17');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(973, 973, 12, '2022-03-12 02:10:20', '2022-03-12 02:10:20');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(974, 974, 12, '2022-03-12 02:10:21', '2022-03-12 02:10:21');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(975, 1, 15, '2022-03-12 02:14:24', '2022-03-12 02:14:24');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(976, 2, 15, '2022-03-12 02:14:24', '2022-03-12 02:14:24');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(977, 3, 15, '2022-03-12 02:14:24', '2022-03-12 02:14:24');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(978, 4, 15, '2022-03-12 02:14:28', '2022-03-12 02:14:28');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(979, 5, 15, '2022-03-12 02:14:29', '2022-03-12 02:14:29');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(980, 6, 15, '2022-03-12 02:14:30', '2022-03-12 02:14:30');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(981, 7, 15, '2022-03-12 02:14:31', '2022-03-12 02:14:31');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(982, 8, 15, '2022-03-12 02:14:32', '2022-03-12 02:14:32');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(983, 9, 15, '2022-03-12 02:14:34', '2022-03-12 02:14:34');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(984, 10, 15, '2022-03-12 02:14:35', '2022-03-12 02:14:35');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(985, 11, 15, '2022-03-12 02:14:36', '2022-03-12 02:14:36');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(986, 12, 15, '2022-03-12 02:14:37', '2022-03-12 02:14:37');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(987, 13, 15, '2022-03-12 02:14:37', '2022-03-12 02:14:37');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(988, 14, 15, '2022-03-12 02:14:39', '2022-03-12 02:14:39');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(989, 15, 15, '2022-03-12 02:14:40', '2022-03-12 02:14:40');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(990, 16, 15, '2022-03-12 02:14:41', '2022-03-12 02:14:41');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(991, 17, 15, '2022-03-12 02:14:42', '2022-03-12 02:14:42');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(992, 18, 15, '2022-03-12 02:14:43', '2022-03-12 02:14:43');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(993, 19, 15, '2022-03-12 02:14:45', '2022-03-12 02:14:45');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(994, 20, 15, '2022-03-12 02:14:46', '2022-03-12 02:14:46');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(995, 21, 15, '2022-03-12 02:14:47', '2022-03-12 02:14:47');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(996, 22, 15, '2022-03-12 02:14:47', '2022-03-12 02:14:47');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(997, 23, 15, '2022-03-12 02:14:49', '2022-03-12 02:14:49');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(998, 24, 15, '2022-03-12 02:14:50', '2022-03-12 02:14:50');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(999, 25, 15, '2022-03-12 02:14:51', '2022-03-12 02:14:51');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1000, 26, 15, '2022-03-12 02:14:52', '2022-03-12 02:14:52');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1001, 27, 15, '2022-03-12 02:14:53', '2022-03-12 02:14:53');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1002, 28, 15, '2022-03-12 02:14:54', '2022-03-12 02:14:54');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1003, 29, 15, '2022-03-12 02:14:55', '2022-03-12 02:14:55');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1004, 30, 15, '2022-03-12 02:14:56', '2022-03-12 02:14:56');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1005, 31, 15, '2022-03-12 02:14:57', '2022-03-12 02:14:57');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1006, 32, 15, '2022-03-12 02:14:59', '2022-03-12 02:14:59');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1007, 33, 15, '2022-03-12 02:14:59', '2022-03-12 02:14:59');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1008, 34, 15, '2022-03-12 02:14:59', '2022-03-12 02:14:59');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1009, 35, 15, '2022-03-12 02:15:00', '2022-03-12 02:15:00');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1010, 36, 15, '2022-03-12 02:15:00', '2022-03-12 02:15:00');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1011, 37, 15, '2022-03-12 02:15:00', '2022-03-12 02:15:00');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1012, 38, 15, '2022-03-12 02:15:01', '2022-03-12 02:15:01');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1013, 39, 15, '2022-03-12 02:15:01', '2022-03-12 02:15:01');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1014, 40, 15, '2022-03-12 02:15:01', '2022-03-12 02:15:01');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1015, 41, 15, '2022-03-12 02:15:02', '2022-03-12 02:15:02');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1016, 42, 15, '2022-03-12 02:15:03', '2022-03-12 02:15:03');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1017, 43, 15, '2022-03-12 02:15:03', '2022-03-12 02:15:03');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1018, 44, 15, '2022-03-12 02:15:04', '2022-03-12 02:15:04');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1019, 45, 15, '2022-03-12 02:15:04', '2022-03-12 02:15:04');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1020, 46, 15, '2022-03-12 02:15:05', '2022-03-12 02:15:05');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1021, 47, 15, '2022-03-12 02:15:05', '2022-03-12 02:15:05');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1022, 48, 15, '2022-03-12 02:15:05', '2022-03-12 02:15:05');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1023, 49, 15, '2022-03-12 02:15:06', '2022-03-12 02:15:06');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1024, 50, 15, '2022-03-12 02:15:06', '2022-03-12 02:15:06');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1025, 51, 15, '2022-03-12 02:15:07', '2022-03-12 02:15:07');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1026, 52, 15, '2022-03-12 02:15:07', '2022-03-12 02:15:07');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1027, 53, 15, '2022-03-12 02:15:08', '2022-03-12 02:15:08');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1028, 54, 15, '2022-03-12 02:15:09', '2022-03-12 02:15:09');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1029, 55, 15, '2022-03-12 02:15:16', '2022-03-12 02:15:16');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1030, 56, 15, '2022-03-12 02:15:22', '2022-03-12 02:15:22');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1031, 57, 15, '2022-03-12 02:15:25', '2022-03-12 02:15:25');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1032, 58, 15, '2022-03-12 02:15:29', '2022-03-12 02:15:29');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1033, 59, 15, '2022-03-12 02:15:33', '2022-03-12 02:15:33');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1034, 60, 15, '2022-03-12 02:15:39', '2022-03-12 02:15:39');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1035, 61, 15, '2022-03-12 02:15:45', '2022-03-12 02:15:45');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1036, 62, 15, '2022-03-12 02:15:49', '2022-03-12 02:15:49');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1037, 63, 15, '2022-03-12 02:15:54', '2022-03-12 02:15:54');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1038, 64, 15, '2022-03-12 02:15:58', '2022-03-12 02:15:58');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1039, 65, 15, '2022-03-12 02:16:03', '2022-03-12 02:16:03');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1040, 66, 15, '2022-03-12 02:16:06', '2022-03-12 02:16:06');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1041, 67, 15, '2022-03-12 02:16:10', '2022-03-12 02:16:10');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1042, 68, 15, '2022-03-12 02:16:13', '2022-03-12 02:16:13');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1043, 69, 15, '2022-03-12 02:16:18', '2022-03-12 02:16:18');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1044, 70, 15, '2022-03-12 02:16:21', '2022-03-12 02:16:21');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1045, 71, 15, '2022-03-12 02:16:23', '2022-03-12 02:16:23');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1046, 72, 15, '2022-03-12 02:16:28', '2022-03-12 02:16:28');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1047, 73, 15, '2022-03-12 02:16:32', '2022-03-12 02:16:32');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1048, 74, 15, '2022-03-12 02:16:35', '2022-03-12 02:16:35');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1049, 75, 15, '2022-03-12 02:16:44', '2022-03-12 02:16:44');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1050, 76, 15, '2022-03-12 02:16:50', '2022-03-12 02:16:50');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1051, 77, 15, '2022-03-12 02:16:53', '2022-03-12 02:16:53');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1052, 78, 15, '2022-03-12 02:16:57', '2022-03-12 02:16:57');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1053, 79, 15, '2022-03-12 02:17:02', '2022-03-12 02:17:02');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1054, 80, 15, '2022-03-12 02:17:07', '2022-03-12 02:17:07');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1055, 81, 15, '2022-03-12 02:17:11', '2022-03-12 02:17:11');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1056, 82, 15, '2022-03-12 02:17:16', '2022-03-12 02:17:16');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1057, 83, 15, '2022-03-12 02:17:21', '2022-03-12 02:17:21');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1058, 84, 15, '2022-03-12 02:17:25', '2022-03-12 02:17:25');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1059, 85, 15, '2022-03-12 02:17:28', '2022-03-12 02:17:28');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1060, 86, 15, '2022-03-12 02:17:32', '2022-03-12 02:17:32');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1061, 87, 15, '2022-03-12 02:17:36', '2022-03-12 02:17:36');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1062, 88, 15, '2022-03-12 02:17:42', '2022-03-12 02:17:42');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1063, 89, 15, '2022-03-12 02:17:45', '2022-03-12 02:17:45');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1064, 90, 15, '2022-03-12 02:17:49', '2022-03-12 02:17:49');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1065, 91, 15, '2022-03-12 02:17:53', '2022-03-12 02:17:53');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1066, 92, 15, '2022-03-12 02:17:58', '2022-03-12 02:17:58');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1067, 93, 15, '2022-03-12 02:18:01', '2022-03-12 02:18:01');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1068, 94, 15, '2022-03-12 02:18:06', '2022-03-12 02:18:06');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1069, 95, 15, '2022-03-12 02:18:10', '2022-03-12 02:18:10');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1070, 96, 15, '2022-03-12 02:18:15', '2022-03-12 02:18:15');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1071, 97, 15, '2022-03-12 02:18:21', '2022-03-12 02:18:21');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1072, 98, 15, '2022-03-12 02:18:25', '2022-03-12 02:18:25');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1073, 99, 15, '2022-03-12 02:18:29', '2022-03-12 02:18:29');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1074, 100, 15, '2022-03-12 02:18:33', '2022-03-12 02:18:33');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1075, 101, 15, '2022-03-12 02:18:38', '2022-03-12 02:18:38');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1076, 102, 15, '2022-03-12 02:18:43', '2022-03-12 02:18:43');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1077, 103, 15, '2022-03-12 02:18:46', '2022-03-12 02:18:46');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1078, 104, 15, '2022-03-12 02:18:51', '2022-03-12 02:18:51');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1079, 105, 15, '2022-03-12 02:18:54', '2022-03-12 02:18:54');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1080, 106, 15, '2022-03-12 02:18:57', '2022-03-12 02:18:57');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1081, 107, 15, '2022-03-12 02:19:01', '2022-03-12 02:19:01');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1082, 108, 15, '2022-03-12 02:19:08', '2022-03-12 02:19:08');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1083, 109, 15, '2022-03-12 02:19:10', '2022-03-12 02:19:10');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1084, 110, 15, '2022-03-12 02:19:13', '2022-03-12 02:19:13');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1085, 111, 15, '2022-03-12 02:19:16', '2022-03-12 02:19:16');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1086, 112, 15, '2022-03-12 02:19:19', '2022-03-12 02:19:19');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1087, 113, 15, '2022-03-12 02:19:26', '2022-03-12 02:19:26');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1088, 114, 15, '2022-03-12 02:19:29', '2022-03-12 02:19:29');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1089, 115, 15, '2022-03-12 02:19:37', '2022-03-12 02:19:37');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1090, 116, 15, '2022-03-12 02:19:41', '2022-03-12 02:19:41');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1091, 117, 15, '2022-03-12 02:19:43', '2022-03-12 02:19:43');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1092, 118, 15, '2022-03-12 02:19:47', '2022-03-12 02:19:47');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1093, 119, 15, '2022-03-12 02:19:52', '2022-03-12 02:19:52');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1094, 120, 15, '2022-03-12 02:19:55', '2022-03-12 02:19:55');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1095, 121, 15, '2022-03-12 02:19:58', '2022-03-12 02:19:58');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1096, 122, 15, '2022-03-12 02:20:02', '2022-03-12 02:20:02');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1097, 123, 15, '2022-03-12 02:20:05', '2022-03-12 02:20:05');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1098, 124, 15, '2022-03-12 02:20:08', '2022-03-12 02:20:08');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1099, 125, 15, '2022-03-12 02:20:12', '2022-03-12 02:20:12');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1100, 126, 15, '2022-03-12 02:20:16', '2022-03-12 02:20:16');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1101, 127, 15, '2022-03-12 02:20:21', '2022-03-12 02:20:21');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1102, 128, 15, '2022-03-12 02:20:23', '2022-03-12 02:20:23');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1103, 129, 15, '2022-03-12 02:20:28', '2022-03-12 02:20:28');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1104, 130, 15, '2022-03-12 02:20:33', '2022-03-12 02:20:33');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1105, 131, 15, '2022-03-12 02:20:38', '2022-03-12 02:20:38');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1106, 132, 15, '2022-03-12 02:20:46', '2022-03-12 02:20:46');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1107, 133, 15, '2022-03-12 02:20:50', '2022-03-12 02:20:50');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1108, 134, 15, '2022-03-12 02:20:55', '2022-03-12 02:20:55');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1109, 135, 15, '2022-03-12 02:20:59', '2022-03-12 02:20:59');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1110, 136, 15, '2022-03-12 02:21:02', '2022-03-12 02:21:02');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1111, 137, 15, '2022-03-12 02:21:07', '2022-03-12 02:21:07');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1112, 138, 15, '2022-03-12 02:21:10', '2022-03-12 02:21:10');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1113, 139, 15, '2022-03-12 02:21:14', '2022-03-12 02:21:14');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1114, 140, 15, '2022-03-12 02:21:17', '2022-03-12 02:21:17');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1115, 141, 15, '2022-03-12 02:21:20', '2022-03-12 02:21:20');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1116, 142, 15, '2022-03-12 02:21:24', '2022-03-12 02:21:24');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1117, 143, 15, '2022-03-12 02:21:27', '2022-03-12 02:21:27');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1118, 144, 15, '2022-03-12 02:21:31', '2022-03-12 02:21:31');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1119, 145, 15, '2022-03-12 02:21:37', '2022-03-12 02:21:37');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1120, 146, 15, '2022-03-12 02:21:41', '2022-03-12 02:21:41');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1121, 147, 15, '2022-03-12 02:21:45', '2022-03-12 02:21:45');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1122, 148, 15, '2022-03-12 02:21:51', '2022-03-12 02:21:51');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1123, 149, 15, '2022-03-12 02:22:00', '2022-03-12 02:22:00');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1124, 150, 15, '2022-03-12 02:22:07', '2022-03-12 02:22:07');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1125, 151, 15, '2022-03-12 02:22:11', '2022-03-12 02:22:11');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1126, 152, 15, '2022-03-12 02:22:17', '2022-03-12 02:22:17');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1127, 153, 15, '2022-03-12 02:22:20', '2022-03-12 02:22:20');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1128, 154, 15, '2022-03-12 02:22:23', '2022-03-12 02:22:23');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1129, 155, 15, '2022-03-12 02:22:26', '2022-03-12 02:22:26');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1130, 156, 15, '2022-03-12 02:22:30', '2022-03-12 02:22:30');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1131, 157, 15, '2022-03-12 02:22:34', '2022-03-12 02:22:34');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1132, 158, 15, '2022-03-12 02:22:37', '2022-03-12 02:22:37');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1133, 159, 15, '2022-03-12 02:22:42', '2022-03-12 02:22:42');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1134, 160, 15, '2022-03-12 02:22:47', '2022-03-12 02:22:47');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1135, 161, 15, '2022-03-12 02:22:52', '2022-03-12 02:22:52');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1136, 162, 15, '2022-03-12 02:22:54', '2022-03-12 02:22:54');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1137, 163, 15, '2022-03-12 02:23:00', '2022-03-12 02:23:00');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1138, 164, 15, '2022-03-12 02:23:04', '2022-03-12 02:23:04');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1139, 165, 15, '2022-03-12 02:23:08', '2022-03-12 02:23:08');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1140, 166, 15, '2022-03-12 02:23:13', '2022-03-12 02:23:13');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1141, 167, 15, '2022-03-12 02:23:15', '2022-03-12 02:23:15');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1142, 168, 15, '2022-03-12 02:23:19', '2022-03-12 02:23:19');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1143, 169, 15, '2022-03-12 02:24:38', '2022-03-12 02:24:38');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1144, 170, 15, '2022-03-12 02:24:49', '2022-03-12 02:24:49');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1145, 171, 15, '2022-03-12 02:25:22', '2022-03-12 02:25:22');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1146, 172, 15, '2022-03-12 02:25:24', '2022-03-12 02:25:24');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1147, 173, 15, '2022-03-12 02:25:29', '2022-03-12 02:25:29');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1148, 174, 15, '2022-03-12 02:25:33', '2022-03-12 02:25:33');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1149, 175, 15, '2022-03-12 02:25:36', '2022-03-12 02:25:36');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1150, 176, 15, '2022-03-12 02:25:38', '2022-03-12 02:25:38');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1151, 177, 15, '2022-03-12 02:25:42', '2022-03-12 02:25:42');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1152, 178, 15, '2022-03-12 02:25:47', '2022-03-12 02:25:47');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1153, 179, 15, '2022-03-12 02:25:50', '2022-03-12 02:25:50');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1154, 180, 15, '2022-03-12 02:25:55', '2022-03-12 02:25:55');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1155, 181, 15, '2022-03-12 02:26:00', '2022-03-12 02:26:00');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1156, 182, 15, '2022-03-12 02:26:07', '2022-03-12 02:26:07');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1157, 183, 15, '2022-03-12 02:26:11', '2022-03-12 02:26:11');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1158, 184, 15, '2022-03-12 02:26:16', '2022-03-12 02:26:16');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1159, 185, 15, '2022-03-12 02:26:18', '2022-03-12 02:26:18');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1160, 186, 15, '2022-03-12 02:26:22', '2022-03-12 02:26:22');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1161, 187, 15, '2022-03-12 02:26:26', '2022-03-12 02:26:26');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1162, 188, 15, '2022-03-12 02:26:28', '2022-03-12 02:26:28');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1163, 189, 15, '2022-03-12 02:26:33', '2022-03-12 02:26:33');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1164, 190, 15, '2022-03-12 02:26:37', '2022-03-12 02:26:37');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1165, 191, 15, '2022-03-12 02:26:42', '2022-03-12 02:26:42');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1166, 192, 15, '2022-03-12 02:26:47', '2022-03-12 02:26:47');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1167, 193, 15, '2022-03-12 02:26:52', '2022-03-12 02:26:52');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1168, 194, 15, '2022-03-12 02:26:56', '2022-03-12 02:26:56');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1169, 195, 15, '2022-03-12 02:27:00', '2022-03-12 02:27:00');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1170, 196, 15, '2022-03-12 02:27:05', '2022-03-12 02:27:05');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1171, 197, 15, '2022-03-12 02:27:10', '2022-03-12 02:27:10');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1172, 198, 15, '2022-03-12 02:27:14', '2022-03-12 02:27:14');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1173, 199, 15, '2022-03-12 02:27:19', '2022-03-12 02:27:19');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1174, 200, 15, '2022-03-12 02:27:22', '2022-03-12 02:27:22');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1175, 201, 15, '2022-03-12 02:27:28', '2022-03-12 02:27:28');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1176, 202, 15, '2022-03-12 02:27:33', '2022-03-12 02:27:33');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1177, 203, 15, '2022-03-12 02:27:35', '2022-03-12 02:27:35');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1178, 204, 15, '2022-03-12 02:27:38', '2022-03-12 02:27:38');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1179, 205, 15, '2022-03-12 02:27:43', '2022-03-12 02:27:43');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1180, 206, 15, '2022-03-12 02:27:46', '2022-03-12 02:27:46');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1181, 207, 15, '2022-03-12 02:27:51', '2022-03-12 02:27:51');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1182, 208, 15, '2022-03-12 02:27:53', '2022-03-12 02:27:53');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1183, 209, 15, '2022-03-12 02:27:59', '2022-03-12 02:27:59');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1184, 210, 15, '2022-03-12 02:28:04', '2022-03-12 02:28:04');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1185, 211, 15, '2022-03-12 02:28:07', '2022-03-12 02:28:07');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1186, 212, 15, '2022-03-13 16:17:58', '2022-03-13 16:17:58');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(1187, 213, 15, '2022-03-13 16:18:59', '2022-03-13 16:18:59');
+	(197, 195, 12, '2022-04-28 23:29:17', '2022-04-28 23:29:17');
 /*!40000 ALTER TABLE `news_tags` ENABLE KEYS */;
 
 -- Copiando estrutura para tabela meuhype.password_resets
@@ -3074,7 +1058,7 @@ CREATE TABLE IF NOT EXISTS `password_resets` (
   `token` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   KEY `password_resets_email_index` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Copiando dados para a tabela meuhype.password_resets: ~0 rows (aproximadamente)
 /*!40000 ALTER TABLE `password_resets` DISABLE KEYS */;
@@ -3098,7 +1082,7 @@ CREATE TABLE IF NOT EXISTS `podcasts` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=128 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=128 DEFAULT CHARSET=utf8mb4;
 
 -- Copiando dados para a tabela meuhype.podcasts: ~127 rows (aproximadamente)
 /*!40000 ALTER TABLE `podcasts` DISABLE KEYS */;
@@ -3433,12 +1417,12 @@ CREATE TABLE IF NOT EXISTS `users` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `users_email_unique` (`email`),
   UNIQUE KEY `users_api_token_unique` (`api_token`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
 
 -- Copiando dados para a tabela meuhype.users: ~5 rows (aproximadamente)
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
 INSERT INTO `users` (`id`, `name`, `email`, `sexo`, `password`, `api_token`, `remember_token`, `created_at`, `updated_at`) VALUES
-	(1, 'Carlos Alberto Esteves Junior', 'carlosestevesjr0@gmail.com', 'masculino', '$2y$10$WWE.c9blXqU0DvaMaU2fMu1Rt4G/lEIs3dE53vBu3EHOrf2h26ywW', NULL, NULL, '2020-07-26 17:51:24', '2021-07-11 22:46:16');
+	(1, 'Carlos Alberto Esteves Junior', 'carlosestevesjr0@gmail.com', 'masculino', '$2y$10$WWE.c9blXqU0DvaMaU2fMu1Rt4G/lEIs3dE53vBu3EHOrf2h26ywW', 'kUD8C9Bi5S2kSyB2BlTr9RM2DoRlQVmDDMoPD4FzneTs1HfNn7SdmpYd8NT86256082bba745', NULL, '2020-07-26 17:51:24', '2022-04-12 20:15:55');
 INSERT INTO `users` (`id`, `name`, `email`, `sexo`, `password`, `api_token`, `remember_token`, `created_at`, `updated_at`) VALUES
 	(2, 'Thays Gomes', 'thaysgalhardo03@gmail.com', 'feminino', '$2y$10$LLZOJKoOGL4xNcz43CMPtu5AvgRWDRXevYvq2C7lCe52zwLjwOpTe', 'LZ4eTcNolH3LRJsAWxcjgYZ7xo4Q90548Zaud0yJ82OMMV76Nglg77m53DFH60a913494fcf8', NULL, '2021-05-22 11:20:57', '2021-05-22 11:20:57');
 INSERT INTO `users` (`id`, `name`, `email`, `sexo`, `password`, `api_token`, `remember_token`, `created_at`, `updated_at`) VALUES
@@ -3457,7 +1441,7 @@ CREATE TABLE IF NOT EXISTS `user_channels` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Copiando dados para a tabela meuhype.user_channels: ~0 rows (aproximadamente)
 /*!40000 ALTER TABLE `user_channels` DISABLE KEYS */;
@@ -3471,7 +1455,7 @@ CREATE TABLE IF NOT EXISTS `user_tags` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Copiando dados para a tabela meuhype.user_tags: ~0 rows (aproximadamente)
 /*!40000 ALTER TABLE `user_tags` DISABLE KEYS */;

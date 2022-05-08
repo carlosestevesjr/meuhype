@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 
 use App\User;
+use App\TokenNotification;
 use Validator;
 
 class AuthController extends Controller
@@ -17,6 +18,45 @@ class AuthController extends Controller
     {
         // Unique Token
         $this->apiToken = uniqid(Str::random(60));
+    }
+
+     /**
+     * Login
+     */
+    public function setTokenPush(Request $request)
+    {
+        $params = $request->all();
+        $token_notification = TokenNotification::where( 'token',  '=', $params['token']  )->first();
+
+        if($token_notification == null ){
+    
+            $insert = new TokenNotification;
+    
+            $insert->token = $params['token'];
+            $insert->platform = $params['platform'];
+            if($insert->token != ""){
+                $condition = $insert->save();
+                if($condition){
+                    return "sucesso";
+                }else{
+                    return "erro";
+                }
+            }else{
+                throw new \Exception("Necessario token");
+            }
+
+        }else{
+            $token_notification->token = $params['token'];
+            $token_notification->platform = $params['platform'];
+            $token_notification->updated_at = now();
+            $condition = $token_notification->save();
+            if($condition){
+                return "sucesso";
+            }else{
+                return "erro";
+            }
+        }
+
     }
 
     /**
@@ -247,4 +287,7 @@ class AuthController extends Controller
             return response()->json($retorno , 401);
         }
     }
+
+
+
 }

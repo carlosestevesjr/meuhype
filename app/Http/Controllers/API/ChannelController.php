@@ -29,7 +29,7 @@ class ChannelController extends Controller
         $lista = Channels::query()
                             ->where('name', 'LIKE', "%{$request->busca}%") 
                             ->orderBy('name', 'Asc')
-                            ->get();
+                            ->paginate(10);
 
         if($lista){
             $retorno =  [

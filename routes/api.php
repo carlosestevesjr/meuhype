@@ -42,8 +42,13 @@ Route::group(['prefix' => 'v1', 'middleware' => ['cors']], function () {
        
     });
 
-    Route::group(['namespace'=> 'API'], function () {
+    Route::group(['namespace'=> 'AuthAPI'], function () {
+        //Token Notification
+        Route::post('set-token-push','AuthController@setTokenPush');
+    });
 
+    Route::group(['namespace'=> 'API'], function () {
+       
         //Tags 
         Route::get('lista-tags/{busca?}','TagsController@listaTags');
 
@@ -60,6 +65,7 @@ Route::group(['prefix' => 'v1', 'middleware' => ['cors']], function () {
         
         //News
         Route::get('lista-news/{id?}','NewsController@listaNews');
+        Route::post('lista-news-search','NewsController@listaNewsSearch');
         Route::get('lista-news-user/{token}','NewsController@listaNewsUser');
         Route::get('lista-news-tag-user/{id}/{token}','NewsController@listaNewsTagUser');
         Route::get('lista-news-channel-user/{id}/{token}','NewsController@listaNewsChannelUser');

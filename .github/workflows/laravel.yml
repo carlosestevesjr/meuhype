@@ -16,7 +16,7 @@ jobs:
       uses: appleboy/ssh-action@master
       with:
               
-        host: nocinema.kinghost.net
+        host: 191.6.208.137
         username: nocinema
         password: nerd0471
         port: 22

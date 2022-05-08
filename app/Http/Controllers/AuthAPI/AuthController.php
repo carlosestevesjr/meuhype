@@ -25,7 +25,6 @@ class AuthController extends Controller
      */
     public function setTokenPush(Request $request)
     {
-        die('teste');
         $params = $request->all();
         $token_notification = TokenNotification::where( 'token',  '=', $params['token']  )->first();
 

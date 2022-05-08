@@ -21,4 +21,4 @@ jobs:
         password: ${{ secrets.SSH_PASS }}
         port: 22
         script: |
-          ls
+          echo 'teste' > deu-certo.txt

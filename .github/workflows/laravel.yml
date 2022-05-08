@@ -21,4 +21,4 @@ jobs:
         password: nerd0471
         port: 22
         script: |
-          git pull origin master
+          echo 'teste' > teste.txt

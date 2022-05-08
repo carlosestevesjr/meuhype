@@ -21,5 +21,4 @@ jobs:
         password: ${{ secrets.SSH_PASS }}
         port: 22
         script: |
-          cd www
           git pull origin master

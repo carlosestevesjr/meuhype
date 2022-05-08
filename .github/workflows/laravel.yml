@@ -13,12 +13,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: executing remote ssh commands using password
-      uses: appleboy/ssh-action@master
+      uses: actions/checkout@v2
       with:
               
-        host: 191.6.208.137
-        username: nocinema
-        password: nerd0471
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        password: ${{ secrets.SSH_PASS }}
         port: 22
         script: |
-          echo 'teste' > teste.txt
+          ls

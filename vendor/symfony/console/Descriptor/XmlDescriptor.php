@@ -13,119 +13,42 @@ namespace Symfony\Component\Console\Descriptor;
 
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Formatter\OutputFormatter;
+use Symfony\Component\Console\Helper\Helper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
 
 /**
- * XML descriptor.
+ * Text descriptor.
  *
  * @author Jean-François Simon <contact@jfsimon.fr>
  *
  * @internal
  */
-class XmlDescriptor extends Descriptor
+class TextDescriptor extends Descriptor
 {
-    public function getInputDefinitionDocument(InputDefinition $definition): \DOMDocument
-    {
-        $dom = new \DOMDocument('1.0', 'UTF-8');
-        $dom->appendChild($definitionXML = $dom->createElement('definition'));
-
-        $definitionXML->appendChild($argumentsXML = $dom->createElement('arguments'));
-        foreach ($definition->getArguments() as $argument) {
-            $this->appendDocument($argumentsXML, $this->getInputArgumentDocument($argument));
-        }
-
-        $definitionXML->appendChild($optionsXML = $dom->createElement('options'));
-        foreach ($definition->getOptions() as $option) {
-            $this->appendDocument($optionsXML, $this->getInputOptionDocument($option));
-        }
-
-        return $dom;
-    }
-
-    public function getCommandDocument(Command $command, bool $short = false): \DOMDocument
-    {
-        $dom = new \DOMDocument('1.0', 'UTF-8');
-        $dom->appendChild($commandXML = $dom->createElement('command'));
-
-        $commandXML->setAttribute('id', $command->getName());
-        $commandXML->setAttribute('name', $command->getName());
-        $commandXML->setAttribute('hidden', $command->isHidden() ? 1 : 0);
-
-        $commandXML->appendChild($usagesXML = $dom->createElement('usages'));
-
-        $commandXML->appendChild($descriptionXML = $dom->createElement('description'));
-        $descriptionXML->appendChild($dom->createTextNode(str_replace("\n", "\n ", $command->getDescription())));
-
-        if ($short) {
-            foreach ($command->getAliases() as $usage) {
-                $usagesXML->appendChild($dom->createElement('usage', $usage));
-            }
-        } else {
-            $command->mergeApplicationDefinition(false);
-
-            foreach (array_merge([$command->getSynopsis()], $command->getAliases(), $command->getUsages()) as $usage) {
-                $usagesXML->appendChild($dom->createElement('usage', $usage));
-            }
-
-            $commandXML->appendChild($helpXML = $dom->createElement('help'));
-            $helpXML->appendChild($dom->createTextNode(str_replace("\n", "\n ", $command->getProcessedHelp())));
-
-            $definitionXML = $this->getInputDefinitionDocument($command->getDefinition());
-            $this->appendDocument($commandXML, $definitionXML->getElementsByTagName('definition')->item(0));
-        }
-
-        return $dom;
-    }
-
-    public function getApplicationDocument(Application $application, string $namespace = null, bool $short = false): \DOMDocument
-    {
-        $dom = new \DOMDocument('1.0', 'UTF-8');
-        $dom->appendChild($rootXml = $dom->createElement('symfony'));
-
-        if ('UNKNOWN' !== $application->getName()) {
-            $rootXml->setAttribute('name', $application->getName());
-            if ('UNKNOWN' !== $application->getVersion()) {
-                $rootXml->setAttribute('version', $application->getVersion());
-            }
-        }
-
-        $rootXml->appendChild($commandsXML = $dom->createElement('commands'));
-
-        $description = new ApplicationDescription($application, $namespace, true);
-
-        if ($namespace) {
-            $commandsXML->setAttribute('namespace', $namespace);
-        }
-
-        foreach ($description->getCommands() as $command) {
-            $this->appendDocument($commandsXML, $this->getCommandDocument($command, $short));
-        }
-
-        if (!$namespace) {
-            $rootXml->appendChild($namespacesXML = $dom->createElement('namespaces'));
-
-            foreach ($description->getNamespaces() as $namespaceDescription) {
-                $namespacesXML->appendChild($namespaceArrayXML = $dom->createElement('namespace'));
-                $namespaceArrayXML->setAttribute('id', $namespaceDescription['id']);
-
-                foreach ($namespaceDescription['commands'] as $name) {
-                    $namespaceArrayXML->appendChild($commandXML = $dom->createElement('command'));
-                    $commandXML->appendChild($dom->createTextNode($name));
-                }
-            }
-        }
-
-        return $dom;
-    }
-
     /**
      * {@inheritdoc}
      */
     protected function describeInputArgument(InputArgument $argument, array $options = [])
     {
-        $this->writeDocument($this->getInputArgumentDocument($argument));
+        if (null !== $argument->getDefault() && (!\is_array($argument->getDefault()) || \count($argument->getDefault()))) {
+            $default = sprintf('<comment> [default: %s]</comment>', $this->formatDefaultValue($argument->getDefault()));
+        } else {
+            $default = '';
+        }
+
+        $totalWidth = $options['total_width'] ?? Helper::width($argument->getName());
+        $spacingWidth = $totalWidth - \strlen($argument->getName());
+
+        $this->writeText(sprintf('  <info>%s</info>  %s%s%s',
+            $argument->getName(),
+            str_repeat(' ', $spacingWidth),
+            // + 4 = 2 spaces before <info>, 2 spaces after </info>
+            preg_replace('/\s*[\r\n]\s*/', "\n".str_repeat(' ', $totalWidth + 4), $argument->getDescription()),
+            $default
+        ), $options);
     }
 
     /**
@@ -133,7 +56,37 @@ class XmlDescriptor extends Descriptor
      */
     protected function describeInputOption(InputOption $option, array $options = [])
     {
-        $this->writeDocument($this->getInputOptionDocument($option));
+        if ($option->acceptValue() && null !== $option->getDefault() && (!\is_array($option->getDefault()) || \count($option->getDefault()))) {
+            $default = sprintf('<comment> [default: %s]</comment>', $this->formatDefaultValue($option->getDefault()));
+        } else {
+            $default = '';
+        }
+
+        $value = '';
+        if ($option->acceptValue()) {
+            $value = '='.strtoupper($option->getName());
+
+            if ($option->isValueOptional()) {
+                $value = '['.$value.']';
+            }
+        }
+
+        $totalWidth = $options['total_width'] ?? $this->calculateTotalWidthForOptions([$option]);
+        $synopsis = sprintf('%s%s',
+            $option->getShortcut() ? sprintf('-%s, ', $option->getShortcut()) : '    ',
+            sprintf($option->isNegatable() ? '--%1$s|--no-%1$s' : '--%1$s%2$s', $option->getName(), $value)
+        );
+
+        $spacingWidth = $totalWidth - Helper::width($synopsis);
+
+        $this->writeText(sprintf('  <info>%s</info>  %s%s%s%s',
+            $synopsis,
+            str_repeat(' ', $spacingWidth),
+            // + 4 = 2 spaces before <info>, 2 spaces after </info>
+            preg_replace('/\s*[\r\n]\s*/', "\n".str_repeat(' ', $totalWidth + 4), $option->getDescription()),
+            $default,
+            $option->isArray() ? '<comment> (multiple values allowed)</comment>' : ''
+        ), $options);
     }
 
     /**
@@ -141,7 +94,41 @@ class XmlDescriptor extends Descriptor
      */
     protected function describeInputDefinition(InputDefinition $definition, array $options = [])
     {
-        $this->writeDocument($this->getInputDefinitionDocument($definition));
+        $totalWidth = $this->calculateTotalWidthForOptions($definition->getOptions());
+        foreach ($definition->getArguments() as $argument) {
+            $totalWidth = max($totalWidth, Helper::width($argument->getName()));
+        }
+
+        if ($definition->getArguments()) {
+            $this->writeText('<comment>Arguments:</comment>', $options);
+            $this->writeText("\n");
+            foreach ($definition->getArguments() as $argument) {
+                $this->describeInputArgument($argument, array_merge($options, ['total_width' => $totalWidth]));
+                $this->writeText("\n");
+            }
+        }
+
+        if ($definition->getArguments() && $definition->getOptions()) {
+            $this->writeText("\n");
+        }
+
+        if ($definition->getOptions()) {
+            $laterOptions = [];
+
+            $this->writeText('<comment>Options:</comment>', $options);
+            foreach ($definition->getOptions() as $option) {
+                if (\strlen($option->getShortcut() ?? '') > 1) {
+                    $laterOptions[] = $option;
+                    continue;
+                }
+                $this->writeText("\n");
+                $this->describeInputOption($option, array_merge($options, ['total_width' => $totalWidth]));
+            }
+            foreach ($laterOptions as $option) {
+                $this->writeText("\n");
+                $this->describeInputOption($option, array_merge($options, ['total_width' => $totalWidth]));
+            }
+        }
     }
 
     /**
@@ -149,7 +136,37 @@ class XmlDescriptor extends Descriptor
      */
     protected function describeCommand(Command $command, array $options = [])
     {
-        $this->writeDocument($this->getCommandDocument($command, $options['short'] ?? false));
+        $command->mergeApplicationDefinition(false);
+
+        if ($description = $command->getDescription()) {
+            $this->writeText('<comment>Description:</comment>', $options);
+            $this->writeText("\n");
+            $this->writeText('  '.$description);
+            $this->writeText("\n\n");
+        }
+
+        $this->writeText('<comment>Usage:</comment>', $options);
+        foreach (array_merge([$command->getSynopsis(true)], $command->getAliases(), $command->getUsages()) as $usage) {
+            $this->writeText("\n");
+            $this->writeText('  '.OutputFormatter::escape($usage), $options);
+        }
+        $this->writeText("\n");
+
+        $definition = $command->getDefinition();
+        if ($definition->getOptions() || $definition->getArguments()) {
+            $this->writeText("\n");
+            $this->describeInputDefinition($definition, $options);
+            $this->writeText("\n");
+        }
+
+        $help = $command->getProcessedHelp();
+        if ($help && $help !== $description) {
+            $this->writeText("\n");
+            $this->writeText('<comment>Help:</comment>', $options);
+            $this->writeText("\n");
+            $this->writeText('  '.str_replace("\n", "\n  ", $help), $options);
+            $this->writeText("\n");
+        }
     }
 
     /**
@@ -157,91 +174,168 @@ class XmlDescriptor extends Descriptor
      */
     protected function describeApplication(Application $application, array $options = [])
     {
-        $this->writeDocument($this->getApplicationDocument($application, $options['namespace'] ?? null, $options['short'] ?? false));
-    }
+        $describedNamespace = $options['namespace'] ?? null;
+        $description = new ApplicationDescription($application, $describedNamespace);
 
-    /**
-     * Appends document children to parent node.
-     */
-    private function appendDocument(\DOMNode $parentNode, \DOMNode $importedParent)
-    {
-        foreach ($importedParent->childNodes as $childNode) {
-            $parentNode->appendChild($parentNode->ownerDocument->importNode($childNode, true));
-        }
-    }
+        if (isset($options['raw_text']) && $options['raw_text']) {
+            $width = $this->getColumnWidth($description->getCommands());
 
-    /**
-     * Writes DOM document.
-     */
-    private function writeDocument(\DOMDocument $dom)
-    {
-        $dom->formatOutput = true;
-        $this->write($dom->saveXML());
-    }
-
-    private function getInputArgumentDocument(InputArgument $argument): \DOMDocument
-    {
-        $dom = new \DOMDocument('1.0', 'UTF-8');
-
-        $dom->appendChild($objectXML = $dom->createElement('argument'));
-        $objectXML->setAttribute('name', $argument->getName());
-        $objectXML->setAttribute('is_required', $argument->isRequired() ? 1 : 0);
-        $objectXML->setAttribute('is_array', $argument->isArray() ? 1 : 0);
-        $objectXML->appendChild($descriptionXML = $dom->createElement('description'));
-        $descriptionXML->appendChild($dom->createTextNode($argument->getDescription()));
-
-        $objectXML->appendChild($defaultsXML = $dom->createElement('defaults'));
-        $defaults = \is_array($argument->getDefault()) ? $argument->getDefault() : (\is_bool($argument->getDefault()) ? [var_export($argument->getDefault(), true)] : ($argument->getDefault() ? [$argument->getDefault()] : []));
-        foreach ($defaults as $default) {
-            $defaultsXML->appendChild($defaultXML = $dom->createElement('default'));
-            $defaultXML->appendChild($dom->createTextNode($default));
-        }
-
-        return $dom;
-    }
-
-    private function getInputOptionDocument(InputOption $option): \DOMDocument
-    {
-        $dom = new \DOMDocument('1.0', 'UTF-8');
-
-        $dom->appendChild($objectXML = $dom->createElement('option'));
-        $objectXML->setAttribute('name', '--'.$option->getName());
-        $pos = strpos($option->getShortcut() ?? '', '|');
-        if (false !== $pos) {
-            $objectXML->setAttribute('shortcut', '-'.substr($option->getShortcut(), 0, $pos));
-            $objectXML->setAttribute('shortcuts', '-'.str_replace('|', '|-', $option->getShortcut()));
+            foreach ($description->getCommands() as $command) {
+                $this->writeText(sprintf("%-{$width}s %s", $command->getName(), $command->getDescription()), $options);
+                $this->writeText("\n");
+            }
         } else {
-            $objectXML->setAttribute('shortcut', $option->getShortcut() ? '-'.$option->getShortcut() : '');
+            if ('' != $help = $application->getHelp()) {
+                $this->writeText("$help\n\n", $options);
+            }
+
+            $this->writeText("<comment>Usage:</comment>\n", $options);
+            $this->writeText("  command [options] [arguments]\n\n", $options);
+
+            $this->describeInputDefinition(new InputDefinition($application->getDefinition()->getOptions()), $options);
+
+            $this->writeText("\n");
+            $this->writeText("\n");
+
+            $commands = $description->getCommands();
+            $namespaces = $description->getNamespaces();
+            if ($describedNamespace && $namespaces) {
+                // make sure all alias commands are included when describing a specific namespace
+                $describedNamespaceInfo = reset($namespaces);
+                foreach ($describedNamespaceInfo['commands'] as $name) {
+                    $commands[$name] = $description->getCommand($name);
+                }
+            }
+
+            // calculate max. width based on available commands per namespace
+            $width = $this->getColumnWidth(array_merge(...array_values(array_map(function ($namespace) use ($commands) {
+                return array_intersect($namespace['commands'], array_keys($commands));
+            }, array_values($namespaces)))));
+
+            if ($describedNamespace) {
+                $this->writeText(sprintf('<comment>Available commands for the "%s" namespace:</comment>', $describedNamespace), $options);
+            } else {
+                $this->writeText('<comment>Available commands:</comment>', $options);
+            }
+
+            foreach ($namespaces as $namespace) {
+                $namespace['commands'] = array_filter($namespace['commands'], function ($name) use ($commands) {
+                    return isset($commands[$name]);
+                });
+
+                if (!$namespace['commands']) {
+                    continue;
+                }
+
+                if (!$describedNamespace && ApplicationDescription::GLOBAL_NAMESPACE !== $namespace['id']) {
+                    $this->writeText("\n");
+                    $this->writeText(' <comment>'.$namespace['id'].'</comment>', $options);
+                }
+
+                foreach ($namespace['commands'] as $name) {
+                    $this->writeText("\n");
+                    $spacingWidth = $width - Helper::width($name);
+                    $command = $commands[$name];
+                    $commandAliases = $name === $command->getName() ? $this->getCommandAliasesText($command) : '';
+                    $this->writeText(sprintf('  <info>%s</info>%s%s', $name, str_repeat(' ', $spacingWidth), $commandAliases.$command->getDescription()), $options);
+                }
+            }
+
+            $this->writeText("\n");
         }
-        $objectXML->setAttribute('accept_value', $option->acceptValue() ? 1 : 0);
-        $objectXML->setAttribute('is_value_required', $option->isValueRequired() ? 1 : 0);
-        $objectXML->setAttribute('is_multiple', $option->isArray() ? 1 : 0);
-        $objectXML->appendChild($descriptionXML = $dom->createElement('description'));
-        $descriptionXML->appendChild($dom->createTextNode($option->getDescription()));
+    }
 
-        if ($option->acceptValue()) {
-            $defaults = \is_array($option->getDefault()) ? $option->getDefault() : (\is_bool($option->getDefault()) ? [var_export($option->getDefault(), true)] : ($option->getDefault() ? [$option->getDefault()] : []));
-            $objectXML->appendChild($defaultsXML = $dom->createElement('defaults'));
+    /**
+     * {@inheritdoc}
+     */
+    private function writeText(string $content, array $options = [])
+    {
+        $this->write(
+            isset($options['raw_text']) && $options['raw_text'] ? strip_tags($content) : $content,
+            isset($options['raw_output']) ? !$options['raw_output'] : true
+        );
+    }
 
-            if (!empty($defaults)) {
-                foreach ($defaults as $default) {
-                    $defaultsXML->appendChild($defaultXML = $dom->createElement('default'));
-                    $defaultXML->appendChild($dom->createTextNode($default));
+    /**
+     * Formats command aliases to show them in the command description.
+     */
+    private function getCommandAliasesText(Command $command): string
+    {
+        $text = '';
+        $aliases = $command->getAliases();
+
+        if ($aliases) {
+            $text = '['.implode('|', $aliases).'] ';
+        }
+
+        return $text;
+    }
+
+    /**
+     * Formats input option/argument default value.
+     *
+     * @param mixed $default
+     */
+    private function formatDefaultValue($default): string
+    {
+        if (\INF === $default) {
+            return 'INF';
+        }
+
+        if (\is_string($default)) {
+            $default = OutputFormatter::escape($default);
+        } elseif (\is_array($default)) {
+            foreach ($default as $key => $value) {
+                if (\is_string($value)) {
+                    $default[$key] = OutputFormatter::escape($value);
                 }
             }
         }
 
-        if ($option->isNegatable()) {
-            $dom->appendChild($objectXML = $dom->createElement('option'));
-            $objectXML->setAttribute('name', '--no-'.$option->getName());
-            $objectXML->setAttribute('shortcut', '');
-            $objectXML->setAttribute('accept_value', 0);
-            $objectXML->setAttribute('is_value_required', 0);
-            $objectXML->setAttribute('is_multiple', 0);
-            $objectXML->appendChild($descriptionXML = $dom->createElement('description'));
-            $descriptionXML->appendChild($dom->createTextNode('Negate the "--'.$option->getName().'" option'));
+        return str_replace('\\\\', '\\', json_encode($default, \JSON_UNESCAPED_SLASHES | \JSON_UNESCAPED_UNICODE));
+    }
+
+    /**
+     * @param array<Command|string> $commands
+     */
+    private function getColumnWidth(array $commands): int
+    {
+        $widths = [];
+
+        foreach ($commands as $command) {
+            if ($command instanceof Command) {
+                $widths[] = Helper::width($command->getName());
+                foreach ($command->getAliases() as $alias) {
+                    $widths[] = Helper::width($alias);
+                }
+            } else {
+                $widths[] = Helper::width($command);
+            }
         }
 
-        return $dom;
+        return $widths ? max($widths) + 2 : 0;
+    }
+
+    /**
+     * @param InputOption[] $options
+     */
+    private function calculateTotalWidthForOptions(array $options): int
+    {
+        $totalWidth = 0;
+        foreach ($options as $option) {
+            // "-" + shortcut + ", --" + name
+            $nameLength = 1 + max(Helper::width($option->getShortcut()), 1) + 4 + Helper::width($option->getName());
+            if ($option->isNegatable()) {
+                $nameLength += 6 + Helper::width($option->getName()); // |--no- + name
+            } elseif ($option->acceptValue()) {
+                $valueLength = 1 + Helper::width($option->getName()); // = + value
+                $valueLength += $option->isValueOptional() ? 2 : 0; // [ + ]
+
+                $nameLength += $valueLength;
+            }
+            $totalWidth = max($totalWidth, $nameLength);
+        }
+
+        return $totalWidth;
     }
 }

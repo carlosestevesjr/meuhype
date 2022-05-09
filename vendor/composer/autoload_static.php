@@ -571,7 +571,6 @@ class ComposerStaticInita2f52c051d69eb4d44e32ab360a51a13
         'App\\Providers\\EventServiceProvider' => __DIR__ . '/../..' . '/app/Providers/EventServiceProvider.php',
         'App\\Providers\\RouteServiceProvider' => __DIR__ . '/../..' . '/app/Providers/RouteServiceProvider.php',
         'App\\Tags' => __DIR__ . '/../..' . '/app/Tags.php',
-        'App\\TokenNotification' => __DIR__ . '/../..' . '/app/TokenNotification.php',
         'App\\User' => __DIR__ . '/../..' . '/app/User.php',
         'App\\UserChannels' => __DIR__ . '/../..' . '/app/UserChannels.php',
         'App\\UserTags' => __DIR__ . '/../..' . '/app/UserTags.php',

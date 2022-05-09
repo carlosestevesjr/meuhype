@@ -1,7 +1,7 @@
 -- --------------------------------------------------------
--- Servidor:                     localhost
--- Versão do servidor:           10.4.21-MariaDB - mariadb.org binary distribution
--- OS do Servidor:               Win64
+-- Servidor:                     192.168.10.10
+-- Versão do servidor:           8.0.26-0ubuntu0.20.04.2 - (Ubuntu)
+-- OS do Servidor:               Linux
 -- HeidiSQL Versão:              11.3.0.6295
 -- --------------------------------------------------------
 
@@ -14,23 +14,23 @@
 
 
 -- Copiando estrutura do banco de dados para meuhype
-CREATE DATABASE IF NOT EXISTS `meuhype` /*!40100 DEFAULT CHARACTER SET utf8mb4 */;
+CREATE DATABASE IF NOT EXISTS `meuhype` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `meuhype`;
 
 -- Copiando estrutura para tabela meuhype.admins
 CREATE TABLE IF NOT EXISTS `admins` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `email` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `password` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `image` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `status` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
-  `remember_token` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `email` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `password` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `image` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+  `status` varchar(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `remember_token` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `admins_email_unique` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb3 COLLATE=utf8_unicode_ci;
 
 -- Copiando dados para a tabela meuhype.admins: ~4 rows (aproximadamente)
 /*!40000 ALTER TABLE `admins` DISABLE KEYS */;
@@ -46,12 +46,12 @@ INSERT INTO `admins` (`id`, `name`, `email`, `password`, `image`, `status`, `rem
 
 -- Copiando estrutura para tabela meuhype.admin_password_resets
 CREATE TABLE IF NOT EXISTS `admin_password_resets` (
-  `email` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `token` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `email` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `token` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   KEY `admin_password_resets_email_index` (`email`),
   KEY `admin_password_resets_token_index` (`token`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_unicode_ci;
 
 -- Copiando dados para a tabela meuhype.admin_password_resets: ~0 rows (aproximadamente)
 /*!40000 ALTER TABLE `admin_password_resets` DISABLE KEYS */;
@@ -59,29 +59,29 @@ CREATE TABLE IF NOT EXISTS `admin_password_resets` (
 
 -- Copiando estrutura para tabela meuhype.channels
 CREATE TABLE IF NOT EXISTS `channels` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `hash` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `slug` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `description_short` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `keywords` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `status` varchar(7) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `link` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `url_crawler` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `youtube` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `instagram` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `facebook` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `twitter` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `image` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `order` int(11) NOT NULL,
+  `link` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `url_crawler` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `youtube` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `instagram` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `facebook` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `twitter` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `image` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `order` int NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Copiando dados para a tabela meuhype.channels: ~29 rows (aproximadamente)
+-- Copiando dados para a tabela meuhype.channels: ~27 rows (aproximadamente)
 /*!40000 ALTER TABLE `channels` DISABLE KEYS */;
 INSERT INTO `channels` (`id`, `name`, `hash`, `slug`, `description_short`, `description`, `keywords`, `type`, `status`, `link`, `url_crawler`, `youtube`, `instagram`, `facebook`, `twitter`, `image`, `order`, `created_at`, `updated_at`) VALUES
 	(1, 'Jovem Nerd - Site', 'jovemnerdsite', 'jovem-nerd-site', 'Jovem Nerd', '<p>Jovem Nerd</p>', 'jovrm nerd', 'site', 'active', 'https://jovemnerd.com.br/', 'https://jovemnerd.com.br/?s=', NULL, NULL, NULL, NULL, '/uploads/channels/20210121110212_LogoJovemnerd.png', 0, '2020-12-02 23:02:18', '2021-04-18 10:09:04');
@@ -145,30 +145,30 @@ INSERT INTO `channels` (`id`, `name`, `hash`, `slug`, `description_short`, `desc
 
 -- Copiando estrutura para tabela meuhype.configs
 CREATE TABLE IF NOT EXISTS `configs` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `title` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `slug` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `description` text COLLATE utf8_unicode_ci NOT NULL,
-  `image_logo` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `keywords` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `endereco` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `description_short` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `email1` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `email2` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `tel1` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `tel2` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `facebook` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `twitter` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `instagram` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `youtube` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `vimeo` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `linkedin` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `color_painel` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `slug` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `description` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `image_logo` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+  `keywords` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `endereco` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `description_short` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `email1` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+  `email2` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+  `tel1` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+  `tel2` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+  `facebook` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+  `twitter` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+  `instagram` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+  `youtube` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+  `vimeo` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+  `linkedin` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+  `color_painel` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
   `desconto` decimal(10,2) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3 COLLATE=utf8_unicode_ci;
 
 -- Copiando dados para a tabela meuhype.configs: ~0 rows (aproximadamente)
 /*!40000 ALTER TABLE `configs` DISABLE KEYS */;
@@ -178,18 +178,18 @@ INSERT INTO `configs` (`id`, `title`, `slug`, `description`, `image_logo`, `keyw
 
 -- Copiando estrutura para tabela meuhype.crawler
 CREATE TABLE IF NOT EXISTS `crawler` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `tags_id` int(11) DEFAULT 0,
+  `tags_id` int DEFAULT '0',
   `time_initial` time NOT NULL,
   `type` varchar(10) NOT NULL DEFAULT '',
-  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `order` int(11) NOT NULL,
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `order` int NOT NULL,
   `status` varchar(7) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Copiando dados para a tabela meuhype.crawler: ~4 rows (aproximadamente)
 /*!40000 ALTER TABLE `crawler` DISABLE KEYS */;
@@ -200,31 +200,31 @@ INSERT INTO `crawler` (`id`, `title`, `tags_id`, `time_initial`, `type`, `descri
 INSERT INTO `crawler` (`id`, `title`, `tags_id`, `time_initial`, `type`, `description`, `order`, `status`, `created_at`, `updated_at`) VALUES
 	(3, 'Spotify - Podcasts', 0, '00:18:00', 'spotify', '<p>Spotify</p>', 1, 'active', '2021-04-21 23:14:55', '2021-04-23 21:20:11');
 INSERT INTO `crawler` (`id`, `title`, `tags_id`, `time_initial`, `type`, `description`, `order`, `status`, `created_at`, `updated_at`) VALUES
-	(4, 'Crawler 3', 16, '02:28:00', 'site', NULL, 1, 'active', '2021-05-01 22:21:31', '2022-05-08 02:20:05');
+	(4, 'Crawler 3', 12, '23:28:00', 'site', NULL, 1, 'active', '2021-05-01 22:21:31', '2022-04-28 23:24:41');
 /*!40000 ALTER TABLE `crawler` ENABLE KEYS */;
 
 -- Copiando estrutura para tabela meuhype.crawler_configs
 CREATE TABLE IF NOT EXISTS `crawler_configs` (
-  `id` int(11) NOT NULL,
-  `array_canais_ativos` text DEFAULT NULL,
-  `qtd_noticias_por_canal` int(11) DEFAULT NULL,
+  `id` int NOT NULL,
+  `array_canais_ativos` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `qtd_noticias_por_canal` int DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Copiando dados para a tabela meuhype.crawler_configs: ~0 rows (aproximadamente)
+-- Copiando dados para a tabela meuhype.crawler_configs: ~1 rows (aproximadamente)
 /*!40000 ALTER TABLE `crawler_configs` DISABLE KEYS */;
 INSERT INTO `crawler_configs` (`id`, `array_canais_ativos`, `qtd_noticias_por_canal`, `created_at`, `updated_at`) VALUES
-	(1, '["cinemacomrapadurayoutube","einerdyoutube","jovemnerdsite","jovemnerdyoutube","miguellokiayoutube","pipocandoyoutube","poltronanerdsite","superoitoyoutube","thiagoromarizyoutube"]', 10, '2021-09-12 18:01:22', '2022-05-08 02:19:20');
+	(1, '["arenanerdyoutube","caiqueizotonyoutube","caldeiraonerdyoutube","cavernadocarusoyoutube","cinemacomrapadurayoutube","crispandayoutube","einerdyoutube","entremigasyoutube","gustavocunhayoutube","herancanerdyoutube","jovemnerdsite","jovemnerdyoutube","miguellokiayoutube","nerdexperienceyoutube","nerdnewsyoutube","nerdrabugentoyoutube","nerdlandyoutube","omeletesite","omeleteyoutube","operacaocinemayoutube","pipocandoyoutube","poltronanerdsite","quatrocoisasyoutube","sessaonerdyoutube","superoitoyoutube","tecmundosite","thiagoromarizyoutube"]', 10, '2021-09-12 18:01:22', '2022-03-12 01:42:35');
 /*!40000 ALTER TABLE `crawler_configs` ENABLE KEYS */;
 
 -- Copiando estrutura para tabela meuhype.migrations
 CREATE TABLE IF NOT EXISTS `migrations` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
   `migration` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `batch` int(11) NOT NULL,
+  `batch` int NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Copiando dados para a tabela meuhype.migrations: ~0 rows (aproximadamente)
 /*!40000 ALTER TABLE `migrations` DISABLE KEYS */;
@@ -232,28 +232,28 @@ CREATE TABLE IF NOT EXISTS `migrations` (
 
 -- Copiando estrutura para tabela meuhype.news
 CREATE TABLE IF NOT EXISTS `news` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `channels_id` int(11) NOT NULL,
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `channels_id` int NOT NULL,
   `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `slug` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `hash` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `image` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `image` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `keywords` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `status` varchar(7) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `link` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `description_short` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `order` int(11) DEFAULT NULL,
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `order` int DEFAULT NULL,
   `data` date DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=244 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=196 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Copiando dados para a tabela meuhype.news: ~242 rows (aproximadamente)
+-- Copiando dados para a tabela meuhype.news: ~186 rows (aproximadamente)
 /*!40000 ALTER TABLE `news` DISABLE KEYS */;
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(1, 28, 'Doutor Estranho 2 | Teaser confirma Xavier e sugere personagem de What If?', 'doutor-estranho-2-teaser-confirma-xavier-e-sugere-personagem-de-what-if', 'doutor-estranho-2-teaser-confirma-xavier-e-sugere-personagem-de-what-if-omeletesite', '/uploads/news/20220428111716_doutor-estranho-2-teaser-confirma-xavier-e-sugere-personagem-de-what-if-omeletesite.jpg', NULL, 'show', 'https://open.spotify.com/episode/11J0nIt4WSHcavsroE5hDg', NULL, NULL, 0, '2022-04-28', '2022-04-28 23:17:16', '2022-04-28 23:17:16');
+	(1, 3, 'Doutor Estranho 2 | Teaser confirma Xavier e sugere personagem de What If?', 'doutor-estranho-2-teaser-confirma-xavier-e-sugere-personagem-de-what-if', 'doutor-estranho-2-teaser-confirma-xavier-e-sugere-personagem-de-what-if-omeletesite', '/uploads/news/20220428111716_doutor-estranho-2-teaser-confirma-xavier-e-sugere-personagem-de-what-if-omeletesite.jpg', NULL, 'show', 'https://www.omelete.com.br/marvel-cinema/doutor-estranho-no-multiverso-da-loucura-professor-xavier-cadeira-teaser', NULL, NULL, 0, '2022-04-28', '2022-04-28 23:17:16', '2022-04-28 23:17:16');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
 	(2, 3, 'Doutor Estranho salva America Chavez em cena inédita', 'doutor-estranho-salva-america-chavez-em-cena-inedita', 'doutor-estranho-salva-america-chavez-em-cena-inedita-omeletesite', '/uploads/news/20220428111716_doutor-estranho-salva-america-chavez-em-cena-inedita-omeletesite.jpg', NULL, 'show', 'https://www.omelete.com.br/marvel-cinema/doutor-estranho-salva-america-chavez-em-nova-cena-inedita', NULL, NULL, 0, '2022-04-28', '2022-04-28 23:17:16', '2022-04-28 23:17:16');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
@@ -642,115 +642,19 @@ INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keyw
 	(194, 6, '44 DETALHES QUE VOCÊ PERDEU! WANDAVISION EPISÓDIO 6', '44-detalhes-que-voce-perdeu-wandavision-episodio-6', '44-detalhes-que-voce-perdeu-wandavision-episodio-6-nerdlandyoutube', '/uploads/news/20220428112912_44-detalhes-que-voce-perdeu-wandavision-episodio-6-nerdlandyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=VeGhOTBEOg0', NULL, NULL, 0, '2021-02-12', '2022-04-28 23:29:12', '2022-04-28 23:29:12');
 INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
 	(195, 6, 'FINAL DE WANDAVISION! PORQUE A DARCY SUMIU', 'final-de-wandavision-porque-a-darcy-sumiu', 'final-de-wandavision-porque-a-darcy-sumiu-nerdlandyoutube', '/uploads/news/20220428112916_final-de-wandavision-porque-a-darcy-sumiu-nerdlandyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=0BLJ5e0qeKQ', NULL, NULL, 0, '2021-02-16', '2022-04-28 23:29:17', '2022-04-28 23:29:17');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(196, 1, 'Taika Waititi explica retorno de Jane Foster em Thor: Amor e Trovão', 'taika-waititi-explica-retorno-de-jane-foster-em-thor-amor-e-trovao', 'taika-waititi-explica-retorno-de-jane-foster-em-thor-amor-e-trovao-jovemnerdsite', '/uploads/news/20220508022053_taika-waititi-explica-retorno-de-jane-foster-em-thor-amor-e-trovao-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/thor-amor-e-trovao-taika-waititi-explica-retorno-de-jane-foster/', NULL, NULL, 0, '2022-05-07', '2022-05-08 02:20:54', '2022-05-08 02:20:54');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(197, 1, 'Deuses do trovão se reúnem em nova foto de Thor: Amor e Trovão', 'deuses-do-trovao-se-reunem-em-nova-foto-de-thor-amor-e-trovao', 'deuses-do-trovao-se-reunem-em-nova-foto-de-thor-amor-e-trovao-jovemnerdsite', '/uploads/news/20220508022054_deuses-do-trovao-se-reunem-em-nova-foto-de-thor-amor-e-trovao-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/thor-amor-e-trovao-foto-poderosa-thor-filho-de-odin/', NULL, NULL, 0, '2022-05-07', '2022-05-08 02:20:55', '2022-05-08 02:20:55');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(198, 1, 'Thor musculoso está de volta em nova foto de Amor e Trovão', 'thor-musculoso-esta-de-volta-em-nova-foto-de-amor-e-trovao', 'thor-musculoso-esta-de-volta-em-nova-foto-de-amor-e-trovao-jovemnerdsite', '/uploads/news/20220508022055_thor-musculoso-esta-de-volta-em-nova-foto-de-amor-e-trovao-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/thor-amor-e-trovao-foto-musculoso/', NULL, NULL, 0, '2022-05-06', '2022-05-08 02:20:56', '2022-05-08 02:20:56');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(199, 1, 'Thor curte momento de paz em nova imagem de Amor e Trovão', 'thor-curte-momento-de-paz-em-nova-imagem-de-amor-e-trovao', 'thor-curte-momento-de-paz-em-nova-imagem-de-amor-e-trovao-jovemnerdsite', '/uploads/news/20220508022056_thor-curte-momento-de-paz-em-nova-imagem-de-amor-e-trovao-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/thor-amor-e-trovao-nova-foto-chris-hemsworth/', NULL, NULL, 0, '2022-04-28', '2022-05-08 02:20:57', '2022-05-08 02:20:57');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(200, 1, 'Thor: Amor e Trovão traz artistas das HQs para ilustrar novas imagens; veja', 'thor-amor-e-trovao-traz-artistas-das-hqs-para-ilustrar-novas-imagens-veja', 'thor-amor-e-trovao-traz-artistas-das-hqs-para-ilustrar-novas-imagens-veja-jovemnerdsite', '/uploads/news/20220508022057_thor-amor-e-trovao-traz-artistas-das-hqs-para-ilustrar-novas-imagens-veja-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/thor-amor-e-trovao-artistas-das-hqs/', NULL, NULL, 0, '2022-04-27', '2022-05-08 02:20:58', '2022-05-08 02:20:58');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(201, 1, 'Rock &8216;n&8217; Roll, Guns &8216;n&8217; Roses, Love &8216;n&8217; Thunder | Trailer de Thor: Amor e Trovão', 'rock-8216n8217-roll-guns-8216n8217-roses-love-8216n8217-thunder-trailer-de-thor-amor-e-trovao', 'rock-8216n8217-roll-guns-8216n8217-roses-love-8216n8217-thunder-trailer-de-thor-amor-e-trovao-jovemnerdsite', '/uploads/news/20220508022058_rock-8216n8217-roll-guns-8216n8217-roses-love-8216n8217-thunder-trailer-de-thor-amor-e-trovao-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdoffice/rock-n-roll-guns-n-roses-love-n-thunder-trailer-de-thor-amor-e-trovao/', NULL, NULL, 0, '2022-04-27', '2022-05-08 02:20:59', '2022-05-08 02:20:59');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(202, 1, 'Thor: Amor e Trovão passou ajustes a pedido de James Gunn, diretor de Guardiões da Galáxia', 'thor-amor-e-trovao-passou-ajustes-a-pedido-de-james-gunn-diretor-de-guardioes-da-galaxia', 'thor-amor-e-trovao-passou-ajustes-a-pedido-de-james-gunn-diretor-de-guardioes-da-galaxia-jovemnerdsite', '/uploads/news/20220508022059_thor-amor-e-trovao-passou-ajustes-a-pedido-de-james-gunn-diretor-de-guardioes-da-galaxia-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/thor-amor-e-trovao-ajustes-guardioes-da-galaxia/', NULL, NULL, 0, '2022-04-25', '2022-05-08 02:21:00', '2022-05-08 02:21:00');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(203, 1, 'Thor: Amor e Trovão ganha pôster grandioso com Natalie Portman', 'thor-amor-e-trovao-ganha-poster-grandioso-com-natalie-portman', 'thor-amor-e-trovao-ganha-poster-grandioso-com-natalie-portman-jovemnerdsite', '/uploads/news/20220508022100_thor-amor-e-trovao-ganha-poster-grandioso-com-natalie-portman-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/thor-amor-e-trovao-poster-natalie-portman/', NULL, NULL, 0, '2022-04-20', '2022-05-08 02:21:01', '2022-05-08 02:21:01');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(204, 1, 'Tudo o que sabemos sobre Thor: Amor e Trovão', 'tudo-o-que-sabemos-sobre-thor-amor-e-trovao', 'tudo-o-que-sabemos-sobre-thor-amor-e-trovao-jovemnerdsite', '/uploads/news/20220508022101_tudo-o-que-sabemos-sobre-thor-amor-e-trovao-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/thor-amor-e-trovao-tudo-sobre/', NULL, NULL, 0, '2022-04-18', '2022-05-08 02:21:02', '2022-05-08 02:21:02');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(205, 1, 'Sinopse de Thor: Amor e Trovão revela Deus do Trovão zen e nova ameaça', 'sinopse-de-thor-amor-e-trovao-revela-deus-do-trovao-zen-e-nova-ameaca', 'sinopse-de-thor-amor-e-trovao-revela-deus-do-trovao-zen-e-nova-ameaca-jovemnerdsite', '/uploads/news/20220508022102_sinopse-de-thor-amor-e-trovao-revela-deus-do-trovao-zen-e-nova-ameaca-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/thor-amor-e-trovao-sinopse/', NULL, NULL, 0, '2022-04-18', '2022-05-08 02:21:03', '2022-05-08 02:21:03');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(206, 1, 'Funkos de Thor: Amor e Trovão têm herói com nova armadura e bodes voadores', 'funkos-de-thor-amor-e-trovao-tem-heroi-com-nova-armadura-e-bodes-voadores', 'funkos-de-thor-amor-e-trovao-tem-heroi-com-nova-armadura-e-bodes-voadores-jovemnerdsite', '/uploads/news/20220508022103_funkos-de-thor-amor-e-trovao-tem-heroi-com-nova-armadura-e-bodes-voadores-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/thor-amor-e-trovao-funkos/', NULL, NULL, 0, '2022-04-18', '2022-05-08 02:21:04', '2022-05-08 02:21:04');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(207, 1, '10 segredos e revelações no teaser de Thor: Amor e Trovão', '10-segredos-e-revelacoes-no-teaser-de-thor-amor-e-trovao', '10-segredos-e-revelacoes-no-teaser-de-thor-amor-e-trovao-jovemnerdsite', '/uploads/news/20220508022104_10-segredos-e-revelacoes-no-teaser-de-thor-amor-e-trovao-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/thor-amor-e-trovao-teaser-segredos/', NULL, NULL, 0, '2022-04-18', '2022-05-08 02:21:05', '2022-05-08 02:21:05');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(208, 1, 'Thor: Amor e Trovão ganha pôster épico', 'thor-amor-e-trovao-ganha-poster-epico', 'thor-amor-e-trovao-ganha-poster-epico-jovemnerdsite', '/uploads/news/20220508022105_thor-amor-e-trovao-ganha-poster-epico-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/thor-love-and-thunder-poster/', NULL, NULL, 0, '2022-04-18', '2022-05-08 02:21:05', '2022-05-08 02:21:05');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(209, 1, 'Thor: Amor e Trovão ganha primeiro teaser com Guardiões da Galáxia e mais', 'thor-amor-e-trovao-ganha-primeiro-teaser-com-guardioes-da-galaxia-e-mais', 'thor-amor-e-trovao-ganha-primeiro-teaser-com-guardioes-da-galaxia-e-mais-jovemnerdsite', '/uploads/news/20220508022105_thor-amor-e-trovao-ganha-primeiro-teaser-com-guardioes-da-galaxia-e-mais-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/thor-love-and-thunder-primeiro-teaser/', NULL, NULL, 0, '2022-04-18', '2022-05-08 02:21:06', '2022-05-08 02:21:06');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(210, 1, 'Taika Waititi já terminou de escrever o roteiro de Thor: Amor e Trovão', 'taika-waititi-ja-terminou-de-escrever-o-roteiro-de-thor-amor-e-trovao', 'taika-waititi-ja-terminou-de-escrever-o-roteiro-de-thor-amor-e-trovao-jovemnerdsite', '/uploads/news/20220508022106_taika-waititi-ja-terminou-de-escrever-o-roteiro-de-thor-amor-e-trovao-jovemnerdsite.jpg', NULL, 'show', 'https://jovemnerd.com.br/nerdbunker/taika-waititi-ja-terminou-de-escrever-o-roteiro-de-thor-amor-e-trovao/', NULL, NULL, 0, '2019-08-09', '2022-05-08 02:21:07', '2022-05-08 02:21:07');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(211, 30, 'Jane e Odinson aparecem em foto inédita de Thor: Amor e Trovão', 'jane-e-odinson-aparecem-em-foto-inedita-de-thor-amor-e-trovao', 'jane-e-odinson-aparecem-em-foto-inedita-de-thor-amor-e-trovao-poltronanerdsite', '/uploads/news/20220508022110_jane-e-odinson-aparecem-em-foto-inedita-de-thor-amor-e-trovao-poltronanerdsite.jpg', NULL, 'show', 'https://poltronanerd.com.br/filmes/jane-e-odinson-aparecem-em-foto-inedita-de-thor-amor-e-trovao-134174', NULL, NULL, 0, '2022-05-07', '2022-05-08 02:21:10', '2022-05-08 02:21:10');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(212, 30, 'Thor: Amor e Trovão traz Russell Crowe como Zeus ao MCU', 'thor-amor-e-trovao-traz-russell-crowe-como-zeus-ao-mcu', 'thor-amor-e-trovao-traz-russell-crowe-como-zeus-ao-mcu-poltronanerdsite', '/uploads/news/20220508022110_thor-amor-e-trovao-traz-russell-crowe-como-zeus-ao-mcu-poltronanerdsite.jpg', NULL, 'show', 'https://poltronanerd.com.br/filmes/thor-amor-russell-crowe-133521', NULL, NULL, 0, '2022-04-18', '2022-05-08 02:21:10', '2022-05-08 02:21:10');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(213, 30, 'Thor: Amor e Trovão ganha teaser trailer ao som de Guns N&8217; Roses', 'thor-amor-e-trovao-ganha-teaser-trailer-ao-som-de-guns-n8217-roses', 'thor-amor-e-trovao-ganha-teaser-trailer-ao-som-de-guns-n8217-roses-poltronanerdsite', '/uploads/news/20220508022110_thor-amor-e-trovao-ganha-teaser-trailer-ao-som-de-guns-n8217-roses-poltronanerdsite.jpg', NULL, 'show', 'https://poltronanerd.com.br/filmes/thor-amor-e-trovao-ganha-teaser-trailer-ao-som-de-guns-n-roses-133506', NULL, NULL, 0, '2022-04-18', '2022-05-08 02:21:10', '2022-05-08 02:21:10');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(214, 30, 'Thor: Amor e Trovão | Confira novas fotos dos bastidores do filme', 'thor-amor-e-trovao-confira-novas-fotos-dos-bastidores-do-filme', 'thor-amor-e-trovao-confira-novas-fotos-dos-bastidores-do-filme-poltronanerdsite', '/uploads/news/20220508022110_thor-amor-e-trovao-confira-novas-fotos-dos-bastidores-do-filme-poltronanerdsite.jpg', NULL, 'show', 'https://poltronanerd.com.br/filmes/thor-amor-e-trovao-confira-novas-fotos-dos-bastidores-do-filme-114723', NULL, NULL, 0, '2021-02-05', '2022-05-08 02:21:10', '2022-05-08 02:21:10');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(215, 30, 'Thor: Amor e Trovão | Tessa Thompson divulgou possíveis personagens do filme', 'thor-amor-e-trovao-tessa-thompson-divulgou-possiveis-personagens-do-filme', 'thor-amor-e-trovao-tessa-thompson-divulgou-possiveis-personagens-do-filme-poltronanerdsite', '/uploads/news/20220508022110_thor-amor-e-trovao-tessa-thompson-divulgou-possiveis-personagens-do-filme-poltronanerdsite.jpg', NULL, 'show', 'https://poltronanerd.com.br/filmes/thor-amor-e-trovao-tessa-thompson-divulgou-possiveis-personagens-do-filme-113182', NULL, NULL, 0, '2020-12-22', '2022-05-08 02:21:10', '2022-05-08 02:21:10');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(216, 30, 'Thor: Amor e Trovão | Tudo o que sabemos, até agora', 'thor-amor-e-trovao-tudo-o-que-sabemos-ate-agora', 'thor-amor-e-trovao-tudo-o-que-sabemos-ate-agora-poltronanerdsite', '/uploads/news/20220508022110_thor-amor-e-trovao-tudo-o-que-sabemos-ate-agora-poltronanerdsite.jpg', NULL, 'show', 'https://poltronanerd.com.br/filmes/thor-amor-e-trovao-tudo-o-que-sabemos-ate-agora-97730', NULL, NULL, 0, '2020-05-16', '2022-05-08 02:21:10', '2022-05-08 02:21:10');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(217, 2, 'Rock \'n\' Roll, Guns \'n\' Roses, Love \'n\' Thunder | Trailer de Thor: Amor e Trovão', 'rock-n-roll-guns-n-roses-love-n-thunder-trailer-de-thor-amor-e-trovao', 'rock-n-roll-guns-n-roses-love-n-thunder-trailer-de-thor-amor-e-trovao-jovemnerdyoutube', '/uploads/news/20220508022117_rock-n-roll-guns-n-roses-love-n-thunder-trailer-de-thor-amor-e-trovao-jovemnerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=g7uFcNqURxk', NULL, NULL, 0, '2022-04-27', '2022-05-08 02:21:18', '2022-05-08 02:21:18');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(218, 5, 'THOR AMOR E TROVÃO TEM BILL RAIO BETA!? TREAILER TENTOU ESCONDER', 'thor-amor-e-trovao-tem-bill-raio-beta-treailer-tentou-esconder', 'thor-amor-e-trovao-tem-bill-raio-beta-treailer-tentou-esconder-einerdyoutube', '/uploads/news/20220508022125_thor-amor-e-trovao-tem-bill-raio-beta-treailer-tentou-esconder-einerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=5dE3nXnMRaM', NULL, NULL, 0, '2022-04-20', '2022-05-08 02:21:25', '2022-05-08 02:21:25');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(219, 5, 'THOR 4 VAI TER TROPA THOR', 'thor-4-vai-ter-tropa-thor', 'thor-4-vai-ter-tropa-thor-einerdyoutube', '/uploads/news/20220508022128_thor-4-vai-ter-tropa-thor-einerdyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=85s75TwE0zU', NULL, NULL, 0, '2019-08-11', '2022-05-08 02:21:29', '2022-05-08 02:21:29');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(220, 9, 'TRAILER DE THOR: AMOR E TROVÃO | React e Comentários', 'trailer-de-thor-amor-e-trovao-react-e-comentarios', 'trailer-de-thor-amor-e-trovao-react-e-comentarios-cinemacomrapadurayoutube', '/uploads/news/20220508022133_trailer-de-thor-amor-e-trovao-react-e-comentarios-cinemacomrapadurayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=pwWLRTVPDSs', NULL, NULL, 0, '2022-04-18', '2022-05-08 02:21:33', '2022-05-08 02:21:33');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(221, 9, '18 SEGREDOS DO TRAILER DE THOR: AMOR E TROVÃO', '18-segredos-do-trailer-de-thor-amor-e-trovao', '18-segredos-do-trailer-de-thor-amor-e-trovao-cinemacomrapadurayoutube', '/uploads/news/20220508022137_18-segredos-do-trailer-de-thor-amor-e-trovao-cinemacomrapadurayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=foYAbYLqges', NULL, NULL, 0, '2022-04-18', '2022-05-08 02:21:37', '2022-05-08 02:21:37');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(222, 9, 'THOR: AMOR E TROVÃO VAI MUDAR TUDO NA MARVEL', 'thor-amor-e-trovao-vai-mudar-tudo-na-marvel', 'thor-amor-e-trovao-vai-mudar-tudo-na-marvel-cinemacomrapadurayoutube', '/uploads/news/20220508022141_thor-amor-e-trovao-vai-mudar-tudo-na-marvel-cinemacomrapadurayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=wlQylYy4o_Y', NULL, NULL, 0, '2019-07-27', '2022-05-08 02:21:42', '2022-05-08 02:21:42');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(223, 22, 'THOR 4 AMOR E TROVÃO | TRAILER EXPLICADO', 'thor-4-amor-e-trovao-trailer-explicado', 'thor-4-amor-e-trovao-trailer-explicado-thiagoromarizyoutube', '/uploads/news/20220508022146_thor-4-amor-e-trovao-trailer-explicado-thiagoromarizyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=Tld3CqYlvYs', NULL, NULL, 0, '2022-04-18', '2022-05-08 02:21:46', '2022-05-08 02:21:46');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(224, 22, 'Segredos do Trailer de Thor 4: Amor e Trovão!', 'segredos-do-trailer-de-thor-4-amor-e-trovao', 'segredos-do-trailer-de-thor-4-amor-e-trovao-thiagoromarizyoutube', '/uploads/news/20220508022147_segredos-do-trailer-de-thor-4-amor-e-trovao-thiagoromarizyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=HcDYbsWjlaM', NULL, NULL, 0, '2022-04-19', '2022-05-08 02:21:48', '2022-05-08 02:21:48');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(225, 22, 'THOR 4: AMOR E TROVÃO | TRAILER OFICIAL | REAÇÃO', 'thor-4-amor-e-trovao-trailer-oficial-reacao', 'thor-4-amor-e-trovao-trailer-oficial-reacao-thiagoromarizyoutube', '/uploads/news/20220508022149_thor-4-amor-e-trovao-trailer-oficial-reacao-thiagoromarizyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=RPaiE0qxmSo', NULL, NULL, 0, '2022-04-18', '2022-05-08 02:21:49', '2022-05-08 02:21:49');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(226, 22, 'THOR 4: JANE FOSTER e MIGHTY THOR! Novas imagens de Thor 4', 'thor-4-jane-foster-e-mighty-thor-novas-imagens-de-thor-4', 'thor-4-jane-foster-e-mighty-thor-novas-imagens-de-thor-4-thiagoromarizyoutube', '/uploads/news/20220508022152_thor-4-jane-foster-e-mighty-thor-novas-imagens-de-thor-4-thiagoromarizyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=sqwBzT-ncZo', NULL, NULL, 0, '2022-01-04', '2022-05-08 02:21:52', '2022-05-08 02:21:52');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(227, 22, 'TRAILER DE THOR 4: AMOR E TROVÃO, AVATAR 2 E MAIS', 'trailer-de-thor-4-amor-e-trovao-avatar-2-e-mais', 'trailer-de-thor-4-amor-e-trovao-avatar-2-e-mais-thiagoromarizyoutube', '/uploads/news/20220508022156_trailer-de-thor-4-amor-e-trovao-avatar-2-e-mais-thiagoromarizyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=d258XjYtWD4', NULL, NULL, 0, '2022-03-23', '2022-05-08 02:21:56', '2022-05-08 02:21:56');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(228, 22, 'TRAILER de THOR 4 AMOR E TROVÃO: DATA, VILÃO E GUARDIÕES!', 'trailer-de-thor-4-amor-e-trovao-data-vilao-e-guardioes', 'trailer-de-thor-4-amor-e-trovao-data-vilao-e-guardioes-thiagoromarizyoutube', '/uploads/news/20220508022157_trailer-de-thor-4-amor-e-trovao-data-vilao-e-guardioes-thiagoromarizyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=USdDaswl2SU', NULL, NULL, 0, '2022-04-11', '2022-05-08 02:21:58', '2022-05-08 02:21:58');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(229, 22, 'AGORA SIM! THOR 4: A THOR MULHER E AS CABRAS MÁGICAS', 'agora-sim-thor-4-a-thor-mulher-e-as-cabras-magicas', 'agora-sim-thor-4-a-thor-mulher-e-as-cabras-magicas-thiagoromarizyoutube', '/uploads/news/20220508022200_agora-sim-thor-4-a-thor-mulher-e-as-cabras-magicas-thiagoromarizyoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=V3-qM7Zd0RU', NULL, NULL, 0, '2022-02-22', '2022-05-08 02:22:00', '2022-05-08 02:22:00');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(230, 24, 'FINALMENTE!!! THOR 4 AMOR E TROVÃO TRAILER OFICIAL - REAÇÃO E ANÁLISE', 'finalmente-thor-4-amor-e-trovao-trailer-oficial-reacao-e-analise', 'finalmente-thor-4-amor-e-trovao-trailer-oficial-reacao-e-analise-miguellokiayoutube', '/uploads/news/20220508022206_finalmente-thor-4-amor-e-trovao-trailer-oficial-reacao-e-analise-miguellokiayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=Z01DZns-a-o', NULL, NULL, 0, '2022-04-18', '2022-05-08 02:22:06', '2022-05-08 02:22:06');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(231, 24, 'É HOJE! THOR 4 AMOR E TROVÃO: TRAILER OFICIAL, GORR, VAZAMENTOS EXPLICADOS', 'e-hoje-thor-4-amor-e-trovao-trailer-oficial-gorr-vazamentos-explicados', 'e-hoje-thor-4-amor-e-trovao-trailer-oficial-gorr-vazamentos-explicados-miguellokiayoutube', '/uploads/news/20220508022209_e-hoje-thor-4-amor-e-trovao-trailer-oficial-gorr-vazamentos-explicados-miguellokiayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=4rOKa0BBdbc', NULL, NULL, 0, '2022-04-11', '2022-05-08 02:22:09', '2022-05-08 02:22:09');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(232, 24, 'ANÚNCIOS THOR 4 AMOR E TROVÃO - VINGADORES 5, VENOM e FASE 4 MARVEL STUDIOS', 'anuncios-thor-4-amor-e-trovao-vingadores-5-venom-e-fase-4-marvel-studios', 'anuncios-thor-4-amor-e-trovao-vingadores-5-venom-e-fase-4-marvel-studios-miguellokiayoutube', '/uploads/news/20220508022212_anuncios-thor-4-amor-e-trovao-vingadores-5-venom-e-fase-4-marvel-studios-miguellokiayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=ca9l2RbRL-s', NULL, NULL, 0, '2021-01-20', '2022-05-08 02:22:12', '2022-05-08 02:22:12');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(233, 24, 'CHEGOU BILL! THOR 4 AMOR E TROVÃO TRAILER DESMONTADO: TOM CRUISE, LOKI, LADY SIF, ANÁLISE e DETALHES', 'chegou-bill-thor-4-amor-e-trovao-trailer-desmontado-tom-cruise-loki-lady-sif-analise-e-detalhes', 'chegou-bill-thor-4-amor-e-trovao-trailer-desmontado-tom-cruise-loki-lady-sif-analise-e-detalhes-miguellokiayoutube', '/uploads/news/20220508022213_chegou-bill-thor-4-amor-e-trovao-trailer-desmontado-tom-cruise-loki-lady-sif-analise-e-detalhes-miguellokiayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=rINX4KSdd-s', NULL, NULL, 0, '2022-04-25', '2022-05-08 02:22:14', '2022-05-08 02:22:14');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(234, 24, 'AGORA SIM! PODEROSA THOR VAZA e REVELA MUITO de THOR 4 AMOR E TROVÃO + CONEXÃO COM LOKI', 'agora-sim-poderosa-thor-vaza-e-revela-muito-de-thor-4-amor-e-trovao-conexao-com-loki', 'agora-sim-poderosa-thor-vaza-e-revela-muito-de-thor-4-amor-e-trovao-conexao-com-loki-miguellokiayoutube', '/uploads/news/20220508022216_agora-sim-poderosa-thor-vaza-e-revela-muito-de-thor-4-amor-e-trovao-conexao-com-loki-miguellokiayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=7UFDUIGyG-s', NULL, NULL, 0, '2021-06-15', '2022-05-08 02:22:16', '2022-05-08 02:22:16');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(235, 24, 'THOR 4: TRAGÉDIA DE GORR, O CARNICEIRO DOS DEUSES - AMOR E TROVÃO', 'thor-4-tragedia-de-gorr-o-carniceiro-dos-deuses-amor-e-trovao', 'thor-4-tragedia-de-gorr-o-carniceiro-dos-deuses-amor-e-trovao-miguellokiayoutube', '/uploads/news/20220508022219_thor-4-tragedia-de-gorr-o-carniceiro-dos-deuses-amor-e-trovao-miguellokiayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=n8zcX1XrNcw', NULL, NULL, 0, '2022-04-21', '2022-05-08 02:22:19', '2022-05-08 02:22:19');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(236, 24, 'NOVOS TRAILERS: THOR 4 AMOR E TROVÃO e DOUTOR ESTRANHO 2 NO MULTIVERSO DA LOUCURA', 'novos-trailers-thor-4-amor-e-trovao-e-doutor-estranho-2-no-multiverso-da-loucura', 'novos-trailers-thor-4-amor-e-trovao-e-doutor-estranho-2-no-multiverso-da-loucura-miguellokiayoutube', '/uploads/news/20220508022222_novos-trailers-thor-4-amor-e-trovao-e-doutor-estranho-2-no-multiverso-da-loucura-miguellokiayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=pS00DYoWWXI', NULL, NULL, 0, '2022-04-12', '2022-05-08 02:22:22', '2022-05-08 02:22:22');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(237, 24, 'AH NÃO! VAZAMENTO SÉRIO DE THOR 4 AMOR E TROVÃO CANCELA O MULTIVERSO NO FILME!?', 'ah-nao-vazamento-serio-de-thor-4-amor-e-trovao-cancela-o-multiverso-no-filme', 'ah-nao-vazamento-serio-de-thor-4-amor-e-trovao-cancela-o-multiverso-no-filme-miguellokiayoutube', '/uploads/news/20220508022226_ah-nao-vazamento-serio-de-thor-4-amor-e-trovao-cancela-o-multiverso-no-filme-miguellokiayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=xytdFy-ekkg', NULL, NULL, 0, '2021-03-11', '2022-05-08 02:22:26', '2022-05-08 02:22:26');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(238, 24, 'E O VENOM? PRIMEIRAS FOTOS DE THOR 4 AMOR E TROVÃO REVELAM DEMAIS!', 'e-o-venom-primeiras-fotos-de-thor-4-amor-e-trovao-revelam-demais', 'e-o-venom-primeiras-fotos-de-thor-4-amor-e-trovao-revelam-demais-miguellokiayoutube', '/uploads/news/20220508022228_e-o-venom-primeiras-fotos-de-thor-4-amor-e-trovao-revelam-demais-miguellokiayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=QmTWGUpMUw0', NULL, NULL, 0, '2021-02-02', '2022-05-08 02:22:29', '2022-05-08 02:22:29');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(239, 24, 'THOR 4: AMOR E TROVÃO SERÁ UMA BAGUNÇA', 'thor-4-amor-e-trovao-sera-uma-bagunca', 'thor-4-amor-e-trovao-sera-uma-bagunca-miguellokiayoutube', '/uploads/news/20220508022232_thor-4-amor-e-trovao-sera-uma-bagunca-miguellokiayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=jjKpvwYvFLE', NULL, NULL, 0, '2019-08-12', '2022-05-08 02:22:33', '2022-05-08 02:22:33');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(240, 24, 'NOVOS TRAILERS MARVEL: ARANHAVERSO 2, THOR 4 AMOR E TROVÃO, SHE HULK e MAIS', 'novos-trailers-marvel-aranhaverso-2-thor-4-amor-e-trovao-she-hulk-e-mais', 'novos-trailers-marvel-aranhaverso-2-thor-4-amor-e-trovao-she-hulk-e-mais-miguellokiayoutube', '/uploads/news/20220508022235_novos-trailers-marvel-aranhaverso-2-thor-4-amor-e-trovao-she-hulk-e-mais-miguellokiayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=CQ_WMWv5vyI', NULL, NULL, 0, '2022-02-02', '2022-05-08 02:22:35', '2022-05-08 02:22:35');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(241, 24, 'NATALIE PORTMAN FALOU O QUE NÃO DEVIA - THOR 4 AMOR E TROVÃO ACABA DE FICAR MAIS ÉPICO!', 'natalie-portman-falou-o-que-nao-devia-thor-4-amor-e-trovao-acaba-de-ficar-mais-epico', 'natalie-portman-falou-o-que-nao-devia-thor-4-amor-e-trovao-acaba-de-ficar-mais-epico-miguellokiayoutube', '/uploads/news/20220508022237_natalie-portman-falou-o-que-nao-devia-thor-4-amor-e-trovao-acaba-de-ficar-mais-epico-miguellokiayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=GfFK1__FCyo', NULL, NULL, 0, '2020-10-09', '2022-05-08 02:22:37', '2022-05-08 02:22:37');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(242, 24, 'THOR MULHER? HISTÓRIA COMPLETA DA THOR JANE FOSTER', 'thor-mulher-historia-completa-da-thor-jane-foster', 'thor-mulher-historia-completa-da-thor-jane-foster-miguellokiayoutube', '/uploads/news/20220508022240_thor-mulher-historia-completa-da-thor-jane-foster-miguellokiayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=tSb7D83tjgY', NULL, NULL, 0, '2019-07-24', '2022-05-08 02:22:40', '2022-05-08 02:22:40');
-INSERT INTO `news` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `keywords`, `status`, `link`, `description_short`, `description`, `order`, `data`, `created_at`, `updated_at`) VALUES
-	(243, 24, 'VAZOU DEMAIS! VÁRIAS VERSÕES DE LOKI NA SÉRIE MARVEL DO DISNEY PLUS + THOR 4 AMOR E TROVÃO', 'vazou-demais-varias-versoes-de-loki-na-serie-marvel-do-disney-plus-thor-4-amor-e-trovao', 'vazou-demais-varias-versoes-de-loki-na-serie-marvel-do-disney-plus-thor-4-amor-e-trovao-miguellokiayoutube', '/uploads/news/20220508022242_vazou-demais-varias-versoes-de-loki-na-serie-marvel-do-disney-plus-thor-4-amor-e-trovao-miguellokiayoutube.jpg', NULL, 'show', 'https://www.youtube.com/watch?v=jkiSP9ITlHk', NULL, NULL, 0, '2021-03-25', '2022-05-08 02:22:42', '2022-05-08 02:22:42');
 /*!40000 ALTER TABLE `news` ENABLE KEYS */;
 
 -- Copiando estrutura para tabela meuhype.news_tags
 CREATE TABLE IF NOT EXISTS `news_tags` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `news_id` int(11) NOT NULL,
-  `tags_id` int(11) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `news_id` int NOT NULL,
+  `tags_id` int NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=246 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=198 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Copiando dados para a tabela meuhype.news_tags: ~221 rows (aproximadamente)
+-- Copiando dados para a tabela meuhype.news_tags: ~195 rows (aproximadamente)
 /*!40000 ALTER TABLE `news_tags` DISABLE KEYS */;
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
 	(1, 1, 11, '2022-04-28 23:17:16', '2022-04-28 23:17:16');
@@ -1146,102 +1050,6 @@ INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`)
 	(196, 194, 12, '2022-04-28 23:29:12', '2022-04-28 23:29:12');
 INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
 	(197, 195, 12, '2022-04-28 23:29:17', '2022-04-28 23:29:17');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(198, 196, 16, '2022-05-08 02:20:54', '2022-05-08 02:20:54');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(199, 197, 16, '2022-05-08 02:20:55', '2022-05-08 02:20:55');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(200, 198, 16, '2022-05-08 02:20:56', '2022-05-08 02:20:56');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(201, 199, 16, '2022-05-08 02:20:57', '2022-05-08 02:20:57');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(202, 200, 16, '2022-05-08 02:20:58', '2022-05-08 02:20:58');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(203, 201, 16, '2022-05-08 02:20:59', '2022-05-08 02:20:59');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(204, 202, 16, '2022-05-08 02:21:00', '2022-05-08 02:21:00');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(205, 203, 16, '2022-05-08 02:21:01', '2022-05-08 02:21:01');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(206, 204, 16, '2022-05-08 02:21:02', '2022-05-08 02:21:02');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(207, 205, 16, '2022-05-08 02:21:03', '2022-05-08 02:21:03');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(208, 206, 16, '2022-05-08 02:21:04', '2022-05-08 02:21:04');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(209, 207, 16, '2022-05-08 02:21:05', '2022-05-08 02:21:05');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(210, 208, 16, '2022-05-08 02:21:05', '2022-05-08 02:21:05');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(211, 209, 16, '2022-05-08 02:21:06', '2022-05-08 02:21:06');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(212, 210, 16, '2022-05-08 02:21:07', '2022-05-08 02:21:07');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(213, 211, 16, '2022-05-08 02:21:10', '2022-05-08 02:21:10');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(214, 212, 16, '2022-05-08 02:21:10', '2022-05-08 02:21:10');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(215, 213, 16, '2022-05-08 02:21:10', '2022-05-08 02:21:10');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(216, 214, 16, '2022-05-08 02:21:10', '2022-05-08 02:21:10');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(217, 215, 16, '2022-05-08 02:21:10', '2022-05-08 02:21:10');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(218, 216, 16, '2022-05-08 02:21:10', '2022-05-08 02:21:10');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(219, 217, 16, '2022-05-08 02:21:18', '2022-05-08 02:21:18');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(220, 218, 16, '2022-05-08 02:21:25', '2022-05-08 02:21:25');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(221, 219, 16, '2022-05-08 02:21:29', '2022-05-08 02:21:29');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(222, 220, 16, '2022-05-08 02:21:33', '2022-05-08 02:21:33');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(223, 221, 16, '2022-05-08 02:21:37', '2022-05-08 02:21:37');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(224, 222, 16, '2022-05-08 02:21:42', '2022-05-08 02:21:42');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(225, 223, 16, '2022-05-08 02:21:46', '2022-05-08 02:21:46');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(226, 224, 16, '2022-05-08 02:21:48', '2022-05-08 02:21:48');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(227, 225, 16, '2022-05-08 02:21:49', '2022-05-08 02:21:49');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(228, 226, 16, '2022-05-08 02:21:52', '2022-05-08 02:21:52');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(229, 227, 16, '2022-05-08 02:21:56', '2022-05-08 02:21:56');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(230, 228, 16, '2022-05-08 02:21:58', '2022-05-08 02:21:58');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(231, 229, 16, '2022-05-08 02:22:00', '2022-05-08 02:22:00');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(232, 230, 16, '2022-05-08 02:22:06', '2022-05-08 02:22:06');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(233, 231, 16, '2022-05-08 02:22:09', '2022-05-08 02:22:09');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(234, 232, 16, '2022-05-08 02:22:12', '2022-05-08 02:22:12');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(235, 233, 16, '2022-05-08 02:22:14', '2022-05-08 02:22:14');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(236, 234, 16, '2022-05-08 02:22:16', '2022-05-08 02:22:16');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(237, 235, 16, '2022-05-08 02:22:19', '2022-05-08 02:22:19');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(238, 236, 16, '2022-05-08 02:22:22', '2022-05-08 02:22:22');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(239, 237, 16, '2022-05-08 02:22:26', '2022-05-08 02:22:26');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(240, 238, 16, '2022-05-08 02:22:29', '2022-05-08 02:22:29');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(241, 239, 16, '2022-05-08 02:22:33', '2022-05-08 02:22:33');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(242, 240, 16, '2022-05-08 02:22:35', '2022-05-08 02:22:35');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(243, 241, 16, '2022-05-08 02:22:37', '2022-05-08 02:22:37');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(244, 242, 16, '2022-05-08 02:22:40', '2022-05-08 02:22:40');
-INSERT INTO `news_tags` (`id`, `news_id`, `tags_id`, `created_at`, `updated_at`) VALUES
-	(245, 243, 16, '2022-05-08 02:22:42', '2022-05-08 02:22:42');
 /*!40000 ALTER TABLE `news_tags` ENABLE KEYS */;
 
 -- Copiando estrutura para tabela meuhype.password_resets
@@ -1250,7 +1058,7 @@ CREATE TABLE IF NOT EXISTS `password_resets` (
   `token` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   KEY `password_resets_email_index` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Copiando dados para a tabela meuhype.password_resets: ~0 rows (aproximadamente)
 /*!40000 ALTER TABLE `password_resets` DISABLE KEYS */;
@@ -1258,23 +1066,23 @@ CREATE TABLE IF NOT EXISTS `password_resets` (
 
 -- Copiando estrutura para tabela meuhype.podcasts
 CREATE TABLE IF NOT EXISTS `podcasts` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `channels_id` int(11) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `channels_id` int NOT NULL,
   `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `slug` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `hash` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `image` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `image` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `keywords` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `status` varchar(7) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `link` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `description_short` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `order` int(11) DEFAULT NULL,
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `order` int DEFAULT NULL,
   `data` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=128 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=128 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Copiando dados para a tabela meuhype.podcasts: ~127 rows (aproximadamente)
 /*!40000 ALTER TABLE `podcasts` DISABLE KEYS */;
@@ -1536,22 +1344,22 @@ INSERT INTO `podcasts` (`id`, `channels_id`, `title`, `slug`, `hash`, `image`, `
 
 -- Copiando estrutura para tabela meuhype.tags
 CREATE TABLE IF NOT EXISTS `tags` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `title` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `slug` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `description` text COLLATE utf8_unicode_ci NOT NULL,
-  `image` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `keywords` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `description_short` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `categoria` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `order` int(11) NOT NULL,
-  `status` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `slug` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `description` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `image` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+  `keywords` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `description_short` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `categoria` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `order` int NOT NULL,
+  `status` varchar(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb3 COLLATE=utf8_unicode_ci;
 
--- Copiando dados para a tabela meuhype.tags: ~9 rows (aproximadamente)
+-- Copiando dados para a tabela meuhype.tags: ~7 rows (aproximadamente)
 /*!40000 ALTER TABLE `tags` DISABLE KEYS */;
 INSERT INTO `tags` (`id`, `title`, `slug`, `description`, `image`, `keywords`, `description_short`, `categoria`, `order`, `status`, `created_at`, `updated_at`) VALUES
 	(4, 'The Bad Batch', 'the-bad-batch', '<p>The Bad Batch</p>', '/uploads/fotos/20210523073544_TheBadBatch.jpg', 'The Bad Batch', 'The Bad Batch', '', 1, 'active', '2021-04-17 23:40:16', '2021-05-23 19:35:44');
@@ -1571,48 +1379,25 @@ INSERT INTO `tags` (`id`, `title`, `slug`, `description`, `image`, `keywords`, `
 	(14, 'Venom', 'venom', '<p>Venom</p>', '', 'Venom', 'Venom', '', 1, 'active', '2021-09-22 20:48:22', '2021-09-22 20:48:22');
 INSERT INTO `tags` (`id`, `title`, `slug`, `description`, `image`, `keywords`, `description_short`, `categoria`, `order`, `status`, `created_at`, `updated_at`) VALUES
 	(15, 'The Batman', 'the-batman', '<p>The Batman</p>', '', 'Batman', 'The Batman', '', 1, 'active', '2022-03-03 21:31:39', '2022-03-03 21:39:34');
-INSERT INTO `tags` (`id`, `title`, `slug`, `description`, `image`, `keywords`, `description_short`, `categoria`, `order`, `status`, `created_at`, `updated_at`) VALUES
-	(16, 'Thor Amor e Trovão', 'thor-amor-e-trovao', '<p>Thor Amor e Trov&atilde;o</p>', '', 'Thor Amor e Trovão', 'Thor Amor e Trovão', '', 0, 'active', '2022-05-08 02:18:17', '2022-05-08 02:18:17');
 /*!40000 ALTER TABLE `tags` ENABLE KEYS */;
-
--- Copiando estrutura para tabela meuhype.token_notification
-CREATE TABLE IF NOT EXISTS `token_notification` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `token` varchar(50) NOT NULL,
-  `user_id` int(11) DEFAULT NULL,
-  `platform` varchar(20) DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4;
-
--- Copiando dados para a tabela meuhype.token_notification: ~3 rows (aproximadamente)
-/*!40000 ALTER TABLE `token_notification` DISABLE KEYS */;
-INSERT INTO `token_notification` (`id`, `token`, `user_id`, `platform`, `created_at`, `updated_at`) VALUES
-	(1, 'ExponentPushToken[CAmOpDPcLv-8h9If7NGFpK]', NULL, 'android', '2022-05-08 00:47:13', '2022-05-08 04:40:35');
-INSERT INTO `token_notification` (`id`, `token`, `user_id`, `platform`, `created_at`, `updated_at`) VALUES
-	(2, 'ExponentPushToken[QjqoJuBX_rLVAUDuXHxbQx]', NULL, 'android', '2022-05-08 00:52:40', '2022-05-08 04:40:34');
-INSERT INTO `token_notification` (`id`, `token`, `user_id`, `platform`, `created_at`, `updated_at`) VALUES
-	(3, 'ExponentPushToken[AgEOkRB-oWi1XEDrnDzk9s]', NULL, 'ios', '2022-05-08 00:54:04', '2022-05-08 02:08:45');
-/*!40000 ALTER TABLE `token_notification` ENABLE KEYS */;
 
 -- Copiando estrutura para tabela meuhype.uploads
 CREATE TABLE IF NOT EXISTS `uploads` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `title` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `slug` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `id_modulo` int(11) NOT NULL,
-  `modulo` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `url` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `size` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `size2` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `type` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `order` int(11) NOT NULL,
-  `status` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `slug` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `id_modulo` int NOT NULL,
+  `modulo` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `url` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `size` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `size2` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `type` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `order` int NOT NULL,
+  `status` varchar(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=73 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=73 DEFAULT CHARSET=utf8mb3 COLLATE=utf8_unicode_ci;
 
 -- Copiando dados para a tabela meuhype.uploads: ~0 rows (aproximadamente)
 /*!40000 ALTER TABLE `uploads` DISABLE KEYS */;
@@ -1620,7 +1405,7 @@ CREATE TABLE IF NOT EXISTS `uploads` (
 
 -- Copiando estrutura para tabela meuhype.users
 CREATE TABLE IF NOT EXISTS `users` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `sexo` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -1632,7 +1417,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `users_email_unique` (`email`),
   UNIQUE KEY `users_api_token_unique` (`api_token`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Copiando dados para a tabela meuhype.users: ~5 rows (aproximadamente)
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
@@ -1650,13 +1435,13 @@ INSERT INTO `users` (`id`, `name`, `email`, `sexo`, `password`, `api_token`, `re
 
 -- Copiando estrutura para tabela meuhype.user_channels
 CREATE TABLE IF NOT EXISTS `user_channels` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `users_id` int(11) DEFAULT NULL,
-  `channels_id` int(11) DEFAULT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `users_id` int DEFAULT NULL,
+  `channels_id` int DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Copiando dados para a tabela meuhype.user_channels: ~0 rows (aproximadamente)
 /*!40000 ALTER TABLE `user_channels` DISABLE KEYS */;
@@ -1664,13 +1449,13 @@ CREATE TABLE IF NOT EXISTS `user_channels` (
 
 -- Copiando estrutura para tabela meuhype.user_tags
 CREATE TABLE IF NOT EXISTS `user_tags` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `users_id` int(11) DEFAULT NULL,
-  `tags_id` int(11) DEFAULT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `users_id` int DEFAULT NULL,
+  `tags_id` int DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Copiando dados para a tabela meuhype.user_tags: ~0 rows (aproximadamente)
 /*!40000 ALTER TABLE `user_tags` DISABLE KEYS */;

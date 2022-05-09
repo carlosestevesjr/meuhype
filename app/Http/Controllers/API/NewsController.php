@@ -65,8 +65,6 @@ class NewsController extends Controller
 
     public function listaNews(Request $request)
     {
-     
-       
         $lista =DB::table('news')
                     ->join('channels', 'news.channels_id', '=', 'channels.id')
                     ->select('news.*', 'channels.name as channel', 'channels.image as channel_logo', 'channels.type as channel_type')

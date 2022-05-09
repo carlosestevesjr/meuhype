@@ -228,6 +228,7 @@
         </div>
     </div>
 
+    <script src="{{ asset('adminkit-web-kit/dist/js/vendor.js') }}"></script>
 	<script src="{{ asset('adminkit-web-kit/dist/js/app.js') }}"></script>
 
     @stack('scripts-page')

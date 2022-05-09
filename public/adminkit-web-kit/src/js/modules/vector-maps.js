@@ -1,3 +1,2 @@
-// Usage: https://github.com/themustafaomar/jsvectormap
-import "jsvectormap"
-import "jsvectormap/dist/maps/world.js"
+import "script-loader!jvectormap-next";
+import "script-loader!../vendor/jquery-jvectormap-world-mill.js";

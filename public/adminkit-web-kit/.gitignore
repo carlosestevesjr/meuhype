@@ -5,7 +5,6 @@
 
 # production
 /dist
-/_builder
 
 # misc
 .DS_Store

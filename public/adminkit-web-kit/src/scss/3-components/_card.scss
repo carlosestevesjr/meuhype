@@ -7,10 +7,26 @@
   border-bottom-width: 1px;
 }
 
+.card-actions {
+  a {
+    color: $body-color;
+    text-decoration: none;
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .dropdown {
+    line-height: 1.4;
+  }
+}
+
 .card-title {
-  font-size: $card-title-font-size;
+  font-size: $font-size-base;
   font-weight: $card-title-font-weight;
-  color: $card-title-color;
+  color: $gray-700;
 }
 
 .card-subtitle {

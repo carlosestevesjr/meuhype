@@ -2,8 +2,9 @@ const Webpack = require("webpack");
 const Path = require("path");
 const TerserPlugin = require("terser-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
+const HardSourceWebpackPlugin = require("hard-source-webpack-plugin");
 const FileManagerPlugin = require("filemanager-webpack-plugin");
 
 const opts = {
@@ -33,9 +34,18 @@ module.exports = {
           ecma: 5
         }
       }),
-      new CssMinimizerPlugin({})
+      new OptimizeCSSAssetsPlugin({})
     ],
-    runtimeChunk: false
+    runtimeChunk: false,
+    splitChunks: {
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendor',
+          enforce: true
+        }
+      }
+    }
   },
   plugins: [
     // Extract css files to seperate bundle
@@ -43,23 +53,28 @@ module.exports = {
       filename: "css/app.css",
       chunkFilename: "css/app.css"
     }),
+    // jQuery and PopperJS
+    new Webpack.ProvidePlugin({
+      $: "jquery",
+      jQuery: "jquery",
+      jquery: "jquery",
+      "window.$": "jquery",
+      "window.jQuery": "jquery",
+      Popper: ["popper.js", "default"]
+    }),
     // Copy fonts and images to dist
-    new CopyWebpackPlugin({
-      patterns: [
-        { from: "src/fonts", to: "fonts" },
-        { from: "src/img", to: "img" }
-      ]
-    }),
-    // Copy dist folder to static
+    new CopyWebpackPlugin([
+      { from: "src/fonts", to: "fonts" },
+      { from: "src/img", to: "img" }
+    ]),
+    // Speed up webpack build
+    new HardSourceWebpackPlugin(),
+    // Copy dist folder to examples
     new FileManagerPlugin({
-      events: {
-        onEnd: {
-          copy: [
-            { source: "./dist/", destination: "./static" }
-          ]
-        }
+      onEnd: {
+        copy: [{ source: "./dist/**/*", destination: "./examples" }]
       }
-    }),
+    })
   ],
   module: {
     rules: [
@@ -67,12 +82,7 @@ module.exports = {
       {
         test: /\.js$/,
         exclude: /(node_modules)/,
-        use: {
-          loader: "babel-loader",
-          options: {
-            cacheDirectory: true
-          }
-        }
+        loader: ["babel-loader?cacheDirectory=true"]
       },
       // Css-loader & sass-loader
       {
@@ -81,30 +91,51 @@ module.exports = {
           MiniCssExtractPlugin.loader,
           "css-loader",
           "postcss-loader",
-          {
-            loader: "sass-loader",
-            options: {
-              implementation: require.resolve("sass"),
-            }
-          }
+          "sass-loader"
         ]
       },
       // Load fonts
       {
         test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
-        type: "asset/resource",
-        generator: {
-          filename: "fonts/[name][ext]"
-        }
+        use: [
+          {
+            loader: "file-loader",
+            options: {
+              name: "/[name].[ext]",
+              outputPath: "fonts/",
+              publicPath: "../fonts/"
+            }
+          }
+        ]
       },
       // Load images
       {
         test: /\.(png|jpg|jpeg|gif)(\?v=\d+\.\d+\.\d+)?$/,
-        type: "asset/resource",
-        generator: {
-          filename: "img/[name][ext]"
-        }
+        use: [
+          {
+            loader: "file-loader",
+            options: {
+              name: "[name].[ext]",
+              outputPath: "img/",
+              publicPath: "../img/"
+            }
+          }
+        ]
       },
+      // Expose loader
+      {
+        test: require.resolve("jquery"),
+        use: [
+          {
+            loader: "expose-loader",
+            options: "jQuery"
+          },
+          {
+            loader: "expose-loader",
+            options: "$"
+          }
+        ]
+      }
     ]
   },
   resolve: {
@@ -115,9 +146,7 @@ module.exports = {
     }
   },
   devServer: {
-    static: {
-      directory: Path.join(__dirname, "static")
-    },
+    contentBase: Path.join(__dirname, "examples"),
     compress: true,
     port: 8080,
     open: true

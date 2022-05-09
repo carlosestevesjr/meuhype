@@ -4,6 +4,6 @@
     "sourceType": "module"
   },
   "env": {
-    "es7": true
+    "es6": true
   }
 }

@@ -39,7 +39,7 @@ class NewsController extends Controller
             'data' =>  $array, 
         ];
         
-        if($lista){
+        if($lista && $busca != ""){
             $retorno =  [
                 'code'  => '000',
                 'content' => [

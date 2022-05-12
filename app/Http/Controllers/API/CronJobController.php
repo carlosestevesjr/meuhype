@@ -41,7 +41,6 @@ class CronJobController extends Controller
                             'Jovem_Nerd_Site'    => ($this->crawler_canais_ativos('jovemnerdsite')) ? $this->buscaNewsJovemNerdSite() : "desligado",
                             'Tec_Mundo_Site'    => ($this->crawler_canais_ativos('tecmundosite')) ? $this->buscaTecMundoSite() : "desligado",
                             'Poltrona_Nerd_Site'    => ($this->crawler_canais_ativos('poltronanerdsite')) ? $this->buscaPoltronaNerdSite() : "desligado",
-                            'Poltrona_Nerd_Site'    => ($this->crawler_canais_ativos('poltronanerdsite')) ? $this->buscaPoltronaNerdSite() : "desligado",
                             'Super_Oito_Youtube' => ($this->crawler_canais_ativos('superoitoyoutube')) ? $this->buscaNewsSuperOitoYoutube() : "desligado",
                             'Jovem_Nerd_Youtube' => ($this->crawler_canais_ativos('jovemnerdyoutube')) ? $this->buscaNewsJovemNerdYoutube() : "desligado",
                             'Omelete_Youtube'    => ($this->crawler_canais_ativos('omeleteyoutube')) ? $this->buscaNewsOmeleteYoutube() : "desligado",
@@ -94,25 +93,25 @@ class CronJobController extends Controller
             print_r($arrayResults);
             echo '</pre>';
 
-            // Mail::send('emails.contato', $dados, function ($message) {
-            //     $message->from('inthemovie@nocinema.kinghost.net', 'Contato Meu Hype');
-            //     $message->subject('Contato Pelo Site');
-            //     $message->to('carlosestevesjr0@gmail.com');
-            //     // $message->bcc('cissa@highpix.com.br');
+            Mail::send('emails.contato', $dados, function ($message) {
+                $message->from('inthemovie@nocinema.kinghost.net', 'Contato Meu Hype');
+                $message->subject('Contato Pelo Site');
+                $message->to('carlosestevesjr0@gmail.com');
+                // $message->bcc('cissa@highpix.com.br');
                 
-            // });
+            });
         }
         catch (Exception $e) {
             echo $e->getMessage();
             $dados = [ 'data'  => $e->getMessage()];
 
-            // Mail::send('emails.contato', $dados, function ($message) {
-            //     $message->from('inthemovie@nocinema.kinghost.net', 'Contato Meu Hype');
-            //     $message->subject('Contato Pelo Site');
-            //     $message->to('carlosestevesjr0@gmail.com');
-            //     // $message->bcc('cissa@highpix.com.br');
+            Mail::send('emails.contato', $dados, function ($message) {
+                $message->from('inthemovie@nocinema.kinghost.net', 'Contato Meu Hype');
+                $message->subject('Contato Pelo Site');
+                $message->to('carlosestevesjr0@gmail.com');
+                // $message->bcc('cissa@highpix.com.br');
                 
-            // });
+            });
         }
         
         // return response()->json($arrayResults , 200);

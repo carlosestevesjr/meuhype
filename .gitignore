@@ -9,7 +9,6 @@ app/storage/
 
 public/uploads/*
 
-storage/*.key
 .env
 Homestead.yaml
 Homestead.json

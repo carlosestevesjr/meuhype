@@ -4,7 +4,7 @@
 /yarn.lock
 
 # production
-/dist
+
 
 # misc
 .DS_Store

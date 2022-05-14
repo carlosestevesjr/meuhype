@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '05d0bc3cfe20c3e2f748cc62993c3ba083a195c8',
+        'reference' => '9de9b97ba87e75536202f83f12066aafb75f6ee6',
         'name' => 'laravel/laravel',
         'dev' => true,
     ),
@@ -17,15 +17,6 @@
             'install_path' => __DIR__ . '/../aerni/laravel-spotify',
             'aliases' => array(),
             'reference' => '3c7d96dc094e9ec9a9146b35b589c0f04f9fa30c',
-            'dev_requirement' => false,
-        ),
-        'alaouy/youtube' => array(
-            'pretty_version' => 'v2.2.5',
-            'version' => '2.2.5.0',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../alaouy/youtube',
-            'aliases' => array(),
-            'reference' => '6cd66013b18a958b85f4e71f72fb6fac7dc25c14',
             'dev_requirement' => false,
         ),
         'asm89/stack-cors' => array(
@@ -397,7 +388,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '05d0bc3cfe20c3e2f748cc62993c3ba083a195c8',
+            'reference' => '9de9b97ba87e75536202f83f12066aafb75f6ee6',
             'dev_requirement' => false,
         ),
         'laravel/tinker' => array(
@@ -712,8 +703,8 @@
         'psr/log-implementation' => array(
             'dev_requirement' => false,
             'provided' => array(
-                0 => '1.0|2.0',
-                1 => '1.0.0 || 2.0.0 || 3.0.0',
+                0 => '1.0.0 || 2.0.0 || 3.0.0',
+                1 => '1.0|2.0',
             ),
         ),
         'psr/simple-cache' => array(

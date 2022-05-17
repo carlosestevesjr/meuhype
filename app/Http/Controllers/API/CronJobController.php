@@ -4470,7 +4470,7 @@ class CronJobController extends Controller
     }
 
     public function buscaPoltronaNerdSite(){
-
+ 
         $channel = Channels::where( 'hash',  '=', 'poltronanerdsite' )->firstOrFail();
         $url = "";
 

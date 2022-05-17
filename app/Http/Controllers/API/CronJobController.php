@@ -125,8 +125,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s', strtotime('-1 minute', strtotime($hora))); 
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -297,8 +297,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s', strtotime('-1 minute', strtotime($hora))); 
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -469,8 +469,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s', strtotime('-1 minute', strtotime($hora))); 
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -643,8 +643,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s', strtotime('-1 minute', strtotime($hora))); 
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -817,8 +817,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s', strtotime('-1 minute', strtotime($hora))); 
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -991,8 +991,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s', strtotime('-1 minute', strtotime($hora))); 
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -1165,8 +1165,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s', strtotime('-1 minute', strtotime($hora))); 
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -1339,8 +1339,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s', strtotime('-1 minute', strtotime($hora))); 
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -1513,8 +1513,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s', strtotime('-1 minute', strtotime($hora))); 
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -1687,8 +1687,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s', strtotime('-1 minute', strtotime($hora))); 
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -1861,8 +1861,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s', strtotime('-1 minute', strtotime($hora))); 
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -2035,8 +2035,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s', strtotime('-1 minute', strtotime($hora))); 
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -2209,8 +2209,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s', strtotime('-1 minute', strtotime($hora))); 
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -2383,8 +2383,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s', strtotime('-1 minute', strtotime($hora))); 
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -2557,8 +2557,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s', strtotime('-1 minute', strtotime($hora))); 
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -2731,8 +2731,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s', strtotime('-1 minute', strtotime($hora))); 
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -2905,8 +2905,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s', strtotime('-1 minute', strtotime($hora))); 
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -3079,8 +3079,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s', strtotime('-1 minute', strtotime($hora))); 
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -3253,8 +3253,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s', strtotime('-1 minute', strtotime($hora))); 
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -3427,8 +3427,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s', strtotime('-1 minute', strtotime($hora))); 
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -3600,8 +3600,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s', strtotime('-1 minute', strtotime($hora))); 
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -3773,8 +3773,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s', strtotime('-1 minute', strtotime($hora))); 
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -3946,8 +3946,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s', strtotime('-1 minute', strtotime($hora))); 
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -4118,8 +4118,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s', strtotime('-1 minute', strtotime($hora))); 
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -4301,8 +4301,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s', strtotime('-1 minute', strtotime($hora))); 
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -4479,8 +4479,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s', strtotime('-1 minute', strtotime($hora))); 
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;

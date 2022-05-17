@@ -3994,7 +3994,7 @@ class CronJobController extends Controller
             $result['url'] = $matche['url'][0];
             $result['noticia'] = trim($matche['noticia'][0]) ;
             preg_match_all('/(<img)[\s\S]*?(src\=")(?P<imagem>[\s\S]*?)(")/', $value, $matche);
-            $result['img'] = $matche['imagem'][0];
+            $result['img'] = (array_key_exists(0 , $matche['imagem'])) ? $matche['imagem'][0] : '';
             preg_match_all('/(<time)[\s\S](class="postedon">)(?P<data>[\s\S]*?)(<\/time>)/', $value, $matche);
             $result['data'] = trim($matche['data'][0]) ;
             $return['content'][] = $result;
@@ -4354,7 +4354,7 @@ class CronJobController extends Controller
             $result['url']=  $matche_link['link'][0];
            
             preg_match_all('/(<img data-src=")(?P<imagem>[\s\S]*?)("?ims=)/', $value, $matche_img);
-            $result['img'] = $matche_img['imagem'][0];
+            $result['img'] = (array_key_exists(0 , $matche_img['imagem'])) ? $matche_img['imagem'][0] : '';
             
             preg_match_all('/(class="tec--timestamp__item z--font-semibold">)(?P<data>[\s\S]*?)(<\/div>)/', $value, $matche_data);
             $result['data'] = $matche_data['data'][0];
@@ -4537,7 +4537,7 @@ class CronJobController extends Controller
             $result['url']=  $matche_link['link'][0];
             
             preg_match_all('/(ret_img,w_350,h_250\/)(?P<imagem>[\s\S]*?)(")/', $value, $matche_img);
-            $result['img'] = $matche_img['imagem'][0];
+            $result['img'] = (array_key_exists(0 , $matche_img['imagem'])) ? $matche_img['imagem'][0] : '';
             
             preg_match_all('/(<i class="fa fa-clock-o"><\/i>)(?P<data>[\s\S]*?)(<\/a)/', $value, $matche_data);
             $result['data'] = $matche_data['data'][0];

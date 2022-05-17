@@ -48,7 +48,10 @@ Route::group(['prefix' => 'v1', 'middleware' => ['cors']], function () {
     });
 
     Route::group(['namespace'=> 'API'], function () {
-       
+        
+        //Contato
+        Route::post('contato','ContactController@contato');
+
         //Tags 
         Route::get('lista-tags/{busca?}','TagsController@listaTags');
 

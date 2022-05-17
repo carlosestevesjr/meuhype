@@ -86,13 +86,14 @@ class CronJobController extends Controller
         // $message->getSwiftMessage();
         // var_dump($arrayResults['Omelete_Site']);
         // dd();   
+        echo '<pre>';
+        print_r($arrayResults);
+        echo '</pre>';
+        die();
         
         try {
             $dados = [ 'data'  => $arrayResults, 'hora_inicial' => $hora_inicial,'hora_final' => $hora_final];
-            echo '<pre>';
-            print_r($arrayResults);
-            echo '</pre>';
-
+           
             Mail::send('emails.contato', $dados, function ($message) {
                 $message->from('inthemovie@nocinema.kinghost.net', 'Contato Meu Hype');
                 $message->subject('Contato Pelo Site');
@@ -4004,97 +4005,99 @@ class CronJobController extends Controller
             $return['content'][] = $result;
         }
 
-        foreach($return['content'] as $item){
+        if(count($return['content']) > 0){
+            foreach($return['content'] as $item){
 
-            //Validando os campos
-            $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-jovemnerdsite')], [
-                    'hash' => 'required|unique:news',
-                ],
-                $messages = [
-                    'unique'    => 'Notícia já existe.',
-                ]
-            );
-
-            if ($validator->fails()) {
-
-                $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-jovemnerdsite') )->first();
-                            
-                if($news && $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
-                    $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
-                    
-                    if(!$news_tags){
-                        $insert_news_tags = new NewsTags;
-                        $insert_news_tags->news_id = $news->id;
-                        $insert_news_tags->tags_id = $tag->id;
-                        $insert_news_tags->save();
-                    }
-                }
-
-                // Validation 
-                array_push(
-                    $array_existentes,
-                    Str::slug($item['noticia'].'-jovemnerdsite')
+                //Validando os campos
+                $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-jovemnerdsite')], [
+                        'hash' => 'required|unique:news',
+                    ],
+                    $messages = [
+                        'unique'    => 'Notícia já existe.',
+                    ]
                 );
-            }else{
 
-                $img = "";
-                $link = "";
-                $data = "";
+                if ($validator->fails()) {
 
-                if($item['img']){
-                    $img = $item['img'];
-                }
-
-                if($item['url']){
-                    $link = $item['url'];
-                }
-
-                if($item['data']){
-                    $data =  $this->formata_data(1, trim($item['data'])); 
-                }
-                if($img != "" && $link != ""){
-                    $data_json = "";
-                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
-                        //Baixa imagem
-                        $file =$img;
-                        $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-jovemnerdsite'.'.jpg';
-                        $destinationPath = public_path().'/uploads/news/';
-                        $upload = $this->downloadFile($filename, $file , $destinationPath);
-
-                        $insert = new News;
-                        $insert->title = $this->removeEmoji($item['noticia']);
-                        $insert->channels_id = $channel->id;
-                        $insert->slug = Str::slug($item['noticia']);
-                        $insert->hash = Str::slug($item['noticia'].'-jovemnerdsite');
-                        $insert->link = $link;
-                        $insert->image = '/uploads/news/' . $filename;
-                        $insert->status = "show";
-                        $insert->order = 0;
+                    $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-jovemnerdsite') )->first();
+                                
+                    if($news && $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
                         
-                        $insert->data = $data;
-                        $condition = $insert->save();
-                        if($condition){
-                            
-                            $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
-                            
-                            if(!$news_tags){
-                                $insert_news_tags = new NewsTags;
-                                $insert_news_tags->news_id = $insert->id;
-                                $insert_news_tags->tags_id = $tag->id;
-                                $insert_news_tags->save();
-                            }
-
-                            array_push(
-                                $array_adicionados,
-                                $insert->id.' '.Str::slug($item['noticia'].'-jovemnerdsite')
-                            );
+                        if(!$news_tags){
+                            $insert_news_tags = new NewsTags;
+                            $insert_news_tags->news_id = $news->id;
+                            $insert_news_tags->tags_id = $tag->id;
+                            $insert_news_tags->save();
                         }
                     }
-                }else{
+
+                    // Validation 
                     array_push(
-                        $array_erros,
+                        $array_existentes,
                         Str::slug($item['noticia'].'-jovemnerdsite')
                     );
+                }else{
+
+                    $img = "";
+                    $link = "";
+                    $data = "";
+
+                    if($item['img']){
+                        $img = $item['img'];
+                    }
+
+                    if($item['url']){
+                        $link = $item['url'];
+                    }
+
+                    if($item['data']){
+                        $data =  $this->formata_data(1, trim($item['data'])); 
+                    }
+                    if($img != "" && $link != ""){
+                        $data_json = "";
+                        if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                            //Baixa imagem
+                            $file =$img;
+                            $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-jovemnerdsite'.'.jpg';
+                            $destinationPath = public_path().'/uploads/news/';
+                            $upload = $this->downloadFile($filename, $file , $destinationPath);
+
+                            $insert = new News;
+                            $insert->title = $this->removeEmoji($item['noticia']);
+                            $insert->channels_id = $channel->id;
+                            $insert->slug = Str::slug($item['noticia']);
+                            $insert->hash = Str::slug($item['noticia'].'-jovemnerdsite');
+                            $insert->link = $link;
+                            $insert->image = '/uploads/news/' . $filename;
+                            $insert->status = "show";
+                            $insert->order = 0;
+                            
+                            $insert->data = $data;
+                            $condition = $insert->save();
+                            if($condition){
+                                
+                                $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
+                                
+                                if(!$news_tags){
+                                    $insert_news_tags = new NewsTags;
+                                    $insert_news_tags->news_id = $insert->id;
+                                    $insert_news_tags->tags_id = $tag->id;
+                                    $insert_news_tags->save();
+                                }
+
+                                array_push(
+                                    $array_adicionados,
+                                    $insert->id.' '.Str::slug($item['noticia'].'-jovemnerdsite')
+                                );
+                            }
+                        }
+                    }else{
+                        array_push(
+                            $array_erros,
+                            Str::slug($item['noticia'].'-jovemnerdsite')
+                        );
+                    }
                 }
             }
         }
@@ -4181,101 +4184,103 @@ class CronJobController extends Controller
             $return['content'][] = $result;
         }
        
-        // return false ;
-        foreach($return['content'] as $item){
             
-            //Validando os campos
-            $validator = Validator::make(['hash' => Str::slug($item['noticia'][0].'-omeletesite')], [
-                    'hash' => 'required|unique:news',
-                ],
-                $messages = [
-                    'unique'    => 'Notícia já existe.',
-                ]
-            );
-
-            if ($validator->fails()) {
-
-                $news = News::where( 'hash',  '=', Str::slug($item['noticia'][0].'-omeletesite') )->first();
-                            
-                if($news && $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia'][0]) )){
-                    $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
-                    
-                    if(!$news_tags){
-                        $insert_news_tags = new NewsTags;
-                        $insert_news_tags->news_id = $news->id;
-                        $insert_news_tags->tags_id = $tag->id;
-                        $insert_news_tags->save();
-                    }
-                }
-
-                // Validation 
-                array_push(
-                    $array_existentes,
-                    Str::slug($item['noticia'][0].'-omeletesite')
-                );
-               
-            }else{
-
-                $img = "";
-                $link = "";
-                $data = "";
-
-                if($item['img']){
-                    $img = 'https:'.$item['img'][0];
-                }
-
-                if($item['link']){
-                    $link = "https://www.omelete.com.br".$item['link'][0];
-                }
-
-                if($item['data']){
-                    $data = $item['data'][0];
-                }
-
-               
-                if($img != "" && $link != ""){
-                    $data_json = "";
-                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia'][0]) )){
-                        //Baixa imagem
-                        $file =$img;
-                        $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'][0])).'-omeletesite'.'.jpg';
-                        $destinationPath = public_path().'/uploads/news/';
-                        $upload = $this->downloadFile($filename, $file , $destinationPath);
-
-                        $insert = new News;
-                        $insert->title = $this->removeEmoji($item['noticia'][0]);
-                        $insert->channels_id = $channel->id;
-                        $insert->slug = Str::slug($item['noticia'][0]);
-                        $insert->hash = Str::slug($item['noticia'][0].'-omeletesite');
-                        $insert->link = $link;
-                        $insert->image = '/uploads/news/' . $filename;
-                        $insert->status = "show";
-                        $insert->order = 0;
+        if(count($return['content']) > 0){
+            foreach($return['content'] as $item){
                 
-                        $insert->data =  $this->formata_data(2, trim($data));
-                        $condition = $insert->save();
-                        if($condition){
+                //Validando os campos
+                $validator = Validator::make(['hash' => Str::slug($item['noticia'][0].'-omeletesite')], [
+                        'hash' => 'required|unique:news',
+                    ],
+                    $messages = [
+                        'unique'    => 'Notícia já existe.',
+                    ]
+                );
 
-                            $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
-                            
-                            if(!$news_tags){
-                                $insert_news_tags = new NewsTags;
-                                $insert_news_tags->news_id = $insert->id;
-                                $insert_news_tags->tags_id = $tag->id;
-                                $insert_news_tags->save();
-                            }
+                if ($validator->fails()) {
 
-                            array_push(
-                                $array_adicionados,
-                                $insert->id.' '.Str::slug($item['noticia'][0].'-omeletesite')
-                            );
+                    $news = News::where( 'hash',  '=', Str::slug($item['noticia'][0].'-omeletesite') )->first();
+                                
+                    if($news && $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia'][0]) )){
+                        $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
+                        
+                        if(!$news_tags){
+                            $insert_news_tags = new NewsTags;
+                            $insert_news_tags->news_id = $news->id;
+                            $insert_news_tags->tags_id = $tag->id;
+                            $insert_news_tags->save();
                         }
                     }
-                }else{
+
+                    // Validation 
                     array_push(
-                        $array_erros,
+                        $array_existentes,
                         Str::slug($item['noticia'][0].'-omeletesite')
                     );
+                
+                }else{
+
+                    $img = "";
+                    $link = "";
+                    $data = "";
+
+                    if($item['img']){
+                        $img = 'https:'.$item['img'][0];
+                    }
+
+                    if($item['link']){
+                        $link = "https://www.omelete.com.br".$item['link'][0];
+                    }
+
+                    if($item['data']){
+                        $data = $item['data'][0];
+                    }
+
+                
+                    if($img != "" && $link != ""){
+                        $data_json = "";
+                        if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia'][0]) )){
+                            //Baixa imagem
+                            $file =$img;
+                            $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'][0])).'-omeletesite'.'.jpg';
+                            $destinationPath = public_path().'/uploads/news/';
+                            $upload = $this->downloadFile($filename, $file , $destinationPath);
+
+                            $insert = new News;
+                            $insert->title = $this->removeEmoji($item['noticia'][0]);
+                            $insert->channels_id = $channel->id;
+                            $insert->slug = Str::slug($item['noticia'][0]);
+                            $insert->hash = Str::slug($item['noticia'][0].'-omeletesite');
+                            $insert->link = $link;
+                            $insert->image = '/uploads/news/' . $filename;
+                            $insert->status = "show";
+                            $insert->order = 0;
+                    
+                            $insert->data =  $this->formata_data(2, trim($data));
+                            $condition = $insert->save();
+                            if($condition){
+
+                                $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
+                                
+                                if(!$news_tags){
+                                    $insert_news_tags = new NewsTags;
+                                    $insert_news_tags->news_id = $insert->id;
+                                    $insert_news_tags->tags_id = $tag->id;
+                                    $insert_news_tags->save();
+                                }
+
+                                array_push(
+                                    $array_adicionados,
+                                    $insert->id.' '.Str::slug($item['noticia'][0].'-omeletesite')
+                                );
+                            }
+                        }
+                    }else{
+                        array_push(
+                            $array_erros,
+                            Str::slug($item['noticia'][0].'-omeletesite')
+                        );
+                    }
                 }
             }
         }
@@ -4343,6 +4348,8 @@ class CronJobController extends Controller
 
         $result = $this->getCurl($url);
         preg_match_all('/(<article class="tec--card tec--card--medium">)(?P<artigos>[\s\S]*?)(<\/article>)/', $result, $matches);
+       
+        
         $result = [];
        
         foreach ($matches['artigos'] as $key => $value) {
@@ -4359,98 +4366,100 @@ class CronJobController extends Controller
             $result['data'] = $matche_data['data'][0];
             $return['content'][] = $result;
         }
-        
-        foreach($return['content'] as $item){
 
-            //Validando os campos
-            $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-tecmundosite')], [
-                    'hash' => 'required|unique:news',
-                ],
-                $messages = [
-                    'unique'    => 'Notícia já existe.',
-                ]
-            );
+        if(count($return['content']) > 0){
+            foreach($return['content'] as $item){
 
-            if ($validator->fails()) {
-
-                $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-tecmundosite') )->first();
-                            
-                if($news && $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
-                    $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
-                    
-                    if(!$news_tags){
-                        $insert_news_tags = new NewsTags;
-                        $insert_news_tags->news_id = $news->id;
-                        $insert_news_tags->tags_id = $tag->id;
-                        $insert_news_tags->save();
-                    }
-                }
-
-                // Validation 
-                array_push(
-                    $array_existentes,
-                    Str::slug($item['noticia'].'-tecmundosite')
+                //Validando os campos
+                $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-tecmundosite')], [
+                        'hash' => 'required|unique:news',
+                    ],
+                    $messages = [
+                        'unique'    => 'Notícia já existe.',
+                    ]
                 );
-            }else{
 
-                $img = "";
-                $link = "";
-                $data = "";
+                if ($validator->fails()) {
 
-                if($item['img']){
-                    $img = $item['img'];
-                }
-
-                if($item['url']){
-                    $link = $item['url'];
-                }
-
-                if($item['data']){
-                    $data =  $this->formata_data(1, trim($item['data'])); 
-                }
-                if($img != "" && $link != ""){
-                    $data_json = "";
-                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
-                        //Baixa imagem
-                        $file =$img;
-                        $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-tecmundosite'.'.jpg';
-                        $destinationPath = public_path().'/uploads/news/';
-                        $upload = $this->downloadFile($filename, $file , $destinationPath);
-
-                        $insert = new News;
-                        $insert->title = $this->removeEmoji($item['noticia']);
-                        $insert->channels_id = $channel->id;
-                        $insert->slug = Str::slug($item['noticia']);
-                        $insert->hash = Str::slug($item['noticia'].'-tecmundosite');
-                        $insert->link = $link;
-                        $insert->image = '/uploads/news/' . $filename;
-                        $insert->status = "show";
-                        $insert->order = 0;
+                    $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-tecmundosite') )->first();
+                                
+                    if($news && $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
                         
-                        $insert->data = $data;
-                        $condition = $insert->save();
-                        if($condition){
-                            
-                            $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
-                            
-                            if(!$news_tags){
-                                $insert_news_tags = new NewsTags;
-                                $insert_news_tags->news_id = $insert->id;
-                                $insert_news_tags->tags_id = $tag->id;
-                                $insert_news_tags->save();
-                            }
-
-                            array_push(
-                                $array_adicionados,
-                                $insert->id.' '.Str::slug($item['noticia'].'-tecmundosite')
-                            );
+                        if(!$news_tags){
+                            $insert_news_tags = new NewsTags;
+                            $insert_news_tags->news_id = $news->id;
+                            $insert_news_tags->tags_id = $tag->id;
+                            $insert_news_tags->save();
                         }
                     }
-                }else{
+
+                    // Validation 
                     array_push(
-                        $array_erros,
+                        $array_existentes,
                         Str::slug($item['noticia'].'-tecmundosite')
                     );
+                }else{
+
+                    $img = "";
+                    $link = "";
+                    $data = "";
+
+                    if($item['img']){
+                        $img = $item['img'];
+                    }
+
+                    if($item['url']){
+                        $link = $item['url'];
+                    }
+
+                    if($item['data']){
+                        $data =  $this->formata_data(1, trim($item['data'])); 
+                    }
+                    if($img != "" && $link != ""){
+                        $data_json = "";
+                        if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                            //Baixa imagem
+                            $file =$img;
+                            $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-tecmundosite'.'.jpg';
+                            $destinationPath = public_path().'/uploads/news/';
+                            $upload = $this->downloadFile($filename, $file , $destinationPath);
+
+                            $insert = new News;
+                            $insert->title = $this->removeEmoji($item['noticia']);
+                            $insert->channels_id = $channel->id;
+                            $insert->slug = Str::slug($item['noticia']);
+                            $insert->hash = Str::slug($item['noticia'].'-tecmundosite');
+                            $insert->link = $link;
+                            $insert->image = '/uploads/news/' . $filename;
+                            $insert->status = "show";
+                            $insert->order = 0;
+                            
+                            $insert->data = $data;
+                            $condition = $insert->save();
+                            if($condition){
+                                
+                                $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
+                                
+                                if(!$news_tags){
+                                    $insert_news_tags = new NewsTags;
+                                    $insert_news_tags->news_id = $insert->id;
+                                    $insert_news_tags->tags_id = $tag->id;
+                                    $insert_news_tags->save();
+                                }
+
+                                array_push(
+                                    $array_adicionados,
+                                    $insert->id.' '.Str::slug($item['noticia'].'-tecmundosite')
+                                );
+                            }
+                        }
+                    }else{
+                        array_push(
+                            $array_erros,
+                            Str::slug($item['noticia'].'-tecmundosite')
+                        );
+                    }
                 }
             }
         }
@@ -4541,98 +4550,100 @@ class CronJobController extends Controller
     
             $return['content'][] = $result;
         }
-       
-        foreach($return['content'] as $item){
+        
+        if(count($return['content']) > 0){
+            foreach($return['content'] as $item){
 
-            //Validando os campos
-            $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-poltronanerdsite')], [
-                    'hash' => 'required|unique:news',
-                ],
-                $messages = [
-                    'unique'    => 'Notícia já existe.',
-                ]
-            );
-
-            if ($validator->fails()) {
-
-                $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-poltronanerdsite') )->first();
-                            
-                if($news && $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
-                    $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
-                    
-                    if(!$news_tags){
-                        $insert_news_tags = new NewsTags;
-                        $insert_news_tags->news_id = $news->id;
-                        $insert_news_tags->tags_id = $tag->id;
-                        $insert_news_tags->save();
-                    }
-                }
-
-                // Validation 
-                array_push(
-                    $array_existentes,
-                    Str::slug($item['noticia'].'-poltronanerdsite')
+                //Validando os campos
+                $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-poltronanerdsite')], [
+                        'hash' => 'required|unique:news',
+                    ],
+                    $messages = [
+                        'unique'    => 'Notícia já existe.',
+                    ]
                 );
-            }else{
 
-                $img = "";
-                $link = "";
-                $data = "";
+                if ($validator->fails()) {
 
-                if($item['img']){
-                    $img = $item['img'];
-                }
-
-                if($item['url']){
-                    $link = $item['url'];
-                }
-
-                if($item['data']){
-                    $data =  $this->formata_data(1, trim($item['data'])); 
-                }
-                if($img != "" && $link != ""){
-                    $data_json = "";
-                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
-                        //Baixa imagem
-                        $file =$img;
-                        $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-poltronanerdsite'.'.jpg';
-                        $destinationPath = public_path().'/uploads/news/';
-                        $upload = $this->downloadFile($filename, $file , $destinationPath);
-
-                        $insert = new News;
-                        $insert->title = $this->removeEmoji($item['noticia']);
-                        $insert->channels_id = $channel->id;
-                        $insert->slug = Str::slug($item['noticia']);
-                        $insert->hash = Str::slug($item['noticia'].'-poltronanerdsite');
-                        $insert->link = $link;
-                        $insert->image = '/uploads/news/' . $filename;
-                        $insert->status = "show";
-                        $insert->order = 0;
+                    $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-poltronanerdsite') )->first();
+                                
+                    if($news && $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
                         
-                        $insert->data = $data;
-                        $condition = $insert->save();
-                        if($condition){
-                            
-                            $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
-                            
-                            if(!$news_tags){
-                                $insert_news_tags = new NewsTags;
-                                $insert_news_tags->news_id = $insert->id;
-                                $insert_news_tags->tags_id = $tag->id;
-                                $insert_news_tags->save();
-                            }
-
-                            array_push(
-                                $array_adicionados,
-                                $insert->id.' '.Str::slug($item['noticia'].'-poltronanerdsite')
-                            );
+                        if(!$news_tags){
+                            $insert_news_tags = new NewsTags;
+                            $insert_news_tags->news_id = $news->id;
+                            $insert_news_tags->tags_id = $tag->id;
+                            $insert_news_tags->save();
                         }
                     }
-                }else{
+
+                    // Validation 
                     array_push(
-                        $array_erros,
+                        $array_existentes,
                         Str::slug($item['noticia'].'-poltronanerdsite')
                     );
+                }else{
+
+                    $img = "";
+                    $link = "";
+                    $data = "";
+
+                    if($item['img']){
+                        $img = $item['img'];
+                    }
+
+                    if($item['url']){
+                        $link = $item['url'];
+                    }
+
+                    if($item['data']){
+                        $data =  $this->formata_data(1, trim($item['data'])); 
+                    }
+                    if($img != "" && $link != ""){
+                        $data_json = "";
+                        if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                            //Baixa imagem
+                            $file =$img;
+                            $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-poltronanerdsite'.'.jpg';
+                            $destinationPath = public_path().'/uploads/news/';
+                            $upload = $this->downloadFile($filename, $file , $destinationPath);
+
+                            $insert = new News;
+                            $insert->title = $this->removeEmoji($item['noticia']);
+                            $insert->channels_id = $channel->id;
+                            $insert->slug = Str::slug($item['noticia']);
+                            $insert->hash = Str::slug($item['noticia'].'-poltronanerdsite');
+                            $insert->link = $link;
+                            $insert->image = '/uploads/news/' . $filename;
+                            $insert->status = "show";
+                            $insert->order = 0;
+                            
+                            $insert->data = $data;
+                            $condition = $insert->save();
+                            if($condition){
+                                
+                                $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
+                                
+                                if(!$news_tags){
+                                    $insert_news_tags = new NewsTags;
+                                    $insert_news_tags->news_id = $insert->id;
+                                    $insert_news_tags->tags_id = $tag->id;
+                                    $insert_news_tags->save();
+                                }
+
+                                array_push(
+                                    $array_adicionados,
+                                    $insert->id.' '.Str::slug($item['noticia'].'-poltronanerdsite')
+                                );
+                            }
+                        }
+                    }else{
+                        array_push(
+                            $array_erros,
+                            Str::slug($item['noticia'].'-poltronanerdsite')
+                        );
+                    }
                 }
             }
         }

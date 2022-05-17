@@ -74,6 +74,7 @@ class ComunicaYoutube {
         }
             
         $return['content'] = [];
+        
         foreach ($dados as $key => $value) {
             
             if($key >= $quantidade ){

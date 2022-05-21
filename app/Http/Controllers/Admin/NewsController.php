@@ -62,8 +62,6 @@ class NewsController extends Controller
                 ->orderBy('data', 'desc')
                 ->paginate($qtd);
                 // dd($lista);
-        dd($lista);
-      
 
         $tags_crawleando = DB::select('
             SELECT 

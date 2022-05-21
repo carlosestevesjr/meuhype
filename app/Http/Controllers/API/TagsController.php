@@ -57,6 +57,62 @@ class TagsController extends Controller
         // dd( $lista);
     }
 
+    public function listaTagsRecentes(Request $request)
+    {
+        // $lista = DB::table('channels')->orderBy('name', 'Asc')->get();
+        
+        // $lista = Tags::query()
+                        // ->where('title', 'LIKE', "%{$request->busca}%") 
+                        // ->where('status', '=', "active") 
+                        // ->orderBy('title', 'Asc')
+                        // // ->limit(15)
+                        // ->paginate(25);
+
+
+
+        $results = DB::select('
+        SELECT *
+            FROM tags 
+                JOIN news_tags
+                (
+                    SELECT *
+                    FROM news
+                    WHERE data = "2022-05-09"
+                ) 
+                ON news_tags.tags_id = tags.id
+            WHERE tags.status = "active" ,
+                   
+            GROUP BY 
+                news_tags.tags_id
+            ORDER BY 
+                tags.title
+        ');   
+        dd($results);
+
+        if($lista){
+            $retorno =  [
+                'code'  => '000',
+                'content' => [
+                                'dados' =>  $lista, 
+                            ],
+                'date'         => date("Y-m-d"),
+                'hour'         => date("H:i:s"),
+            ];
+            return response()->json($retorno , 200);
+        }else{
+            $retorno =  [
+                'code'  => '000',
+                'content' => [
+                                'dados' =>  [], 
+                            ],
+                'date'         => date("Y-m-d"),
+                'hour'         => date("H:i:s"),
+            ];
+            return response()->json($retorno , 200);
+        }
+        // dd( $lista);
+    }
+
     public function listaTagsUser(Request $request)
     {
         

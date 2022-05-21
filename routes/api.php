@@ -55,6 +55,9 @@ Route::group(['prefix' => 'v1', 'middleware' => ['cors']], function () {
         //Tags 
         Route::get('lista-tags/{busca?}','TagsController@listaTags');
 
+        
+        Route::get('lista-tags-recentes','TagsController@listaTagsRecentes');
+
         Route::get('lista-tags-user/{token}','TagsController@listaTagsUser');
         Route::post('set-tag/','TagsController@postSetTag');
         Route::post('unset-tag/','TagsController@postUnsetTag');

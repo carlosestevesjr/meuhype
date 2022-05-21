@@ -63,6 +63,7 @@ class CronJobController extends Controller
                             'Gustavo_Cunha_Youtube' => ($this->crawler_canais_ativos('gustavocunhayoutube')) ? $this->buscaGustavoCunhaYoutube() : "desligado",
                             'Miguel_Lokia_Youtube' => ($this->crawler_canais_ativos('miguellokiayoutube')) ? $this->buscaMiguelLokiaYoutube() : "desligado",
                             'Entre_Migas_Youtube' => ($this->crawler_canais_ativos('entremigasyoutube')) ? $this->buscaEntreMigasYoutube() : "desligado",
+                            'Matando_Robos_Gigantes_Youtube' => ($this->crawler_canais_ativos('matandorobosgigantesyoutube')) ? $this->buscaMatandoRobosGigantesYoutube() : "desligado",
                             'Jovem_Nerd_Spotify' => ($this->crawler_canais_ativos('jovemnerdspotify')) ? $this->buscaNewsJovemNerdSpotify() : "desligado",
                             'Cinema_Com_Rapadura_Spotify' => ($this->crawler_canais_ativos('cinemacomrapaduraspotify')) ? $this->buscaNewsCinemaComRapaduraSpotify() : "desligado"
                         ];
@@ -112,6 +113,178 @@ class CronJobController extends Controller
         
         // return response()->json($arrayResults , 200);
         
+    }
+
+    public function buscaMatandoRobosGigantesYoutube(){
+
+        // Search only videos in a given channel, return an array of PHP objects
+        $channel = Channels::where( 'hash',  '=', 'matandorobosgigantesyoutube' )->firstOrFail();
+        $tag_title = "";
+
+        $array_adicionados = [];
+        $array_existentes = [];
+        $array_erros = [];
+
+        if($channel){
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
+            // echo $hora;
+            // echo "<br>";
+            // echo $hora_30;
+            $crawlers = DB::table('crawler')
+                        ->where( 'status', '=', 'active' )
+                        ->where( 'tags_id', '!=', 0 )
+                        ->whereBetween('time_initial', [$hora, $hora_30])
+                        // ->orWhereBetween('time_final', [$hora, $hora_30])
+                        ->get();
+            $count = 1;
+            foreach ($crawlers as $key => $value) {
+                // echo "crawler";
+                if($count == 1){
+                    $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
+                    if($tag ){
+                        $tag_title = $tag->title ;
+                    }
+                }
+                $count++;
+            }
+            // dd($tag_title);
+        }
+        // echo 'url:'.$tag_title;
+        
+        if($tag_title == ""){
+            $retorno = [
+                'code'         => '003',
+                'adicionados'  => $array_adicionados, 
+                'existentes'   => $array_existentes, 
+                'erros'        => $array_erros, 
+                'date'         => date("Y-m-d"),
+                'hour'         => date("H:i:s"),
+            ];
+            return $retorno;
+        }
+        
+        //Busca Crawler
+        $comunicaYoutube = new ComunicaYoutube;
+        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/user')->prepare($tag_title, 'matandorobosgigantes')->get($this->qtd_noticias_por_canal());
+       
+        // echo '<pre>'; print_r($return['content']); echo '</pre>';/
+        foreach($dados_busca as $item){
+
+            //Validando os campos
+            $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-matandorobosgigantesyoutube')], [
+                    'hash' => 'required|unique:news',
+                ],
+                $messages = [
+                    'unique'    => 'Notícia já existe.',
+                ]
+            );
+
+            if ($validator->fails()) {
+
+                $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-matandorobosgigantesyoutube') )->first();
+                            
+                if($news && $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                    $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
+                    
+                    if(!$news_tags){
+                        $insert_news_tags = new NewsTags;
+                        $insert_news_tags->news_id = $news->id;
+                        $insert_news_tags->tags_id = $tag->id;
+                        $insert_news_tags->save();
+                    }
+                }
+
+                // Validation 
+                array_push(
+                    $array_existentes,
+                    Str::slug($item['noticia'].'-matandorobosgigantesyoutube')
+                );
+            }else{
+
+                $img = "";
+                $link = "";
+                $data = "";
+
+                if($item['img']){
+                    $img = $item['img'];
+                }
+
+                if($item['url']){
+                    $link = $item['url'];
+                }
+
+                
+                if($img != "" && $link != ""){
+                    $data_json = "";
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        if(isset($item['url']) && $item['url'] != ""){
+                            $data2 = "";
+                            $url_date = "";
+                            $url_date = $item['url'];
+                            $this->pauseTime();
+                            $data2 = $this->getCurl($url_date);
+                            preg_match_all('/(<meta itemprop="datePublished" content=")(?P<json>[\s\S]*?)["><meta]/', $data2, $matches);
+                            if(!empty($matches['json'][0])){
+                                $data =  trim($matches['json'][0]); 
+                            }else{
+                                $data = '0000-00-00';
+                            }
+                        }
+
+                        //Baixa imagem
+                        $file =$img;
+                        $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-matandorobosgigantesyoutube'.'.jpg';
+                        $destinationPath = public_path().'/uploads/news/';
+                        $upload = $this->downloadFile($filename, $file , $destinationPath);
+
+                        $insert = new News;
+                        $insert->title = $this->removeEmoji($item['noticia']);
+                        $insert->channels_id = $channel->id;
+                        $insert->slug = Str::slug($item['noticia']);
+                        $insert->hash = Str::slug($item['noticia'].'-matandorobosgigantesyoutube');
+                        $insert->link = $link;
+                        $insert->image = '/uploads/news/' . $filename;
+                        $insert->status = "show";
+                        $insert->order = 0;
+                        
+                        $insert->data = $data;
+                        $condition = $insert->save();
+                        if($condition){
+                            
+                            $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
+                            
+                            if(!$news_tags){
+                                $insert_news_tags = new NewsTags;
+                                $insert_news_tags->news_id = $insert->id;
+                                $insert_news_tags->tags_id = $tag->id;
+                                $insert_news_tags->save();
+                            }
+
+                            array_push(
+                                $array_adicionados,
+                                $insert->id.' '.Str::slug($item['noticia'].'-matandorobosgigantesyoutube')
+                            );
+                        }
+                    }
+                }else{
+                    array_push(
+                        $array_erros,
+                        Str::slug($item['noticia'].'-matandorobosgigantesyoutube')
+                    );
+                }
+            }
+        }
+
+        $retorno = [
+            'code'         => '000',
+            'adicionados'  => $array_adicionados, 
+            'existentes'   => $array_existentes, 
+            'erros'        => $array_erros, 
+            'date'         => date("Y-m-d"),
+            'hour'         => date("H:i:s"),
+        ];
+        return $retorno;
     }
 
     public function buscaThiagoRomarizYoutube(){

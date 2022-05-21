@@ -62,6 +62,21 @@ class NewsController extends Controller
                 ->orderBy('data', 'desc')
                 ->paginate($qtd);
                 // dd($lista);
+        dd($lista);
+      
+
+        $tags_crawleando = DB::select('
+            SELECT 
+                T.title as tags_title,
+                C.id as crawler_id,
+                C.tags_id as crawler_tags_id,
+                C.title as crawler_title
+            FROM tags AS T
+            JOIN crawler AS C ON C.tags_id = T.id
+            WHERE C.tags_id != 0 AND C.status = "active"
+            GROUP BY crawler_tags_id 
+            ORDER BY tags_title ASC
+        ');
         
         $tags = DB::select('
             SELECT 
@@ -71,7 +86,7 @@ class NewsController extends Controller
             ORDER BY tags_title ASC
         ');
 
-        return view($this->page_dados['prefix_auth'] .'.pages.'. $this->page_dados['route_view'] .'.index' , compact('lista','search','qtd','tags'))
+        return view($this->page_dados['prefix_auth'] .'.pages.'. $this->page_dados['route_view'] .'.index' , compact('lista','search','qtd','tags','tags_crawleando'))
                 ->with('page_dados', $this->page_dados);
     }
 

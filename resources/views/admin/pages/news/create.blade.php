@@ -120,7 +120,7 @@
                             <div class="form-group col-12 col-lg-6">
                                 <label>Status</label>
                                 <select name="status" id="status" class="form-control">
-                                    <option value="active" selected>Ativo</option>
+                                    <option value="show" selected>Ativo</option>
                                     <option value="hidden">Bloqueado</option>
                                 </select>
                             </div>

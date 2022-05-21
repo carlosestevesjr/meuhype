@@ -19,10 +19,6 @@
     </div>
 </div>
 
-
-
-
-
 @if(Session::has('message'))
     <div class="alert alert-success alert-dismissible" role="alert">
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -62,10 +58,29 @@
                 </a>
             </div>
             <p>
+                <a class="btn btn-danger" data-toggle="collapse" href="#tags-crawleando" role="button" aria-expanded="false" aria-controls="tags-crawleando">
+                    Tags Crawleando
+                </a>
                 <button class="btn btn-danger" type="button" data-toggle="collapse" data-target="#todas-tags" aria-expanded="false" aria-controls="todas-tags">
                     Todas as Tags
                 </button>
             </p>
+            <div class="collapse" id="tags-crawleando">
+                <div class="card">
+                    <div class="float-left p-2">
+                        <h3>Tags Crawleando</h3>
+                    
+                        @foreach($tags_crawleando as $tag)
+                            <a class="btn btn-dark" href="{{URL::asset($prefix_admin.'/'.$page_dados['route_controler'].'?search='.$tag->tags_title) }}">
+                                #{{$tag->tags_title}}
+                            </a>
+                        @endforeach
+                        <a class="btn btn-info" href="{{URL::asset($prefix_admin.'/'.$page_dados['route_controler'].'?search=') }}">
+                            Limpar
+                        </a>
+                    </div>
+                </div>
+            </div>
             <div class="collapse" id="todas-tags">
                 <div class="card" >
                     <div class="float-left p-2">

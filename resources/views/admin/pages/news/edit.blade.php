@@ -138,7 +138,7 @@
                             <div class="form-group col-12 col-lg-6">
                                 <label>Status</label>
                                 <select name="status" id="status" class="form-control">
-                                    <option value="active" <?php if($item->status == 'active') echo "selected" ?>>Ativo</option>
+                                    <option value="show" <?php if($item->status == 'show') echo "selected" ?>>Ativo</option>
                                     <option value="hidden" <?php if($item->status == 'hidden') echo "selected" ?>>Bloqueado</option>
                                 </select>
                             </div>

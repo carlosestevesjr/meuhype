@@ -65,52 +65,6 @@ class NewsController extends Controller
 
     public function listaNews(Request $request)
     {
-        // $lista =DB::table('news')
-        //             ->join('channels', 'news.channels_id', '=', 'channels.id')
-        //             ->select('news.*', 'channels.name as channel', 'channels.image as channel_logo', 'channels.type as channel_type')
-        //             ->where('news.status', '=', 'show') 
-        //             ->orderBy('data', 'desc')
-        //             ->paginate(15);
-       
-        
-        // $array = [];
-        // foreach($lista->items() as $key => $item) {
-        //     $array[$key]['new'] = $item;
-        //     $new = News::find($item->id);
-        //     foreach( $new->tags as $tagskey => $tags) {
-        //         $array[$key]['tags'][$tagskey] = $tags;
-        //     }
-        // }
-       
-        // $lista = [
-        //     'data' =>  $array, 
-        // ];
-        
-        // if($lista){
-        //     $retorno =  [
-        //         'code'  => '000',
-        //         'content' => [
-        //                         'dados' =>  $lista, 
-        //                     ],
-        //         'date'         => date("Y-m-d"),
-        //         'hour'         => date("H:i:s"),
-        //     ];
-            
-        //     return response()->json($retorno , 200);
-        // }else{
-        //     $retorno =  [
-        //         'code'  => '000',
-        //         'content' => [
-        //                         'dados' =>  [], 
-        //                     ],
-        //         'date'         => date("Y-m-d"),
-        //         'hour'         => date("H:i:s"),
-        //     ];
-        //     return response()->json($retorno , 200);
-        // }
-
-
-
         $qtd =15;
         if($request->input('qtd')){
             $qtd = $request->input('qtd');
@@ -166,7 +120,7 @@ class NewsController extends Controller
             WHERE N.status = 'show' 
             AND N.data BETWEEN '$dateFinal' AND '$dateInitial'
             ORDER BY 
-                N.data DESC, N.title ASC
+                N.data DESC, N.id ASC
             LIMIT $inicio , $qtd
         ");  
        

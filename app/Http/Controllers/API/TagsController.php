@@ -24,7 +24,8 @@ class TagsController extends Controller
 
     public function listaTags(Request $request)
     {
-        // $lista = DB::table('channels')->orderBy('name', 'Asc')->get();
+
+        
         
         $lista = Tags::query()
                         // ->where('title', 'LIKE', "%{$request->busca}%") 

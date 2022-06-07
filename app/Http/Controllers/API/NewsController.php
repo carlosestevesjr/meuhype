@@ -65,49 +65,159 @@ class NewsController extends Controller
 
     public function listaNews(Request $request)
     {
-        $lista =DB::table('news')
-                    ->join('channels', 'news.channels_id', '=', 'channels.id')
-                    ->select('news.*', 'channels.name as channel', 'channels.image as channel_logo', 'channels.type as channel_type')
-                    ->where('news.status', '=', 'show') 
-                    ->orderBy('data', 'desc')
-                    ->paginate(15);
+        // $lista =DB::table('news')
+        //             ->join('channels', 'news.channels_id', '=', 'channels.id')
+        //             ->select('news.*', 'channels.name as channel', 'channels.image as channel_logo', 'channels.type as channel_type')
+        //             ->where('news.status', '=', 'show') 
+        //             ->orderBy('data', 'desc')
+        //             ->paginate(15);
        
         
+        // $array = [];
+        // foreach($lista->items() as $key => $item) {
+        //     $array[$key]['new'] = $item;
+        //     $new = News::find($item->id);
+        //     foreach( $new->tags as $tagskey => $tags) {
+        //         $array[$key]['tags'][$tagskey] = $tags;
+        //     }
+        // }
+       
+        // $lista = [
+        //     'data' =>  $array, 
+        // ];
+        
+        // if($lista){
+        //     $retorno =  [
+        //         'code'  => '000',
+        //         'content' => [
+        //                         'dados' =>  $lista, 
+        //                     ],
+        //         'date'         => date("Y-m-d"),
+        //         'hour'         => date("H:i:s"),
+        //     ];
+            
+        //     return response()->json($retorno , 200);
+        // }else{
+        //     $retorno =  [
+        //         'code'  => '000',
+        //         'content' => [
+        //                         'dados' =>  [], 
+        //                     ],
+        //         'date'         => date("Y-m-d"),
+        //         'hour'         => date("H:i:s"),
+        //     ];
+        //     return response()->json($retorno , 200);
+        // }
+
+
+
+        $qtd =15;
+        if($request->input('qtd')){
+            $qtd = $request->input('qtd');
+        }
+
+        $page = 1;
+        if($request->input('page')){
+            $page = ($request->input('page') == 0 ) ? $request->input('page') + 1 : $request->input('page');
+        }
+       
+        $dateInitial = date("Y-m-d");
+        if($request->input('dateInitial') && $request->input('dateInitial') != ""){
+            $dateInitial = $request->input('dateInitial');
+        }
+
+        $dateFinal = date('Y-m-d', strtotime("-90 day", strtotime($dateInitial)));
+        if($request->input('dateFinal') && $request->input('dateFinal') != ""){
+            $dateFinal = $request->input('dateFinal');
+        }
+
+        $busca_total_registros = DB::select("
+            SELECT 
+                N.id AS news_id
+                
+            FROM news N
+                INNER JOIN channels CH 
+                    ON CH.id = N.channels_id 
+            
+            WHERE N.status = 'show' 
+            AND N.data BETWEEN '$dateFinal' AND '$dateInitial'
+            ORDER BY 
+                N.data DESC, N.title ASC
+        ");  
+
+        $inicio = ($qtd*$page) - $qtd; 
+        $numPaginas = ceil(count($busca_total_registros) / $qtd); 
+    
+        $busca_news = DB::select("
+            SELECT 
+                N.id AS news_id,
+                N.title AS news_title,
+                N.image AS news_image,
+                N.data AS news_data,
+                N.link AS news_link,
+                CH.id AS channels_id,
+                CH.name AS channel,
+                CH.image AS channel_logo,
+                CH.type AS channel_type
+            FROM news N
+                INNER JOIN channels CH 
+                    ON CH.id = N.channels_id 
+            
+            WHERE N.status = 'show' 
+            AND N.data BETWEEN '$dateFinal' AND '$dateInitial'
+            ORDER BY 
+                N.data DESC, N.title ASC
+            LIMIT $inicio , $qtd
+        ");  
+       
         $array = [];
-        foreach($lista->items() as $key => $item) {
+        foreach($busca_news as $key => $item) {
             $array[$key]['new'] = $item;
-            $new = News::find($item->id);
-            foreach( $new->tags as $tagskey => $tags) {
+            // print_r($item->news_id);
+            
+            $busca_tags = DB::select("
+                SELECT 
+                T.id AS tag_id,
+                T.title AS tag_name,
+                T.image AS tag_image
+
+                FROM news_tags N_T 
+                    INNER JOIN tags T 
+                        ON N_T.tags_id = T.id
+
+                WHERE N_T.news_id = '$item->news_id' 
+                GROUP BY N_T.news_id	
+               
+            ");
+             
+            foreach( $busca_tags as $tagskey => $tags) {
                 $array[$key]['tags'][$tagskey] = $tags;
             }
+           
         }
        
-        $lista = [
-            'data' =>  $array, 
-        ];
-        
-        if($lista){
-            $retorno =  [
-                'code'  => '000',
-                'content' => [
-                                'dados' =>  $lista, 
-                            ],
-                'date'         => date("Y-m-d"),
-                'hour'         => date("H:i:s"),
-            ];
-            
-            return response()->json($retorno , 200);
-        }else{
-            $retorno =  [
-                'code'  => '000',
-                'content' => [
-                                'dados' =>  [], 
-                            ],
-                'date'         => date("Y-m-d"),
-                'hour'         => date("H:i:s"),
-            ];
-            return response()->json($retorno , 200);
-        }
+        $result = $array;
+        $base_route = '/api/v1/lista-news';
+        return $this->successResponseAPI( 
+            [
+                "date_initial" =>  $dateInitial,
+                "date_final" =>  $dateFinal,
+                "current_page" => $page,
+                'dados' => $result, 
+                "first_page_url" => url( $base_route."?page=1&qtd=".$qtd."&dateInitial=".$dateInitial."&dateFinal=".$dateFinal.""),
+                "from" => ($inicio > 1) ? $inicio : $inicio + 1,
+                "last_page" => $numPaginas,
+                "last_page_url" => url( $base_route."?page=".$numPaginas."&qtd=".$qtd."&dateInitial=".$dateInitial."&dateFinal=".$dateFinal.""),
+                "next_page_url" =>  ($page + 1 <= $numPaginas ) ? url( $base_route."?page=".($page + 1)."&qtd=".$qtd."&dateInitial=".$dateInitial."&dateFinal=".$dateFinal.""): null,
+                "path" => url( $base_route),
+                "per_page" => $qtd,
+                "prev_page_url" => ($page > 1) ? url( $base_route."?page=".($page -1)."&qtd=".$qtd."&dateInitial=".$dateInitial."&dateFinal=".$dateFinal.""): null,
+                "to" => intval($inicio) + count($result),
+                "total" => count($busca_total_registros)
+            ]
+            ,"O recurso solicitado foi processado e retornado com sucesso.", 200
+        );
+
     }
 
     public function listaNewsUser(Request $request)

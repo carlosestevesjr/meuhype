@@ -48,7 +48,7 @@ Route::group(['prefix' => 'v1', 'middleware' => ['cors']], function () {
     });
 
     Route::group(['namespace'=> 'API'], function () {
-        
+
         //Contato
         Route::post('contato','ContactController@contato');
 
@@ -76,9 +76,8 @@ Route::group(['prefix' => 'v1', 'middleware' => ['cors']], function () {
         Route::get('lista-news-tag-user/{id}/{token}','NewsController@listaNewsTagUser');
         Route::get('lista-news-channel-user/{id}/{token}','NewsController@listaNewsChannelUser');
 
-        Route::resources([
-            'cronjob' => 'CronJobController',
-        ]);
+        Route::get('cronjob','CronJobController@index');
+        Route::get('cronjob/{channel_id}/{}','CronJobController@index');
     });
 
 });

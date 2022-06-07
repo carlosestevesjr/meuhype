@@ -515,6 +515,7 @@ class ComposerStaticInita2f52c051d69eb4d44e32ab360a51a13
         'App\\Crawler' => __DIR__ . '/../..' . '/app/Crawler.php',
         'App\\CrawlerConfigs' => __DIR__ . '/../..' . '/app/CrawlerConfigs.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
+        'App\\Exceptions\\MyCustomException' => __DIR__ . '/../..' . '/app/Exceptions/MyCustomException.php',
         'App\\Fornecedores\\Youtube\\ComunicaYoutube' => __DIR__ . '/../..' . '/app/Fornecedores/Youtube/ComunicaYoutube.php',
         'App\\Http\\Controllers\\API\\ChannelController' => __DIR__ . '/../..' . '/app/Http/Controllers/API/ChannelController.php',
         'App\\Http\\Controllers\\API\\ContactController' => __DIR__ . '/../..' . '/app/Http/Controllers/API/ContactController.php',

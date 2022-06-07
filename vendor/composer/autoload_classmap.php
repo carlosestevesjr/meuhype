@@ -33,6 +33,7 @@ return array(
     'App\\Crawler' => $baseDir . '/app/Crawler.php',
     'App\\CrawlerConfigs' => $baseDir . '/app/CrawlerConfigs.php',
     'App\\Exceptions\\Handler' => $baseDir . '/app/Exceptions/Handler.php',
+    'App\\Exceptions\\MyCustomException' => $baseDir . '/app/Exceptions/MyCustomException.php',
     'App\\Fornecedores\\Youtube\\ComunicaYoutube' => $baseDir . '/app/Fornecedores/Youtube/ComunicaYoutube.php',
     'App\\Http\\Controllers\\API\\ChannelController' => $baseDir . '/app/Http/Controllers/API/ChannelController.php',
     'App\\Http\\Controllers\\API\\ContactController' => $baseDir . '/app/Http/Controllers/API/ContactController.php',

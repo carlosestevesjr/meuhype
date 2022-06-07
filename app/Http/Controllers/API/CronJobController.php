@@ -33,6 +33,7 @@ class CronJobController extends Controller
 
     public function index()
     {      
+        // $this->buscaTeste();
           
         $hora_inicial = date("H:i:s");
 
@@ -41,31 +42,31 @@ class CronJobController extends Controller
                             'Jovem_Nerd_Site'    => ($this->crawler_canais_ativos('jovemnerdsite')) ? $this->buscaNewsJovemNerdSite() : "desligado",
                             'Tec_Mundo_Site'    => ($this->crawler_canais_ativos('tecmundosite')) ? $this->buscaTecMundoSite() : "desligado",
                             'Poltrona_Nerd_Site'    => ($this->crawler_canais_ativos('poltronanerdsite')) ? $this->buscaPoltronaNerdSite() : "desligado",
-                            'Super_Oito_Youtube' => ($this->crawler_canais_ativos('superoitoyoutube')) ? $this->buscaNewsSuperOitoYoutube() : "desligado",
-                            'Jovem_Nerd_Youtube' => ($this->crawler_canais_ativos('jovemnerdyoutube')) ? $this->buscaNewsJovemNerdYoutube() : "desligado",
-                            'Omelete_Youtube'    => ($this->crawler_canais_ativos('omeleteyoutube')) ? $this->buscaNewsOmeleteYoutube() : "desligado",
-                            'Pipocando_Youtube'  => ($this->crawler_canais_ativos('pipocandoyoutube')) ? $this->buscaNewsPipocandoYoutube() : "desligado",
-                            'Ei_Nerd_Youtube'    => ($this->crawler_canais_ativos('einerdyoutube')) ? $this->buscaNewsEiNerdYoutube() : "desligado",
-                            'Nerd_Land_Youtube'  => ($this->crawler_canais_ativos('nerdlandyoutube')) ? $this->buscaNewsNerdLandYoutube() : "desligado",
-                            'Cinema_Com_Rapadura_Youtube' => ($this->crawler_canais_ativos('cinemacomrapadurayoutube')) ? $this->buscaCinemaComRapaduraYoutube() : "desligado",
-                            'Caique_Izoton_Youtube' => ($this->crawler_canais_ativos('caiqueizotonyoutube')) ? $this->buscaCaiqueIzotonYoutube() : "desligado",
-                            'Caverna_Do_Caruso_Youtube' => ($this->crawler_canais_ativos('cavernadocarusoyoutube')) ? $this->buscaCavernaDoCarusoYoutube() : "desligado",
-                            'Quatro_Coisas_Youtube' => ($this->crawler_canais_ativos('quatrocoisasyoutube')) ? $this->buscaQuatroCoisasYoutube() : "desligado",
-                            'Operacao_Cinema_Youtube' => ($this->crawler_canais_ativos('operacaocinemayoutube')) ? $this->buscaOperacaoCinemaYoutube() : "desligado",
-                            'Nerd_Rabugento_Youtube' => ($this->crawler_canais_ativos('nerdrabugentoyoutube')) ? $this->buscaNerdRabugentoYoutube() : "desligado",
-                            'Cris_Panda_Youtube' => ($this->crawler_canais_ativos('crispandayoutube')) ? $this->buscaCrisPandaYoutube() : "desligado",
-                            'Nerd_Experience_Youtube' => ($this->crawler_canais_ativos('nerdexperienceyoutube')) ? $this->buscaNerdExperienceYoutube() : "desligado",
-                            'Caldeirao_Nerd_Youtube' => ($this->crawler_canais_ativos('caldeiraonerdyoutube')) ? $this->buscaCaldeiraoNerdYoutube() : "desligado",
-                            'Arena_Nerd_Youtube' => ($this->crawler_canais_ativos('arenanerdyoutube')) ? $this->buscaArenaNerdYoutube() : "desligado",
-                            'Sessao_Nerd_Youtube' => ($this->crawler_canais_ativos('sessaonerdyoutube')) ? $this->buscaSessaoNerdYoutube() : "desligado",
-                            'Nerd_News_Youtube' => ($this->crawler_canais_ativos('nerdnewsyoutube')) ? $this->buscaNerdNewsYoutube() : "desligado",
-                            'Thiago_Romariz_Youtube' => ($this->crawler_canais_ativos('thiagoromarizyoutube')) ? $this->buscaThiagoRomarizYoutube() : "desligado",
-                            'Gustavo_Cunha_Youtube' => ($this->crawler_canais_ativos('gustavocunhayoutube')) ? $this->buscaGustavoCunhaYoutube() : "desligado",
-                            'Miguel_Lokia_Youtube' => ($this->crawler_canais_ativos('miguellokiayoutube')) ? $this->buscaMiguelLokiaYoutube() : "desligado",
-                            'Entre_Migas_Youtube' => ($this->crawler_canais_ativos('entremigasyoutube')) ? $this->buscaEntreMigasYoutube() : "desligado",
-                            'Matando_Robos_Gigantes_Youtube' => ($this->crawler_canais_ativos('matandorobosgigantesyoutube')) ? $this->buscaMatandoRobosGigantesYoutube() : "desligado",
-                            'Jovem_Nerd_Spotify' => ($this->crawler_canais_ativos('jovemnerdspotify')) ? $this->buscaNewsJovemNerdSpotify() : "desligado",
-                            'Cinema_Com_Rapadura_Spotify' => ($this->crawler_canais_ativos('cinemacomrapaduraspotify')) ? $this->buscaNewsCinemaComRapaduraSpotify() : "desligado"
+                            // 'Super_Oito_Youtube' => ($this->crawler_canais_ativos('superoitoyoutube')) ? $this->buscaNewsSuperOitoYoutube() : "desligado",
+                            // 'Jovem_Nerd_Youtube' => ($this->crawler_canais_ativos('jovemnerdyoutube')) ? $this->buscaNewsJovemNerdYoutube() : "desligado",
+                            // 'Omelete_Youtube'    => ($this->crawler_canais_ativos('omeleteyoutube')) ? $this->buscaNewsOmeleteYoutube() : "desligado",
+                            // 'Pipocando_Youtube'  => ($this->crawler_canais_ativos('pipocandoyoutube')) ? $this->buscaNewsPipocandoYoutube() : "desligado",
+                            // 'Ei_Nerd_Youtube'    => ($this->crawler_canais_ativos('einerdyoutube')) ? $this->buscaNewsEiNerdYoutube() : "desligado",
+                            // 'Nerd_Land_Youtube'  => ($this->crawler_canais_ativos('nerdlandyoutube')) ? $this->buscaNewsNerdLandYoutube() : "desligado",
+                            // 'Cinema_Com_Rapadura_Youtube' => ($this->crawler_canais_ativos('cinemacomrapadurayoutube')) ? $this->buscaCinemaComRapaduraYoutube() : "desligado",
+                            // 'Caique_Izoton_Youtube' => ($this->crawler_canais_ativos('caiqueizotonyoutube')) ? $this->buscaCaiqueIzotonYoutube() : "desligado",
+                            // 'Caverna_Do_Caruso_Youtube' => ($this->crawler_canais_ativos('cavernadocarusoyoutube')) ? $this->buscaCavernaDoCarusoYoutube() : "desligado",
+                            // 'Quatro_Coisas_Youtube' => ($this->crawler_canais_ativos('quatrocoisasyoutube')) ? $this->buscaQuatroCoisasYoutube() : "desligado",
+                            // 'Operacao_Cinema_Youtube' => ($this->crawler_canais_ativos('operacaocinemayoutube')) ? $this->buscaOperacaoCinemaYoutube() : "desligado",
+                            // 'Nerd_Rabugento_Youtube' => ($this->crawler_canais_ativos('nerdrabugentoyoutube')) ? $this->buscaNerdRabugentoYoutube() : "desligado",
+                            // 'Cris_Panda_Youtube' => ($this->crawler_canais_ativos('crispandayoutube')) ? $this->buscaCrisPandaYoutube() : "desligado",
+                            // 'Nerd_Experience_Youtube' => ($this->crawler_canais_ativos('nerdexperienceyoutube')) ? $this->buscaNerdExperienceYoutube() : "desligado",
+                            // 'Caldeirao_Nerd_Youtube' => ($this->crawler_canais_ativos('caldeiraonerdyoutube')) ? $this->buscaCaldeiraoNerdYoutube() : "desligado",
+                            // 'Arena_Nerd_Youtube' => ($this->crawler_canais_ativos('arenanerdyoutube')) ? $this->buscaArenaNerdYoutube() : "desligado",
+                            // 'Sessao_Nerd_Youtube' => ($this->crawler_canais_ativos('sessaonerdyoutube')) ? $this->buscaSessaoNerdYoutube() : "desligado",
+                            // 'Nerd_News_Youtube' => ($this->crawler_canais_ativos('nerdnewsyoutube')) ? $this->buscaNerdNewsYoutube() : "desligado",
+                            // 'Thiago_Romariz_Youtube' => ($this->crawler_canais_ativos('thiagoromarizyoutube')) ? $this->buscaThiagoRomarizYoutube() : "desligado",
+                            // 'Gustavo_Cunha_Youtube' => ($this->crawler_canais_ativos('gustavocunhayoutube')) ? $this->buscaGustavoCunhaYoutube() : "desligado",
+                            // 'Miguel_Lokia_Youtube' => ($this->crawler_canais_ativos('miguellokiayoutube')) ? $this->buscaMiguelLokiaYoutube() : "desligado",
+                            // 'Entre_Migas_Youtube' => ($this->crawler_canais_ativos('entremigasyoutube')) ? $this->buscaEntreMigasYoutube() : "desligado",
+                            // 'Matando_Robos_Gigantes_Youtube' => ($this->crawler_canais_ativos('matandorobosgigantesyoutube')) ? $this->buscaMatandoRobosGigantesYoutube() : "desligado",
+                            // 'Jovem_Nerd_Spotify' => ($this->crawler_canais_ativos('jovemnerdspotify')) ? $this->buscaNewsJovemNerdSpotify() : "desligado",
+                            // 'Cinema_Com_Rapadura_Spotify' => ($this->crawler_canais_ativos('cinemacomrapaduraspotify')) ? $this->buscaNewsCinemaComRapaduraSpotify() : "desligado"
                         ];
                         
         $hora_final = date("H:i:s");
@@ -113,6 +114,13 @@ class CronJobController extends Controller
         
         // return response()->json($arrayResults , 200);
         
+    }
+
+    public function buscaTeste(){
+        $result = $this->getCurl("https://www.filmelier.com/br/film/19308/tico-e-teco-defensores-da-lei");
+
+        echo $result;
+        die('buscaTeste');
     }
 
     public function buscaMatandoRobosGigantesYoutube(){
@@ -5071,26 +5079,7 @@ class CronJobController extends Controller
             return $agents[rand(0, count($agents)-1)];
     }
 
-    // /**
-    //  * Display the specified resource.
-    //  *
-    //  * @param  int  $id
-    //  * @return \Illuminate\Http\Response
-    //  */
-    // public function show(Request $request)
-    // {
-    //     $noticias =DB::table('news')
-    //                     ->join('channels', 'news.channels_id', '=', 'channels.id')
-    //                     ->join('movies', 'news.movies_id', '=', 'movies.id')
-    //                     ->select('news.*', 'channels.name as channel', 'channels.image as channel_logo', 'movies.title as movie_title')
-    //                     ->orderBy('created_at', 'desc')
-    //                     ->paginate(15);
-       
-    //     return response()->json($noticias , 200);
-    // }
-
-    public function removeEmoji($text)
-    {
+    public function removeEmoji($text){
         $string = $text;
         $string = str_replace( "?", "{%}", $string );
         $string  = mb_convert_encoding( $string, "ISO-8859-1", "UTF-8" );
@@ -5115,15 +5104,13 @@ class CronJobController extends Controller
         return $data; 
     } 
 
-    public function downloadFile( $imgName, $url, $path )
-    {
+    public function downloadFile( $imgName, $url, $path ){
         $data = $this->file_get_contents_curl( $url );
         $status = file_put_contents( $path.$imgName, $data ); 
         return $status;
     }
 
-    public function formata_data( $type, $data )
-    {
+    public function formata_data( $type, $data ){
         
         // 1 - 13 de julho de 2020 //JOVEM NERD SITE
         // 2 - 15.04.202111H51 //OMELETE  SITE
@@ -5188,7 +5175,7 @@ class CronJobController extends Controller
             foreach ($palavrasTitle as $key2 => $palavraTitle) {
                 similar_text($palavraSearch, $palavraTitle, $similaridade);
     
-                if($similaridade > 80) {
+                if($similaridade > $porcentagemMatch) {
                     $matches++; 
                     $similaridadeGeral += $similaridade;
                 }
@@ -5330,7 +5317,7 @@ class CronJobController extends Controller
 
     function qtd_noticias_por_canal() {
         $crawler_configs = CrawlerConfigs::where( 'id',  '=', 1 )->first();
-        if(empty($crawler_configs)){
+        if(!empty($crawler_configs)){
             return $crawler_configs->qtd_noticias_por_canal;
         }else{
             return 20;

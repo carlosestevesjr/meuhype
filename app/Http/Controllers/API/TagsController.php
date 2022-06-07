@@ -16,46 +16,67 @@ use Illuminate\Http\Request;
 
 class TagsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-
+  
     public function listaTags(Request $request)
     {
 
-        
-        
-        $lista = Tags::query()
-                        // ->where('title', 'LIKE', "%{$request->busca}%") 
-                        ->where('status', '=', "active") 
-                        ->orderBy('title', 'Asc')
-                        // ->limit(15)
-                        ->paginate(13);
-
-        if($lista){
-            $retorno =  [
-                'code'  => '000',
-                'content' => [
-                                'dados' =>  $lista, 
-                            ],
-                'date'         => date("Y-m-d"),
-                'hour'         => date("H:i:s"),
-            ];
-            return response()->json($retorno , 200);
-        }else{
-            $retorno =  [
-                'code'  => '000',
-                'content' => [
-                                'dados' =>  [], 
-                            ],
-                'date'         => date("Y-m-d"),
-                'hour'         => date("H:i:s"),
-            ];
-            return response()->json($retorno , 200);
+        $qtd = 15;
+        if($request->input('qtd')){
+            $qtd = $request->input('qtd');
         }
-        // dd( $lista);
+
+        $page = 1;
+        if($request->input('page')){
+            $page = ($request->input('page') == 0 ) ? $request->input('page') + 1 : $request->input('page');
+        }
+       
+        $busca_total_registros = DB::select("
+            SELECT 
+                T.id AS tag_id,
+                T.title AS tag_name,
+                T.image AS tag_image
+            
+            FROM tags T
+            WHERE T.status = 'active' 
+            ORDER BY 
+                T.title ASC
+        ");  
+
+        $inicio = ($qtd*$page) - $qtd; 
+        $numPaginas = ceil(count($busca_total_registros) / $qtd); 
+    
+        $busca_tags = DB::select("
+            SELECT 
+                T.id AS tag_id,
+                T.title AS tag_name,
+                T.image AS tag_image
+               
+            FROM tags T
+            WHERE T.status = 'active' 
+            ORDER BY 
+                T.title ASC
+            LIMIT $inicio , $qtd
+        ");  
+        
+        $result = $busca_tags;
+        $base_route = '/api/v1/lista-tags';
+        return $this->successResponseAPI( 
+            [
+                "current_page" => $page,
+                'dados' => $result, 
+                "first_page_url" => url( $base_route."?page=1&qtd=".$qtd),
+                "from" => ($inicio > 1) ? $inicio : $inicio + 1,
+                "last_page" => $numPaginas,
+                "last_page_url" => url( $base_route."?page=".$numPaginas."&qtd=".$qtd),
+                "next_page_url" =>  ($page + 1 <= $numPaginas ) ? url( $base_route."?page=".($page + 1)."&qtd=".$qtd): null,
+                "path" => url( $base_route),
+                "per_page" => $qtd,
+                "prev_page_url" => ($page > 1) ? url( $base_route."?page=".($page -1)."&qtd=".$qtd): null,
+                "to" => intval($inicio) + count($result),
+                "total" => count($busca_total_registros)
+            ]
+            ,"O recurso solicitado foi processado e retornado com sucesso.", 200
+        );
     }
 
     public function listaTagsRecentes(Request $request)
@@ -269,70 +290,4 @@ class TagsController extends Controller
         return response()->json($retorno , 200);
     }
 
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Channel  $channel
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Channel $channel)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Channel  $channel
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Channel $channel)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Channel  $channel
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Channel $channel)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Channel  $channel
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Channel $channel)
-    {
-        //
-    }
 }

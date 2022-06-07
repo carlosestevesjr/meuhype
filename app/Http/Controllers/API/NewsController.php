@@ -75,15 +75,6 @@ class NewsController extends Controller
             $page = ($request->input('page') == 0 ) ? $request->input('page') + 1 : $request->input('page');
         }
        
-        $dateInitial = date("Y-m-d");
-        if($request->input('dateInitial') && $request->input('dateInitial') != ""){
-            $dateInitial = $request->input('dateInitial');
-        }
-
-        $dateFinal = date('Y-m-d', strtotime("-90 day", strtotime($dateInitial)));
-        if($request->input('dateFinal') && $request->input('dateFinal') != ""){
-            $dateFinal = $request->input('dateFinal');
-        }
 
         $busca_total_registros = DB::select("
             SELECT 
@@ -94,14 +85,13 @@ class NewsController extends Controller
                     ON CH.id = N.channels_id 
             
             WHERE N.status = 'show' 
-            AND N.data BETWEEN '$dateFinal' AND '$dateInitial'
             ORDER BY 
                 N.data DESC, N.title ASC
         ");  
 
         $inicio = ($qtd*$page) - $qtd; 
         $numPaginas = ceil(count($busca_total_registros) / $qtd); 
-    
+        
         $busca_news = DB::select("
             SELECT 
                 N.id AS news_id,
@@ -113,12 +103,12 @@ class NewsController extends Controller
                 CH.name AS channel,
                 CH.image AS channel_logo,
                 CH.type AS channel_type
+
             FROM news N
                 INNER JOIN channels CH 
                     ON CH.id = N.channels_id 
             
-            WHERE N.status = 'show' 
-            AND N.data BETWEEN '$dateFinal' AND '$dateInitial'
+            WHERE N.status = 'show'
             ORDER BY 
                 N.data DESC, N.id ASC
             LIMIT $inicio , $qtd
@@ -127,8 +117,7 @@ class NewsController extends Controller
         $array = [];
         foreach($busca_news as $key => $item) {
             $array[$key]['new'] = $item;
-            // print_r($item->news_id);
-            
+           
             $busca_tags = DB::select("
                 SELECT 
                 T.id AS tag_id,
@@ -139,11 +128,10 @@ class NewsController extends Controller
                     INNER JOIN tags T 
                         ON N_T.tags_id = T.id
 
-                WHERE N_T.news_id = '$item->news_id' 
+                WHERE N_T.news_id = $item->news_id 
                 GROUP BY N_T.news_id	
-               
             ");
-             
+
             foreach( $busca_tags as $tagskey => $tags) {
                 $array[$key]['tags'][$tagskey] = $tags;
             }
@@ -154,18 +142,17 @@ class NewsController extends Controller
         $base_route = '/api/v1/lista-news';
         return $this->successResponseAPI( 
             [
-                "date_initial" =>  $dateInitial,
-                "date_final" =>  $dateFinal,
+               
                 "current_page" => $page,
                 'dados' => $result, 
-                "first_page_url" => url( $base_route."?page=1&qtd=".$qtd."&dateInitial=".$dateInitial."&dateFinal=".$dateFinal.""),
+                "first_page_url" => url( $base_route."?page=1&qtd=".$qtd),
                 "from" => ($inicio > 1) ? $inicio : $inicio + 1,
                 "last_page" => $numPaginas,
-                "last_page_url" => url( $base_route."?page=".$numPaginas."&qtd=".$qtd."&dateInitial=".$dateInitial."&dateFinal=".$dateFinal.""),
-                "next_page_url" =>  ($page + 1 <= $numPaginas ) ? url( $base_route."?page=".($page + 1)."&qtd=".$qtd."&dateInitial=".$dateInitial."&dateFinal=".$dateFinal.""): null,
+                "last_page_url" => url( $base_route."?page=".$numPaginas."&qtd=".$qtd),
+                "next_page_url" =>  ($page + 1 <= $numPaginas ) ? url( $base_route."?page=".($page + 1)."&qtd=".$qtd): null,
                 "path" => url( $base_route),
                 "per_page" => $qtd,
-                "prev_page_url" => ($page > 1) ? url( $base_route."?page=".($page -1)."&qtd=".$qtd."&dateInitial=".$dateInitial."&dateFinal=".$dateFinal.""): null,
+                "prev_page_url" => ($page > 1) ? url( $base_route."?page=".($page -1)."&qtd=".$qtd): null,
                 "to" => intval($inicio) + count($result),
                 "total" => count($busca_total_registros)
             ]

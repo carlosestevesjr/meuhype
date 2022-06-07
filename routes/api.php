@@ -53,7 +53,8 @@ Route::group(['prefix' => 'v1', 'middleware' => ['cors']], function () {
         Route::post('contato','ContactController@contato');
 
         //Tags 
-        Route::get('lista-tags/{busca?}','TagsController@listaTags');
+        Route::get('lista-tags','TagsController@listaTags');
+        Route::get('lista-tags-search','TagsController@listaTagsSearch');
 
         
         Route::get('lista-tags-recentes','TagsController@listaTagsRecentes');

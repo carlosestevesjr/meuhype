@@ -79,6 +79,77 @@ class TagsController extends Controller
         );
     }
 
+    public function listaTagsSearch(Request $request)
+    {
+
+        $qtd = 15;
+        if($request->input('qtd')){
+            $qtd = $request->input('qtd');
+        }
+
+        $page = 1;
+        if($request->input('page')){
+            $page = ($request->input('page') == 0 ) ? $request->input('page') + 1 : $request->input('page');
+        }
+
+        $search = "";
+        $v_search = $request->input('search');
+        if($request->input('search')){
+            $search = "AND T.title LIKE '%$v_search%'";
+        }
+       
+        $busca_total_registros = DB::select("
+            SELECT 
+                T.id AS tag_id,
+                T.title AS tag_name,
+                T.image AS tag_image
+            
+            FROM tags T
+            WHERE T.status = 'active' 
+            $search
+            ORDER BY 
+                T.title ASC
+        ");  
+
+        $inicio = ($qtd*$page) - $qtd; 
+        $numPaginas = ceil(count($busca_total_registros) / $qtd); 
+    
+        $busca_tags = DB::select("
+            SELECT 
+                T.id AS tag_id,
+                T.title AS tag_name,
+                T.image AS tag_image
+               
+            FROM tags T
+            WHERE T.status = 'active' 
+            $search
+            ORDER BY 
+                T.title ASC
+            LIMIT $inicio , $qtd
+        ");  
+        
+        $result = $busca_tags;
+        $base_route = '/api/v1/lista-tags-search';
+        $v_search = str_replace(' ', '+', $v_search);
+        return $this->successResponseAPI( 
+            [
+                "current_page" => $page,
+                'dados' => $result, 
+                "first_page_url" => url( $base_route."?page=1&qtd=".$qtd."&search=".$v_search),
+                "from" => ($inicio > 1) ? $inicio : $inicio + 1,
+                "last_page" => $numPaginas,
+                "last_page_url" => url( $base_route."?page=".$numPaginas."&qtd=".$qtd."&search=".$v_search),
+                "next_page_url" =>  ($page + 1 <= $numPaginas ) ? url( $base_route."?page=".($page + 1)."&qtd=".$qtd."&search=".$v_search): null,
+                "path" => url( $base_route),
+                "per_page" => $qtd,
+                "prev_page_url" => ($page > 1) ? url( $base_route."?page=".($page -1)."&qtd=".$qtd."&search=".$v_search): null,
+                "to" => intval($inicio) + count($result),
+                "total" => count($busca_total_registros)
+            ]
+            ,"O recurso solicitado foi processado e retornado com sucesso.", 200
+        );
+    }
+
     public function listaTagsRecentes(Request $request)
     {
        

@@ -81,6 +81,7 @@ class TagsController extends Controller
                 T.id AS tag_id,
                 T.title AS tag_name,
                 T.image AS tag_image,
+                T.status AS tag_status,
                 T.status AS tag_status
             
             FROM tags T
@@ -92,7 +93,7 @@ class TagsController extends Controller
             WHERE T.status = 'active' 
             AND N.data BETWEEN '$dateFinal' AND '$dateInitial'
             ORDER BY 
-                 N.data DESC, N.title ASC
+                 N.data DESC, N.id ASC
             LIMIT $qtd
         ");  
 

@@ -64,17 +64,22 @@ Route::group(['prefix' => 'v1', 'middleware' => ['cors']], function () {
         Route::post('unset-tag/','TagsController@postUnsetTag');
         
         //Canais 
-        Route::get('lista-canais/{busca?}','ChannelController@listaCanais');
+        Route::get('lista-channels-search','ChannelController@listaChannelsSearch');
+        Route::get('lista-channels','ChannelController@listaChannels');
         
         Route::get('lista-canais-user/{token}','ChannelController@listaCanaisUser');
         Route::post('set-canal/','ChannelController@postSetCanal');
         Route::post('unset-canal/','ChannelController@postUnsetCanal');
         
         //News
+        Route::get('lista-news-search','NewsController@listaNewsSearch');
+        Route::get('lista-news-tag/{tag_id}','NewsController@listaNewsTag');
+        Route::get('lista-news-channel/{channel_id}','NewsController@listaNewsChannel');
+        
+
+
         Route::get('lista-news/{id?}','NewsController@listaNews');
-        Route::post('lista-news-search','NewsController@listaNewsSearch');
         Route::get('lista-news-user/{token}','NewsController@listaNewsUser');
-        Route::get('lista-news-tag-user/{id}/{token}','NewsController@listaNewsTagUser');
         Route::get('lista-news-channel-user/{id}/{token}','NewsController@listaNewsChannelUser');
 
         Route::get('cronjob','CronJobController@index');

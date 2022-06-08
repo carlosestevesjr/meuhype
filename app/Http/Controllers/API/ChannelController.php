@@ -22,36 +22,145 @@ class ChannelController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function listaCanais(Request $request)
+    public function listaChannelsSearch(Request $request)
     {
         // $lista = DB::table('channels')->orderBy('name', 'Asc')->get();
-        
-        $lista = Channels::query()
-                            ->where('name', 'LIKE', "%{$request->busca}%") 
-                            ->orderBy('name', 'Asc')
-                            ->paginate(25);
 
-        if($lista){
-            $retorno =  [
-                'code'  => '000',
-                'content' => [
-                                'dados' =>  $lista, 
-                            ],
-                'date'         => date("Y-m-d"),
-                'hour'         => date("H:i:s"),
-            ];
-            return response()->json($retorno , 200);
-        }else{
-            $retorno =  [
-                'code'  => '000',
-                'content' => [
-                                'dados' =>  [], 
-                            ],
-                'date'         => date("Y-m-d"),
-                'hour'         => date("H:i:s"),
-            ];
-            return response()->json($retorno , 200);
+        $search = "";
+        $v_search = $request->input('search');
+        if($request->input('search')){
+            $search = "AND CH.name LIKE '%$v_search%'";
         }
+
+        $qtd =20;
+        if($request->input('qtd')){
+            $qtd = $request->input('qtd');
+        }
+
+        $page = 1;
+        if($request->input('page')){
+            $page = ($request->input('page') == 0 ) ? $request->input('page') + 1 : $request->input('page');
+        }
+       
+        $busca_total_registros = DB::select("
+            SELECT 
+                CH.id AS channels_id,
+                CH.name AS channel,
+                CH.image AS channel_logo,
+                CH.type AS channel_type
+            
+            FROM channels CH
+            WHERE CH.status = 'active'
+            $search
+            ORDER BY 
+                CH.name ASC
+        ");  
+
+        $inicio = ($qtd*$page) - $qtd; 
+        $numPaginas = ceil(count($busca_total_registros) / $qtd); 
+        
+        $busca_channels = DB::select("
+            SELECT 
+                CH.id AS channels_id,
+                CH.name AS channel,
+                CH.image AS channel_logo,
+                CH.type AS channel_type
+            
+            FROM channels CH
+            WHERE CH.status = 'active'
+            $search
+            ORDER BY 
+                CH.name ASC
+            LIMIT $inicio , $qtd
+        ");  
+       
+        $result = $busca_channels;
+        $base_route = '/api/v1/lista-channels-search';
+        $v_search = str_replace(' ', '+', $v_search);
+        return $this->successResponseAPI( 
+            [
+                "current_page" => $page,
+                'dados' => $result, 
+                "first_page_url" => url( $base_route."?page=1&qtd=".$qtd."&search=".$v_search),
+                "from" => ($inicio > 1) ? $inicio : $inicio + 1,
+                "last_page" => $numPaginas,
+                "last_page_url" => url( $base_route."?page=".$numPaginas."&qtd=".$qtd."&search=".$v_search),
+                "next_page_url" =>  ($page + 1 <= $numPaginas ) ? url( $base_route."?page=".($page + 1)."&qtd=".$qtd."&search=".$v_search): null,
+                "path" => url( $base_route),
+                "per_page" => $qtd,
+                "prev_page_url" => ($page > 1) ? url( $base_route."?page=".($page -1)."&qtd=".$qtd."&search=".$v_search): null,
+                "to" => intval($inicio) + count($result),
+                "total" => count($busca_total_registros)
+            ]
+            ,"O recurso solicitado foi processado e retornado com sucesso.", 200
+        );
+       
+    }
+
+    public function listaChannels(Request $request)
+    {
+        // $lista = DB::table('channels')->orderBy('name', 'Asc')->get();
+
+        $qtd =20;
+        if($request->input('qtd')){
+            $qtd = $request->input('qtd');
+        }
+
+        $page = 1;
+        if($request->input('page')){
+            $page = ($request->input('page') == 0 ) ? $request->input('page') + 1 : $request->input('page');
+        }
+       
+        $busca_total_registros = DB::select("
+            SELECT 
+                CH.id AS channels_id,
+                CH.name AS channel,
+                CH.image AS channel_logo,
+                CH.type AS channel_type
+            
+            FROM channels CH
+            WHERE CH.status = 'active'
+            ORDER BY 
+                CH.name ASC
+        ");  
+
+        $inicio = ($qtd*$page) - $qtd; 
+        $numPaginas = ceil(count($busca_total_registros) / $qtd); 
+        
+        $busca_news = DB::select("
+            SELECT 
+                CH.id AS channels_id,
+                CH.name AS channel,
+                CH.image AS channel_logo,
+                CH.type AS channel_type
+            
+            FROM channels CH
+            WHERE CH.status = 'active'
+            ORDER BY 
+                CH.name ASC
+            LIMIT $inicio , $qtd
+        ");  
+       
+        $result = $busca_news;
+        $base_route = '/api/v1/lista-channels';
+        return $this->successResponseAPI( 
+            [
+                "current_page" => $page,
+                'dados' => $result, 
+                "first_page_url" => url( $base_route."?page=1&qtd=".$qtd),
+                "from" => ($inicio > 1) ? $inicio : $inicio + 1,
+                "last_page" => $numPaginas,
+                "last_page_url" => url( $base_route."?page=".$numPaginas."&qtd=".$qtd),
+                "next_page_url" =>  ($page + 1 <= $numPaginas ) ? url( $base_route."?page=".($page + 1)."&qtd=".$qtd): null,
+                "path" => url( $base_route),
+                "per_page" => $qtd,
+                "prev_page_url" => ($page > 1) ? url( $base_route."?page=".($page -1)."&qtd=".$qtd): null,
+                "to" => intval($inicio) + count($result),
+                "total" => count($busca_total_registros)
+            ]
+            ,"O recurso solicitado foi processado e retornado com sucesso.", 200
+        );
+       
     }
 
     public function listaCanaisUser(Request $request)
@@ -212,59 +321,4 @@ class ChannelController extends Controller
     }
 
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Channel  $channel
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Channel $channel)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Channel  $channel
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Channel $channel)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Channel  $channel
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Channel $channel)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Channel  $channel
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Channel $channel)
-    {
-        //
-    }
 }

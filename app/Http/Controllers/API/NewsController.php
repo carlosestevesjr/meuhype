@@ -77,7 +77,6 @@ class NewsController extends Controller
                         ON N_T.tags_id = T.id
 
                 WHERE N_T.news_id = $item->news_id 
-                GROUP BY N_T.news_id	
             ");
 
             foreach( $busca_tags as $tagskey => $tags) {
@@ -192,7 +191,6 @@ class NewsController extends Controller
                         ON N_T.tags_id = T.id
 
                 WHERE N_T.news_id = $item->news_id 
-                GROUP BY N_T.news_id	
             ");
             foreach( $busca_tags as $tagskey => $tags) {
                 $array[$key]['tags'][$tagskey] = $tags;
@@ -295,6 +293,7 @@ class NewsController extends Controller
         ");  
        
         $array = [];
+        
         foreach($busca_news as $key => $item) {
             $array[$key]['new'] = $item;
            
@@ -309,12 +308,12 @@ class NewsController extends Controller
                         ON N_T.tags_id = T.id
 
                 WHERE N_T.news_id = $item->news_id 
-                GROUP BY N_T.news_id	
             ");
-
+           
             foreach( $busca_tags as $tagskey => $tags) {
                 $array[$key]['tags'][$tagskey] = $tags;
             }
+           
         }
        
         $result = $array;

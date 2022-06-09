@@ -173,7 +173,6 @@ class TagsController extends Controller
                 T.id AS tag_id,
                 T.title AS tag_name,
                 T.image AS tag_image,
-                T.status AS tag_status,
                 T.status AS tag_status
             
             FROM tags T

@@ -58,7 +58,7 @@ class NewsController extends Controller
             
             WHERE N.status = 'show'
             ORDER BY 
-                N.data DESC, N.id ASC
+                N.data DESC, N.id DESC
             LIMIT $inicio , $qtd
         ");  
        
@@ -145,7 +145,7 @@ class NewsController extends Controller
             WHERE N.status = 'show'
             $search
             ORDER BY 
-                N.data DESC, N.id ASC
+                N.data DESC, N.id DESC
         ");  
 
         $inicio = ($qtd*$page) - $qtd; 
@@ -170,7 +170,7 @@ class NewsController extends Controller
             WHERE N.status = 'show'
             $search
             ORDER BY 
-                N.data DESC, N.id ASC
+                N.data DESC, N.id DESC
             LIMIT $inicio , $qtd
         ");  
        
@@ -259,7 +259,7 @@ class NewsController extends Controller
             WHERE N.status = 'show'
             AND N_T.tags_id IN ($param_tag_id)
             ORDER BY 
-                N.data DESC, N.id ASC
+                N.data DESC, N.id DESC
         ");  
 
         $inicio = ($qtd*$page) - $qtd; 
@@ -288,7 +288,7 @@ class NewsController extends Controller
             WHERE N.status = 'show'
             AND N_T.tags_id IN ($param_tag_id)
             ORDER BY 
-                N.data DESC, N.id ASC
+                N.data DESC, N.id DESC
             LIMIT $inicio , $qtd
         ");  
        
@@ -494,7 +494,7 @@ class NewsController extends Controller
             WHERE N.status = 'show'
             AND N.channels_id IN ($param_channel_id)
             ORDER BY 
-                N.data DESC, N.id ASC
+                N.data DESC, N.id DESC
         ");  
 
         $inicio = ($qtd*$page) - $qtd; 
@@ -519,7 +519,7 @@ class NewsController extends Controller
             WHERE N.status = 'show'
             AND N.channels_id IN ($param_channel_id)
             ORDER BY 
-                N.data DESC, N.id ASC
+                N.data DESC, N.id DESC
             LIMIT $inicio , $qtd
         ");  
        

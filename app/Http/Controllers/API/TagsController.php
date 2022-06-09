@@ -184,7 +184,7 @@ class TagsController extends Controller
             WHERE T.status = 'active' 
             AND N.data BETWEEN '$dateFinal' AND '$dateInitial'
             ORDER BY 
-                 N.data DESC, N.id ASC
+                 N.data DESC, N.id DESC
             LIMIT $qtd
         ");  
 

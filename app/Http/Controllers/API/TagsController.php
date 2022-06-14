@@ -60,7 +60,7 @@ class TagsController extends Controller
         
         $result = $busca_tags;
         $base_route = '/api/v1/lista-tags';
-        return $this->successResponseAPI( 
+        return $this->ResponseAPI( 
             [
                 "current_page" => $page,
                 'dados' => $result, 
@@ -75,7 +75,7 @@ class TagsController extends Controller
                 "to" => intval($inicio) + count($result),
                 "total" => count($busca_total_registros)
             ]
-            ,"O recurso solicitado foi processado e retornado com sucesso.", 200
+            ,"O recurso solicitado foi processado e retornado com sucesso.", 200, '000'
         );
     }
 
@@ -131,7 +131,7 @@ class TagsController extends Controller
         $result = $busca_tags;
         $base_route = '/api/v1/lista-tags-search';
         $v_search = str_replace(' ', '+', $v_search);
-        return $this->successResponseAPI( 
+        return $this->ResponseAPI( 
             [
                 "current_page" => $page,
                 'dados' => $result, 
@@ -146,7 +146,7 @@ class TagsController extends Controller
                 "to" => intval($inicio) + count($result),
                 "total" => count($busca_total_registros)
             ]
-            ,"O recurso solicitado foi processado e retornado com sucesso.", 200
+            ,"O recurso solicitado foi processado e retornado com sucesso.", 200, '000'
         );
     }
 
@@ -192,14 +192,14 @@ class TagsController extends Controller
         $unique = $collection->unique('tag_name');
         $result = $unique->values()->all();
         
-        return $this->successResponseAPI( 
+        return $this->ResponseAPI( 
             [
                 "date_initial" =>  $dateInitial,
                 "date_final" =>  $dateFinal,
                 'dados' => $result, 
                 "total" => count($result)
             ]
-            ,"O recurso solicitado foi processado e retornado com sucesso.", 200
+            ,"O recurso solicitado foi processado e retornado com sucesso.", 200, '000'
         );
     }
 

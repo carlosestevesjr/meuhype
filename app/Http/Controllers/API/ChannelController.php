@@ -16,11 +16,6 @@ use Illuminate\Http\Request;
 
 class ChannelController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
 
     public function listaChannelsSearch(Request $request)
     {
@@ -77,7 +72,7 @@ class ChannelController extends Controller
         $result = $busca_channels;
         $base_route = '/api/v1/lista-channels-search';
         $v_search = str_replace(' ', '+', $v_search);
-        return $this->successResponseAPI( 
+        return $this->ResponseAPI( 
             [
                 "current_page" => $page,
                 'dados' => $result, 
@@ -92,7 +87,7 @@ class ChannelController extends Controller
                 "to" => intval($inicio) + count($result),
                 "total" => count($busca_total_registros)
             ]
-            ,"O recurso solicitado foi processado e retornado com sucesso.", 200
+            ,"O recurso solicitado foi processado e retornado com sucesso.", 200, '000'
         );
        
     }
@@ -143,7 +138,7 @@ class ChannelController extends Controller
        
         $result = $busca_news;
         $base_route = '/api/v1/lista-channels';
-        return $this->successResponseAPI( 
+        return $this->ResponseAPI( 
             [
                 "current_page" => $page,
                 'dados' => $result, 
@@ -158,7 +153,7 @@ class ChannelController extends Controller
                 "to" => intval($inicio) + count($result),
                 "total" => count($busca_total_registros)
             ]
-            ,"O recurso solicitado foi processado e retornado com sucesso.", 200
+            ,"O recurso solicitado foi processado e retornado com sucesso.", 200, '000'
         );
        
     }

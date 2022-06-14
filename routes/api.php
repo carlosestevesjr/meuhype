@@ -32,6 +32,12 @@ Route::group(['prefix' => 'v1', 'middleware' => ['cors']], function () {
     
     Route::group(['namespace'=> 'API','middleware'=>'APIToken'], function () {
 
+        // Protected APIToken Middleware
+        Route::group(['middleware'=>'APIToken'], function () {
+            // Logout
+            Route::get('lista-news/{id?}','NewsController@listaNews');
+        });
+
         // Route::resources([
         //     'movies' => 'MovieController',
         //     'news' => 'NewsController',
@@ -78,7 +84,7 @@ Route::group(['prefix' => 'v1', 'middleware' => ['cors']], function () {
         
 
 
-        Route::get('lista-news/{id?}','NewsController@listaNews');
+        
         Route::get('lista-news-user/{token}','NewsController@listaNewsUser');
         Route::get('lista-news-channel-user/{id}/{token}','NewsController@listaNewsChannelUser');
 

@@ -77,19 +77,20 @@ class AuthController extends Controller
             'password.min' => 'A senha deve conter no mínimo 8 caracteres.',
         ];
 
-
         $validator = Validator::make($request->all(), $rules, $messages);
 
         if ($validator->fails()) {
 
-            // Validation 
-            $retorno = [
-                'code'          => '001',
-                'errors'        => $validator->messages(), 
-                'date'          => date("Y-m-d"),
-                'hour'          => date("H:i:s"),
-            ];
-            return response()->json($retorno , 200);
+            return $this->ResponseAPI( 
+                [
+                    'dados' => [
+                        'errors' => [
+                            $validator->messages()
+                        ], 
+                    ], 
+                ]
+                ,"O recurso solicitado foi processado e retornado com sucesso.", 200, '999'
+            );
 
         }else {
 
@@ -106,47 +107,46 @@ class AuthController extends Controller
                     
                     if($login) {
 
-                        $retorno = [
-                            'code'  => '000',
-                            'content' => [
-                                            'dados' => [
-                                                'id'         => $user->id,
-                                                'name'         => $user->name,
-                                                'email'        => $user->email,
-                                                'api_token' => $postArray['api_token'],
-                                            ], 
-                                        ],
-                            'date'         => date("Y-m-d"),
-                            'hour'         => date("H:i:s"),
-                        ];
-                        return response()->json($retorno , 200);
+                        return $this->ResponseAPI( 
+                            [
+                                'dados' => [
+                                    'id'         => $user->id,
+                                    'name'         => $user->name,
+                                    'email'        => $user->email,
+                                    'api_token' => $postArray['api_token'],
+                                ], 
+                            ]
+                            ,"O recurso solicitado foi processado e retornado com sucesso.", 200, '000'
+                        );
 
                     }
 
                 }else {
-
-                    $retorno = [
-                        'code'         => '001',
-                        'errors' => [
-                            'Senha inválida'
-                        ], 
-                        'date'         => date("Y-m-d"),
-                        'hour'         => date("H:i:s"),
-                    ];
-                    return response()->json($retorno , 200);
+                    return $this->ResponseAPI( 
+                        [
+                            'dados' => [
+                                'errors' => [
+                                    'Senha inválida'
+                                ], 
+                               
+                            ], 
+                        ]
+                        ,"O recurso solicitado foi processado e retornado com sucesso.", 200, '999'
+                    );
 
                 }
             } else {
 
-                $retorno = [
-                    'code'         => '001',
-                    'errors' => [
-                        'Token inválido'
-                    ], 
-                    'date'         => date("Y-m-d"),
-                    'hour'         => date("H:i:s"),
-                ];
-                return response()->json($retorno , 401);
+                return $this->ResponseAPI( 
+                    [
+                        'dados' => [
+                            'errors' => [
+                                'Usuário não existe'
+                            ], 
+                        ], 
+                    ]
+                    ,"O recurso solicitado foi processado e retornado com sucesso.", 401, '999'
+                );
 
             }
         }
@@ -257,6 +257,7 @@ class AuthController extends Controller
     */
     public function postLogout(Request $request)
     {
+       
         $token =  $request->header('Authorization');
        
         $user = User::where('api_token', $token)->first();

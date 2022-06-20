@@ -20,9 +20,7 @@ class AuthController extends Controller
         $this->apiToken = uniqid(Str::random(60));
     }
 
-     /**
-     * Login
-     */
+    
     public function setTokenPush(Request $request)
     {
         
@@ -257,36 +255,35 @@ class AuthController extends Controller
     */
     public function postLogout(Request $request)
     {
-       
-        $token =  $request->header('Authorization');
-       
+        $params = $request->all();
+        
+        $token =  $params['apiToken'];
         $user = User::where('api_token', $token)->first();
         if($user) {
             $postArray = ['api_token' => null];
             $logout = User::where('id',$user->id)->update($postArray);
             if($logout) {
-                $retorno = [
-                    'code'  => '000',
-                    'content' => [
-                                    'dados' => [
-                                        'Login encerrado'
-                                    ], 
-                                ],
-                    'date'         => date("Y-m-d"),
-                    'hour'         => date("H:i:s"),
-                ];
-                return response()->json($retorno , 200);
+                return $this->ResponseAPI( 
+                    [
+                        'dados' => [
+                            "message" => 'Login encerrado'
+                        ], 
+                    ]
+                    ,"O recurso solicitado foi processado e retornado com sucesso.", 200, '000'
+                );
             }
         } else {
-            $retorno = [
-                'code'         => '001',
-                'errors' => [
-                            'Token inválido'
-                ], 
-                'date'         => date("Y-m-d"),
-                'hour'         => date("H:i:s"),
-            ];
-            return response()->json($retorno , 401);
+            return $this->ResponseAPI( 
+                [
+                    'dados' => [
+                        'errors' => [
+                            'Usuário não existe'
+                        ], 
+                    ], 
+                ]
+                ,"O recurso solicitado foi processado e retornado com sucesso.", 401, '999'
+            );
+            
         }
     }
 

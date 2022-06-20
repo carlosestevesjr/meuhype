@@ -30,15 +30,22 @@ class NewsController extends Controller
 
         //Caso tenha usuário
         if($request->input('apiToken') && $request->input('apiToken') != ""){
-            $user = DB::table('users')->where('api_token', '=',$request->input('apiToken'))->first();
+            $user = DB::select("
+                SELECT 
+                *
+                FROM users U
+                WHERE U.api_token = '".$request->input('apiToken')."'
+            ");  
+           
             if($user){
                 //Channels User
                 $busca_channels_user = DB::select("
                     SELECT 
                         UC.channels_id AS channels_id
                     FROM user_channels UC
-                    WHERE UC.users_id = $user->id
+                    WHERE UC.users_id = '".$user[0]->id."'
                 ");
+                
                 $array_channels_user = "";
                 $array_channels_user_count = count($busca_channels_user);
                 
@@ -49,19 +56,19 @@ class NewsController extends Controller
                         $array_channels_user .= (String)$item->channels_id.",";
                     }
                 }
-                
+               
                 if($array_channels_user_count > 0){
                     $sql_channels_users = "AND CH.id IN ($array_channels_user)"; 
                 }
-                
+               
                 //Tags Users
                 $busca_tags_user = DB::select("
                     SELECT 
                         UT.tags_id AS tags_id
                     FROM user_tags UT
-                    WHERE UT.users_id = $user->id
+                    WHERE UT.users_id = '".$user[0]->id."'
                 ");
-                
+               
                 $array_tags_user = "";
                 $array_tags_user_count = count($busca_tags_user);
                 foreach($busca_tags_user as $key => $item) {
@@ -78,7 +85,7 @@ class NewsController extends Controller
                 
             }
         }
-
+      
         $busca_total_registros = DB::select("
             SELECT 
                 N.id AS news_id,
@@ -102,6 +109,7 @@ class NewsController extends Controller
             WHERE N.status = 'show'
             $sql_tags_users
             $sql_channels_users
+            GROUP BY N.id
             ORDER BY 
                 N.data DESC, N.id DESC
         ");  
@@ -132,11 +140,12 @@ class NewsController extends Controller
             WHERE N.status = 'show'
             $sql_tags_users
             $sql_channels_users
+            GROUP BY N.id
             ORDER BY 
                 N.data DESC, N.id DESC
             LIMIT $inicio , $qtd
         ");  
-
+        
         $array = [];
         foreach($busca_news as $key => $item) {
             $array[$key]['new'] = $item;
@@ -206,14 +215,19 @@ class NewsController extends Controller
 
         //Caso tenha usuário
         if($request->input('apiToken') && $request->input('apiToken') != ""){
-            $user = DB::table('users')->where('api_token', '=',$request->input('apiToken'))->first();
+            $user = DB::select("
+                SELECT 
+                *
+                FROM users U
+                WHERE U.api_token = '".$request->input('apiToken')."'
+            ");  
             if($user){
                 //Channels User
                 $busca_channels_user = DB::select("
                     SELECT 
                         UC.channels_id AS channels_id
                     FROM user_channels UC
-                    WHERE UC.users_id = $user->id
+                    WHERE UC.users_id = '".$user[0]->id."'
                 ");
                 $array_channels_user = "";
                 $array_channels_user_count = count($busca_channels_user);
@@ -235,7 +249,7 @@ class NewsController extends Controller
                     SELECT 
                         UT.tags_id AS tags_id
                     FROM user_tags UT
-                    WHERE UT.users_id = $user->id
+                    WHERE UT.users_id = '".$user[0]->id."'
                 ");
                 
                 $array_tags_user = "";
@@ -279,6 +293,7 @@ class NewsController extends Controller
             $sql_tags_users
             $sql_channels_users
             $search
+            GROUP BY N.id
             ORDER BY 
                 N.data DESC, N.id DESC
         ");  
@@ -310,6 +325,7 @@ class NewsController extends Controller
             $sql_tags_users
             $sql_channels_users
             $search
+            GROUP BY N.id
             ORDER BY 
                 N.data DESC, N.id DESC
             LIMIT $inicio , $qtd
@@ -382,14 +398,19 @@ class NewsController extends Controller
 
         //Caso tenha usuário
         if($request->input('apiToken') && $request->input('apiToken') != ""){
-            $user = DB::table('users')->where('api_token', '=',$request->input('apiToken'))->first();
+            $user = DB::select("
+                SELECT 
+                *
+                FROM users U
+                WHERE U.api_token = '".$request->input('apiToken')."'
+            ");  
             if($user){
                 //Channels User
                 $busca_channels_user = DB::select("
                     SELECT 
                         UC.channels_id AS channels_id
                     FROM user_channels UC
-                    WHERE UC.users_id = $user->id
+                    WHERE UC.users_id = '".$user[0]->id."'
                 ");
                 $array_channels_user = "";
                 $array_channels_user_count = count($busca_channels_user);
@@ -411,7 +432,7 @@ class NewsController extends Controller
                     SELECT 
                         UT.tags_id AS tags_id
                     FROM user_tags UT
-                    WHERE UT.users_id = $user->id
+                    WHERE UT.users_id = '".$user[0]->id."'
                 ");
                 
                 $array_tags_user = "";
@@ -455,6 +476,7 @@ class NewsController extends Controller
             WHERE N.status = 'show'
             $sql_channels_users
             $sql_tags_users
+            GROUP BY N.id
             ORDER BY 
                 N.data DESC, N.id DESC
         ");  
@@ -485,6 +507,7 @@ class NewsController extends Controller
             WHERE N.status = 'show'
             $sql_channels_users
             $sql_tags_users
+            GROUP BY N.id
             ORDER BY 
                 N.data DESC, N.id DESC
             LIMIT $inicio , $qtd
@@ -561,14 +584,19 @@ class NewsController extends Controller
 
         //Caso tenha usuário
         if($request->input('apiToken') && $request->input('apiToken') != ""){
-            $user = DB::table('users')->where('api_token', '=',$request->input('apiToken'))->first();
+            $user = DB::select("
+                SELECT 
+                *
+                FROM users U
+                WHERE U.api_token = '".$request->input('apiToken')."'
+            ");  
             if($user){
                 //Channels User
                 $busca_channels_user = DB::select("
                     SELECT 
                         UC.channels_id AS channels_id
                     FROM user_channels UC
-                    WHERE UC.users_id = $user->id
+                    WHERE UC.users_id = '".$user[0]->id."'
                 ");
                 $array_channels_user = "";
                 $array_channels_user_count = count($busca_channels_user);
@@ -592,7 +620,7 @@ class NewsController extends Controller
                     SELECT 
                         UT.tags_id AS tags_id
                     FROM user_tags UT
-                    WHERE UT.users_id = $user->id
+                    WHERE UT.users_id = '".$user[0]->id."'
                 ");
                 
                 $array_tags_user = "";
@@ -635,6 +663,7 @@ class NewsController extends Controller
             WHERE N.status = 'show'
             $sql_channels_users
             $sql_tags_users
+            GROUP BY N.id
             ORDER BY 
                 N.data DESC, N.id DESC
         ");  
@@ -665,6 +694,7 @@ class NewsController extends Controller
             WHERE N.status = 'show'
             $sql_channels_users
             $sql_tags_users
+            GROUP BY N.id
             ORDER BY 
                 N.data DESC, N.id DESC
             LIMIT $inicio , $qtd

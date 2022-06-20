@@ -79,6 +79,7 @@ return array(
     'App\\Providers\\RouteServiceProvider' => $baseDir . '/app/Providers/RouteServiceProvider.php',
     'App\\Tags' => $baseDir . '/app/Tags.php',
     'App\\TokenNotification' => $baseDir . '/app/TokenNotification.php',
+    'App\\Traits\\ApiResponser' => $baseDir . '/app/Traits/ApiResponser.php',
     'App\\User' => $baseDir . '/app/User.php',
     'App\\UserChannels' => $baseDir . '/app/UserChannels.php',
     'App\\UserTags' => $baseDir . '/app/UserTags.php',

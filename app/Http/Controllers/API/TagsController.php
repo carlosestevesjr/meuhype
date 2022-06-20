@@ -57,7 +57,37 @@ class TagsController extends Controller
                 T.title ASC
             LIMIT $inicio , $qtd
         ");  
-        
+      
+        if($request->input('apiToken') && $request->input('apiToken') != ""){
+            // $sql_channels_users = "AND CH.id IN ($array_channels_user)"; 
+            $user = DB::select("
+                SELECT 
+                *
+                FROM users U
+                WHERE U.api_token = '".$request->input('apiToken')."'
+            ");  
+           
+            if($user){
+                $user_tags = DB::table('user_tags')->where('users_id', '=', $user[0]->id)->get();
+                $array_user_tags = [];
+                // print_r($user_tags);
+                // dd();
+                foreach($user_tags as $key => $item){
+                    $array_user_tags[$key] = $item->tags_id;
+                }
+               
+                foreach($busca_tags as $key => $item) {
+                    $select = in_array($item->tag_id, $array_user_tags);
+                    if($select){
+                        $item->select = 1;
+                    }else{
+                        $item->select = 0;
+                    }
+                }
+            }
+        }
+        // print_r($busca_tags);
+        // dd();
         $result = $busca_tags;
         $base_route = '/api/v1/lista-tags';
         return $this->ResponseAPI( 
@@ -127,6 +157,35 @@ class TagsController extends Controller
                 T.title ASC
             LIMIT $inicio , $qtd
         ");  
+
+        if($request->input('apiToken') && $request->input('apiToken') != ""){
+            // $sql_channels_users = "AND CH.id IN ($array_channels_user)"; 
+            $user = DB::select("
+                SELECT 
+                *
+                FROM users U
+                WHERE U.api_token = '".$request->input('apiToken')."'
+            ");  
+           
+            if($user){
+                $user_tags = DB::table('user_tags')->where('users_id', '=', $user[0]->id)->get();
+                $array_user_tags = [];
+                // print_r($user_tags);
+                // dd();
+                foreach($user_tags as $key => $item){
+                    $array_user_tags[$key] = $item->tags_id;
+                }
+               
+                foreach($busca_tags as $key => $item) {
+                    $select = in_array($item->tag_id, $array_user_tags);
+                    if($select){
+                        $item->select = 1;
+                    }else{
+                        $item->select = 0;
+                    }
+                }
+            }
+        }
         
         $result = $busca_tags;
         $base_route = '/api/v1/lista-tags-search';
@@ -168,30 +227,126 @@ class TagsController extends Controller
             $dateFinal = $request->input('dateFinal');
         }
 
-        $busca_tags_recentes = DB::select("
+        //Se tiver user
+        $sql_channels_users = "";
+        $sql_tags_users = "";
+
+        //Caso tenha usuário
+        if($request->input('apiToken') && $request->input('apiToken') != ""){
+            $user = DB::select("
+                SELECT 
+                *
+                FROM users U
+                WHERE U.api_token = '".$request->input('apiToken')."'
+            ");  
+           
+            if($user){
+                //Channels User
+                $busca_channels_user = DB::select("
+                    SELECT 
+                        UC.channels_id AS channels_id
+                    FROM user_channels UC
+                    WHERE UC.users_id = '".$user[0]->id."'
+                ");
+                
+                $array_channels_user = "";
+                $array_channels_user_count = count($busca_channels_user);
+                
+                foreach($busca_channels_user as $key => $item) {
+                    if($array_channels_user_count == $key + 1){
+                        $array_channels_user .= (String)$item->channels_id;
+                    }else{
+                        $array_channels_user .= (String)$item->channels_id.",";
+                    }
+                }
+               
+                if($array_channels_user_count > 0){
+                    $sql_channels_users = "AND CH.id IN ($array_channels_user)"; 
+                }
+               
+                //Tags Users
+                $busca_tags_user = DB::select("
+                    SELECT 
+                        UT.tags_id AS tags_id
+                    FROM user_tags UT
+                    WHERE UT.users_id = '".$user[0]->id."'
+                ");
+               
+                $array_tags_user = "";
+                $array_tags_user_count = count($busca_tags_user);
+                foreach($busca_tags_user as $key => $item) {
+                    if($array_tags_user_count == $key + 1){
+                        $array_tags_user .= (String)$item->tags_id;
+                    }else{
+                        $array_tags_user .= (String)$item->tags_id.",";
+                    }
+                }
+                
+                if($array_tags_user_count > 0){
+                    $sql_tags_users = "AND N_T.tags_id IN ($array_tags_user)"; 
+                }
+                
+            }
+        }
+      
+        $busca_news = DB::select("
             SELECT 
+
                 T.id AS tag_id,
                 T.title AS tag_name,
                 T.image AS tag_image,
-                T.status AS tag_status
+                T.status AS tag_status,
+                CH.id AS channels_id,
+                CH.name AS channel,
+                CH.image AS channel_logo,
+                CH.type AS channel_type,
+                N.id AS news_id
             
-            FROM tags T
-                INNER JOIN news_tags N_T 
-                    ON T.id = N_T.tags_id 
-                INNER JOIN news N
-                    ON N_T.news_id = N.id 
-            
-            WHERE T.status = 'active' 
-            AND N.data BETWEEN '$dateFinal' AND '$dateInitial'
-            ORDER BY 
-                 N.data DESC, N.id DESC
-            LIMIT $qtd
-        ");  
+            FROM news_tags N_T
 
-        $collection = collect( $busca_tags_recentes);
-        $unique = $collection->unique('tag_name');
-        $result = $unique->values()->all();
+                INNER JOIN news N 
+                    ON N.id = N_T.news_id
+                
+                INNER JOIN channels CH 
+                    ON CH.id = N.channels_id 
+
+                INNER JOIN tags T 
+                    ON T.id = N_T.tags_id
+            
+            WHERE N.status = 'show'
+            $sql_tags_users
+            $sql_channels_users
+            GROUP BY N.id
+            ORDER BY 
+                N.data DESC, N.id DESC
+            LIMIT 1000
+        ");  
         
+        $array = [];
+        foreach($busca_news as $key => $item) {
+            $array[$key]['new'] = $item;
+           
+            $busca_tags = DB::select("
+                SELECT 
+                T.id AS tag_id,
+                T.title AS tag_name,
+                T.image AS tag_image
+
+                FROM news_tags N_T 
+                    INNER JOIN tags T 
+                        ON N_T.tags_id = T.id
+
+                WHERE N_T.news_id = $item->news_id 
+            ");
+
+            foreach( $busca_tags as $tagskey => $tags) {
+                $array[$key]['tags'][$tagskey] = $tags;
+            }
+           
+        }
+        $collection = collect( $busca_news);
+        $unique = $collection->unique('tag_id');
+        $result = $unique->values()->all();
         return $this->ResponseAPI( 
             [
                 "date_initial" =>  $dateInitial,
@@ -203,120 +358,64 @@ class TagsController extends Controller
         );
     }
 
-    public function listaTagsUser(Request $request)
-    {
-        
-        if($request->token){
-            $user = DB::table('users')->where('api_token', '=',$request->token)->first();
-            if($user){
-                $user_tags = DB::table('user_tags')->where('users_id', '=', $user->id)->get();
-                $array_user_tags = [];
-                foreach($user_tags as $key => $item) {
-                    $array_user_tags[$key] = $item->tags_id;
-                }
-               
-                $lista = Tags::query()
-                            ->where('title', 'LIKE', "%{$request->busca}%") 
-                            ->where('status', '=', "active") 
-                            ->orderBy('title', 'Asc');
-                          
-                $lista = $lista->get();
-              
-            }else{
-                $retorno =  [
-                    'code'  => '999',
-                    'content' => [
-                                    'message' => 'Token não exite.',
-                                ],
-                    'date'         => date("Y-m-d"),
-                    'hour'         => date("H:i:s"),
-                ];
-                return response()->json($retorno , 200);
-            }
-        }
-
-        foreach($lista as $key => $item) {
-            $select = in_array($item->id, $array_user_tags);
-            
-            if($select){
-                $item['select'] = 1;
-            }else{
-                $item['select'] = 0;
-            }
-        }
-      
-        if($lista){
-            $retorno =  [
-                'code'  => '000',
-                'content' => [
-                                'dados' =>  $lista, 
-                            ],
-                'date'         => date("Y-m-d"),
-                'hour'         => date("H:i:s"),
-            ];
-            return response()->json($retorno , 200);
-        }else{
-            $retorno =  [
-                'code'  => '000',
-                'content' => [
-                                'dados' =>  [], 
-                            ],
-                'date'         => date("Y-m-d"),
-                'hour'         => date("H:i:s"),
-            ];
-            return response()->json($retorno , 200);
-        }
-    }
-
     public function postSetTag(Request $request)
     {
-        $user = DB::table('users')->where('api_token', '=',$request->input('api_token'))->first();
+        $user = DB::select("
+            SELECT 
+            *
+            FROM users U
+            WHERE U.api_token = '".$request->input('apiToken')."'
+        ");  
         if($user){
-            $user_tags = DB::table('user_tags')->where('users_id', '=',$user->id)->where('tags_id', '=',$request->input('tags_id'))->first();
-          
+            $user_tags = DB::table('user_tags')->where('users_id', '=',$user[0]->id)->where('tags_id', '=',$request->input('tags_id'))->first();
+           
             if(!$user_tags){
                 $insert = new UserTags;
-                $insert->users_id = $user->id;
+                $insert->users_id = $user[0]->id;
                 $insert->tags_id = $request->input('tags_id');
                 $condition = $insert->save();
                 if($condition){
-                    $retorno = [
-                        'code'  => '001',
-                        'content' => [
-                                        'message' => 'Tag selecionado com sucesso.',
-                                    ],
-                        'date'         => date("Y-m-d"),
-                        'hour'         => date("H:i:s"),
-                    ];
-                    return response()->json($retorno , 200);
+                    return $this->ResponseAPI( 
+                        [
+                            'dados' =>[
+                                'message' => 'Tag selecionado com sucesso.'
+                            ], 
+                        ]
+                        ,"O recurso solicitado foi processado e retornado com sucesso.", 200, '001'
+                    );
                 }
             }else{
-                $retorno =  [
-                    'code'  => '002',
-                    'content' => [
-                                    'message' => 'Tag já selecionado anteriormente.',
-                                ],
-                    'date'         => date("Y-m-d"),
-                    'hour'         => date("H:i:s"),
-                ];
-                return response()->json($retorno , 200);
+                return $this->ResponseAPI( 
+                    [
+                        'dados' =>[
+                            'message' => 'Tag já selecionado anteriormente.'
+                        ], 
+                    ]
+                    ,"O recurso solicitado foi processado e retornado com sucesso.", 200, '000'
+                );
             }
         }else{
-            $retorno =  [
-                'code'  => '999d',
-                'content' => [
-                                'message' => 'Token não exite.',
-                            ],
-                'date'         => date("Y-m-d"),
-                'hour'         => date("H:i:s"),
-            ];
+            return $this->ResponseAPI( 
+                [
+                    'dados' =>[
+                        'message' => 'Token não exite.'
+                    ], 
+                ]
+                ,"O recurso solicitado foi processado e retornado com sucesso.", 401, '999'
+            );
+           
         }
-        return response()->json($retorno , 200);
+        
     }
 
     public function postUnsetTag(Request $request)
     {
-        $user = DB::table('users')->where('api_token', '=',$request->input('api_token'))->first();
+        $user = DB::select("
+            SELECT 
+            *
+            FROM users U
+            WHERE U.api_token = '".$request->input('apiToken')."'
+        ");  
         
         if($user){
             $item = UserTags::where('tags_id', '=', $request->tags_id)->first();
@@ -324,40 +423,38 @@ class TagsController extends Controller
                 $item_delete = UserTags::find($item->id);
                 $condition_delete = $item_delete->delete();
                 if($condition_delete){
-                    $retorno =  [
-                        'code'  => '001',
-                        'content' => [
-                                        'message' => 'Deletado com sucesso.',
-                                    ],
-                        'date'         => date("Y-m-d"),
-                        'hour'         => date("H:i:s"),
-                    ];
-                    return response()->json($retorno , 200);
+                    return $this->ResponseAPI( 
+                        [
+                            'dados' =>[
+                                'message' => 'Deletado com sucesso.'
+                            ], 
+                        ]
+                        ,"O recurso solicitado foi processado e retornado com sucesso.", 200, '001'
+                    );
                 }
             }
 
-            $retorno =  [
-                'code'  => '999',
-                'content' => [
-                                'message' => 'Tag não encontrado.',
-                            ],
-                'date'         => date("Y-m-d"),
-                'hour'         => date("H:i:s"),
-            ];
-            return response()->json($retorno , 200);
-        
+            return $this->ResponseAPI( 
+                [
+                    'dados' =>[
+                        'message' => 'Tag não encontrada.'
+                    ], 
+                ]
+                ,"O recurso solicitado foi processado e retornado com sucesso.", 200, '000'
+            );
 
         }else{
-            $retorno =  [
-                'code'  => '999',
-                'content' => [
-                                'message' => 'Token não exite.',
-                            ],
-                'date'         => date("Y-m-d"),
-                'hour'         => date("H:i:s"),
-            ];
+            return $this->ResponseAPI( 
+                [
+                    'dados' =>[
+                        'message' => 'Token não exite.'
+                    ], 
+                ]
+                ,"O recurso solicitado foi processado e retornado com sucesso.", 401, '999'
+            );
+           
         }
-        return response()->json($retorno , 200);
+        
     }
 
 }

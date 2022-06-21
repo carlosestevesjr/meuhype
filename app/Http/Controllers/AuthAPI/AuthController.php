@@ -156,10 +156,7 @@ class AuthController extends Controller
     public function postRegister(Request $request)
     {
 
-        $code_permition = $request->header('Authorization');
-        if($code_permition === "cinemando"){
-
-             // Validations
+            // Validations
             $rules = [
                 'name'     => 'required|min:3',
                 'sexo'     => 'required',
@@ -179,12 +176,18 @@ class AuthController extends Controller
             
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
-                
-                return response()->json([
-                    'code'         => '001',
-                    'message' => $validator->messages(),
-                ]);
 
+                return $this->ResponseAPI( 
+                    [
+                        'dados' => [
+                            'errors' => [
+                                $validator->messages()
+                            ], 
+                        ], 
+                    ]
+                    ,"O recurso solicitado foi processado e retornado com sucesso.", 200, '999'
+                );
+                
             } else {
 
                 $postArray = [
@@ -204,50 +207,35 @@ class AuthController extends Controller
                 $condition = $insert->save();
 
                 if($condition) {
-
-                    $retorno = [
-                        'code'  => '000',
-                        'content' => [
-                                        'dados' => [
-                                            'id'         => $insert->id,
-                                            'name'         => $insert->name,
-                                            'email'        => $insert->email,
-                                            'sexo'         => $insert->sexo,
-                                            'access_token' => $insert->api_token,
-                                        ], 
-                                    ],
-                        'date'         => date("Y-m-d"),
-                        'hour'         => date("H:i:s"),
-                    ];
-                    return response()->json($retorno , 201);
+                    return $this->ResponseAPI( 
+                        [
+                            'dados' => [
+                                'id'         => $insert->id,
+                                'name'         => $insert->name,
+                                'email'        => $insert->email,
+                                'sexo'         => $insert->sexo,
+                                'access_token' => $insert->api_token,
+                            ], 
+                        ]
+                        ,"O recurso solicitado foi processado e retornado com sucesso.", 201, '001'
+                    );
 
                 } else {
 
-                    $retorno = [
-                        'code'         => '001',
-                        'errors' => [
-                            'O registro falhou, por favor tente novamente.'
-                        ], 
-                        'date'         => date("Y-m-d"),
-                        'hour'         => date("H:i:s"),
-                    ];
-                    return response()->json($retorno , 400);
+                    return $this->ResponseAPI( 
+                        [
+                            'dados' => [
+                                'errors' => [
+                                    'Ocorreu um erro ao salvar. Tente novamente.'
+                                ], 
+                            ], 
+                        ]
+                        ,"O recurso solicitado foi processado e retornado com sucesso.", 401, '001'
+                    );
 
                 }
             }
-        }else{
-
-            $retorno = [
-                'code'         => '001',
-                'errors' => [
-                    'Token inválido'
-                ], 
-                'date'         => date("Y-m-d"),
-                'hour'         => date("H:i:s"),
-            ];
-            return response()->json($retorno , 401);
-
-        }
+       
     }
 
     /**

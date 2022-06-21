@@ -209,9 +209,6 @@ class ChannelController extends Controller
         );
        
     }
-
-   
-
     public function postSetCanal(Request $request)
     {
         $user = DB::select("

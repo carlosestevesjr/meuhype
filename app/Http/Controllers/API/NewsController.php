@@ -541,7 +541,6 @@ class NewsController extends Controller
         $base_route = '/api/v1/lista-news-tag/'.$param_tag_id.'';
         return $this->ResponseAPI( 
             [
-               
                 "current_page" => $page,
                 'dados' => $result, 
                 "first_page_url" => url( $base_route."?page=1&qtd=".$qtd),

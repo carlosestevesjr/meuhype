@@ -43,6 +43,7 @@
                     <li class="sidebar-item"><a class="sidebar-link" href="{{ url($prefix_admin.'/podcasts') }}">Podcasts</a></li>
                     <li class="sidebar-item"><a class="sidebar-link" href="{{ url($prefix_admin.'/tags') }}">Tags</a></li>
                     <li class="sidebar-item"><a class="sidebar-link" href="{{ url($prefix_admin.'/channels') }}">Canais</a></li>
+                    <li class="sidebar-item"><a class="sidebar-link" href="{{ url($prefix_admin.'/notifications') }}">Notificações</a></li>
                 </ul>
             </li>
             <li class="sidebar-item">

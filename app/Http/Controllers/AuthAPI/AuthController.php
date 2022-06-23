@@ -25,10 +25,10 @@ class AuthController extends Controller
     {
         
         $params = $request->all();
-        $token_notification = TokenNotification::where( 'token',  '=', $params['token']  )->first();
 
+        $token_notification = TokenNotification::where( 'token',  '=', $params["token"]  )->first();
+       
         if($token_notification == null ){
-    
             $insert = new TokenNotification;
     
             $insert->token = $params['token'];
@@ -45,9 +45,15 @@ class AuthController extends Controller
             }
 
         }else{
+           
+            if($token_notification->user_id == null){
+                $token_notification->user_id = $params['user_id'];
+            }
+
             $token_notification->token = $params['token'];
             $token_notification->platform = $params['platform'];
             $token_notification->updated_at = now();
+           
             $condition = $token_notification->save();
             if($condition){
                 return "sucesso";

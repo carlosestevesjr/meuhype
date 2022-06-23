@@ -51,6 +51,10 @@ Route::group(['prefix'=>'admin','middleware'=>'admin_auth'], function(){
         //Channels
         Route::resource('channels', 'ChannelsController');
 
+        //Notifications
+        Route::resource('notifications', 'NotificationsController');
+        Route::get('notifications-notificar', 'NotificationsController@notificar');
+
         //News
         Route::resource('news', 'NewsController');
         Route::post('news-ajax-create', 'NewsController@storeAjax');

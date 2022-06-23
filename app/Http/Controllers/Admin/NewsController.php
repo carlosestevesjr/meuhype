@@ -185,7 +185,6 @@ class NewsController extends Controller
         }
     }
 
-
     public function store(Request $request)
     {
         $canais  = Channels::find($request->input('channels_id'));
@@ -225,7 +224,7 @@ class NewsController extends Controller
                 // 'order.required' => 'O campo ordem deve ser preenchido.',
 			]
 		);
-
+        
         if ($validator->fails()) {
            
             $news = News::where( 'hash',  '=',  $campos['hash'] )->first();
@@ -251,6 +250,7 @@ class NewsController extends Controller
             ->withErrors($validator)
             ->withInput();
         }else{
+
             // Cadastrando um novo Registro
             $insert = new News;
             $insert->channels_id = $request->input('channels_id');
@@ -264,7 +264,7 @@ class NewsController extends Controller
             $insert->keywords = $request->input('keywords');
             $insert->status = $request->input('status');
             $insert->order = $request->input('order');
-         
+            
             //Image
             if ($request->file('image')) {
                 $file = $request->file('image');

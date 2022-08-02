@@ -45,7 +45,7 @@ class ContactController extends Controller
 
         // dd($request->all());
 
-           //Validando os campos
+        //Validando os campos
         $validator = Validator::make($request->all(),
             [
                 'name' => 'required|max:255',
@@ -62,27 +62,27 @@ class ContactController extends Controller
         );
 
         if( $validator->fails() ){
-           
-            $retorno =  [
-                'code'  => '998',
-                'content' => [
-                                'errros' => $validator->messages(), 
-                            ],
-                'message' => 'Não foi possível enviar.',
-                'date'         => date("Y-m-d"),
-                'hour'         => date("H:i:s"),
-            ];
-            return response()->json($retorno , 200);
+            return $this->ResponseAPI( 
+                [
+                    'dados' => [
+                        'errors' => [
+                            $validator->messages()
+                        ], 
+                    ], 
+                ]
+                ,"O recurso solicitado foi processado e retornado com sucesso.", 200, '999'
+            );
            
         }else{
 
             $params = $request->all();
-
+           
             $dados = [ 
                 'name'  => $params['name'],
                 'email' =>  $params['email'],
-                'message' => $params['message']
+                'm' => $params['message']
             ];
+           
 
             $insert =  new Contact;
             $insert->name = $request->name;
@@ -93,46 +93,46 @@ class ContactController extends Controller
             $condition = $insert->save();
 
             if($condition){
-                // return 'success';
-                $retorno =  [
-                    'code'  => '001',
-                    'content' => "",
-                    'message' => 'Email enviado com sucesso.',
-                    'date'         => date("Y-m-d"),
-                    'hour'         => date("H:i:s"),
-                ];
-                return response()->json($retorno , 200);
-            }elseif($condition == false){
-                $retorno =  [
-                    'code'  => '998',
-                    'content' => '',
-                    'message' => 'Não foi inserir no banco de dados .',
-                    'date'         => date("Y-m-d"),
-                    'hour'         => date("H:i:s"),
-                ];
-                return response()->json($retorno , 200);
+                
+                Mail::send('emails.apicontato', $dados, function ($message) {
+                    $message->from('inthemovie@nocinema.kinghost.net', 'Contato Meu Hype');
+                    $message->subject('Contato Pelo App Meu Hype');
+                    $message->to('carlosestevesjr0@gmail.com');
+                    // $message->bcc('');
+                });
+
+                return $this->ResponseAPI( 
+                    [
+                        'dados' =>[
+                            'message' => 'Email enviado com sucesso.',
+                        ], 
+                    ]
+                    ,"O recurso solicitado foi processado e retornado com sucesso.", 201, '001'
+                );
+
+            }elseif(!$condition){
+                return $this->ResponseAPI( 
+                    [
+                        'dados' =>[
+                            'message' => 'Não foi inserir no banco de dados.',
+                        ], 
+                    ]
+                    ,"O recurso solicitado foi processado e retornado com sucesso.", 200, '999'
+                );
             }
 
             // Mail::send('emails.apicontato', $dados, function ($message) {
             //     $message->from('inthemovie@nocinema.kinghost.net', 'Contato Meu Hype');
             //     $message->subject('Contato Pelo App Meu Hype');
             //     $message->to('carlosestevesjr0@gmail.com');
-            //     // $message->bcc('cissa@highpix.com.br');
-                
+            //     // $message->bcc('');
             // });
-        
 
-            // Mail::send('emails.contato', $dados, function ($message) {
-            //     $message->from('inthemovie@nocinema.kinghost.net', 'Contato Meu Hype');
-            //     $message->subject('Contato Pelo App Meu Hype');
-            //     $message->to('carlosestevesjr0@gmail.com');
-            //     // $message->bcc('cissa@highpix.com.br');
-                
-            // });
+           
             
         }
         
-        // return response()->json($arrayResults , 200);
+        
         
     }
 

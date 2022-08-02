@@ -3,7 +3,7 @@
 @section('content')
 
 <div class="title-block">
-    <h3 class="title">{{ $page_dados['title'] }} - Criar </h3>
+    <h3 class="title">{{ $page_dados['title'] }} - Ver </h3>
     <p class="title-description">{{ $page_dados["description"] }}</p>
 </div>
 <div class="p-3">
@@ -48,30 +48,47 @@
         <div class="col-12 col-xl-12">
             <div class="card">
                 <div class="card-body">
-                <form method="post" action="{{ URL::asset( $prefix_admin.'/'.$page_dados['route_controler']) }}" role="form" enctype="multipart/form-data">
+                    <form>
+                        <div class="form-row">
+                            <div class="form-group col-12 col-lg-12">
+                                <label>Hash</label>
+                                <input type="text" name="hash" class="form-control" placeholder="" readonly value="{{ $item->hash }}" >
+                            </div>
+                        </div>
                         <div class="form-row">
                             <div class="form-group col-12 col-lg-6">
-                                <label>Titulo</label>
-                                <input type="text" name="title" class="form-control" placeholder="" value="{{ old('title') }}" >
+                                <label>Nome</label>
+                                <input type="text" name="name" class="form-control" placeholder="" readonly value="{{ $item->name }}" >
+                            </div>
+                            <div class="form-group col-12 col-lg-6">
+                                <label>Slug</label>
+                                <input type="text" name="slug" class="form-control" placeholder="" readonly value="{{ $item->slug }}" >
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group col-12 col-lg-12">
                                 <label>Descrição Curta</label>
-                                <textarea name="description_short" id="description_short" class="form-control" maxlength="255" rows="3">{{ old('description_short') }}</textarea>
+                                <textarea name="description_short" id="description_short" class="form-control" readonly maxlength="255" rows="3">{{ $item->description_short }}</textarea>
                                 <p style="color:red;"><small class="caracteres"></small></p>
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group col-12 col-lg-12">
                                 <label>Descrição</label>
-                                <textarea name="description" id="description" class="form-control textarea" rows="10">{{ old('description') }}</textarea>
+                                <textarea name="description" id="description" class="form-control textarea" readonly rows="10">{{ $item->description }}</textarea>
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group col-12 col-lg-6">
                                 <label >Foto</label>
                                 <div class="box">
+                                    @if($item->image)
+                                    <div class="image-container">
+                                        <a href="{{ url($item->image) }}" class="fancybox">
+                                            <img src="{{ url($item->image) }}" height="100px" class="image">
+                                        </a>
+                                    </div>
+                                    @endif
                                     <input type="file" name="image" id="image" class="inputfile inputfile-1" data-multiple-caption="{count} arquivos selecionados"/>
                                     <label for="image"> <i class="fas fa-upload"></i> <span>arquivo&hellip;</span></label>
                                     <p>Tamanho da imagem: 560x300px 2M</p>
@@ -79,58 +96,60 @@
                             </div>
                             <div class="form-group col-12 col-lg-6">
                                 <label>Link</label>
-                                <input type="text" name="link" class="form-control" placeholder="" value="{{ old('link') }}" >
+                                <input type="text" name="link" class="form-control" placeholder="" readonly value="{{ $item->link }}" >
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group col-12 col-lg-6">
-                                <label>Canais</label>
-                                <select name="channels_id" class="form-control">
-                                    <option value="" >Nenhum</option>
-                                    @foreach($canais as $canal)
-                                        <option value="{{ $canal->id }}" >{{ $canal->name }}</option>
-                                    @endforeach
-                                </select>
+                                <label>Facebook</label>
+                                <input type="text" name="facebook" class="form-control boxed" placeholder="" readonly value="{{ $item->facebook }}">
                             </div>
                             <div class="form-group col-12 col-lg-6">
-                                <label>Tags</label>
-                                <select name="tags_id" class="form-control">
-                                    <option value="0" >Nenhum</option>
-                                    @foreach($tags as $tag)
-                                        <option value="{{ $tag->id }}" >{{ $tag->title }}</option>
-                                    @endforeach
-                                </select>
+                                <label>Twitter</label>
+                                <input type="text" name="twitter" class="form-control" placeholder="" readonly value="{{ $item->twitter }}" >
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group col-12 col-lg-6">
-                                <label>Data</label>
-                                <input type="text" name="data" class="form-control" placeholder="" value="{{ old('data') }}" >
+                                <label>Instagram</label>
+                                <input type="text" name="instagram" class="form-control boxed" placeholder="" readonly value="{{ $item->instagram }}">
                             </div>
+                            <div class="form-group col-12 col-lg-6">
+                                <label>Youtube</label>
+                                <input type="text" name="youtube" class="form-control" placeholder="" readonly value="{{ $item->youtube }}" >
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-12 col-lg-6">
+                                <label>Instagram</label>
+                                <input type="text" name="instagram" class="form-control boxed" placeholder="" readonly value="{{ $item->instagram }}">
+                            </div>
+                            <div class="form-group col-12 col-lg-6">
+                                <label>Tipo</label>
+                                <select name="status" readonly class="form-control">
+                                    <option value="youtube" <?php if($item->type == 'youtube') echo "selected" ?>>Youtube</option>
+                                    <option value="site" <?php if($item->type == 'site') echo "selected" ?>>Site</option>
+                                    <option value="podcast" <?php if($item->type == 'podcast')echo "selected" ?>>Podcast</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
                             <div class="form-group col-12 col-lg-6">
                                 <label>Keywords</label>
-                                <input type="text" name="keywords" class="form-control" placeholder="" value="{{ old('keywords') }}" >
+                                <input type="text" name="keywords" class="form-control" placeholder="" readonly value="{{ $item->keywords }}" >
                             </div>
-                        </div>
-                        <div class="form-row">
                             <div class="form-group col-12 col-lg-6">
                                 <label>Ordem</label>
-                                <input type="text" name="order" class="form-control boxed" placeholder="" value="{{ old('order') }}">
-                            </div>
-                            <div class="form-group col-12 col-lg-6">
-                                <label>Status</label>
-                                <select name="status" id="status" class="form-control">
-                                    <option value="show" selected>Ativo</option>
-                                    <option value="hidden">Bloqueado</option>
-                                </select>
+                                <input type="text" name="order" class="form-control boxed" placeholder="" readonly value="{{ $item->order }}">
                             </div>
                         </div>
                         <div class="form-row">
-                            <div class="col-md-12">
-                                {{ csrf_field() }}
-                                <button type="submit" class="btn btn-success">
-                                    Salvar
-                                </button>
+                            <div class="form-group col-12 col-lg-6">
+                                <label>Status</label>
+                                <select name="status" readonly id="status" class="form-control">
+                                    <option value="active" <?php if($item->status == 'active') echo "selected" ?>>Ativo</option>
+                                    <option value="hidden" <?php if($item->status == 'hidden') echo "selected" ?>>Bloqueado</option>
+                                </select>
                             </div>
                         </div>
                     </form>

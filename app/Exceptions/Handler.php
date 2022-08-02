@@ -2,11 +2,21 @@
 
 namespace App\Exceptions;
 
-use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
+
+use App\Traits\ApiResponser;
+use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class Handler extends ExceptionHandler
 {
+    use ApiResponser;
+
     /**
      * A list of the exception types that are not reported.
      *
@@ -50,6 +60,32 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $exception)
     {
-        return parent::render($request, $exception);
+        $response = $this->handleException($request, $exception);
+        return $response;
     }
+    
+
+    public function handleException($request, Exception $exception)
+    {
+        
+        if ($exception instanceof MethodNotAllowedHttpException) {
+            return $this->ResponseAPI('metodo para requisição é inválido', 405);
+        }
+
+        if ($exception instanceof NotFoundHttpException) {
+            return $this->ResponseAPI('URL não encontrada', 404);
+        }
+
+        if ($exception instanceof HttpException) {
+            return $this->ResponseAPI($exception->getMessage(), $exception->getStatusCode());
+        }
+
+        if (config('app.debug')) {
+            return parent::render($request, $exception);            
+        }
+       
+        return $this->ResponseAPI('Ocorreu uma falha na plataforma. Por favor, entre em contato com o atendimento.', 500);
+
+    }
+
 }

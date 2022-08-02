@@ -2,22 +2,8 @@
 
 @section('content')
 
-<div class="row mb-2 mb-xl-3">
-    <div class="col-auto d-none d-sm-block">
-        <h3><strong>{{ $page_dados["title"] }}</strong></h3>
-        <p class="title-description">{{ $page_dados["description"] }}</p>
-    </div>
-
-    <div class="col-auto ml-auto text-right mt-n1">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb bg-transparent p-0 mt-1 mb-0">
-                <li class="breadcrumb-item"><a href="#">AdminKit</a></li>
-                <li class="breadcrumb-item"><a href="#">Dashboards</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Analytics</li>
-            </ol>
-        </nav>
-    </div>
-</div>
+<h1 class="h3 mb-3">{{ $page_dados["title"] }}</h1>
+<p class="title-description">{{ $page_dados["description"] }}</p>
 
 @if(Session::has('message'))
     <div class="alert alert-success alert-dismissible" role="alert">
@@ -57,45 +43,6 @@
                     Novo Registro
                 </a>
             </div>
-            <p>
-                <a class="btn btn-danger" data-toggle="collapse" href="#tags-crawleando" role="button" aria-expanded="false" aria-controls="tags-crawleando">
-                    Tags Crawleando
-                </a>
-                <button class="btn btn-danger" type="button" data-toggle="collapse" data-target="#todas-tags" aria-expanded="false" aria-controls="todas-tags">
-                    Todas as Tags
-                </button>
-            </p>
-            <div class="collapse" id="tags-crawleando">
-                <div class="card">
-                    <div class="float-left p-2">
-                        <h3>Tags Crawleando</h3>
-                    
-                        @foreach($tags_crawleando as $tag)
-                            <a class="btn btn-dark" href="{{URL::asset($prefix_admin.'/'.$page_dados['route_controler'].'?search='.$tag->tags_title) }}">
-                                #{{$tag->tags_title}}
-                            </a>
-                        @endforeach
-                        <a class="btn btn-info" href="{{URL::asset($prefix_admin.'/'.$page_dados['route_controler'].'?search=') }}">
-                            Limpar
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div class="collapse" id="todas-tags">
-                <div class="card" >
-                    <div class="float-left p-2">
-                        <h3>Todas as Tags</h3>
-                        @foreach($tags as $tag)
-                            <a class="btn btn-outless" href="{{URL::asset($prefix_admin.'/'.$page_dados['route_controler'].'?search='.$tag->tags_title) }}">
-                                #{{$tag->tags_title}}
-                            </a>
-                        @endforeach
-                        <a class="btn btn-info" href="{{URL::asset($prefix_admin.'/'.$page_dados['route_controler'].'?search=') }}">
-                            Limpar
-                        </a>
-                    </div>
-                </div>
-            </div>
             <div class="card">
                 <form action="{{ URL::asset($prefix_admin.'/'.$page_dados['route_controler']) }}"  class="form-inline d-none d-sm-inline-block">
                     <div class="input-group input-group-navbar p-2 float-right">
@@ -118,25 +65,13 @@
                     </div>
                     <div class="clearfix"></div>
                 </form>
-                <div class="card">
-                    <div class="col-12 col-xl-12">
-                        {{-- Pagination --}}
-                        <div class="d-flex justify-content-center">
-                        {{-- {!! $lista->links() !!} --}}
-                        {!! $lista->appends(['sort' => 'science-stream','search' => $search, 'qtd' => $qtd])->links() !!}
-                    </div>
-                </div>
-                <table id="table" class="table table-sm table-striped table-bordered table-hover">
+                <table id="table" class="table table-striped table-bordered table-hover">
                     <thead>
                         <tr>
                             <tr>
                                 <th>Id</th>
-                                <th>Titulo</th>
-                                <th>Image</th>
-                                <th>Data Fornecedor</th>
-                                <th>Canal</th>
-                                <th>Tipo Canal</th>
-                                <th>Data de atualização</th>
+                                <th>Title</th>
+                                <th>Body</th>
                                 <th>Ações</th>
                             </tr>
                         </tr>
@@ -144,12 +79,8 @@
                     <tfoot>
                         <tr>
                             <th>Id</th>
-                            <th>Titulo</th>
-                            <th>Image</th>
-                            <th>Data Fornecedor</th>
-                            <th>Canal</th>
-                            <th>Tipo Canal</th>
-                            <th>Data de atualização</th>
+                            <th>Title</th>
+                            <th>Body</th>
                             <th>Ações</th>
                         </tr>
                     </tfoot>
@@ -157,25 +88,12 @@
                         @foreach($lista as $item)
                         <tr class="even pointer" <?php if($item->status == 'hidden'){ echo 'style="background:#F25959; color:#fff;" '; } ?>>
                             <td>{{ $item->id }}</td>
-                            <td width="25%"><strong>{{ $item->title }}</strong></td>
-                            <td>
-                                <?php
-                                    if($item->image){
-                                ?>
-                                        <a href="{{ url($item->image) }}" class="fancybox">
-                                            <img src="{{ url($item->image) }}" height="60px" class="image">
-                                        </a>
-                                <?php
-                                    }
-                                ?>
-                            </td>
-                            <td>{{ date("d/m/Y", strtotime($item->data)) }}</td>
-                            <td>{{ $item->canal }}</td>
-                            <td>{{ $item->tipo_canal }}</td>
+                            <td>{{ $item->title }}</td>
+                            <td>{{ $item->body }}</td>
                             <td>{{ date("d/m/Y \a\s H:i", strtotime($item->updated_at)) }}</td>
                             <td>
-                                <a href="{{ $item->link }}" target="_blank" class="btn btn-info btn-sm" title="Ver Post"><i class="align-middle fas fa-link"></i></a>
-                                <a href="{{ URL::asset('admin/'.$page_dados['route_controler'].'/'.$item->id) }}" class="btn btn-info btn-sm" title="Ver"><i class="align-middle fas fa-eye"></i></a>
+                                <a href="{{ URL::asset('admin/notifications-notificar?id='.$item->id.'&channels_id='.$item->channels_id.'&tags_id='.$item->tags_id) }}" target="_blank" class="btn btn-info btn-sm" title="Notificar"><i class="align-middle fas fa-link"></i></a>
+                                <!-- <a href="{{ URL::asset('admin/'.$page_dados['route_controler'].'/'.$item->id) }}" class="btn btn-info btn-sm" title="Ver"><i class="align-middle fas fa-eye"></i></a> -->
                                 <a href="{{ URL::asset('admin/'.$page_dados['route_controler'].'/'.$item->id.'/edit') }}" class="btn btn-success btn-sm" title="Editar"><i class="align-middle fas fa-pencil-alt"></i></a>
                                 <a href="{{ URL::asset('admin/'.$page_dados['route_controler'].'/'.$item->id) }}" class="btn btn-danger btn-sm method_destroy" data-method="DELETE" title="Excluir"><i class="align-middle fas fa-trash-alt"></i></a>
                             </td>
@@ -201,10 +119,6 @@
 
 @push('scripts-page')
 
-<!-- Fancybox -->
-<script src="{{ asset('packages/fancybox/dist/jquery.fancybox.js') }}" type="text/javascript"></script>
-<link href="{{ asset('packages/fancybox/dist/jquery.fancybox.css') }}" media="all" rel="stylesheet">
-
 <!-- DataTables -->
 <link href="{{ asset('packages/datatables-1.10.15/media/css/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
 <link href="{{ asset('packages/datatables-1.10.15/media/css/dataTables.material.min.css') }}" rel="stylesheet">
@@ -212,7 +126,7 @@
 
 <script type="text/javascript">
 $('document').ready(function(){
-    $("a.fancybox").fancybox();
+
     $(".method_destroy").click(function() {
         var r = confirm('Tem certeza que deseja excluir esse item ?');
         if (r == true) {

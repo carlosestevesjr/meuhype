@@ -62,6 +62,19 @@ class NewsController extends Controller
                 ->orderBy('data', 'desc')
                 ->paginate($qtd);
                 // dd($lista);
+
+        $tags_crawleando = DB::select('
+            SELECT 
+                T.title as tags_title,
+                C.id as crawler_id,
+                C.tags_id as crawler_tags_id,
+                C.title as crawler_title
+            FROM tags AS T
+            JOIN crawler AS C ON C.tags_id = T.id
+            WHERE C.tags_id != 0 AND C.status = "active"
+            GROUP BY crawler_tags_id 
+            ORDER BY tags_title ASC
+        ');
         
         $tags = DB::select('
             SELECT 
@@ -71,7 +84,7 @@ class NewsController extends Controller
             ORDER BY tags_title ASC
         ');
 
-        return view($this->page_dados['prefix_auth'] .'.pages.'. $this->page_dados['route_view'] .'.index' , compact('lista','search','qtd','tags'))
+        return view($this->page_dados['prefix_auth'] .'.pages.'. $this->page_dados['route_view'] .'.index' , compact('lista','search','qtd','tags','tags_crawleando'))
                 ->with('page_dados', $this->page_dados);
     }
 
@@ -172,7 +185,6 @@ class NewsController extends Controller
         }
     }
 
-
     public function store(Request $request)
     {
         $canais  = Channels::find($request->input('channels_id'));
@@ -212,7 +224,7 @@ class NewsController extends Controller
                 // 'order.required' => 'O campo ordem deve ser preenchido.',
 			]
 		);
-
+        
         if ($validator->fails()) {
            
             $news = News::where( 'hash',  '=',  $campos['hash'] )->first();
@@ -238,6 +250,7 @@ class NewsController extends Controller
             ->withErrors($validator)
             ->withInput();
         }else{
+
             // Cadastrando um novo Registro
             $insert = new News;
             $insert->channels_id = $request->input('channels_id');
@@ -251,7 +264,7 @@ class NewsController extends Controller
             $insert->keywords = $request->input('keywords');
             $insert->status = $request->input('status');
             $insert->order = $request->input('order');
-         
+            
             //Image
             if ($request->file('image')) {
                 $file = $request->file('image');

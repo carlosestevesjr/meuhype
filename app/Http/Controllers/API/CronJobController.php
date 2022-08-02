@@ -33,6 +33,7 @@ class CronJobController extends Controller
 
     public function index()
     {      
+        // $this->buscaTeste();
           
         $hora_inicial = date("H:i:s");
 
@@ -63,8 +64,9 @@ class CronJobController extends Controller
                             'Gustavo_Cunha_Youtube' => ($this->crawler_canais_ativos('gustavocunhayoutube')) ? $this->buscaGustavoCunhaYoutube() : "desligado",
                             'Miguel_Lokia_Youtube' => ($this->crawler_canais_ativos('miguellokiayoutube')) ? $this->buscaMiguelLokiaYoutube() : "desligado",
                             'Entre_Migas_Youtube' => ($this->crawler_canais_ativos('entremigasyoutube')) ? $this->buscaEntreMigasYoutube() : "desligado",
-                            'Jovem_Nerd_Spotify' => ($this->crawler_canais_ativos('jovemnerdspotify')) ? $this->buscaNewsJovemNerdSpotify() : "desligado",
-                            'Cinema_Com_Rapadura_Spotify' => ($this->crawler_canais_ativos('cinemacomrapaduraspotify')) ? $this->buscaNewsCinemaComRapaduraSpotify() : "desligado"
+                            'Matando_Robos_Gigantes_Youtube' => ($this->crawler_canais_ativos('matandorobosgigantesyoutube')) ? $this->buscaMatandoRobosGigantesYoutube() : "desligado",
+                            // 'Jovem_Nerd_Spotify' => ($this->crawler_canais_ativos('jovemnerdspotify')) ? $this->buscaNewsJovemNerdSpotify() : "desligado",
+                            // 'Cinema_Com_Rapadura_Spotify' => ($this->crawler_canais_ativos('cinemacomrapaduraspotify')) ? $this->buscaNewsCinemaComRapaduraSpotify() : "desligado"
                         ];
                         
         $hora_final = date("H:i:s");
@@ -114,6 +116,185 @@ class CronJobController extends Controller
         
     }
 
+    public function buscaTeste(){
+        $result = $this->getCurl("https://www.filmelier.com/br/film/19308/tico-e-teco-defensores-da-lei");
+
+        echo $result;
+        die('buscaTeste');
+    }
+
+    public function buscaMatandoRobosGigantesYoutube(){
+
+        // Search only videos in a given channel, return an array of PHP objects
+        $channel = Channels::where( 'hash',  '=', 'matandorobosgigantesyoutube' )->firstOrFail();
+        $tag_title = "";
+
+        $array_adicionados = [];
+        $array_existentes = [];
+        $array_erros = [];
+
+        if($channel){
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
+            // echo $hora;
+            // echo "<br>";
+            // echo $hora_30;
+            $crawlers = DB::table('crawler')
+                        ->where( 'status', '=', 'active' )
+                        ->where( 'tags_id', '!=', 0 )
+                        ->whereBetween('time_initial', [$hora, $hora_30])
+                        // ->orWhereBetween('time_final', [$hora, $hora_30])
+                        ->get();
+            $count = 1;
+            foreach ($crawlers as $key => $value) {
+                // echo "crawler";
+                if($count == 1){
+                    $tag = Tags::where( 'id',  '=', $value->tags_id )->where( 'status',  '=', 'active' )->firstOrFail();
+                    if($tag ){
+                        $tag_title = $tag->title ;
+                    }
+                }
+                $count++;
+            }
+            // dd($tag_title);
+        }
+        // echo 'url:'.$tag_title;
+        
+        if($tag_title == ""){
+            $retorno = [
+                'code'         => '003',
+                'adicionados'  => $array_adicionados, 
+                'existentes'   => $array_existentes, 
+                'erros'        => $array_erros, 
+                'date'         => date("Y-m-d"),
+                'hour'         => date("H:i:s"),
+            ];
+            return $retorno;
+        }
+        
+        //Busca Crawler
+        $comunicaYoutube = new ComunicaYoutube;
+        $dados_busca = $comunicaYoutube->baseUrl('https://www.youtube.com/user')->prepare($tag_title, 'matandorobosgigantes')->get($this->qtd_noticias_por_canal());
+       
+        // echo '<pre>'; print_r($return['content']); echo '</pre>';/
+        foreach($dados_busca as $item){
+
+            //Validando os campos
+            $validator = Validator::make(['hash' => Str::slug($item['noticia'].'-matandorobosgigantesyoutube')], [
+                    'hash' => 'required|unique:news',
+                ],
+                $messages = [
+                    'unique'    => 'Notícia já existe.',
+                ]
+            );
+
+            if ($validator->fails()) {
+
+                $news = News::where( 'hash',  '=',  Str::slug($item['noticia'].'-matandorobosgigantesyoutube') )->first();
+                            
+                if($news && $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                    $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $tag->id )->first();
+                    
+                    if(!$news_tags){
+                        $insert_news_tags = new NewsTags;
+                        $insert_news_tags->news_id = $news->id;
+                        $insert_news_tags->tags_id = $tag->id;
+                        $insert_news_tags->save();
+                    }
+                }
+
+                // Validation 
+                array_push(
+                    $array_existentes,
+                    Str::slug($item['noticia'].'-matandorobosgigantesyoutube')
+                );
+            }else{
+
+                $img = "";
+                $link = "";
+                $data = "";
+
+                if($item['img']){
+                    $img = $item['img'];
+                }
+
+                if($item['url']){
+                    $link = $item['url'];
+                }
+
+                
+                if($img != "" && $link != ""){
+                    $data_json = "";
+                    if( $this->validaNoticia( $tag->title,  $this->removeEmoji($item['noticia']) )){
+                        if(isset($item['url']) && $item['url'] != ""){
+                            $data2 = "";
+                            $url_date = "";
+                            $url_date = $item['url'];
+                            $this->pauseTime();
+                            $data2 = $this->getCurl($url_date);
+                            preg_match_all('/(<meta itemprop="datePublished" content=")(?P<json>[\s\S]*?)["><meta]/', $data2, $matches);
+                            if(!empty($matches['json'][0])){
+                                $data =  trim($matches['json'][0]); 
+                            }else{
+                                $data = '0000-00-00';
+                            }
+                        }
+
+                        //Baixa imagem
+                        $file =$img;
+                        $filename =  date('Ymdhis'). '_' . Str::slug( $this->removeEmoji($item['noticia'])).'-matandorobosgigantesyoutube'.'.jpg';
+                        $destinationPath = public_path().'/uploads/news/';
+                        $upload = $this->downloadFile($filename, $file , $destinationPath);
+
+                        $insert = new News;
+                        $insert->title = $this->removeEmoji($item['noticia']);
+                        $insert->channels_id = $channel->id;
+                        $insert->slug = Str::slug($item['noticia']);
+                        $insert->hash = Str::slug($item['noticia'].'-matandorobosgigantesyoutube');
+                        $insert->link = $link;
+                        $insert->image = '/uploads/news/' . $filename;
+                        $insert->status = "show";
+                        $insert->order = 0;
+                        
+                        $insert->data = $data;
+                        $condition = $insert->save();
+                        if($condition){
+                            
+                            $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $tag->id )->first();
+                            
+                            if(!$news_tags){
+                                $insert_news_tags = new NewsTags;
+                                $insert_news_tags->news_id = $insert->id;
+                                $insert_news_tags->tags_id = $tag->id;
+                                $insert_news_tags->save();
+                            }
+
+                            array_push(
+                                $array_adicionados,
+                                $insert->id.' '.Str::slug($item['noticia'].'-matandorobosgigantesyoutube')
+                            );
+                        }
+                    }
+                }else{
+                    array_push(
+                        $array_erros,
+                        Str::slug($item['noticia'].'-matandorobosgigantesyoutube')
+                    );
+                }
+            }
+        }
+
+        $retorno = [
+            'code'         => '000',
+            'adicionados'  => $array_adicionados, 
+            'existentes'   => $array_existentes, 
+            'erros'        => $array_erros, 
+            'date'         => date("Y-m-d"),
+            'hour'         => date("H:i:s"),
+        ];
+        return $retorno;
+    }
+
     public function buscaThiagoRomarizYoutube(){
 
         // Search only videos in a given channel, return an array of PHP objects
@@ -125,8 +306,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s');
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -297,8 +478,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s');
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -469,8 +650,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s');
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -643,8 +824,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s');
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -817,8 +998,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s');
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -991,8 +1172,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s');
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -1165,8 +1346,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s');
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -1339,8 +1520,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s');
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -1513,8 +1694,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s');
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -1687,8 +1868,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s');
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -1861,8 +2042,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s');
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -2035,8 +2216,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s');
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -2209,8 +2390,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s');
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -2383,8 +2564,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s');
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -2557,8 +2738,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s');
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -2731,8 +2912,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s');
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -2905,8 +3086,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s');
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -3079,8 +3260,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s');
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -3253,8 +3434,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s');
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -3427,8 +3608,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s');
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -3600,8 +3781,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s');
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -3773,8 +3954,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s');
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -3946,8 +4127,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s');
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -3994,7 +4175,7 @@ class CronJobController extends Controller
             $result['url'] = $matche['url'][0];
             $result['noticia'] = trim($matche['noticia'][0]) ;
             preg_match_all('/(<img)[\s\S]*?(src\=")(?P<imagem>[\s\S]*?)(")/', $value, $matche);
-            $result['img'] = $matche['imagem'][0];
+            $result['img'] = (array_key_exists(0 , $matche['imagem'])) ? $matche['imagem'][0] : '';
             preg_match_all('/(<time)[\s\S](class="postedon">)(?P<data>[\s\S]*?)(<\/time>)/', $value, $matche);
             $result['data'] = trim($matche['data'][0]) ;
             $return['content'][] = $result;
@@ -4118,8 +4299,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s');
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -4301,8 +4482,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s');
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -4354,7 +4535,7 @@ class CronJobController extends Controller
             $result['url']=  $matche_link['link'][0];
            
             preg_match_all('/(<img data-src=")(?P<imagem>[\s\S]*?)("?ims=)/', $value, $matche_img);
-            $result['img'] = $matche_img['imagem'][0];
+            $result['img'] = (array_key_exists(0 , $matche_img['imagem'])) ? $matche_img['imagem'][0] : '';
             
             preg_match_all('/(class="tec--timestamp__item z--font-semibold">)(?P<data>[\s\S]*?)(<\/div>)/', $value, $matche_data);
             $result['data'] = $matche_data['data'][0];
@@ -4479,8 +4660,8 @@ class CronJobController extends Controller
         $array_erros = [];
 
         if($channel){
-            $hora = date('H:i:s');
-            $hora_30 = date('H:i:s', strtotime('+29 minute', strtotime($hora)));
+            $hora = date('H:i:s'); 
+            $hora_30 = date('H:i:s', strtotime('+30 minute', strtotime($hora)));
             // echo $hora;
             // echo "<br>";
             // echo $hora_30;
@@ -4537,7 +4718,7 @@ class CronJobController extends Controller
             $result['url']=  $matche_link['link'][0];
             
             preg_match_all('/(ret_img,w_350,h_250\/)(?P<imagem>[\s\S]*?)(")/', $value, $matche_img);
-            $result['img'] = $matche_img['imagem'][0];
+            $result['img'] = (array_key_exists(0 , $matche_img['imagem'])) ? $matche_img['imagem'][0] : '';
             
             preg_match_all('/(<i class="fa fa-clock-o"><\/i>)(?P<data>[\s\S]*?)(<\/a)/', $value, $matche_data);
             $result['data'] = $matche_data['data'][0];
@@ -4898,26 +5079,7 @@ class CronJobController extends Controller
             return $agents[rand(0, count($agents)-1)];
     }
 
-    // /**
-    //  * Display the specified resource.
-    //  *
-    //  * @param  int  $id
-    //  * @return \Illuminate\Http\Response
-    //  */
-    // public function show(Request $request)
-    // {
-    //     $noticias =DB::table('news')
-    //                     ->join('channels', 'news.channels_id', '=', 'channels.id')
-    //                     ->join('movies', 'news.movies_id', '=', 'movies.id')
-    //                     ->select('news.*', 'channels.name as channel', 'channels.image as channel_logo', 'movies.title as movie_title')
-    //                     ->orderBy('created_at', 'desc')
-    //                     ->paginate(15);
-       
-    //     return response()->json($noticias , 200);
-    // }
-
-    public function removeEmoji($text)
-    {
+    public function removeEmoji($text){
         $string = $text;
         $string = str_replace( "?", "{%}", $string );
         $string  = mb_convert_encoding( $string, "ISO-8859-1", "UTF-8" );
@@ -4942,15 +5104,13 @@ class CronJobController extends Controller
         return $data; 
     } 
 
-    public function downloadFile( $imgName, $url, $path )
-    {
+    public function downloadFile( $imgName, $url, $path ){
         $data = $this->file_get_contents_curl( $url );
         $status = file_put_contents( $path.$imgName, $data ); 
         return $status;
     }
 
-    public function formata_data( $type, $data )
-    {
+    public function formata_data( $type, $data ){
         
         // 1 - 13 de julho de 2020 //JOVEM NERD SITE
         // 2 - 15.04.202111H51 //OMELETE  SITE
@@ -5015,7 +5175,7 @@ class CronJobController extends Controller
             foreach ($palavrasTitle as $key2 => $palavraTitle) {
                 similar_text($palavraSearch, $palavraTitle, $similaridade);
     
-                if($similaridade > 80) {
+                if($similaridade > $porcentagemMatch) {
                     $matches++; 
                     $similaridadeGeral += $similaridade;
                 }
@@ -5157,7 +5317,7 @@ class CronJobController extends Controller
 
     function qtd_noticias_por_canal() {
         $crawler_configs = CrawlerConfigs::where( 'id',  '=', 1 )->first();
-        if(empty($crawler_configs)){
+        if(!empty($crawler_configs)){
             return $crawler_configs->qtd_noticias_por_canal;
         }else{
             return 20;

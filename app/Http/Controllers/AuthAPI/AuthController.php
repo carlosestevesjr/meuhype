@@ -20,17 +20,15 @@ class AuthController extends Controller
         $this->apiToken = uniqid(Str::random(60));
     }
 
-     /**
-     * Login
-     */
+    
     public function setTokenPush(Request $request)
     {
         
         $params = $request->all();
-        $token_notification = TokenNotification::where( 'token',  '=', $params['token']  )->first();
 
+        $token_notification = TokenNotification::where( 'token',  '=', $params["token"]  )->first();
+       
         if($token_notification == null ){
-    
             $insert = new TokenNotification;
     
             $insert->token = $params['token'];
@@ -47,9 +45,15 @@ class AuthController extends Controller
             }
 
         }else{
+           
+            if($token_notification->user_id == null){
+                $token_notification->user_id = $params['user_id'];
+            }
+
             $token_notification->token = $params['token'];
             $token_notification->platform = $params['platform'];
             $token_notification->updated_at = now();
+           
             $condition = $token_notification->save();
             if($condition){
                 return "sucesso";
@@ -77,19 +81,20 @@ class AuthController extends Controller
             'password.min' => 'A senha deve conter no mínimo 8 caracteres.',
         ];
 
-
         $validator = Validator::make($request->all(), $rules, $messages);
 
         if ($validator->fails()) {
 
-            // Validation 
-            $retorno = [
-                'code'          => '001',
-                'errors'        => $validator->messages(), 
-                'date'          => date("Y-m-d"),
-                'hour'          => date("H:i:s"),
-            ];
-            return response()->json($retorno , 200);
+            return $this->ResponseAPI( 
+                [
+                    'dados' => [
+                        'errors' => [
+                            $validator->messages()
+                        ], 
+                    ], 
+                ]
+                ,"O recurso solicitado foi processado e retornado com sucesso.", 200, '999'
+            );
 
         }else {
 
@@ -106,47 +111,46 @@ class AuthController extends Controller
                     
                     if($login) {
 
-                        $retorno = [
-                            'code'  => '000',
-                            'content' => [
-                                            'dados' => [
-                                                'id'         => $user->id,
-                                                'name'         => $user->name,
-                                                'email'        => $user->email,
-                                                'api_token' => $postArray['api_token'],
-                                            ], 
-                                        ],
-                            'date'         => date("Y-m-d"),
-                            'hour'         => date("H:i:s"),
-                        ];
-                        return response()->json($retorno , 200);
+                        return $this->ResponseAPI( 
+                            [
+                                'dados' => [
+                                    'id'         => $user->id,
+                                    'name'         => $user->name,
+                                    'email'        => $user->email,
+                                    'api_token' => $postArray['api_token'],
+                                ], 
+                            ]
+                            ,"O recurso solicitado foi processado e retornado com sucesso.", 200, '000'
+                        );
 
                     }
 
                 }else {
-
-                    $retorno = [
-                        'code'         => '001',
-                        'errors' => [
-                            'Senha inválida'
-                        ], 
-                        'date'         => date("Y-m-d"),
-                        'hour'         => date("H:i:s"),
-                    ];
-                    return response()->json($retorno , 200);
+                    return $this->ResponseAPI( 
+                        [
+                            'dados' => [
+                                'errors' => [
+                                    'Senha inválida'
+                                ], 
+                               
+                            ], 
+                        ]
+                        ,"O recurso solicitado foi processado e retornado com sucesso.", 200, '999'
+                    );
 
                 }
             } else {
 
-                $retorno = [
-                    'code'         => '001',
-                    'errors' => [
-                        'Token inválido'
-                    ], 
-                    'date'         => date("Y-m-d"),
-                    'hour'         => date("H:i:s"),
-                ];
-                return response()->json($retorno , 401);
+                return $this->ResponseAPI( 
+                    [
+                        'dados' => [
+                            'errors' => [
+                                'Usuário não existe'
+                            ], 
+                        ], 
+                    ]
+                    ,"O recurso solicitado foi processado e retornado com sucesso.", 401, '999'
+                );
 
             }
         }
@@ -158,10 +162,7 @@ class AuthController extends Controller
     public function postRegister(Request $request)
     {
 
-        $code_permition = $request->header('Authorization');
-        if($code_permition === "cinemando"){
-
-             // Validations
+            // Validations
             $rules = [
                 'name'     => 'required|min:3',
                 'sexo'     => 'required',
@@ -181,12 +182,18 @@ class AuthController extends Controller
             
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
-                
-                return response()->json([
-                    'code'         => '001',
-                    'message' => $validator->messages(),
-                ]);
 
+                return $this->ResponseAPI( 
+                    [
+                        'dados' => [
+                            'errors' => [
+                                $validator->messages()
+                            ], 
+                        ], 
+                    ]
+                    ,"O recurso solicitado foi processado e retornado com sucesso.", 200, '999'
+                );
+                
             } else {
 
                 $postArray = [
@@ -206,50 +213,35 @@ class AuthController extends Controller
                 $condition = $insert->save();
 
                 if($condition) {
-
-                    $retorno = [
-                        'code'  => '000',
-                        'content' => [
-                                        'dados' => [
-                                            'id'         => $insert->id,
-                                            'name'         => $insert->name,
-                                            'email'        => $insert->email,
-                                            'sexo'         => $insert->sexo,
-                                            'access_token' => $insert->api_token,
-                                        ], 
-                                    ],
-                        'date'         => date("Y-m-d"),
-                        'hour'         => date("H:i:s"),
-                    ];
-                    return response()->json($retorno , 201);
+                    return $this->ResponseAPI( 
+                        [
+                            'dados' => [
+                                'id'         => $insert->id,
+                                'name'         => $insert->name,
+                                'email'        => $insert->email,
+                                'sexo'         => $insert->sexo,
+                                'access_token' => $insert->api_token,
+                            ], 
+                        ]
+                        ,"O recurso solicitado foi processado e retornado com sucesso.", 201, '001'
+                    );
 
                 } else {
 
-                    $retorno = [
-                        'code'         => '001',
-                        'errors' => [
-                            'O registro falhou, por favor tente novamente.'
-                        ], 
-                        'date'         => date("Y-m-d"),
-                        'hour'         => date("H:i:s"),
-                    ];
-                    return response()->json($retorno , 400);
+                    return $this->ResponseAPI( 
+                        [
+                            'dados' => [
+                                'errors' => [
+                                    'Ocorreu um erro ao salvar. Tente novamente.'
+                                ], 
+                            ], 
+                        ]
+                        ,"O recurso solicitado foi processado e retornado com sucesso.", 401, '001'
+                    );
 
                 }
             }
-        }else{
-
-            $retorno = [
-                'code'         => '001',
-                'errors' => [
-                    'Token inválido'
-                ], 
-                'date'         => date("Y-m-d"),
-                'hour'         => date("H:i:s"),
-            ];
-            return response()->json($retorno , 401);
-
-        }
+       
     }
 
     /**
@@ -257,35 +249,35 @@ class AuthController extends Controller
     */
     public function postLogout(Request $request)
     {
-        $token =  $request->header('Authorization');
-       
+        $params = $request->all();
+        
+        $token =  $params['apiToken'];
         $user = User::where('api_token', $token)->first();
         if($user) {
             $postArray = ['api_token' => null];
             $logout = User::where('id',$user->id)->update($postArray);
             if($logout) {
-                $retorno = [
-                    'code'  => '000',
-                    'content' => [
-                                    'dados' => [
-                                        'Login encerrado'
-                                    ], 
-                                ],
-                    'date'         => date("Y-m-d"),
-                    'hour'         => date("H:i:s"),
-                ];
-                return response()->json($retorno , 200);
+                return $this->ResponseAPI( 
+                    [
+                        'dados' => [
+                            "message" => 'Login encerrado'
+                        ], 
+                    ]
+                    ,"O recurso solicitado foi processado e retornado com sucesso.", 200, '000'
+                );
             }
         } else {
-            $retorno = [
-                'code'         => '001',
-                'errors' => [
-                            'Token inválido'
-                ], 
-                'date'         => date("Y-m-d"),
-                'hour'         => date("H:i:s"),
-            ];
-            return response()->json($retorno , 401);
+            return $this->ResponseAPI( 
+                [
+                    'dados' => [
+                        'errors' => [
+                            'Usuário não existe'
+                        ], 
+                    ], 
+                ]
+                ,"O recurso solicitado foi processado e retornado com sucesso.", 401, '999'
+            );
+            
         }
     }
 

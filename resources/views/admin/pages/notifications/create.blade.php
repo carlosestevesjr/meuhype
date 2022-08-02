@@ -49,26 +49,21 @@
             <div class="card">
                 <div class="card-body">
                 <form method="post" action="{{ URL::asset( $prefix_admin.'/'.$page_dados['route_controler']) }}" role="form" enctype="multipart/form-data">
+                      
                         <div class="form-row">
-                            <div class="form-group col-12 col-lg-6">
-                                <label>Titulo</label>
+                            <div class="form-group col-12 col-lg-12">
+                                <label>Title</label>
                                 <input type="text" name="title" class="form-control" placeholder="" value="{{ old('title') }}" >
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group col-12 col-lg-12">
-                                <label>Descrição Curta</label>
-                                <textarea name="description_short" id="description_short" class="form-control" maxlength="255" rows="3">{{ old('description_short') }}</textarea>
+                                <label>Body</label>
+                                <textarea name="body" id="description_short" class="form-control" maxlength="255" rows="3">{{ old('body') }}</textarea>
                                 <p style="color:red;"><small class="caracteres"></small></p>
                             </div>
                         </div>
-                        <div class="form-row">
-                            <div class="form-group col-12 col-lg-12">
-                                <label>Descrição</label>
-                                <textarea name="description" id="description" class="form-control textarea" rows="10">{{ old('description') }}</textarea>
-                            </div>
-                        </div>
-                        <div class="form-row">
+                        <!-- <div class="form-row">
                             <div class="form-group col-12 col-lg-6">
                                 <label >Foto</label>
                                 <div class="box">
@@ -81,19 +76,19 @@
                                 <label>Link</label>
                                 <input type="text" name="link" class="form-control" placeholder="" value="{{ old('link') }}" >
                             </div>
-                        </div>
+                        </div> -->
                         <div class="form-row">
                             <div class="form-group col-12 col-lg-6">
-                                <label>Canais</label>
+                                <label>Pra quem segue o Canal</label>
                                 <select name="channels_id" class="form-control">
-                                    <option value="" >Nenhum</option>
+                                    <option value="0" >Nenhum</option>
                                     @foreach($canais as $canal)
-                                        <option value="{{ $canal->id }}" >{{ $canal->name }}</option>
+                                        <option  value="{{ $canal->id }}"  >{{ $canal->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="form-group col-12 col-lg-6">
-                                <label>Tags</label>
+                                <label>Pra quem segue o Tag</label>
                                 <select name="tags_id" class="form-control">
                                     <option value="0" >Nenhum</option>
                                     @foreach($tags as $tag)
@@ -104,23 +99,9 @@
                         </div>
                         <div class="form-row">
                             <div class="form-group col-12 col-lg-6">
-                                <label>Data</label>
-                                <input type="text" name="data" class="form-control" placeholder="" value="{{ old('data') }}" >
-                            </div>
-                            <div class="form-group col-12 col-lg-6">
-                                <label>Keywords</label>
-                                <input type="text" name="keywords" class="form-control" placeholder="" value="{{ old('keywords') }}" >
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-12 col-lg-6">
-                                <label>Ordem</label>
-                                <input type="text" name="order" class="form-control boxed" placeholder="" value="{{ old('order') }}">
-                            </div>
-                            <div class="form-group col-12 col-lg-6">
                                 <label>Status</label>
                                 <select name="status" id="status" class="form-control">
-                                    <option value="show" selected>Ativo</option>
+                                    <option value="active" selected>Ativo</option>
                                     <option value="hidden">Bloqueado</option>
                                 </select>
                             </div>

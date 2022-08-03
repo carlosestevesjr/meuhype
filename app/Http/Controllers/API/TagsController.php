@@ -235,7 +235,7 @@ class TagsController extends Controller
     public function listaTagsRecentes(Request $request)
     {
        
-        $qtd = 1000;
+        $qtd = 200;
         if($request->input('qtd')){
             $qtd = $request->input('qtd');
         }

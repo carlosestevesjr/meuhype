@@ -343,7 +343,7 @@ class TagsController extends Controller
             GROUP BY N.id
             ORDER BY 
                 N.data DESC, N.id DESC
-            LIMIT 1000
+            LIMIT 200
         ");  
         
         $array = [];

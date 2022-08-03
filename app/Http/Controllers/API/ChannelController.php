@@ -36,7 +36,8 @@ class ChannelController extends Controller
                 CH.id AS channels_id,
                 CH.name AS channel,
                 CH.image AS channel_logo,
-                CH.type AS channel_type
+                CH.type AS channel_type,
+                CH.slug AS channel_slug
             
             FROM channels CH
             WHERE CH.status = 'active'
@@ -52,7 +53,8 @@ class ChannelController extends Controller
                 CH.id AS channels_id,
                 CH.name AS channel,
                 CH.image AS channel_logo,
-                CH.type AS channel_type
+                CH.type AS channel_type,
+                CH.slug AS channel_slug
             
             FROM channels CH
             WHERE CH.status = 'active'
@@ -134,7 +136,8 @@ class ChannelController extends Controller
                 CH.id AS channels_id,
                 CH.name AS channel,
                 CH.image AS channel_logo,
-                CH.type AS channel_type
+                CH.type AS channel_type,
+                CH.slug AS channel_slug
             
             FROM channels CH
             WHERE CH.status = 'active'
@@ -151,7 +154,8 @@ class ChannelController extends Controller
                 CH.id AS channels_id,
                 CH.name AS channel,
                 CH.image AS channel_logo,
-                CH.type AS channel_type
+                CH.type AS channel_type,
+                CH.slug AS channel_slug
             
             FROM channels CH
             WHERE CH.status = 'active'
@@ -217,12 +221,31 @@ class ChannelController extends Controller
             FROM users U
             WHERE U.api_token = '".$request->input('apiToken')."'
         ");  
+
+        //Busca id paramter
+        $id_paramter = DB::select("
+                            SELECT 
+                                C.id AS id
+                            FROM channels C
+                            WHERE C.slug = '".$request->input('channels_id')."'
+                            LIMIT 1
+                        "); 
+                        
+        if(count($id_paramter)> 0){
+            $param_tag_id = $id_paramter[0]->id;
+        }else{
+            $param_tag_id = 0;
+        }
+        
         if($user){
-            $user_channles = DB::table('user_channels')->where('users_id', '=',$user[0]->id)->where('channels_id', '=',$request->input('channels_id'))->first();
+           
+            $user_channles = DB::table('user_channels')->where('users_id', '=',$user[0]->id)->where('channels_id', '=', $param_tag_id )->first();
+           
             if(!$user_channles){
+              
                 $insert = new UserChannels;
                 $insert->users_id = $user[0]->id;
-                $insert->channels_id = $request->input('channels_id');
+                $insert->channels_id = $param_tag_id;
                 $condition = $insert->save();
                 if($condition){
                     return $this->ResponseAPI( 
@@ -265,9 +288,25 @@ class ChannelController extends Controller
             FROM users U
             WHERE U.api_token = '".$request->input('apiToken')."'
         ");  
+
+        //Busca id paramter
+        $id_paramter = DB::select("
+                            SELECT 
+                                C.id AS id
+                            FROM channels C
+                            WHERE C.slug = '".$request->input('channels_id')."'
+                            LIMIT 1
+                        "); 
+                        
+        if(count($id_paramter)> 0){
+            $param_tag_id = $id_paramter[0]->id;
+        }else{
+            $param_tag_id = 0;
+        }
         
         if($user){
-            $item = UserChannels::where('channels_id', '=', $request->channels_id)->first();
+            $item = UserChannels::where('channels_id', '=',$param_tag_id)->first();
+            
             if( $item ){
                 $item_delete = UserChannels::find($item->id);
                 $condition_delete = $item_delete->delete();

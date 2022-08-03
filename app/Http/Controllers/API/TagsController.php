@@ -34,7 +34,8 @@ class TagsController extends Controller
             SELECT 
                 T.id AS tag_id,
                 T.title AS tag_name,
-                T.image AS tag_image
+                T.image AS tag_image,
+                T.slug AS tag_slug
             
             FROM tags T
             WHERE T.status = 'active' 
@@ -49,7 +50,8 @@ class TagsController extends Controller
             SELECT 
                 T.id AS tag_id,
                 T.title AS tag_name,
-                T.image AS tag_image
+                T.image AS tag_image,
+                T.slug AS tag_slug
                
             FROM tags T
             WHERE T.status = 'active' 
@@ -132,7 +134,8 @@ class TagsController extends Controller
             SELECT 
                 T.id AS tag_id,
                 T.title AS tag_name,
-                T.image AS tag_image
+                T.image AS tag_image,
+                T.slug AS tag_slug
             
             FROM tags T
             WHERE T.status = 'active' 
@@ -148,7 +151,8 @@ class TagsController extends Controller
             SELECT 
                 T.id AS tag_id,
                 T.title AS tag_name,
-                T.image AS tag_image
+                T.image AS tag_image,
+                T.slug AS tag_slug
                
             FROM tags T
             WHERE T.status = 'active' 
@@ -295,6 +299,7 @@ class TagsController extends Controller
                 T.id AS tag_id,
                 T.title AS tag_name,
                 T.image AS tag_image,
+                T.slug AS tag_slug,
                 T.status AS tag_status,
                 CH.id AS channels_id,
                 CH.name AS channel,
@@ -330,7 +335,8 @@ class TagsController extends Controller
                 SELECT 
                 T.id AS tag_id,
                 T.title AS tag_name,
-                T.image AS tag_image
+                T.image AS tag_image,
+                T.slug AS tag_slug
 
                 FROM news_tags N_T 
                     INNER JOIN tags T 
@@ -366,13 +372,29 @@ class TagsController extends Controller
             FROM users U
             WHERE U.api_token = '".$request->input('apiToken')."'
         ");  
+        
+        //Busca id paramter
+        $id_paramter = DB::select("
+                            SELECT 
+                                T.id AS id
+                            FROM tags T
+                            WHERE T.slug = '".$request->tags_id."'
+                            LIMIT 1
+                        "); 
+                        
+        if(count($id_paramter)> 0){
+            $param_tag_id = strVal($id_paramter[0]->id);
+        }else{
+            $param_tag_id = 0;
+        }
+
         if($user){
-            $user_tags = DB::table('user_tags')->where('users_id', '=',$user[0]->id)->where('tags_id', '=',$request->input('tags_id'))->first();
+            $user_tags = DB::table('user_tags')->where('users_id', '=',$user[0]->id)->where('tags_id', '=',$param_tag_id)->first();
            
             if(!$user_tags){
                 $insert = new UserTags;
                 $insert->users_id = $user[0]->id;
-                $insert->tags_id = $request->input('tags_id');
+                $insert->tags_id = $param_tag_id;
                 $condition = $insert->save();
                 if($condition){
                     return $this->ResponseAPI( 
@@ -416,9 +438,23 @@ class TagsController extends Controller
             FROM users U
             WHERE U.api_token = '".$request->input('apiToken')."'
         ");  
+
+        $id_paramter = DB::select("
+                                    SELECT 
+                                        T.id AS id
+                                    FROM tags T
+                                    WHERE T.slug = '".$request->tags_id."'
+                                    LIMIT 1
+                                "); 
+            
+        if(count($id_paramter)> 0){
+            $param_tag_id = strVal($id_paramter[0]->id);
+        }else{
+            $param_tag_id = 0;
+        }
         
         if($user){
-            $item = UserTags::where('tags_id', '=', $request->tags_id)->first();
+            $item = UserTags::where('tags_id', '=', $param_tag_id)->first();
             if( $item ){
                 $item_delete = UserTags::find($item->id);
                 $condition_delete = $item_delete->delete();

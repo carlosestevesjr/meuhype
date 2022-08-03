@@ -111,6 +111,28 @@ class ChannelController extends Controller
        
     }
 
+    public function channelSingle(Request $request)
+    {
+      
+       
+        $channel = DB::select("
+            SELECT 
+                *
+            FROM channels  CH
+            WHERE CH.slug = '".$request->channel_id."'
+        ");  
+
+        
+        return $this->ResponseAPI( 
+            [
+                'dados' => $channel
+            ]
+            ,"O recurso solicitado foi processado e retornado com sucesso.", 200, '000'
+        );
+       
+    }
+
+
     public function listaChannelsSearch(Request $request)
     {
         // $lista = DB::table('channels')->orderBy('name', 'Asc')->get();

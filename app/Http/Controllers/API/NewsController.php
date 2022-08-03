@@ -91,6 +91,7 @@ class NewsController extends Controller
                 N.id AS news_id,
                 N.title AS news_title,
                 N.image AS news_image,
+                N.hash AS news_hash,
                 N.data AS news_data,
                 N.link AS news_link,
                 CH.id AS channels_id,
@@ -122,6 +123,7 @@ class NewsController extends Controller
                 N.id AS news_id,
                 N.title AS news_title,
                 N.image AS news_image,
+                N.hash AS news_hash,
                 N.data AS news_data,
                 N.link AS news_link,
                 CH.id AS channels_id,
@@ -274,6 +276,7 @@ class NewsController extends Controller
                 N.id AS news_id,
                 N.title AS news_title,
                 N.image AS news_image,
+                N.hash AS news_hash,
                 N.data AS news_data,
                 N.link AS news_link,
                 CH.id AS channels_id,
@@ -306,6 +309,7 @@ class NewsController extends Controller
                 N.id AS news_id,
                 N.title AS news_title,
                 N.image AS news_image,
+                N.hash AS news_hash,
                 N.data AS news_data,
                 N.link AS news_link,
                 CH.id AS channels_id,
@@ -381,8 +385,22 @@ class NewsController extends Controller
         if($request->tag_id){
             $param_tag_id = $request->tag_id;
         }
-
-        $qtd =15;
+        //Busca id paramter
+        $id_paramter =  $user = DB::select("
+                            SELECT 
+                                T.id AS id
+                            FROM tags T
+                            WHERE T.slug = '".$param_tag_id."'
+                            LIMIT 1
+                        "); 
+                        
+        if(count($id_paramter)> 0){
+            $param_tag_id = strVal($id_paramter[0]->id);
+        }else{
+            $param_tag_id = 0;
+        }
+        
+        $qtd = 15;
         if($request->input('qtd')){
             $qtd = $request->input('qtd');
         }
@@ -458,6 +476,7 @@ class NewsController extends Controller
                 N.id AS news_id,
                 N.title AS news_title,
                 N.image AS news_image,
+                N.hash AS news_hash,
                 N.data AS news_data,
                 N.link AS news_link,
                 CH.id AS channels_id,
@@ -489,6 +508,7 @@ class NewsController extends Controller
                 N.id AS news_id,
                 N.title AS news_title,
                 N.image AS news_image,
+                N.hash AS news_hash,
                 N.data AS news_data,
                 N.link AS news_link,
                 CH.id AS channels_id,
@@ -644,6 +664,7 @@ class NewsController extends Controller
                 N.id AS news_id,
                 N.title AS news_title,
                 N.image AS news_image,
+                N.hash AS news_hash,
                 N.data AS news_data,
                 N.link AS news_link,
                 CH.id AS channels_id,
@@ -675,6 +696,7 @@ class NewsController extends Controller
                 N.id AS news_id,
                 N.title AS news_title,
                 N.image AS news_image,
+                N.hash AS news_hash,
                 N.data AS news_data,
                 N.link AS news_link,
                 CH.id AS channels_id,

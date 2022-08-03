@@ -57,10 +57,14 @@ class TagsCrawlerController extends Controller
 
     public function store(Request $request)
     {
-
+    
+        $valida_dados =  $request->all();
+        $valida_dados['slug'] = Str::slug($request->input('title'));
+       
 		//Validando os campos
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make($valida_dados, [
                 'title' => 'required|max:255',
+                'slug' => 'required|unique:tags'
                 // 'image' => 'file|required|max:500',
                 // 'image' => 'file|required|max:500|dimensions:max_width=1366,max_height=768',
             ],
@@ -69,6 +73,7 @@ class TagsCrawlerController extends Controller
                 'max'    => 'A imagem :attribute não tem o tamanho correto - :max kb.', // Peso da imagem em KB
                 'title.unique'    => 'Esta tag já existe.',
                 'title.required' => 'O campo nome deve ser preenchido.',
+                'slug.unique'    => 'O titulo já existe.',
                 // 'image.required' => 'Faça upload de uma imagem.',
             ]
         );
@@ -141,7 +146,6 @@ class TagsCrawlerController extends Controller
             $messages = [
                 // 'dimensions' => 'A imagem não esta nas dimenssões especificadas abaixo do campo.',
                 'max'    => 'A imagem :attribute não tem o tamanho correto - :max kb.', // Peso da imagem em KB
-                'unique'    => 'O email deve ser único.',
                 'title.required' => 'O campo nome deve ser preenchido.',
                 // 'image.required' => 'Faça upload de uma imagem.',
             ]
@@ -156,7 +160,7 @@ class TagsCrawlerController extends Controller
             // Cadastrando um novo Registro
 			$insert = Tags::find($id);
             $insert->title = $request->input('title');
-            $insert->slug = Str::slug($request->input('title'));
+            $insert->slug = $request->input('slug');
             $insert->description = $request->input('description');
             $insert->description_short = $request->input('description_short');
             $insert->keywords = $request->input('keywords');

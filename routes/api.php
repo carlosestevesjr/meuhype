@@ -59,6 +59,7 @@ Route::group(['prefix' => 'v1', 'middleware' => ['cors']], function () {
         Route::post('contato','ContactController@contato');
 
         //Tags 
+        Route::get('tag-single/{tag_id}','TagsController@tagSingle');
         Route::get('lista-tags','TagsController@listaTags');
         Route::get('lista-tags-search','TagsController@listaTagsSearch');
 
@@ -70,6 +71,7 @@ Route::group(['prefix' => 'v1', 'middleware' => ['cors']], function () {
         Route::post('unset-tag/','TagsController@postUnsetTag');
         
         //Canais 
+        Route::get('channel-single/{channel_id}','ChannelController@channelSingle');
         Route::get('lista-channels-search','ChannelController@listaChannelsSearch');
         Route::get('lista-channels','ChannelController@listaChannels');
         

@@ -111,6 +111,25 @@ class TagsController extends Controller
         );
     }
 
+    public function tagSingle(Request $request)
+    {
+      
+        $tag = DB::select("
+            SELECT 
+                *
+            FROM tags T
+            WHERE T.slug = '".$request->tag_id."'
+        ");  
+        
+        return $this->ResponseAPI( 
+            [
+                'dados' => $tag
+            ]
+            ,"O recurso solicitado foi processado e retornado com sucesso.", 200, '000'
+        );
+       
+    }
+
     public function listaTagsSearch(Request $request)
     {
 

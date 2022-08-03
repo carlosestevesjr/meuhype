@@ -14,6 +14,7 @@ class NewsController extends Controller
 
     public function listaNews(Request $request)
     {
+       
         $qtd =15;
         if($request->input('qtd')){
             $qtd = $request->input('qtd');

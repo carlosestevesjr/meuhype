@@ -97,7 +97,8 @@ class NewsController extends Controller
                 CH.id AS channels_id,
                 CH.name AS channel,
                 CH.image AS channel_logo,
-                CH.type AS channel_type
+                CH.type AS channel_type,
+                CH.slug AS channel_slug
             
             FROM news_tags N_T
 
@@ -129,7 +130,8 @@ class NewsController extends Controller
                 CH.id AS channels_id,
                 CH.name AS channel,
                 CH.image AS channel_logo,
-                CH.type AS channel_type
+                CH.type AS channel_type,
+                CH.slug AS channel_slug
             
             FROM news_tags N_T
 
@@ -156,7 +158,8 @@ class NewsController extends Controller
                 SELECT 
                 T.id AS tag_id,
                 T.title AS tag_name,
-                T.image AS tag_image
+                T.image AS tag_image,
+                T.slug AS tag_slug
 
                 FROM news_tags N_T 
                     INNER JOIN tags T 
@@ -282,7 +285,8 @@ class NewsController extends Controller
                 CH.id AS channels_id,
                 CH.name AS channel,
                 CH.image AS channel_logo,
-                CH.type AS channel_type
+                CH.type AS channel_type,
+                CH.slug AS channel_slug
             
             FROM news_tags N_T
 
@@ -315,7 +319,8 @@ class NewsController extends Controller
                 CH.id AS channels_id,
                 CH.name AS channel,
                 CH.image AS channel_logo,
-                CH.type AS channel_type
+                CH.type AS channel_type,
+                CH.slug AS channel_slug
             
             FROM news_tags N_T
 
@@ -344,7 +349,8 @@ class NewsController extends Controller
                 SELECT 
                 T.id AS tag_id,
                 T.title AS tag_name,
-                T.image AS tag_image
+                T.image AS tag_image,
+                T.slug AS tag_slug
 
                 FROM news_tags N_T 
                     INNER JOIN tags T 
@@ -386,7 +392,7 @@ class NewsController extends Controller
             $param_tag_id = $request->tag_id;
         }
         //Busca id paramter
-        $id_paramter =  $user = DB::select("
+        $id_paramter = DB::select("
                             SELECT 
                                 T.id AS id
                             FROM tags T
@@ -482,7 +488,8 @@ class NewsController extends Controller
                 CH.id AS channels_id,
                 CH.name AS channel,
                 CH.image AS channel_logo,
-                CH.type AS channel_type
+                CH.type AS channel_type,
+                CH.slug AS channel_slug
             
             FROM news_tags N_T
 
@@ -514,7 +521,8 @@ class NewsController extends Controller
                 CH.id AS channels_id,
                 CH.name AS channel,
                 CH.image AS channel_logo,
-                CH.type AS channel_type
+                CH.type AS channel_type,
+                CH.slug AS channel_slug
                
             FROM news_tags N_T
 
@@ -542,7 +550,8 @@ class NewsController extends Controller
                 SELECT 
                 T.id AS tag_id,
                 T.title AS tag_name,
-                T.image AS tag_image
+                T.image AS tag_image,
+                T.slug AS tag_slug
 
                 FROM news_tags N_T 
                     INNER JOIN tags T 
@@ -587,6 +596,21 @@ class NewsController extends Controller
             $param_channel_id = $request->channel_id;
         }
 
+        //Busca id paramter
+        $id_paramter = DB::select("
+                            SELECT 
+                                C.id AS id
+                            FROM channels C
+                            WHERE C.slug = '".$param_channel_id."'
+                            LIMIT 1
+                        "); 
+                        
+        if(count($id_paramter)> 0){
+            $param_channel_id = strVal($id_paramter[0]->id);
+        }else{
+            $param_channel_id = 0;
+        }
+        
         $qtd =15;
         if($request->input('qtd')){
             $qtd = $request->input('qtd');
@@ -670,7 +694,8 @@ class NewsController extends Controller
                 CH.id AS channels_id,
                 CH.name AS channel,
                 CH.image AS channel_logo,
-                CH.type AS channel_type
+                CH.type AS channel_type,
+                CH.slug AS channel_slug
             
             FROM news_tags N_T
 
@@ -702,7 +727,8 @@ class NewsController extends Controller
                 CH.id AS channels_id,
                 CH.name AS channel,
                 CH.image AS channel_logo,
-                CH.type AS channel_type
+                CH.type AS channel_type,
+                CH.slug AS channel_slug
             
             FROM news_tags N_T
 
@@ -729,7 +755,8 @@ class NewsController extends Controller
                 SELECT 
                 T.id AS tag_id,
                 T.title AS tag_name,
-                T.image AS tag_image
+                T.image AS tag_image,
+                T.slug AS tag_slug
 
                 FROM news_tags N_T 
                     INNER JOIN tags T 

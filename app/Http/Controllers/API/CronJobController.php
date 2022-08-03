@@ -94,22 +94,22 @@ class CronJobController extends Controller
             echo '<pre>';
             print_r($arrayResults);
             echo '</pre>';
-            Mail::send('emails.contato', $dados, function ($message) {
-                $message->from('inthemovie@nocinema.kinghost.net', 'Contato Meu Hype');
-                $message->subject('Contato Pelo Site');
-                $message->to('carlosestevesjr0@gmail.com');
+            // Mail::send('emails.contato', $dados, function ($message) {
+            //     $message->from('inthemovie@nocinema.kinghost.net', 'Contato Meu Hype');
+            //     $message->subject('Contato Pelo Site');
+            //     $message->to('carlosestevesjr0@gmail.com');
                 
-            });
+            // });
         }
         catch (Exception $e) {
             echo $e->getMessage();
             $dados = [ 'data'  => $e->getMessage()];
 
-            Mail::send('emails.contato', $dados, function ($message) {
-                $message->from('inthemovie@nocinema.kinghost.net', 'Contato Meu Hype');
-                $message->subject('Contato Pelo Site');
-                $message->to('carlosestevesjr0@gmail.com');
-            });
+            // Mail::send('emails.contato', $dados, function ($message) {
+            //     $message->from('inthemovie@nocinema.kinghost.net', 'Contato Meu Hype');
+            //     $message->subject('Contato Pelo Site');
+            //     $message->to('carlosestevesjr0@gmail.com');
+            // });
         }
         
         // return response()->json($arrayResults , 200);

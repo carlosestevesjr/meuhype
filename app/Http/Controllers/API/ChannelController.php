@@ -37,7 +37,13 @@ class ChannelController extends Controller
                 CH.name AS channel,
                 CH.image AS channel_logo,
                 CH.type AS channel_type,
-                CH.slug AS channel_slug
+                CH.slug AS channel_slug,
+                CH.description AS channel_description,
+                CH.facebook AS channel_facebook,
+                CH.instagram AS channel_instagram,
+                CH.youtube AS channel_youtube,
+                CH.twitter AS channel_twitter
+               
             
             FROM channels CH
             WHERE CH.status = 'active'
@@ -54,7 +60,13 @@ class ChannelController extends Controller
                 CH.name AS channel,
                 CH.image AS channel_logo,
                 CH.type AS channel_type,
-                CH.slug AS channel_slug
+                CH.slug AS channel_slug,
+                CH.description AS channel_description,
+                CH.facebook AS channel_facebook,
+                CH.instagram AS channel_instagram,
+                CH.youtube AS channel_youtube,
+                CH.twitter AS channel_twitter
+               
             
             FROM channels CH
             WHERE CH.status = 'active'
@@ -159,7 +171,13 @@ class ChannelController extends Controller
                 CH.name AS channel,
                 CH.image AS channel_logo,
                 CH.type AS channel_type,
-                CH.slug AS channel_slug
+                CH.slug AS channel_slug,
+                CH.description AS channel_description,
+                CH.facebook AS channel_facebook,
+                CH.instagram AS channel_instagram,
+                CH.youtube AS channel_youtube,
+                CH.twitter AS channel_twitter
+               
             
             FROM channels CH
             WHERE CH.status = 'active'
@@ -177,7 +195,13 @@ class ChannelController extends Controller
                 CH.name AS channel,
                 CH.image AS channel_logo,
                 CH.type AS channel_type,
-                CH.slug AS channel_slug
+                CH.slug AS channel_slug,
+                CH.description AS channel_description,
+                CH.facebook AS channel_facebook,
+                CH.instagram AS channel_instagram,
+                CH.youtube AS channel_youtube,
+                CH.twitter AS channel_twitter
+               
             
             FROM channels CH
             WHERE CH.status = 'active'

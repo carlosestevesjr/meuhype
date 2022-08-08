@@ -35,7 +35,8 @@ class TagsController extends Controller
                 T.id AS tag_id,
                 T.title AS tag_name,
                 T.image AS tag_image,
-                T.slug AS tag_slug
+                T.slug AS tag_slug,
+                T.description_short AS tag_descriptionshort
             
             FROM tags T
             WHERE T.status = 'active' 
@@ -51,7 +52,8 @@ class TagsController extends Controller
                 T.id AS tag_id,
                 T.title AS tag_name,
                 T.image AS tag_image,
-                T.slug AS tag_slug
+                T.slug AS tag_slug,
+                T.description_short AS tag_descriptionshort
                
             FROM tags T
             WHERE T.status = 'active' 
@@ -154,7 +156,8 @@ class TagsController extends Controller
                 T.id AS tag_id,
                 T.title AS tag_name,
                 T.image AS tag_image,
-                T.slug AS tag_slug
+                T.slug AS tag_slug,
+                T.description_short AS tag_descriptionshort
             
             FROM tags T
             WHERE T.status = 'active' 
@@ -171,7 +174,8 @@ class TagsController extends Controller
                 T.id AS tag_id,
                 T.title AS tag_name,
                 T.image AS tag_image,
-                T.slug AS tag_slug
+                T.slug AS tag_slug,
+                T.description_short AS tag_descriptionshort
                
             FROM tags T
             WHERE T.status = 'active' 
@@ -319,6 +323,7 @@ class TagsController extends Controller
                 T.title AS tag_name,
                 T.image AS tag_image,
                 T.slug AS tag_slug,
+                T.description_short AS tag_descriptionshort,
                 T.status AS tag_status,
                 CH.id AS channels_id,
                 CH.name AS channel,
@@ -355,7 +360,8 @@ class TagsController extends Controller
                 T.id AS tag_id,
                 T.title AS tag_name,
                 T.image AS tag_image,
-                T.slug AS tag_slug
+                T.slug AS tag_slug,
+                T.description_short AS tag_descriptionshort
 
                 FROM news_tags N_T 
                     INNER JOIN tags T 

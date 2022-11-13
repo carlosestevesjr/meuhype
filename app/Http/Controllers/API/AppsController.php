@@ -23,7 +23,7 @@ class AppsController extends Controller
                     "name": "@ce/pokedex",
                     "package": "@ce/pokedex",
                     "activeWhen": "/pokedex",
-                    "exact": true
+                    "exact": false
                 }
             ]
         

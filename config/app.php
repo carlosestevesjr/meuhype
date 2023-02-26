@@ -178,7 +178,6 @@ return [
         /*
          * Application Service Providers Minhas...
          */
-        
 
     ],
 
@@ -232,7 +231,6 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         //Minhas Aliasses
-        
 
     ],
 

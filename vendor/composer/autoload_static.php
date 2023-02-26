@@ -132,6 +132,7 @@ class ComposerStaticInita2f52c051d69eb4d44e32ab360a51a13
             'GuzzleHttp\\Psr7\\' => 16,
             'GuzzleHttp\\Promise\\' => 19,
             'GuzzleHttp\\' => 11,
+            'Gumlet\\' => 7,
         ),
         'F' => 
         array (
@@ -403,6 +404,10 @@ class ComposerStaticInita2f52c051d69eb4d44e32ab360a51a13
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/guzzle/src',
         ),
+        'Gumlet\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/gumlet/php-image-resize/lib',
+        ),
         'Fruitcake\\Cors\\' => 
         array (
             0 => __DIR__ . '/..' . '/fruitcake/laravel-cors/src',
@@ -517,6 +522,7 @@ class ComposerStaticInita2f52c051d69eb4d44e32ab360a51a13
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
         'App\\Exceptions\\MyCustomException' => __DIR__ . '/../..' . '/app/Exceptions/MyCustomException.php',
         'App\\Fornecedores\\Youtube\\ComunicaYoutube' => __DIR__ . '/../..' . '/app/Fornecedores/Youtube/ComunicaYoutube.php',
+        'App\\Http\\Controllers\\API\\AppsController' => __DIR__ . '/../..' . '/app/Http/Controllers/API/AppsController.php',
         'App\\Http\\Controllers\\API\\ChannelController' => __DIR__ . '/../..' . '/app/Http/Controllers/API/ChannelController.php',
         'App\\Http\\Controllers\\API\\ContactController' => __DIR__ . '/../..' . '/app/Http/Controllers/API/ContactController.php',
         'App\\Http\\Controllers\\API\\CronJobController' => __DIR__ . '/../..' . '/app/Http/Controllers/API/CronJobController.php',
@@ -1487,6 +1493,8 @@ class ComposerStaticInita2f52c051d69eb4d44e32ab360a51a13
         'Fideloper\\Proxy\\TrustedProxyServiceProvider' => __DIR__ . '/..' . '/fideloper/proxy/src/TrustedProxyServiceProvider.php',
         'Fruitcake\\Cors\\CorsServiceProvider' => __DIR__ . '/..' . '/fruitcake/laravel-cors/src/CorsServiceProvider.php',
         'Fruitcake\\Cors\\HandleCors' => __DIR__ . '/..' . '/fruitcake/laravel-cors/src/HandleCors.php',
+        'Gumlet\\ImageResize' => __DIR__ . '/..' . '/gumlet/php-image-resize/lib/ImageResize.php',
+        'Gumlet\\ImageResizeException' => __DIR__ . '/..' . '/gumlet/php-image-resize/lib/ImageResizeException.php',
         'GuzzleHttp\\BodySummarizer' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/BodySummarizer.php',
         'GuzzleHttp\\BodySummarizerInterface' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/BodySummarizerInterface.php',
         'GuzzleHttp\\Client' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/Client.php',

@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::group(['prefix' => 'v1', 'middleware' => ['cors']], function () {
+  
     
     Route::group(['namespace'=>'AuthAPI'], function () {
         // Register
@@ -91,6 +92,7 @@ Route::group(['prefix' => 'v1', 'middleware' => ['cors']], function () {
         Route::get('lista-news-channel-user/{id}/{token}','NewsController@listaNewsChannelUser');
 
         Route::get('cronjob','CronJobController@index');
+        Route::get('cronjob/resize','CronJobController@resize');
         Route::get('cronjob/{channel_id}/{}','CronJobController@index');
     });
 

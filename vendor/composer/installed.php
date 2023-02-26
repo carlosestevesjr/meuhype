@@ -1,11 +1,11 @@
 <?php return array(
     'root' => array(
-        'pretty_version' => 'dev-master',
-        'version' => 'dev-master',
+        'pretty_version' => 'dev-develop',
+        'version' => 'dev-develop',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '9de9b97ba87e75536202f83f12066aafb75f6ee6',
+        'reference' => 'd232ccee37894240b0ec2d68e2ccb8bda0c49843',
         'name' => 'laravel/laravel',
         'dev' => true,
     ),
@@ -155,6 +155,15 @@
             'install_path' => __DIR__ . '/../fruitcake/laravel-cors',
             'aliases' => array(),
             'reference' => '783a74f5e3431d7b9805be8afb60fd0a8f743534',
+            'dev_requirement' => false,
+        ),
+        'gumlet/php-image-resize' => array(
+            'pretty_version' => '2.0.3',
+            'version' => '2.0.3.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../gumlet/php-image-resize',
+            'aliases' => array(),
+            'reference' => 'aee4e2573e83476ffd0ac64b7269f838c8cd9d68',
             'dev_requirement' => false,
         ),
         'guzzlehttp/guzzle' => array(
@@ -383,12 +392,12 @@
             'dev_requirement' => false,
         ),
         'laravel/laravel' => array(
-            'pretty_version' => 'dev-master',
-            'version' => 'dev-master',
+            'pretty_version' => 'dev-develop',
+            'version' => 'dev-develop',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '9de9b97ba87e75536202f83f12066aafb75f6ee6',
+            'reference' => 'd232ccee37894240b0ec2d68e2ccb8bda0c49843',
             'dev_requirement' => false,
         ),
         'laravel/tinker' => array(

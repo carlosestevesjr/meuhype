@@ -29,19 +29,33 @@ class TagsController extends Controller
         if($request->input('page')){
             $page = ($request->input('page') == 0 ) ? $request->input('page') + 1 : $request->input('page');
         }
+
+        // Mantém todas as tags disponíveis e prioriza as que têm conteúdo mais quente.
+        // A notícia mais recente define a ordem principal e o volume dos últimos 7 dias
+        // desempata tags atualizadas na mesma data.
+        $sql_tags_hotness = "
+            LEFT JOIN (
+                SELECT
+                    N_T.tags_id,
+                    MAX(N.data) AS latest_news_at,
+                    COUNT(DISTINCT CASE
+                        WHEN N.data >= DATE_SUB(NOW(), INTERVAL 7 DAY) THEN N.id
+                    END) AS recent_news_count
+                FROM news_tags N_T
+                INNER JOIN news N
+                    ON N.id = N_T.news_id
+                    AND N.status = 'show'
+                GROUP BY N_T.tags_id
+            ) TAG_HOTNESS
+                ON TAG_HOTNESS.tags_id = T.id
+        ";
        
         $busca_total_registros = DB::select("
             SELECT 
-                T.id AS tag_id,
-                T.title AS tag_name,
-                T.image AS tag_image,
-                T.slug AS tag_slug,
-                T.description_short AS tag_descriptionshort
+                T.id AS tag_id
             
             FROM tags T
             WHERE T.status = 'active' 
-            ORDER BY 
-                T.title ASC
         ");  
 
         $inicio = ($qtd*$page) - $qtd; 
@@ -53,11 +67,20 @@ class TagsController extends Controller
                 T.title AS tag_name,
                 T.image AS tag_image,
                 T.slug AS tag_slug,
-                T.description_short AS tag_descriptionshort
+                T.description_short AS tag_descriptionshort,
+                T.imdb_url AS tag_imdb_url,
+                T.imdb_rating AS tag_imdb_rating,
+                T.imdb_vote_count AS tag_imdb_vote_count,
+                T.imdb_popularity AS tag_imdb_popularity,
+                TAG_HOTNESS.latest_news_at AS tag_latest_news_at,
+                COALESCE(TAG_HOTNESS.recent_news_count, 0) AS tag_recent_news_count
                
             FROM tags T
+            $sql_tags_hotness
             WHERE T.status = 'active' 
             ORDER BY 
+                TAG_HOTNESS.latest_news_at DESC,
+                TAG_HOTNESS.recent_news_count DESC,
                 T.title ASC
             LIMIT $inicio , $qtd
         ");  
@@ -150,20 +173,32 @@ class TagsController extends Controller
         if($request->input('search')){
             $search = "AND T.title LIKE '%$v_search%'";
         }
+
+        // A busca preserva a mesma relevância da lista principal de tags.
+        $sql_tags_hotness = "
+            LEFT JOIN (
+                SELECT
+                    N_T.tags_id,
+                    MAX(N.data) AS latest_news_at,
+                    COUNT(DISTINCT CASE
+                        WHEN N.data >= DATE_SUB(NOW(), INTERVAL 7 DAY) THEN N.id
+                    END) AS recent_news_count
+                FROM news_tags N_T
+                INNER JOIN news N
+                    ON N.id = N_T.news_id
+                    AND N.status = 'show'
+                GROUP BY N_T.tags_id
+            ) TAG_HOTNESS
+                ON TAG_HOTNESS.tags_id = T.id
+        ";
        
         $busca_total_registros = DB::select("
             SELECT 
-                T.id AS tag_id,
-                T.title AS tag_name,
-                T.image AS tag_image,
-                T.slug AS tag_slug,
-                T.description_short AS tag_descriptionshort
+                T.id AS tag_id
             
             FROM tags T
             WHERE T.status = 'active' 
             $search
-            ORDER BY 
-                T.title ASC
         ");  
 
         $inicio = ($qtd*$page) - $qtd; 
@@ -175,12 +210,21 @@ class TagsController extends Controller
                 T.title AS tag_name,
                 T.image AS tag_image,
                 T.slug AS tag_slug,
-                T.description_short AS tag_descriptionshort
+                T.description_short AS tag_descriptionshort,
+                T.imdb_url AS tag_imdb_url,
+                T.imdb_rating AS tag_imdb_rating,
+                T.imdb_vote_count AS tag_imdb_vote_count,
+                T.imdb_popularity AS tag_imdb_popularity,
+                TAG_HOTNESS.latest_news_at AS tag_latest_news_at,
+                COALESCE(TAG_HOTNESS.recent_news_count, 0) AS tag_recent_news_count
                
             FROM tags T
+            $sql_tags_hotness
             WHERE T.status = 'active' 
             $search
             ORDER BY 
+                TAG_HOTNESS.latest_news_at DESC,
+                TAG_HOTNESS.recent_news_count DESC,
                 T.title ASC
             LIMIT $inicio , $qtd
         ");  
@@ -325,6 +369,10 @@ class TagsController extends Controller
                 T.slug AS tag_slug,
                 T.description_short AS tag_descriptionshort,
                 T.status AS tag_status,
+                T.imdb_url AS tag_imdb_url,
+                T.imdb_rating AS tag_imdb_rating,
+                T.imdb_vote_count AS tag_imdb_vote_count,
+                T.imdb_popularity AS tag_imdb_popularity,
                 CH.id AS channels_id,
                 CH.name AS channel,
                 CH.image AS channel_logo,
@@ -479,7 +527,12 @@ class TagsController extends Controller
         }
         
         if($user){
-            $item = UserTags::where('tags_id', '=', $param_tag_id)->first();
+            // Remove somente a seleção pertencente ao usuário autenticado.
+            // Sem o filtro por users_id, o primeiro vínculo de outro usuário
+            // poderia ser excluído e a seleção atual continuaria marcada.
+            $item = UserTags::where('users_id', '=', $user[0]->id)
+                ->where('tags_id', '=', $param_tag_id)
+                ->first();
             if( $item ){
                 $item_delete = UserTags::find($item->id);
                 $condition_delete = $item_delete->delete();
@@ -516,6 +569,95 @@ class TagsController extends Controller
            
         }
         
+    }
+
+    /**
+     * Seleciona ou remove, em uma única operação, todas as tags ativas.
+     * O filtro opcional usa o nome da tag e não fica limitado à página atual.
+     */
+    public function postSetAllTags(Request $request)
+    {
+        $validated = $request->validate([
+            'apiToken' => 'required|string',
+            'select' => 'required|boolean',
+            'search' => 'nullable|string|max:255',
+        ]);
+
+        $user = DB::table('users')
+            ->where('api_token', $validated['apiToken'])
+            ->first();
+
+        if (!$user) {
+            return $this->ResponseAPI(
+                ['dados' => ['message' => 'Token não existe.']],
+                'Não foi possível autenticar o usuário.',
+                401,
+                '999'
+            );
+        }
+
+        $tagsQuery = DB::table('tags')->where('status', 'active');
+        $search = trim((string) ($validated['search'] ?? ''));
+        if ($search !== '') {
+            $tagsQuery->where('title', 'like', '%' . $search . '%');
+        }
+
+        $tags = $tagsQuery->get(['id', 'slug']);
+        $tagIds = $tags->pluck('id')->map(function ($id) {
+            return (int) $id;
+        })->all();
+
+        DB::transaction(function () use ($user, $tagIds, $validated) {
+            if (empty($tagIds)) {
+                return;
+            }
+
+            if ((bool) $validated['select']) {
+                $existingIds = DB::table('user_tags')
+                    ->where('users_id', $user->id)
+                    ->whereIn('tags_id', $tagIds)
+                    ->pluck('tags_id')
+                    ->map(function ($id) {
+                        return (int) $id;
+                    })
+                    ->all();
+                $missingIds = array_diff($tagIds, $existingIds);
+                $now = now();
+                $rows = array_map(function ($tagId) use ($user, $now) {
+                    return [
+                        'users_id' => $user->id,
+                        'tags_id' => $tagId,
+                        'created_at' => $now,
+                        'updated_at' => $now,
+                    ];
+                }, $missingIds);
+                if (!empty($rows)) {
+                    DB::table('user_tags')->insert($rows);
+                }
+                return;
+            }
+
+            DB::table('user_tags')
+                ->where('users_id', $user->id)
+                ->whereIn('tags_id', $tagIds)
+                ->delete();
+        });
+
+        return $this->ResponseAPI(
+            [
+                'dados' => [
+                    'message' => (bool) $validated['select']
+                        ? 'Tags selecionadas com sucesso.'
+                        : 'Seleção das tags removida com sucesso.',
+                    'select' => (bool) $validated['select'] ? 1 : 0,
+                    'slugs' => $tags->pluck('slug')->values()->all(),
+                    'total' => count($tagIds),
+                ],
+            ],
+            'O recurso solicitado foi processado e retornado com sucesso.',
+            200,
+            '001'
+        );
     }
 
 }

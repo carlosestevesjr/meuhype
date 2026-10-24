@@ -1,10 +1,10 @@
 <h1 align="center">
     <img src="https://github.com/aerni/laravel-spotify/blob/master/logo.png" width="160">
     <br>
-    Laravel-Spotify
+    Spotify for Laravel
     <br>
 </h1>
-<h4 align="center">An easy to use Spotify Web API wrapper for Laravel 7 and 8</h4>
+<h4 align="center">An easy to use Spotify Web API wrapper for Laravel</h4>
 <p align="center">
     <a href="https://packagist.org/packages/aerni/laravel-spotify">
         <img src="https://flat.badgen.net/packagist/v/aerni/laravel-spotify" alt="Packagist version">
@@ -30,7 +30,7 @@
 </p>
 
 ## Introduction
-Laravel-Spotify makes working with the Spotify Web API a breeze. It provides straight forward methods for each endpoint and a fluent interface for optional parameters.
+Spotify for Laravel makes working with the Spotify Web API a breeze. It provides straight forward methods for each endpoint and a fluent interface for optional parameters.
 
 The package supports all Spotify Web API endpoints that are accessible with the [Client Credentials Flow](https://developer.spotify.com/documentation/general/guides/authorization-guide/#client-credentials-flow).
 
@@ -260,7 +260,7 @@ Spotify::playlistCoverImage('playlist_id')->get();
 ```
 
 ### Search
-[Spotify Web API Reference on Search](https://developer.spotify.com/documentation/web-api/reference/search/search/)
+[Spotify Web API Reference on Search](https://developer.spotify.com/documentation/web-api/reference/search/)
 
 ```php
 // Search items by query. Provide a string or array to the second parameter.
@@ -371,12 +371,12 @@ SpotifySeed::addArtists('artist_id_1, artist_id_2, artist_id_3');
 SpotifySeed::setArtists('artist_id_1, artist_id_2, artist_id_3');
 
 // Add a genre by ID.
-SpotifySeed::addGerne('gerne_id');
+SpotifySeed::addGenre('genre_id');
 
 // Add several genres by IDs. Provide a string or array of IDs.
-SpotifySeed::addGenres('gerne_id_1, gerne_id_2, gerne_id_3');
+SpotifySeed::addGenres('genre_id_1, genre_id_2, genre_id_3');
 
-// Set gernes by IDs. Provide a string or array of IDs. This overwrites previously added genres.
+// Set genres by IDs. Provide a string or array of IDs. This overwrites previously added genres.
 SpotifySeed::setGenres('genre_id_1, genre_id_2, genre_id_3');
 
 // Add a track by ID.

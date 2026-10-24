@@ -95,6 +95,7 @@ class ChannelsController extends Controller
             $insert->youtube = $request->input('youtube');
             $insert->link = $request->input('link');
             $insert->url_crawler = $request->input('url_crawler');
+            $insert->spotify_search_name = $request->input('spotify_search_name');
             $insert->keywords = $request->input('keywords');
             $insert->status = $request->input('status');
             $insert->order = $request->input('order');
@@ -171,6 +172,7 @@ class ChannelsController extends Controller
             $insert->youtube = $request->input('youtube');
             $insert->link = $request->input('link');
             $insert->url_crawler = $request->input('url_crawler');
+            $insert->spotify_search_name = $request->input('spotify_search_name');
             $insert->keywords = $request->input('keywords');
             $insert->status = $request->input('status');
             $insert->order = $request->input('order');

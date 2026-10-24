@@ -26,6 +26,16 @@ class ComunicaYoutube {
     private $tag;
 
     /**
+        * @var string
+    **/
+    private $base_url = "";
+
+    /**
+        * @var string
+    **/
+    private $url = "";
+
+    /**
         * @param string $tag
         * @param string $canal
         * @return self
@@ -50,12 +60,23 @@ class ComunicaYoutube {
         return $this;
     }
 
+    /**
+        * @param string $url
+        * @return self
+    **/
+    public function url($url) {
+
+        $this->url = $url;
+        return $this;
+    }
+
     public function get($quantidade = 15) {
-       
-        $data = $this->getCurl(sprintf($this->base_url, $this->canal, $this->tag));
+
+        $url = $this->url ?: sprintf($this->base_url, $this->canal, $this->tag);
+        $data = $this->getCurl($url);
         sleep(1);
         // var_dump($data); 
-        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)(;<)/', $data, $matches);
+        preg_match_all('/(var ytInitialData = )(?P<json>[\s\S]*?)(;<\/script>|;<)/', $data, $matches);
         // echo($matches['json'][0]); 
         
     
@@ -65,17 +86,11 @@ class ComunicaYoutube {
         }else{
             $dados = [];
         }
-       
-        foreach ($dados->contents->twoColumnBrowseResultsRenderer->tabs as $key1 => $item1) {
-            if(isset($item1->expandableTabRenderer) ){
-                $dados = $item1->expandableTabRenderer->content->sectionListRenderer->contents;
-                break;
-            }
-        }
-            
+
+        $videos = $this->buscaVideoRenderers($dados);
         $return['content'] = [];
         
-        foreach ($dados as $key => $value) {
+        foreach ($videos as $key => $video) {
             
             if($key >= $quantidade ){
                 break;
@@ -84,28 +99,65 @@ class ComunicaYoutube {
             $result['noticia'] = "";
             $result['img'] = "";
             $result['link'] = "";
+            $result['url'] = "";
+            $result['data'] = "";
 
-            if(isset($value->itemSectionRenderer->contents[0]->videoRenderer)){
+            $result['noticia'] = $this->textoYoutube($video->title ?? null);
+            if(isset($video->thumbnail->thumbnails)){
 
-                $result['noticia'] = $value->itemSectionRenderer->contents[0]->videoRenderer->title->runs[0]->text;
-                if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails)){
-
-                    $thumbnails = $value->itemSectionRenderer->contents[0]->videoRenderer->thumbnail->thumbnails;
-                    $thumbnails = array_reverse($thumbnails);
-                    $result['img'] = isset($thumbnails[0]->url) ? $thumbnails[0]->url : '';
-                }
-
-                if(isset($value->itemSectionRenderer->contents[0]->videoRenderer->videoId)){
-                    $result['url'] = sprintf(self::BUSCA_VIDEO, $value->itemSectionRenderer->contents[0]->videoRenderer->videoId);
-                }
-
-                $return['content'][] = $result;
-                
+                $thumbnails = $video->thumbnail->thumbnails;
+                $thumbnails = array_reverse($thumbnails);
+                $result['img'] = isset($thumbnails[0]->url) ? preg_replace('/\?.*$/', '', $thumbnails[0]->url) : '';
             }
-            
+
+            if(isset($video->videoId)){
+                $result['url'] = sprintf(self::BUSCA_VIDEO, $video->videoId);
+            }
+
+            if(isset($video->publishedTimeText)){
+                $result['data'] = $this->textoYoutube($video->publishedTimeText);
+            }
+
+            if($result['noticia'] != "" && $result['url'] != ""){
+                $return['content'][] = $result;
+            }
         }
 
         return $return['content'];
+    }
+
+    private function buscaVideoRenderers($node) {
+
+        $videos = [];
+
+        if(is_object($node)){
+            if(isset($node->videoRenderer)){
+                $videos[] = $node->videoRenderer;
+            }
+
+            foreach (get_object_vars($node) as $value) {
+                $videos = array_merge($videos, $this->buscaVideoRenderers($value));
+            }
+        } else if(is_array($node)) {
+            foreach ($node as $value) {
+                $videos = array_merge($videos, $this->buscaVideoRenderers($value));
+            }
+        }
+
+        return $videos;
+    }
+
+    private function textoYoutube($node) {
+
+        if(isset($node->simpleText)){
+            return $node->simpleText;
+        }
+
+        if(isset($node->runs[0]->text)){
+            return $node->runs[0]->text;
+        }
+
+        return "";
     }
 
     public function getRandAgent() {

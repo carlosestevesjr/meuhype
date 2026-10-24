@@ -12,10 +12,128 @@ use DB;
 use App\Channels;
 use App\UserChannels;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class ChannelController extends Controller
 {
+
+    /**
+     * Retorna todos os canais que publicaram notícias na data vigente.
+     *
+     * O período usa a quantidade de dias configurada em feed.php. As datas são
+     * devolvidas para que o Reels mantenha exatamente o mesmo recorte.
+     */
+    public function listaChannelsVigentes(Request $request)
+    {
+        $request->validate([
+            'days_back' => 'nullable|integer|min:0|max:365',
+        ]);
+
+        $daysBack = (int) $request->input(
+            'days_back',
+            config('feed.feed_dock_days_back', 3)
+        );
+        $today = Carbon::now(config('app.timezone'));
+        $endDate = $today->toDateString();
+        $startDate = $today->copy()->subDays($daysBack)->toDateString();
+
+        $channels = DB::select("
+            SELECT
+                CH.id AS channels_id,
+                CH.name AS channel,
+                CH.image AS channel_logo,
+                CH.type AS channel_type,
+                CH.slug AS channel_slug,
+                CH.description AS channel_description,
+                CH.facebook AS channel_facebook,
+                CH.instagram AS channel_instagram,
+                CH.youtube AS channel_youtube,
+                CH.twitter AS channel_twitter,
+                MAX(N.data) AS latest_news_data,
+                COUNT(DISTINCT N.id) AS news_count
+            FROM channels CH
+                INNER JOIN news N
+                    ON N.channels_id = CH.id
+                INNER JOIN news_tags N_T
+                    ON N_T.news_id = N.id
+            WHERE CH.status = 'active'
+                AND N.status = 'show'
+                AND DATE(N.data) BETWEEN ? AND ?
+            GROUP BY
+                CH.id,
+                CH.name,
+                CH.image,
+                CH.type,
+                CH.slug,
+                CH.description,
+                CH.facebook,
+                CH.instagram,
+                CH.youtube,
+                CH.twitter
+            ORDER BY
+                latest_news_data DESC,
+                CH.name ASC
+        ", [$startDate, $endDate]);
+
+        // Mantém a informação de canais seguidos quando há usuário autenticado.
+        if ($request->filled('apiToken')) {
+            $user = DB::selectOne("
+                SELECT
+                    U.id
+                FROM users U
+                WHERE U.api_token = ?
+                LIMIT 1
+            ", [$request->input('apiToken')]);
+
+            if ($user) {
+                $userChannels = DB::select("
+                    SELECT
+                        UC.channels_id
+                    FROM user_channels UC
+                    WHERE UC.users_id = ?
+                ", [$user->id]);
+                $selectedChannels = array_map(function ($item) {
+                    return (int) $item->channels_id;
+                }, $userChannels);
+
+                foreach ($channels as $channel) {
+                    $channel->select = in_array(
+                        (int) $channel->channels_id,
+                        $selectedChannels,
+                        true
+                    ) ? 1 : 0;
+                }
+            }
+        }
+
+        $baseRoute = '/api/v1/lista-channels-vigentes';
+        $total = count($channels);
+
+        return $this->ResponseAPI(
+            [
+                'active_date' => $endDate,
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+                'days_back' => $daysBack,
+                'current_page' => 1,
+                'dados' => $channels,
+                'first_page_url' => url($baseRoute),
+                'from' => $total > 0 ? 1 : 0,
+                'last_page' => 1,
+                'last_page_url' => url($baseRoute),
+                'next_page_url' => null,
+                'path' => url($baseRoute),
+                'per_page' => $total,
+                'prev_page_url' => null,
+                'to' => $total,
+                'total' => $total,
+            ],
+            'O recurso solicitado foi processado e retornado com sucesso.',
+            200,
+            '000'
+        );
+    }
 
     public function listaChannels(Request $request)
     {
@@ -351,7 +469,12 @@ class ChannelController extends Controller
         }
         
         if($user){
-            $item = UserChannels::where('channels_id', '=',$param_tag_id)->first();
+            // Remove somente a seleção pertencente ao usuário autenticado.
+            // Sem o filtro por users_id, o primeiro vínculo de outro usuário
+            // poderia ser excluído e a seleção atual continuaria marcada.
+            $item = UserChannels::where('users_id', '=', $user[0]->id)
+                ->where('channels_id', '=', $param_tag_id)
+                ->first();
             
             if( $item ){
                 $item_delete = UserChannels::find($item->id);
@@ -388,6 +511,97 @@ class ChannelController extends Controller
             );
         }
        
+    }
+
+    /**
+     * Seleciona ou remove, em uma única operação, todos os canais ativos.
+     * Quando search é informado, a alteração alcança todos os resultados da
+     * busca no banco, inclusive os que ainda não foram carregados no app.
+     */
+    public function postSetAllCanais(Request $request)
+    {
+        $validated = $request->validate([
+            'apiToken' => 'required|string',
+            'select' => 'required|boolean',
+            'search' => 'nullable|string|max:255',
+        ]);
+
+        $user = DB::table('users')
+            ->where('api_token', $validated['apiToken'])
+            ->first();
+
+        if (!$user) {
+            return $this->ResponseAPI(
+                ['dados' => ['message' => 'Token não existe.']],
+                'Não foi possível autenticar o usuário.',
+                401,
+                '999'
+            );
+        }
+
+        $channelsQuery = DB::table('channels')
+            ->where('status', 'active');
+        $search = trim((string) ($validated['search'] ?? ''));
+        if ($search !== '') {
+            $channelsQuery->where('name', 'like', '%' . $search . '%');
+        }
+
+        $channels = $channelsQuery->get(['id', 'slug']);
+        $channelIds = $channels->pluck('id')->map(function ($id) {
+            return (int) $id;
+        })->all();
+
+        DB::transaction(function () use ($user, $channelIds, $validated) {
+            if (empty($channelIds)) {
+                return;
+            }
+
+            if ((bool) $validated['select']) {
+                $existingIds = DB::table('user_channels')
+                    ->where('users_id', $user->id)
+                    ->whereIn('channels_id', $channelIds)
+                    ->pluck('channels_id')
+                    ->map(function ($id) {
+                        return (int) $id;
+                    })
+                    ->all();
+                $missingIds = array_diff($channelIds, $existingIds);
+                $now = now();
+                $rows = array_map(function ($channelId) use ($user, $now) {
+                    return [
+                        'users_id' => $user->id,
+                        'channels_id' => $channelId,
+                        'created_at' => $now,
+                        'updated_at' => $now,
+                    ];
+                }, $missingIds);
+                if (!empty($rows)) {
+                    DB::table('user_channels')->insert($rows);
+                }
+                return;
+            }
+
+            DB::table('user_channels')
+                ->where('users_id', $user->id)
+                ->whereIn('channels_id', $channelIds)
+                ->delete();
+        });
+
+        return $this->ResponseAPI(
+            [
+                'dados' => [
+                    'message' => (bool) $validated['select']
+                        ? 'Canais selecionados com sucesso.'
+                        : 'Seleção dos canais removida com sucesso.',
+                    'select' => (bool) $validated['select'] ? 1 : 0,
+                    'slugs' => $channels->pluck('slug')->values()->all(),
+                    'total' => count($channelIds),
+                ],
+            ],
+            'O recurso solicitado foi processado e retornado com sucesso.',
+            200,
+            '001'
+        );
     }
 
 

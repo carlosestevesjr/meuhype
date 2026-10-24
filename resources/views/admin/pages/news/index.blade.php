@@ -56,6 +56,9 @@
                 <a href="{{ URL::asset($prefix_admin.'/'.$page_dados['route_controler'].'/create') }}" class="btn btn-primary ">
                     Novo Registro
                 </a>
+                <a href="{{ url('/api/v1/cronjob') }}" target="_blank" rel="noopener" class="btn btn-success ml-2" title="Executar o crawler de notícias">
+                    <i class="fas fa-cloud-download-alt"></i> Importar notícias
+                </a>
             </div>
             <p>
                 <a class="btn btn-danger" data-toggle="collapse" href="#tags-crawleando" role="button" aria-expanded="false" aria-controls="tags-crawleando">
@@ -175,9 +178,9 @@
                             <td>{{ date("d/m/Y \a\s H:i", strtotime($item->updated_at)) }}</td>
                             <td>
                                 <a href="{{ $item->link }}" target="_blank" class="btn btn-info btn-sm" title="Ver Post"><i class="align-middle fas fa-link"></i></a>
-                                <a href="{{ URL::asset('admin/'.$page_dados['route_controler'].'/'.$item->id) }}" class="btn btn-info btn-sm" title="Ver"><i class="align-middle fas fa-eye"></i></a>
-                                <a href="{{ URL::asset('admin/'.$page_dados['route_controler'].'/'.$item->id.'/edit') }}" class="btn btn-success btn-sm" title="Editar"><i class="align-middle fas fa-pencil-alt"></i></a>
-                                <a href="{{ URL::asset('admin/'.$page_dados['route_controler'].'/'.$item->id) }}" class="btn btn-danger btn-sm method_destroy" data-method="DELETE" title="Excluir"><i class="align-middle fas fa-trash-alt"></i></a>
+                                <a href="{{ URL::asset('admin/'.$page_dados['route_controler'].'/'.$item->id) }}" class="btn btn-info btn-sm" title="Ver"><i class="align-middle" data-feather="eye"></i></a>
+                                <a href="{{ URL::asset('admin/'.$page_dados['route_controler'].'/'.$item->id.'/edit') }}" class="btn btn-success btn-sm" title="Editar"><i class="align-middle" data-feather="edit-2"></i></a>
+                                <a href="{{ URL::asset('admin/'.$page_dados['route_controler'].'/'.$item->id) }}" class="btn btn-danger btn-sm method_destroy" data-method="DELETE" title="Excluir"><i class="align-middle" data-feather="trash-2"></i></a>
                             </td>
                         </tr>
                         @endforeach

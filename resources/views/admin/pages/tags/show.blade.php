@@ -93,6 +93,28 @@
                         </div>
                         <div class="form-row">
                             <div class="form-group col-12 col-lg-6">
+                                <label>IMDb</label>
+                                @if($item->imdb_url)
+                                    <div><a href="{{ $item->imdb_url }}" target="_blank" rel="noopener" class="btn btn-warning"><i class="fas fa-external-link-alt"></i> Abrir no IMDb</a></div>
+                                @else
+                                    <input type="text" class="form-control" readonly value="Sem link cadastrado">
+                                @endif
+                            </div>
+                            <div class="form-group col-12 col-lg-2">
+                                <label>Avaliação IMDb</label>
+                                <input type="text" class="form-control" readonly value="{{ $item->imdb_rating !== null ? number_format($item->imdb_rating, 1, ',', '.') : '-' }}">
+                            </div>
+                            <div class="form-group col-12 col-lg-2">
+                                <label>Votos IMDb</label>
+                                <input type="text" class="form-control" readonly value="{{ $item->imdb_vote_count !== null ? number_format($item->imdb_vote_count, 0, ',', '.') : '-' }}">
+                            </div>
+                            <div class="form-group col-12 col-lg-2">
+                                <label>Popularidade</label>
+                                <input type="text" class="form-control" readonly value="{{ $item->imdb_popularity ? '#'.$item->imdb_popularity : '-' }}">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-12 col-lg-6">
                                 <label>Keywords</label>
                                 <input type="text" name="keywords" class="form-control" placeholder="" readonly value="{{ $item->keywords }}" >
                             </div>

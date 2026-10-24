@@ -33,6 +33,16 @@ trait ResponseTrait
     }
 
     /**
+     * Get the status text for the response.
+     *
+     * @return string
+     */
+    public function statusText()
+    {
+        return $this->statusText;
+    }
+
+    /**
      * Get the content of the response.
      *
      * @return string
@@ -89,6 +99,21 @@ trait ResponseTrait
     }
 
     /**
+     * Remove a header(s) from the response.
+     *
+     * @param  array|string  $key
+     * @return $this
+     */
+    public function withoutHeader($key)
+    {
+        foreach ((array) $key as $header) {
+            $this->headers->remove($header);
+        }
+
+        return $this;
+    }
+
+    /**
      * Add a cookie to the response.
      *
      * @param  \Symfony\Component\HttpFoundation\Cookie|mixed  $cookie
@@ -109,6 +134,25 @@ trait ResponseTrait
     {
         if (is_string($cookie) && function_exists('cookie')) {
             $cookie = cookie(...func_get_args());
+        }
+
+        $this->headers->setCookie($cookie);
+
+        return $this;
+    }
+
+    /**
+     * Expire a cookie when sending the response.
+     *
+     * @param  \Symfony\Component\HttpFoundation\Cookie|mixed  $cookie
+     * @param  string|null  $path
+     * @param  string|null  $domain
+     * @return $this
+     */
+    public function withoutCookie($cookie, $path = null, $domain = null)
+    {
+        if (is_string($cookie) && function_exists('cookie')) {
+            $cookie = cookie($cookie, null, -2628000, $path, $domain);
         }
 
         $this->headers->setCookie($cookie);
@@ -142,7 +186,7 @@ trait ResponseTrait
     /**
      * Throws the response in a HttpResponseException instance.
      *
-     * @return void
+     * @return never
      *
      * @throws \Illuminate\Http\Exceptions\HttpResponseException
      */

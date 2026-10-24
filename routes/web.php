@@ -63,6 +63,7 @@ Route::group(['prefix'=>'admin','middleware'=>'admin_auth'], function(){
         Route::resource('podcasts', 'PodcastsController');
         
         //Tag
+        Route::get('tags/crawler-imdb', 'TagsCrawlerController@crawlerImdb')->name('tags.crawler-imdb');
         Route::resource('tags', 'TagsCrawlerController');
         // Route::post('tag-blog-ajax-update', 'TagBlogController@postAjaxUpdate');
         // Route::post('tag-blog-ajax-delete', 'TagBlogController@postAjaxDelete');

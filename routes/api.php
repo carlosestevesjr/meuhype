@@ -73,20 +73,33 @@ Route::group(['prefix' => 'v1', 'middleware' => ['cors']], function () {
         Route::get('lista-tags-user/{token}','TagsController@listaTagsUser');
         Route::post('set-tag/','TagsController@postSetTag');
         Route::post('unset-tag/','TagsController@postUnsetTag');
+        Route::post('set-all-tags','TagsController@postSetAllTags');
         
         //Canais 
         Route::get('channel-single/{channel_id}','ChannelController@channelSingle');
         Route::get('lista-channels-search','ChannelController@listaChannelsSearch');
         Route::get('lista-channels','ChannelController@listaChannels');
+
+        // FeedDock: canais que possuem ao menos uma notícia na data vigente.
+        Route::get('lista-channels-vigentes','ChannelController@listaChannelsVigentes');
         
         Route::get('lista-canais-user/{token}','ChannelController@listaCanaisUser');
         Route::post('set-canal/','ChannelController@postSetCanal');
         Route::post('unset-canal/','ChannelController@postUnsetCanal');
+        Route::post('set-all-canais','ChannelController@postSetAllCanais');
         
         //News
         Route::get('lista-news-search','NewsController@listaNewsSearch');
         Route::get('lista-news-tag/{tag_id}','NewsController@listaNewsTag');
         Route::get('lista-news-channel/{channel_id}','NewsController@listaNewsChannel');
+
+        // Curtidas pessoais de notícias.
+        Route::get('lista-news-likes','NewsController@listaNewsLikes');
+        Route::post('set-news-like','NewsController@postSetNewsLike');
+        Route::post('unset-news-like','NewsController@postUnsetNewsLike');
+
+        // Reels: notícias do canal limitadas à mesma data vigente do FeedDock.
+        Route::get('lista-news-channel-vigente/{channel_id}','NewsController@listaNewsChannelVigente');
         
         Route::get('lista-news-user/{token}','NewsController@listaNewsUser');
         Route::get('lista-news-channel-user/{id}/{token}','NewsController@listaNewsChannelUser');

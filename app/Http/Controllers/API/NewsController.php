@@ -5,12 +5,257 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 
 use App\News;
+use Carbon\Carbon;
 use DB;
 
 use Illuminate\Http\Request;
 
 class NewsController extends Controller
 {
+    /**
+     * Retorna os IDs das notícias curtidas pelo usuário autenticado.
+     */
+    public function listaNewsLikes(Request $request)
+    {
+        $user = DB::table('users')
+            ->where('api_token', (string) $request->input('apiToken'))
+            ->first();
+
+        if (!$user) {
+            return $this->ResponseAPI(
+                ['dados' => ['message' => 'Token não existe.']],
+                'Não foi possível autenticar o usuário.',
+                401,
+                '999'
+            );
+        }
+
+        $newsIds = DB::table('user_news_likes')
+            ->where('users_id', $user->id)
+            ->orderByDesc('created_at')
+            ->pluck('news_id')
+            ->map(function ($newsId) {
+                return (int) $newsId;
+            })
+            ->values()
+            ->all();
+
+        return $this->ResponseAPI(
+            ['dados' => $newsIds],
+            'Curtidas carregadas com sucesso.',
+            200,
+            '000'
+        );
+    }
+
+    /**
+     * Registra uma curtida sem criar duplicidades para o mesmo usuário.
+     */
+    public function postSetNewsLike(Request $request)
+    {
+        return $this->updateNewsLike($request, true);
+    }
+
+    /**
+     * Remove somente a curtida pertencente ao usuário autenticado.
+     */
+    public function postUnsetNewsLike(Request $request)
+    {
+        return $this->updateNewsLike($request, false);
+    }
+
+    private function updateNewsLike(Request $request, bool $selected)
+    {
+        $validated = $request->validate([
+            'apiToken' => 'required|string',
+            'news_id' => 'required|integer|exists:news,id',
+        ]);
+
+        $user = DB::table('users')
+            ->where('api_token', $validated['apiToken'])
+            ->first();
+
+        if (!$user) {
+            return $this->ResponseAPI(
+                ['dados' => ['message' => 'Token não existe.']],
+                'Não foi possível autenticar o usuário.',
+                401,
+                '999'
+            );
+        }
+
+        if ($selected) {
+            DB::table('user_news_likes')->updateOrInsert(
+                [
+                    'users_id' => $user->id,
+                    'news_id' => (int) $validated['news_id'],
+                ],
+                [
+                    'updated_at' => now(),
+                    'created_at' => now(),
+                ]
+            );
+        } else {
+            DB::table('user_news_likes')
+                ->where('users_id', $user->id)
+                ->where('news_id', (int) $validated['news_id'])
+                ->delete();
+        }
+
+        return $this->ResponseAPI(
+            [
+                'dados' => [
+                    'news_id' => (int) $validated['news_id'],
+                    'select' => $selected ? 1 : 0,
+                ],
+            ],
+            $selected
+                ? 'Notícia curtida com sucesso.'
+                : 'Curtida removida com sucesso.',
+            200,
+            '001'
+        );
+    }
+
+
+    /**
+     * Lista as notícias de um canal na data vigente usada pelo FeedDock.
+     *
+     * O parâmetro date recebe a data final devolvida pelo FeedDock. A data
+     * inicial é calculada com a quantidade configurada em feed.php.
+     */
+    public function listaNewsChannelVigente(Request $request)
+    {
+        $request->validate([
+            'date' => 'nullable|date_format:Y-m-d',
+            'days_back' => 'nullable|integer|min:0|max:365',
+            'page' => 'nullable|integer|min:1',
+            'qtd' => 'nullable|integer|min:1|max:100',
+        ]);
+
+        $daysBack = (int) $request->input(
+            'days_back',
+            config('feed.feed_dock_days_back', 3)
+        );
+        $today = Carbon::now(config('app.timezone'))->toDateString();
+        $endDate = $request->input('date') ?: $today;
+        $startDate = Carbon::createFromFormat('Y-m-d', $endDate)
+            ->subDays($daysBack)
+            ->toDateString();
+        $page = (int) $request->input('page', 1);
+        $qtd = (int) $request->input('qtd', 20);
+        $offset = ($page - 1) * $qtd;
+        $channelSlug = $request->route('channel_id');
+
+        $totalResult = DB::selectOne("
+            SELECT
+                COUNT(DISTINCT N.id) AS total
+            FROM news N
+                INNER JOIN channels CH
+                    ON CH.id = N.channels_id
+                INNER JOIN news_tags N_T
+                    ON N_T.news_id = N.id
+            WHERE CH.status = 'active'
+                AND CH.slug = ?
+                AND N.status = 'show'
+                AND DATE(N.data) BETWEEN ? AND ?
+        ", [$channelSlug, $startDate, $endDate]);
+        $total = (int) ($totalResult->total ?? 0);
+
+        // Offset e quantidade são inteiros validados antes de compor o LIMIT.
+        $news = DB::select("
+            SELECT
+                N.id AS news_id,
+                N.title AS news_title,
+                N.image AS news_image,
+                N.hash AS news_hash,
+                N.data AS news_data,
+                N.link AS news_link,
+                CH.id AS channels_id,
+                CH.name AS channel,
+                CH.image AS channel_logo,
+                CH.type AS channel_type,
+                CH.slug AS channel_slug
+            FROM news N
+                INNER JOIN channels CH
+                    ON CH.id = N.channels_id
+                INNER JOIN news_tags N_T
+                    ON N_T.news_id = N.id
+            WHERE CH.status = 'active'
+                AND CH.slug = ?
+                AND N.status = 'show'
+                AND DATE(N.data) BETWEEN ? AND ?
+            GROUP BY
+                N.id,
+                N.title,
+                N.image,
+                N.hash,
+                N.data,
+                N.link,
+                CH.id,
+                CH.name,
+                CH.image,
+                CH.type,
+                CH.slug
+            ORDER BY
+                N.data DESC,
+                N.id DESC
+            LIMIT $offset, $qtd
+        ", [$channelSlug, $startDate, $endDate]);
+
+        $result = [];
+        foreach ($news as $key => $item) {
+            $result[$key]['new'] = $item;
+            $result[$key]['tags'] = DB::select("
+                SELECT
+                    T.id AS tag_id,
+                    T.title AS tag_name,
+                    T.image AS tag_image,
+                    T.slug AS tag_slug,
+                    T.imdb_url AS tag_imdb_url,
+                    T.imdb_rating AS tag_imdb_rating,
+                    T.imdb_vote_count AS tag_imdb_vote_count,
+                    T.imdb_popularity AS tag_imdb_popularity
+                FROM news_tags N_T
+                    INNER JOIN tags T
+                        ON T.id = N_T.tags_id
+                WHERE N_T.news_id = ?
+            ", [$item->news_id]);
+        }
+
+        $lastPage = max(1, (int) ceil($total / $qtd));
+        $baseRoute = '/api/v1/lista-news-channel-vigente/'.$channelSlug;
+        $dateQuery = '&date='.$endDate.'&days_back='.$daysBack;
+
+        return $this->ResponseAPI(
+            [
+                'active_date' => $endDate,
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+                'days_back' => $daysBack,
+                'calendar_date' => $today,
+                'current_page' => $page,
+                'dados' => $result,
+                'first_page_url' => url($baseRoute.'?page=1&qtd='.$qtd.$dateQuery),
+                'from' => $total > 0 ? $offset + 1 : 0,
+                'last_page' => $lastPage,
+                'last_page_url' => url($baseRoute.'?page='.$lastPage.'&qtd='.$qtd.$dateQuery),
+                'next_page_url' => $page < $lastPage
+                    ? url($baseRoute.'?page='.($page + 1).'&qtd='.$qtd.$dateQuery)
+                    : null,
+                'path' => url($baseRoute),
+                'per_page' => $qtd,
+                'prev_page_url' => $page > 1
+                    ? url($baseRoute.'?page='.($page - 1).'&qtd='.$qtd.$dateQuery)
+                    : null,
+                'to' => $offset + count($result),
+                'total' => $total,
+            ],
+            'O recurso solicitado foi processado e retornado com sucesso.',
+            200,
+            '000'
+        );
+    }
 
     public function listaNews(Request $request)
     {
@@ -160,7 +405,11 @@ class NewsController extends Controller
                 T.id AS tag_id,
                 T.title AS tag_name,
                 T.image AS tag_image,
-                T.slug AS tag_slug
+                T.slug AS tag_slug,
+                T.imdb_url AS tag_imdb_url,
+                T.imdb_rating AS tag_imdb_rating,
+                T.imdb_vote_count AS tag_imdb_vote_count,
+                T.imdb_popularity AS tag_imdb_popularity
 
                 FROM news_tags N_T 
                     INNER JOIN tags T 
@@ -351,7 +600,11 @@ class NewsController extends Controller
                 T.id AS tag_id,
                 T.title AS tag_name,
                 T.image AS tag_image,
-                T.slug AS tag_slug
+                T.slug AS tag_slug,
+                T.imdb_url AS tag_imdb_url,
+                T.imdb_rating AS tag_imdb_rating,
+                T.imdb_vote_count AS tag_imdb_vote_count,
+                T.imdb_popularity AS tag_imdb_popularity
 
                 FROM news_tags N_T 
                     INNER JOIN tags T 
@@ -552,7 +805,11 @@ class NewsController extends Controller
                 T.id AS tag_id,
                 T.title AS tag_name,
                 T.image AS tag_image,
-                T.slug AS tag_slug
+                T.slug AS tag_slug,
+                T.imdb_url AS tag_imdb_url,
+                T.imdb_rating AS tag_imdb_rating,
+                T.imdb_vote_count AS tag_imdb_vote_count,
+                T.imdb_popularity AS tag_imdb_popularity
 
                 FROM news_tags N_T 
                     INNER JOIN tags T 
@@ -757,7 +1014,11 @@ class NewsController extends Controller
                 T.id AS tag_id,
                 T.title AS tag_name,
                 T.image AS tag_image,
-                T.slug AS tag_slug
+                T.slug AS tag_slug,
+                T.imdb_url AS tag_imdb_url,
+                T.imdb_rating AS tag_imdb_rating,
+                T.imdb_vote_count AS tag_imdb_vote_count,
+                T.imdb_popularity AS tag_imdb_popularity
 
                 FROM news_tags N_T 
                     INNER JOIN tags T 

@@ -5,7 +5,6 @@ namespace App\Exceptions;
 use Throwable;
 
 use App\Traits\ApiResponser;
-use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
@@ -65,7 +64,7 @@ class Handler extends ExceptionHandler
     }
     
 
-    public function handleException($request, Exception $exception)
+    public function handleException($request, Throwable $exception)
     {
         
         if ($exception instanceof MethodNotAllowedHttpException) {

@@ -28,11 +28,9 @@ class ApplicationTester
 {
     use TesterTrait;
 
-    private $application;
-
-    public function __construct(Application $application)
-    {
-        $this->application = $application;
+    public function __construct(
+        private Application $application,
+    ) {
     }
 
     /**
@@ -47,7 +45,7 @@ class ApplicationTester
      *
      * @return int The command exit code
      */
-    public function run(array $input, array $options = [])
+    public function run(array $input, array $options = []): int
     {
         $this->input = new ArrayInput($input);
         if (isset($options['interactive'])) {
@@ -60,6 +58,28 @@ class ApplicationTester
 
         $this->initOutput($options);
 
-        return $this->statusCode = $this->application->run($this->input, $this->output);
+        // Temporarily clear SHELL_VERBOSITY to prevent Application::configureIO
+        // from overriding the interactive and verbosity settings set above
+        $prevShellVerbosity = [getenv('SHELL_VERBOSITY'), $_ENV['SHELL_VERBOSITY'] ?? false, $_SERVER['SHELL_VERBOSITY'] ?? false];
+        if (\function_exists('putenv')) {
+            @putenv('SHELL_VERBOSITY');
+        }
+        unset($_ENV['SHELL_VERBOSITY'], $_SERVER['SHELL_VERBOSITY']);
+
+        try {
+            return $this->statusCode = $this->application->run($this->input, $this->output);
+        } finally {
+            if (false !== $prevShellVerbosity[0]) {
+                if (\function_exists('putenv')) {
+                    @putenv('SHELL_VERBOSITY='.$prevShellVerbosity[0]);
+                }
+            }
+            if (false !== $prevShellVerbosity[1]) {
+                $_ENV['SHELL_VERBOSITY'] = $prevShellVerbosity[1];
+            }
+            if (false !== $prevShellVerbosity[2]) {
+                $_SERVER['SHELL_VERBOSITY'] = $prevShellVerbosity[2];
+            }
+        }
     }
 }

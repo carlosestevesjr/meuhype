@@ -3,12 +3,20 @@
 namespace Illuminate\Http\Client;
 
 use ArrayAccess;
+use GuzzleHttp\Psr7\StreamWrapper;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Fluent;
 use Illuminate\Support\Traits\Macroable;
+use Illuminate\Support\Traits\Tappable;
 use LogicException;
+use Stringable;
 
-class Response implements ArrayAccess
+/**
+ * @mixin \Psr\Http\Message\ResponseInterface
+ */
+class Response implements ArrayAccess, Stringable
 {
-    use Macroable {
+    use Concerns\DeterminesStatusCode, Tappable, Macroable {
         __call as macroCall;
     }
 
@@ -27,10 +35,44 @@ class Response implements ArrayAccess
     protected $decoded;
 
     /**
+     * The flags that were used when decoding the JSON response.
+     *
+     * @var int-mask<JSON_BIGINT_AS_STRING, JSON_INVALID_UTF8_IGNORE, JSON_INVALID_UTF8_SUBSTITUTE, JSON_OBJECT_AS_ARRAY, JSON_THROW_ON_ERROR>
+     */
+    protected int $decodingFlags;
+
+    /**
+     * The request cookies.
+     *
+     * @var \GuzzleHttp\Cookie\CookieJar
+     */
+    public $cookies;
+
+    /**
+     * The transfer stats for the request.
+     *
+     * @var \GuzzleHttp\TransferStats|null
+     */
+    public $transferStats;
+
+    /**
+     * The length at which request exceptions will be truncated.
+     *
+     * @var int<1, max>|false|null
+     */
+    protected $truncateExceptionsAt = null;
+
+    /**
+     * The flags passed to `json_decode` by default.
+     *
+     * @var int-mask<JSON_BIGINT_AS_STRING, JSON_INVALID_UTF8_IGNORE, JSON_INVALID_UTF8_SUBSTITUTE, JSON_OBJECT_AS_ARRAY, JSON_THROW_ON_ERROR>
+     */
+    public static int $defaultJsonDecodingFlags = 0;
+
+    /**
      * Create a new response instance.
      *
      * @param  \Psr\Http\Message\MessageInterface  $response
-     * @return void
      */
     public function __construct($response)
     {
@@ -48,27 +90,77 @@ class Response implements ArrayAccess
     }
 
     /**
-     * Get the JSON decoded body of the response as an array or scalar value.
+     * Get the decoded JSON body of the response as an array or scalar value.
      *
+     * @param  string|null  $key
+     * @param  mixed  $default
+     * @param  int-mask<JSON_BIGINT_AS_STRING, JSON_INVALID_UTF8_IGNORE, JSON_INVALID_UTF8_SUBSTITUTE, JSON_OBJECT_AS_ARRAY, JSON_THROW_ON_ERROR>|null  $flags
      * @return mixed
      */
-    public function json()
+    public function json($key = null, $default = null, $flags = null)
     {
-        if (! $this->decoded) {
-            $this->decoded = json_decode($this->body(), true);
+        $flags = $flags ?? self::$defaultJsonDecodingFlags;
+
+        if (! $this->decoded || (isset($this->decodingFlags) && $this->decodingFlags !== $flags)) {
+            $this->decoded = json_decode(
+                $this->body(), true, flags: $flags
+            );
+
+            $this->decodingFlags = $flags;
         }
 
-        return $this->decoded;
+        if (is_null($key)) {
+            return $this->decoded;
+        }
+
+        return data_get($this->decoded, $key, $default);
     }
 
     /**
-     * Get the JSON decoded body of the response as an object.
+     * Get the decoded JSON body of the response as an object.
      *
-     * @return object
+     * @param  int-mask<JSON_BIGINT_AS_STRING, JSON_INVALID_UTF8_IGNORE, JSON_INVALID_UTF8_SUBSTITUTE, JSON_OBJECT_AS_ARRAY, JSON_THROW_ON_ERROR>|null  $flags
+     * @return object|null
      */
-    public function object()
+    public function object($flags = null)
     {
-        return json_decode($this->body(), false);
+        return json_decode($this->body(), false, flags: $flags ?? self::$defaultJsonDecodingFlags);
+    }
+
+    /**
+     * Get the decoded JSON body of the response as a collection.
+     *
+     * @param  string|null  $key
+     * @param  int-mask<JSON_BIGINT_AS_STRING, JSON_INVALID_UTF8_IGNORE, JSON_INVALID_UTF8_SUBSTITUTE, JSON_OBJECT_AS_ARRAY, JSON_THROW_ON_ERROR>|null  $flags
+     * @return \Illuminate\Support\Collection
+     */
+    public function collect($key = null, $flags = null)
+    {
+        return new Collection($this->json($key, flags: $flags));
+    }
+
+    /**
+     * Get the decoded JSON body of the response as a fluent object.
+     *
+     * @param  string|null  $key
+     * @param  int-mask<JSON_BIGINT_AS_STRING, JSON_INVALID_UTF8_IGNORE, JSON_INVALID_UTF8_SUBSTITUTE, JSON_OBJECT_AS_ARRAY, JSON_THROW_ON_ERROR>|null  $flags
+     * @return \Illuminate\Support\Fluent
+     */
+    public function fluent($key = null, $flags = null)
+    {
+        return new Fluent((array) $this->json($key, flags: $flags));
+    }
+
+    /**
+     * Get the body of the response as a PHP resource.
+     *
+     * @return resource
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function resource()
+    {
+        return StreamWrapper::getResource($this->response->getBody());
     }
 
     /**
@@ -89,9 +181,7 @@ class Response implements ArrayAccess
      */
     public function headers()
     {
-        return collect($this->response->getHeaders())->mapWithKeys(function ($v, $k) {
-            return [$k => $v];
-        })->all();
+        return $this->response->getHeaders();
     }
 
     /**
@@ -105,13 +195,23 @@ class Response implements ArrayAccess
     }
 
     /**
+     * Get the reason phrase of the response.
+     *
+     * @return string
+     */
+    public function reason()
+    {
+        return $this->response->getReasonPhrase();
+    }
+
+    /**
      * Get the effective URI of the response.
      *
-     * @return \Psr\Http\Message\UriInterface
+     * @return \Psr\Http\Message\UriInterface|null
      */
     public function effectiveUri()
     {
-        return $this->transferStats->getEffectiveUri();
+        return $this->transferStats?->getEffectiveUri();
     }
 
     /**
@@ -122,16 +222,6 @@ class Response implements ArrayAccess
     public function successful()
     {
         return $this->status() >= 200 && $this->status() < 300;
-    }
-
-    /**
-     * Determine if the response code was "OK".
-     *
-     * @return bool
-     */
-    public function ok()
-    {
-        return $this->status() === 200;
     }
 
     /**
@@ -175,6 +265,21 @@ class Response implements ArrayAccess
     }
 
     /**
+     * Execute the given callback if there was a server or client error.
+     *
+     * @param  callable|(\Closure(\Illuminate\Http\Client\Response): mixed)  $callback
+     * @return $this
+     */
+    public function onError(callable $callback)
+    {
+        if ($this->failed()) {
+            $callback($this);
+        }
+
+        return $this;
+    }
+
+    /**
      * Get the response cookies.
      *
      * @return \GuzzleHttp\Cookie\CookieJar
@@ -182,6 +287,28 @@ class Response implements ArrayAccess
     public function cookies()
     {
         return $this->cookies;
+    }
+
+    /**
+     * Get the handler stats of the response.
+     *
+     * @return array
+     */
+    public function handlerStats()
+    {
+        return $this->transferStats?->getHandlerStats() ?? [];
+    }
+
+    /**
+     * Close the stream and any underlying resources.
+     *
+     * @return $this
+     */
+    public function close()
+    {
+        $this->response->getBody()->close();
+
+        return $this;
     }
 
     /**
@@ -195,6 +322,18 @@ class Response implements ArrayAccess
     }
 
     /**
+     * Create an exception if a server or client error occurred.
+     *
+     * @return \Illuminate\Http\Client\RequestException|null
+     */
+    public function toException()
+    {
+        if ($this->failed()) {
+            return new RequestException($this, $this->truncateExceptionsAt);
+        }
+    }
+
+    /**
      * Throw an exception if a server or client error occurred.
      *
      * @return $this
@@ -203,11 +342,189 @@ class Response implements ArrayAccess
      */
     public function throw()
     {
-        if ($this->serverError() || $this->clientError()) {
-            throw new RequestException($this);
+        $callback = func_get_args()[0] ?? null;
+
+        if ($this->failed()) {
+            throw tap($this->toException(), function ($exception) use ($callback) {
+                if ($callback && is_callable($callback)) {
+                    $callback($this, $exception);
+                }
+            });
         }
 
         return $this;
+    }
+
+    /**
+     * Throw an exception if a server or client error occurred and the given condition evaluates to true.
+     *
+     * @param  \Closure|bool  $condition
+     * @return $this
+     *
+     * @throws \Illuminate\Http\Client\RequestException
+     */
+    public function throwIf($condition)
+    {
+        return value($condition, $this) ? $this->throw(func_get_args()[1] ?? null) : $this;
+    }
+
+    /**
+     * Throw an exception if a server or client error occurred and the given condition evaluates to false.
+     *
+     * @param  \Closure|bool  $condition
+     * @return $this
+     *
+     * @throws \Illuminate\Http\Client\RequestException
+     */
+    public function throwUnless($condition)
+    {
+        return $this->throwIf(! $condition);
+    }
+
+    /**
+     * Throw an exception if the response status code matches the given code.
+     *
+     * @param  int|(\Closure(int, \Illuminate\Http\Client\Response): bool)|callable  $statusCode
+     * @return $this
+     *
+     * @throws \Illuminate\Http\Client\RequestException
+     */
+    public function throwIfStatus($statusCode)
+    {
+        if (is_callable($statusCode) &&
+            $statusCode($this->status(), $this)) {
+            throw new RequestException($this, $this->truncateExceptionsAt);
+        }
+
+        return $this->status() === $statusCode ? throw new RequestException($this, $this->truncateExceptionsAt) : $this;
+    }
+
+    /**
+     * Throw an exception unless the response status code matches the given code.
+     *
+     * @param  int|(\Closure(int, \Illuminate\Http\Client\Response): bool)|callable  $statusCode
+     * @return $this
+     *
+     * @throws \Illuminate\Http\Client\RequestException
+     */
+    public function throwUnlessStatus($statusCode)
+    {
+        if (is_callable($statusCode)) {
+            return $statusCode($this->status(), $this) ? $this : throw new RequestException($this, $this->truncateExceptionsAt);
+        }
+
+        return $this->status() === $statusCode ? $this : throw new RequestException($this, $this->truncateExceptionsAt);
+    }
+
+    /**
+     * Throw an exception if the response status code is a 4xx level code.
+     *
+     * @return $this
+     *
+     * @throws \Illuminate\Http\Client\RequestException
+     */
+    public function throwIfClientError()
+    {
+        return $this->clientError() ? $this->throw() : $this;
+    }
+
+    /**
+     * Throw an exception if the response status code is a 5xx level code.
+     *
+     * @return $this
+     *
+     * @throws \Illuminate\Http\Client\RequestException
+     */
+    public function throwIfServerError()
+    {
+        return $this->serverError() ? $this->throw() : $this;
+    }
+
+    /**
+     * Indicate that request exceptions should be truncated to the given length.
+     *
+     * @param  int<1, max>  $length
+     * @return $this
+     */
+    public function truncateExceptionsAt(int $length)
+    {
+        $this->truncateExceptionsAt = $length;
+
+        return $this;
+    }
+
+    /**
+     * Indicate that request exceptions should not be truncated.
+     *
+     * @return $this
+     */
+    public function dontTruncateExceptions()
+    {
+        $this->truncateExceptionsAt = false;
+
+        return $this;
+    }
+
+    /**
+     * Dump the content from the response.
+     *
+     * @param  string|null  $key
+     * @return $this
+     */
+    public function dump($key = null)
+    {
+        $content = $this->body();
+
+        $json = json_decode($content);
+
+        if (json_last_error() === JSON_ERROR_NONE) {
+            $content = $json;
+        }
+
+        if ($request = $this->transferStats?->getRequest()) {
+            dump('"'.$request->getMethod().' '.$request->getUri().'" '.$this->status());
+        }
+
+        dump(is_null($key) ? $content : data_get($content, $key));
+
+        return $this;
+    }
+
+    /**
+     * Dump the content from the response and end the script.
+     *
+     * @param  string|null  $key
+     * @return never
+     */
+    public function dd($key = null)
+    {
+        $this->dump($key);
+
+        exit(1);
+    }
+
+    /**
+     * Dump the headers from the response.
+     *
+     * @return $this
+     */
+    public function dumpHeaders()
+    {
+        dump($this->headers());
+
+        return $this;
+    }
+
+    /**
+     * Dump the headers from the response and end the script.
+     *
+     * @return never
+     */
+    public function ddHeaders()
+    {
+        $this->dumpHeaders();
+
+        exit(1);
     }
 
     /**
@@ -216,7 +533,7 @@ class Response implements ArrayAccess
      * @param  string  $offset
      * @return bool
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return isset($this->json()[$offset]);
     }
@@ -227,7 +544,7 @@ class Response implements ArrayAccess
      * @param  string  $offset
      * @return mixed
      */
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         return $this->json()[$offset];
     }
@@ -241,7 +558,7 @@ class Response implements ArrayAccess
      *
      * @throws \LogicException
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         throw new LogicException('Response data may not be mutated using array access.');
     }
@@ -254,7 +571,7 @@ class Response implements ArrayAccess
      *
      * @throws \LogicException
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         throw new LogicException('Response data may not be mutated using array access.');
     }
@@ -279,7 +596,15 @@ class Response implements ArrayAccess
     public function __call($method, $parameters)
     {
         return static::hasMacro($method)
-                    ? $this->macroCall($method, $parameters)
-                    : $this->response->{$method}(...$parameters);
+            ? $this->macroCall($method, $parameters)
+            : $this->response->{$method}(...$parameters);
+    }
+
+    /**
+     * Flush the global state of the Response.
+     */
+    public static function flushState(): void
+    {
+        self::$defaultJsonDecodingFlags = 0;
     }
 }

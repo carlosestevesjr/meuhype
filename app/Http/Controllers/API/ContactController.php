@@ -95,7 +95,10 @@ class ContactController extends Controller
             if($condition){
                 
                 Mail::send('emails.apicontato', $dados, function ($message) {
-                    $message->from('inthemovie@nocinema.kinghost.net', 'Contato Meu Hype');
+                    $message->from(
+                        config('mail.from.address') ?: 'contato@meuhype.com.br',
+                        config('mail.from.name') ?: 'Meu Hype'
+                    );
                     $message->subject('Contato Pelo App Meu Hype');
                     $message->to('carlosestevesjr0@gmail.com');
                     // $message->bcc('');
@@ -120,13 +123,6 @@ class ContactController extends Controller
                     ,"O recurso solicitado foi processado e retornado com sucesso.", 200, '999'
                 );
             }
-
-            // Mail::send('emails.apicontato', $dados, function ($message) {
-            //     $message->from('inthemovie@nocinema.kinghost.net', 'Contato Meu Hype');
-            //     $message->subject('Contato Pelo App Meu Hype');
-            //     $message->to('carlosestevesjr0@gmail.com');
-            //     // $message->bcc('');
-            // });
 
            
             

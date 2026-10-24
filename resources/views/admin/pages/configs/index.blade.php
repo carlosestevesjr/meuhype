@@ -58,9 +58,9 @@
                                             <td>{{ $item->title }}</td>
                                             <td>{{ date("d/m/Y \a\s H:i", strtotime($item->updated_at)) }}</td>
                                             <td>
-                                                <a href="{{ URL::asset('admin/'.$page_dados['route_controler'].'/'.$item->id) }}" class="btn btn-success" title="Ver"><em class="fa fa-book"></em></a>
-                                                <a href="{{ URL::asset('admin/'.$page_dados['route_controler'].'/'.$item->id.'/edit') }}" class="btn btn-success" title="Editar"><em class="fa fa-pencil"></em></a>
-                                                <a href="{{ URL::asset('admin/'.$page_dados['route_controler'].'/'.$item->id) }}" class="btn btn-danger method_destroy" data-method="DELETE" title="Excluir"><em class="fa fa-trash-o"></em></a>
+                                                <a href="{{ URL::asset('admin/'.$page_dados['route_controler'].'/'.$item->id) }}" class="btn btn-success" title="Ver"><i class="align-middle" data-feather="book-open"></i></a>
+                                                <a href="{{ URL::asset('admin/'.$page_dados['route_controler'].'/'.$item->id.'/edit') }}" class="btn btn-success" title="Editar"><i class="align-middle" data-feather="edit-2"></i></a>
+                                                <a href="{{ URL::asset('admin/'.$page_dados['route_controler'].'/'.$item->id) }}" class="btn btn-danger method_destroy" data-method="DELETE" title="Excluir"><i class="align-middle" data-feather="trash-2"></i></a>
                                             </td>
                                         </tr>
                                         @endforeach

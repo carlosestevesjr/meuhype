@@ -125,6 +125,7 @@
                         <tr>
                             <tr>
                                 <th>Inserir</th>
+                                <th>Tag</th>
                                 <th>Capa</th>
                                 <th>Id</th>
                                 <th>Titulo</th>
@@ -139,6 +140,7 @@
                     <tfoot>
                         <tr>
                             <th>Inserir</th>
+                            <th>Tag</th>
                             <th>Capa</th>
                             <th>Id</th>
                             <th>Titulo</th>
@@ -153,9 +155,28 @@
                         @foreach($lista as $item)
                         <tr class="even pointer" <?php if($item->status == 'hidden'){ echo 'style="background:#F25959; color:#fff;" '; } ?>>
                             <td>
-                                <a id="podcast_id_{{$item->id}}" class="btn btn-success btn-sm method_news_add" title="Cadastrar em News" href="{{ URL::asset('admin/news-ajax-create?title='.$item->title.'&link='. $item->link.'&channels_id='. $item->channels_id.'&hash='.$item->hash.'&image='. $item->image.'&data='. $item->data.'&status=show&order=1&data='.$item->data) }}">
+                                <a id="podcast_id_{{$item->id}}"
+                                    class="btn btn-success btn-sm method_news_add"
+                                    title="Cadastrar em News"
+                                    href="{{ URL::asset('admin/news-ajax-create') }}"
+                                    data-title="{{ $item->title }}"
+                                    data-link="{{ $item->link }}"
+                                    data-channels-id="{{ $item->channels_id }}"
+                                    data-hash="{{ $item->hash }}"
+                                    data-image="{{ $item->image }}"
+                                    data-data="{{ $item->data }}"
+                                    data-status="show"
+                                    data-order="1">
                                     <i class="align-middle fas fa-plus-circle"></i>
                                 </a>
+                            </td>
+                            <td>
+                                <select id="tag_podcast_{{$item->id}}" class="form-control form-control-sm podcast-tag">
+                                    <option value="">Selecione</option>
+                                    @foreach($tags as $tag)
+                                        <option value="{{ $tag->tags_id }}">{{ $tag->tags_title }}</option>
+                                    @endforeach
+                                </select>
                             </td>
                             <td>
                                 <a href="{{ url($item->image) }}" class="fancybox">
@@ -170,9 +191,9 @@
                             <td>{{ date("d/m/Y \a\s H:i", strtotime($item->updated_at)) }}</td>
                             <td>
                                 <a href="{{ $item->link }}" target="_blank" class="btn btn-info btn-sm" title="Ver Post"><i class="align-middle fas fa-link"></i></a>
-                                <a href="{{ URL::asset('admin/'.$page_dados['route_controler'].'/'.$item->id) }}" class="btn btn-info btn-sm" title="Ver"><i class="align-middle fas fa-eye"></i></a>
-                                <a href="{{ URL::asset('admin/'.$page_dados['route_controler'].'/'.$item->id.'/edit') }}" class="btn btn-success btn-sm" title="Editar"><i class="align-middle fas fa-pencil-alt"></i></a>
-                                <a href="{{ URL::asset('admin/'.$page_dados['route_controler'].'/'.$item->id) }}" class="btn btn-danger btn-sm method_destroy" data-method="DELETE" title="Excluir"><i class="align-middle fas fa-trash-alt"></i></a>
+                                <a href="{{ URL::asset('admin/'.$page_dados['route_controler'].'/'.$item->id) }}" class="btn btn-info btn-sm" title="Ver"><i class="align-middle" data-feather="eye"></i></a>
+                                <a href="{{ URL::asset('admin/'.$page_dados['route_controler'].'/'.$item->id.'/edit') }}" class="btn btn-success btn-sm" title="Editar"><i class="align-middle" data-feather="edit-2"></i></a>
+                                <a href="{{ URL::asset('admin/'.$page_dados['route_controler'].'/'.$item->id) }}" class="btn btn-danger btn-sm method_destroy" data-method="DELETE" title="Excluir"><i class="align-middle" data-feather="trash-2"></i></a>
                             </td>
                         </tr>
                         @endforeach
@@ -296,10 +317,40 @@ $('document').ready(function(){
 
         url = $(this).attr('href');
         id = $(this).attr('id');
+        podcastId = id.replace('podcast_id_', '');
+        tagsId = $('#tag_podcast_' + podcastId).val();
+
+        if(!tagsId){
+            $('.message-ajax').html(    '<div class="alert alert-danger alert-dismissible" role="alert">'+
+                                                    '<button type="button" class="close" data-dismiss="alert" aria-label="Close">'+
+                                                        '<span aria-hidden="true">×</span>'+
+                                                    '</button>'+
+                                                    '<div class="alert-icon">'+
+                                                        '<i class="far fa-fw fa-bell"></i>'+
+                                                    '</div>'+
+                                                    '<div class="alert-message">'+
+                                                        '<strong>Selecione a tag antes de cadastrar em News.</strong>'+
+                                                    '</div>'+
+                                                '</div>'
+                                        );
+            return false;
+        }
+
         $.ajax({
             url : url,
             type : 'post',
-            data: { "_token": "{{ csrf_token() }}" },
+            data: {
+                "_token": "{{ csrf_token() }}",
+                "tags_id": tagsId,
+                "title": $(this).data('title'),
+                "link": $(this).data('link'),
+                "channels_id": $(this).data('channels-id'),
+                "hash": $(this).data('hash'),
+                "image": $(this).data('image'),
+                "data": $(this).data('data'),
+                "status": $(this).data('status'),
+                "order": $(this).data('order')
+            },
             dataType    : 'json', // what type of data do we expect back from the server
             beforeSend : function(){
                 $("#loading").html("ENVIANDO...");

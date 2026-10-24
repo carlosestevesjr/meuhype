@@ -6,6 +6,7 @@ use Aerni\Spotify\Exceptions\SpotifyApiException;
 use Aerni\Spotify\Exceptions\SpotifyAuthException;
 use Aerni\Spotify\SpotifyAuth;
 use Aerni\Spotify\SpotifyRequest;
+use GuzzleHttp\Psr7\Response;
 use Spotify;
 
 class SpotifyExceptionTest extends TestCase
@@ -25,7 +26,7 @@ class SpotifyExceptionTest extends TestCase
         $request = resolve(SpotifyRequest::class);
 
         $this->expectException(SpotifyApiException::class);
-        $this->expectExceptionMessage('Service not found');
+        $this->expectExceptionMessage('Not Found');
 
         $request->get('/not-existing-endpoint');
     }
@@ -38,6 +39,6 @@ class SpotifyExceptionTest extends TestCase
             $apiResponse = $e->getApiResponse();
         }
 
-        $this->assertObjectHasAttribute('error', $apiResponse);
+        $this->assertInstanceOf(Response::class, $apiResponse);
     }
 }

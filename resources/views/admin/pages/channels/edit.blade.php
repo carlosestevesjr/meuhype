@@ -135,6 +135,12 @@
                         </div>
                         <div class="form-row">
                             <div class="form-group col-12 col-lg-6">
+                                <label>Nome no Spotify</label>
+                                <input type="text" name="spotify_search_name" class="form-control" placeholder="" value="{{ $item->spotify_search_name }}" >
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-12 col-lg-6">
                                 <label>Keywords</label>
                                 <input type="text" name="keywords" class="form-control" placeholder="" value="{{ $item->keywords }}" >
                             </div>

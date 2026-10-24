@@ -87,6 +87,7 @@ class PodcastsController extends Controller
 
         $tags = DB::select('
             SELECT 
+                T.id as tags_id,
                 T.title as tags_title
             FROM tags AS T
             WHERE T.status = "active"

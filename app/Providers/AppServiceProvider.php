@@ -5,8 +5,10 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 
 use Illuminate\Support\Facades\View;
+use Illuminate\Pagination\Paginator;
 
 use App\Config;
+use Throwable;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -27,24 +29,31 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        Paginator::useBootstrap();
+
         View::share('prefix_admin', 'admin');
 
-        $config = Config::get();
+        $color = 'custom';
+        $title = 'Site';
+        $configSite = null;
 
-        if(count($config) > 0){
-            $config = $config->first();
-            $color = $config->color_painel;
-            $title = $config->title;
-        }else{
-            $color = 'custom';
-            $title = 'Site';
+        try {
+            $config = Config::get();
+
+            if (count($config) > 0) {
+                $config = $config->first();
+                $color = $config->color_painel;
+                $title = $config->title;
+            }
+
+            // Itens das configurações
+            $configSite = Config::find(1);
+        } catch (Throwable $exception) {
+            //
         }
 
         View::share('config_color', $color );
         View::share('site_name', $title );
-
-        //Itens das configurações
-        $config = Config::find(1);
-        View::share('config_site', $config );
+        View::share('config_site', $configSite );
     }
 }

@@ -8,7 +8,7 @@ PHP library to resize, scale and crop images.
 Cloud Solution
 ---------------
 
-If you don't want to crop, resize and store images on your server, <a href="https://www.gumlet.com" target="_blank">Gumlet.com</a> is a **free** service which can process images in real-time and serve worldwide through CDN.
+If you don't want to crop, resize and store images on your server, <a href="https://www.gumlet.com/image-optimization/" target="_blank">Gumlet.com</a> is a **free** service which can process images in real-time and serve worldwide through CDN.
 
 ------------------
 
@@ -22,16 +22,12 @@ If using [Composer](https://getcomposer.org/), in your `composer.json` file add:
 ```json
 {
     "require": {
-        "gumlet/php-image-resize": "2.0.*"
+        "gumlet/php-image-resize": "2.1.*"
     }
 }
 ```
 
-If you are still using PHP 5.3, please install version ```1.7.0``` and if you are using PHP 5.4, please install version ```1.8.0``` of this library.
-
-WebP support is added with PHP `5.6.0` and current version of library supports that. If you are facing issues, please use `1.9.2` version of this library.
-
-For PHP versions >= 7.2, `2.0.1` or above version of this library should be used.
+For PHP versions >= 7.2 to 8.0, `2.0.x` version of this library should be used.
 
 Otherwise:
 
@@ -352,7 +348,9 @@ Flips an image using a given mode and this method is only for PHP version 5.4.
 $flip = new ImageResize('image.png');
 $image = imagecreatetruecolor(200, 100);
 
-$flip->imageFlip($image, 0);
+$image->addFilter(function ($image) {
+    imageflip($image, IMG_FLIP_HORIZONTAL);
+});
 
 ```
 
@@ -380,4 +378,4 @@ Maintainer
 
 This library is maintained by <a href="https://www.gumlet.com" target="_blank">Gumlet.com</a>
 
-[<img src="https://www.gumlet.com/public/img/logo.png" width="300px">](https://www.gumlet.com)
+[<img src="https://assets.gumlet.io/public/img/logo.png" width="300px">](https://www.gumlet.com)

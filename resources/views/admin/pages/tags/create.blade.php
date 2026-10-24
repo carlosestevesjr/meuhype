@@ -81,8 +81,33 @@
                         </div>
                         <div class="form-row">
                             <div class="form-group col-12 col-lg-6">
+                                <label>Link do IMDb</label>
+                                <input type="url" name="imdb_url" class="form-control" placeholder="https://www.imdb.com/pt/title/tt0000000/" value="{{ old('imdb_url') }}">
+                            </div>
+                            <div class="form-group col-12 col-lg-2">
+                                <label>Avaliação IMDb</label>
+                                <input type="number" name="imdb_rating" class="form-control" min="0" max="10" step="0.1" value="{{ old('imdb_rating') }}">
+                            </div>
+                            <div class="form-group col-12 col-lg-2">
+                                <label>Votos IMDb</label>
+                                <input type="number" name="imdb_vote_count" class="form-control" min="0" step="1" value="{{ old('imdb_vote_count') }}">
+                            </div>
+                            <div class="form-group col-12 col-lg-2">
+                                <label>Popularidade</label>
+                                <input type="number" name="imdb_popularity" class="form-control" min="1" step="1" value="{{ old('imdb_popularity') }}">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-12 col-lg-6">
                                 <label>Keywords</label>
                                 <input type="text" name="keywords" class="form-control" placeholder="" value="{{ old('keywords') }}" >
+                            </div>
+                            <div class="form-group col-12 col-lg-3">
+                                <label>Percentual de match</label>
+                                <div class="input-group">
+                                    <input type="number" name="match_percentage" class="form-control" min="1" max="100" step="1" value="{{ old('match_percentage', 60) }}" required>
+                                    <div class="input-group-append"><span class="input-group-text">%</span></div>
+                                </div>
                             </div>
                             <div class="form-group col-12 col-lg-6">
                                 <label>Ordem</label>

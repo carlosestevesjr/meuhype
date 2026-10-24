@@ -94,9 +94,9 @@
                             <td>{{ $item->type }}</td>
                             <td>{{ date("d/m/Y \a\s H:i", strtotime($item->updated_at)) }}</td>
                             <td>
-                                <a href="{{ URL::asset('admin/'.$page_dados['route_controler'].'/'.$item->id) }}" class="btn btn-info btn-sm" title="Ver"><i class="align-middle fas fa-eye"></i></a>
-                                <a href="{{ URL::asset('admin/'.$page_dados['route_controler'].'/'.$item->id.'/edit') }}" class="btn btn-success btn-sm" title="Editar"><i class="align-middle fas fa-pencil-alt"></i></a>
-                                <!-- <a href="{{ URL::asset('admin/'.$page_dados['route_controler'].'/'.$item->id) }}" class="btn btn-danger btn-sm method_destroy" data-method="DELETE" title="Excluir"><i class="align-middle fas fa-trash-alt"></i></a> -->
+                                <a href="{{ URL::asset('admin/'.$page_dados['route_controler'].'/'.$item->id) }}" class="btn btn-info btn-sm" title="Ver"><i class="align-middle" data-feather="eye"></i></a>
+                                <a href="{{ URL::asset('admin/'.$page_dados['route_controler'].'/'.$item->id.'/edit') }}" class="btn btn-success btn-sm" title="Editar"><i class="align-middle" data-feather="edit-2"></i></a>
+                                <!-- <a href="{{ URL::asset('admin/'.$page_dados['route_controler'].'/'.$item->id) }}" class="btn btn-danger btn-sm method_destroy" data-method="DELETE" title="Excluir"><i class="align-middle" data-feather="trash-2"></i></a> -->
                             </td>
                         </tr>
                         @endforeach

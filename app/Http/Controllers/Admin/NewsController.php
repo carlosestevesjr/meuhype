@@ -98,29 +98,15 @@ class NewsController extends Controller
 
     public function storeAjax(Request $request)
     {
-        $canais  = Channels::find($request->input('channels_id'));
-        $campos = [];
-        if($canais){
-            
-            $campos = $request->all();
-            $campos['hash'] = $request->input('hash');
-            // dd($campos);
-        }else{
-            $retorno = [
-                'code'         => '003',
-                'error'        =>$request->input('channels_id'), 
-                'date'         => date("Y-m-d"),
-                'hour'         => date("H:i:s"),
-            ];
-            
-            return $retorno;
-        }
+        $campos = $request->all();
+        $campos['hash'] = $request->input('hash');
        
 		//Validando os campos
 		$validator = Validator::make( $campos , [
-				'title' => 'required|max:255',
+                'title' => 'required|max:255',
                 'hash' => 'required|unique:news',
-                'id_channel' => 'required',
+                'channels_id' => 'required|exists:channels,id',
+                'tags_id' => 'required|exists:tags,id',
                 // 'link' => 'require',
                 // 'order' => 'required',
 				// 'image' => 'file|required|max:500|dimensions:max_width=1366,max_height=768',
@@ -129,7 +115,10 @@ class NewsController extends Controller
 				// 'dimensions' => 'A imagem não esta nas dimenssões especificadas abaixo do campo.',
 				'max'    => 'A imagem :attribute não tem o tamanho correto - :max kb.', // Peso da imagem em KB
                 'title.required' => 'O campo title deve ser preenchido.',
-                'id_channel.required' => 'O campo canal deve ser preenchido.',
+                'channels_id.required' => 'O campo canal deve ser preenchido.',
+                'channels_id.exists' => 'O canal informado não foi encontrado.',
+                'tags_id.required' => 'O campo Tag deve ser preenchido.',
+                'tags_id.exists' => 'A tag informada não foi encontrada.',
                 'hash.required' => 'O campo hash deve ser preenchido.',
                 'hash.unique' => 'Essa noticia já foi cadastrada.',
                 'link.required' => 'O campo link deve ser preenchido.',
@@ -137,6 +126,27 @@ class NewsController extends Controller
 			]
 		);
         if ($validator->fails()) {
+            $news = News::where( 'hash',  '=',  $campos['hash'] )->first();
+
+            if($news && Tags::find($request->input('tags_id'))){
+                $news_tags = NewsTags::where( 'news_id',  '=',  $news->id )->where( 'tags_id',  '=', $request->input('tags_id') )->first();
+
+                if(!$news_tags){
+                    $insert_news_tags = new NewsTags;
+                    $insert_news_tags->news_id = $news->id;
+                    $insert_news_tags->tags_id = $request->input('tags_id');
+                    $insert_news_tags->save();
+
+                    return [
+                        'code'         => '001',
+                        'message'      => 'Essa noticia já existia e a tag foi vinculada com sucesso.',
+                        'data'         => $news->id,
+                        'date'         => date("Y-m-d"),
+                        'hour'         => date("H:i:s"),
+                    ];
+                }
+            }
+
             $retorno = [
                 'code'         => '003',
                 'error'        => $validator->messages(), 
@@ -163,6 +173,15 @@ class NewsController extends Controller
       
             $condition = $insert->save();
             if($condition){
+                $news_tags = NewsTags::where( 'news_id',  '=',  $insert->id )->where( 'tags_id',  '=', $request->input('tags_id') )->first();
+                            
+                if(!$news_tags){
+                    $insert_news_tags = new NewsTags;
+                    $insert_news_tags->news_id = $insert->id;
+                    $insert_news_tags->tags_id = $request->input('tags_id');
+                    $insert_news_tags->save();
+                }
+
                 $retorno = [
                     'code'         => '001',
                     'message'        => 'Inserido com sucesso.',
@@ -295,9 +314,9 @@ class NewsController extends Controller
     public function show($id)
     {
 
-        $item = News::find($id);
+        $item = News::findOrFail($id);
         $canais  = Channels::orderBy('name', 'Asc')->get();
-        return view($this->page_dados['prefix_auth'].'.pages.'. $this->page_dados['route_view'] .'.show', compact('item','uploads','canais'))
+        return view($this->page_dados['prefix_auth'].'.pages.'. $this->page_dados['route_view'] .'.show', compact('item','canais'))
                 ->with('page_dados', $this->page_dados);
     }
 

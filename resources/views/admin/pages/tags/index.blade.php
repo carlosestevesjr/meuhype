@@ -20,7 +20,7 @@
 @endif
 
 @if(Session::has('message_error'))
-    <div class="alert alert-success alert-dismissible" role="alert">
+    <div class="alert alert-danger alert-dismissible" role="alert">
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">×</span>
         </button>
@@ -42,6 +42,13 @@
                 <a href="{{ URL::asset($prefix_admin.'/'.$page_dados['route_controler'].'/create') }}" class="btn btn-primary ">
                     Novo Registro
                 </a>
+                <form method="get" action="{{ route('tags.crawler-imdb') }}" target="_blank" class="form-inline d-inline-flex ml-2">
+                    <label for="imdb-limit" class="sr-only">Quantidade de novas tags</label>
+                    <input id="imdb-limit" type="number" name="limit" value="30" min="1" max="100" class="form-control mr-1" style="width:90px;" title="Quantidade de novas tags">
+                    <button type="submit" class="btn btn-success" title="Importar filmes e séries populares do IMDb">
+                        <i class="fas fa-cloud-download-alt"></i> Importar do IMDb
+                    </button>
+                </form>
             </div>
             <div class="card">
                 <form action="{{ URL::asset($prefix_admin.'/'.$page_dados['route_controler']) }}"  class="form-inline d-none d-sm-inline-block">
@@ -68,18 +75,24 @@
                 <table id="table" class="table table-sm table-striped table-bordered table-hover">
                     <thead>
                         <tr>
-                            <tr>
-                                <th>Id</th>
-                                <th>Title</th>
-                                <th>Data de atualização</th>
-                                <th>Ações</th>
-                            </tr>
+                            <th>Id</th>
+                            <th>Title</th>
+                            <th>Imagem</th>
+                            <th>IMDb</th>
+                            <th>Avaliação</th>
+                            <th>Popularidade</th>
+                            <th>Data de atualização</th>
+                            <th>Ações</th>
                         </tr>
                     </thead>
                     <tfoot>
                         <tr>
                             <th>Id</th>
                             <th>Title</th>
+                            <th>Imagem</th>
+                            <th>IMDb</th>
+                            <th>Avaliação</th>
+                            <th>Popularidade</th>
                             <th>Data de atualização</th>
                             <th>Ações</th>
                         </tr>
@@ -89,11 +102,29 @@
                         <tr class="even pointer" <?php if($item->status == 'hidden'){ echo 'style="background:#F25959; color:#fff;" '; } ?>>
                             <td>{{ $item->id }}</td>
                             <td>{{ $item->title }}</td>
+                            <td class="text-center">
+                                @if($item->image)
+                                    <a href="{{ url($item->image) }}" class="fancybox" title="{{ $item->title }}">
+                                        <img src="{{ url($item->image) }}" alt="Cartaz de {{ $item->title }}" width="56" height="80" loading="lazy" style="width:56px; height:80px; object-fit:cover; border-radius:4px;">
+                                    </a>
+                                @else
+                                    <span aria-label="Sem imagem">-</span>
+                                @endif
+                            </td>
+                            <td class="text-center">
+                                @if($item->imdb_url)
+                                    <a href="{{ $item->imdb_url }}" target="_blank" rel="noopener" class="btn btn-warning btn-sm" title="Abrir {{ $item->title }} no IMDb"><i class="fas fa-external-link-alt"></i></a>
+                                @else
+                                    <span aria-label="Sem link do IMDb">-</span>
+                                @endif
+                            </td>
+                            <td class="text-center">{{ $item->imdb_rating !== null ? number_format($item->imdb_rating, 1, ',', '.') : '-' }}</td>
+                            <td class="text-center">{{ $item->imdb_popularity ? '#'.$item->imdb_popularity : '-' }}</td>
                             <td>{{ date("d/m/Y \a\s H:i", strtotime($item->updated_at)) }}</td>
                             <td>
-                                <a href="{{ URL::asset('admin/'.$page_dados['route_controler'].'/'.$item->id) }}" class="btn btn-info btn-sm" title="Ver"><i class="align-middle fas fa-eye"></i></a>
-                                <a href="{{ URL::asset('admin/'.$page_dados['route_controler'].'/'.$item->id.'/edit') }}" class="btn btn-success btn-sm" title="Editar"><i class="align-middle fas fa-pencil-alt"></i></a>
-                                <a href="{{ URL::asset('admin/'.$page_dados['route_controler'].'/'.$item->id) }}" class="btn btn-danger btn-sm method_destroy" data-method="DELETE" title="Excluir"><i class="align-middle fas fa-trash-alt"></i></a>
+                                <a href="{{ URL::asset('admin/'.$page_dados['route_controler'].'/'.$item->id) }}" class="btn btn-info btn-sm" title="Ver"><i class="align-middle" data-feather="eye"></i></a>
+                                <a href="{{ URL::asset('admin/'.$page_dados['route_controler'].'/'.$item->id.'/edit') }}" class="btn btn-success btn-sm" title="Editar"><i class="align-middle" data-feather="edit-2"></i></a>
+                                <a href="{{ URL::asset('admin/'.$page_dados['route_controler'].'/'.$item->id) }}" class="btn btn-danger btn-sm method_destroy" data-method="DELETE" title="Excluir"><i class="align-middle" data-feather="trash-2"></i></a>
                             </td>
                         </tr>
                         @endforeach
@@ -117,6 +148,10 @@
 
 @push('scripts-page')
 
+<!-- Fancybox -->
+<script src="{{ asset('packages/fancybox/dist/jquery.fancybox.js') }}" type="text/javascript"></script>
+<link href="{{ asset('packages/fancybox/dist/jquery.fancybox.css') }}" media="all" rel="stylesheet">
+
 <!-- DataTables -->
 <link href="{{ asset('packages/datatables-1.10.15/media/css/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
 <link href="{{ asset('packages/datatables-1.10.15/media/css/dataTables.material.min.css') }}" rel="stylesheet">
@@ -124,6 +159,8 @@
 
 <script type="text/javascript">
 $('document').ready(function(){
+
+    $("a.fancybox").fancybox();
 
     $(".method_destroy").click(function() {
         var r = confirm('Tem certeza que deseja excluir esse item ?');

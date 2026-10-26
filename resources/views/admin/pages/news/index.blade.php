@@ -59,6 +59,9 @@
                 <a href="{{ url('/api/v1/cronjob') }}" target="_blank" rel="noopener" class="btn btn-success ml-2" title="Executar o crawler de notícias">
                     <i class="fas fa-cloud-download-alt"></i> Importar notícias
                 </a>
+                <a href="{{ route('images.optimize', ['type' => 'news']) }}" target="_blank" rel="noopener" class="btn btn-info ml-2">
+                    <i class="fas fa-compress-arrows-alt"></i> Otimizar imagens
+                </a>
             </div>
             <p>
                 <a class="btn btn-danger" data-toggle="collapse" href="#tags-crawleando" role="button" aria-expanded="false" aria-controls="tags-crawleando">

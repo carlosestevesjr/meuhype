@@ -25,10 +25,18 @@ use App\Crawler;
 use App\Channels;
 use App\Podcasts;
 use App\Tags;
+use App\Services\TagImageOptimizer;
 use DB;
 
 class CronJobController extends Controller
 {
+  private TagImageOptimizer $imageOptimizer;
+
+  public function __construct(TagImageOptimizer $imageOptimizer)
+  {
+    $this->imageOptimizer = $imageOptimizer;
+  }
+
   /**
    * Display a listing of the resource.
    *
@@ -2610,7 +2618,23 @@ class CronJobController extends Controller
       return false;
     }
 
-    return file_put_contents($path . $imgName, $data);
+    $filePath = $path . $imgName;
+    $saved = file_put_contents($filePath, $data);
+
+    if ($saved === false) {
+      return false;
+    }
+
+    // Os crawlers gravam o caminho com extensao JPG no banco; mantemos esse
+    // contrato e otimizamos dimensoes, qualidade e peso logo apos o download.
+    try {
+      $this->imageOptimizer->optimize($filePath, 'jpg');
+    } catch (\Throwable $exception) {
+      @unlink($filePath);
+      throw $exception;
+    }
+
+    return filesize($filePath);
   }
 
   // Converte diferentes formatos de data antigos para Y-m-d.

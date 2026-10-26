@@ -42,6 +42,10 @@ Route::group(['prefix'=>'admin','middleware'=>'admin_auth'], function(){
 
     Route::group(['namespace' => 'Admin'], function(){
 
+        Route::get('images/optimize/{type}', 'ImageOptimizationController@optimize')
+            ->where('type', 'news|channels|podcasts|admins|configs')
+            ->name('images.optimize');
+
         //Configurações
         Route::resource('configs', 'ConfigController');
 

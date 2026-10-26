@@ -42,6 +42,9 @@
                 <a href="{{ URL::asset($prefix_admin.'/'.$page_dados['route_controler'].'/create') }}" class="btn btn-primary ">
                     Novo Registro
                 </a>
+                <a href="{{ route('images.optimize', ['type' => 'channels']) }}" target="_blank" rel="noopener" class="btn btn-info ml-2">
+                    <i class="fas fa-compress-arrows-alt"></i> Otimizar imagens
+                </a>
             </div>
             <div class="card">
                 <form action="{{ URL::asset($prefix_admin.'/'.$page_dados['route_controler']) }}"  class="form-inline d-none d-sm-inline-block">

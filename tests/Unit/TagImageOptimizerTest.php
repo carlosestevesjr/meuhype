@@ -44,6 +44,17 @@ class TagImageOptimizerTest extends TestCase
         $this->assertLessThanOrEqual(TagImageOptimizer::TARGET_BYTES, $result['after_bytes']);
     }
 
+    public function test_it_can_force_jpeg_for_legacy_news_paths(): void
+    {
+        $path = $this->createImage(320, 480, 'news.jpg');
+        $result = (new TagImageOptimizer())->optimize($path, 'jpg');
+        $this->files[] = $result['path'];
+
+        $this->assertTrue($result['changed']);
+        $this->assertSame($path, $result['path']);
+        $this->assertSame('image/jpeg', mime_content_type($result['path']));
+    }
+
     private function createImage(int $width, int $height, string $filename): string
     {
         $path = sys_get_temp_dir() . '/' . uniqid('meuhype-', true) . '-' . $filename;

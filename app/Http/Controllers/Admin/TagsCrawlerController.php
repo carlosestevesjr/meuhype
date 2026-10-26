@@ -235,7 +235,7 @@ class TagsCrawlerController extends Controller
                 'limite_solicitado' => $limit,
                 'adicionados' => $adicionados,
                 'existentes' => $existentes,
-                'agendamentos_criados' => $agendamentos,
+                'tags_distribuidas_nos_crawlers' => $agendamentos,
                 'erros' => $erros,
                 'tempos' => [
                     'inicio' => $inicioFormatado,

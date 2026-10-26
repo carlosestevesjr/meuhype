@@ -4,77 +4,66 @@ namespace App\Services;
 
 use App\Crawler;
 use App\Tags;
+use Illuminate\Support\Facades\DB;
+use RuntimeException;
 
 class CrawlerTagScheduler
 {
-    private const SLOT_INTERVAL_MINUTES = 30;
-
-    private const SLOTS_PER_DAY = 48;
+    private array $assignedCrawlerIds = [];
 
     /**
-     * Cria um crawler ativo para a tag no horario de menor ocupacao do dia.
+     * Distribui a tag em um crawler de horario existente, alterando apenas tags_id.
      */
     public function schedule(Tags $tag): array
     {
         $existing = Crawler::where('tags_id', $tag->id)->first();
 
         if ($existing) {
-            return $this->result($existing, false);
+            return $this->result($existing, $tag, false);
         }
 
-        // O bloqueio evita que importacoes simultaneas escolham o mesmo slot livre.
-        $crawlers = Crawler::query()->lockForUpdate()->get();
-        $time = $this->leastUsedTime($crawlers->pluck('time_initial')->all());
+        $crawler = Crawler::query()
+            ->lockForUpdate()
+            ->orderBy('time_initial')
+            ->orderBy('id')
+            ->get()
+            ->first(function (Crawler $crawler) {
+                return $this->isTimeTitle($crawler->title)
+                    && !in_array($crawler->id, $this->assignedCrawlerIds, true);
+            });
 
-        $crawler = new Crawler();
-        $crawler->title = $tag->title;
+        if (!$crawler) {
+            throw new RuntimeException('Nao ha mais crawlers com titulo de horario disponiveis para distribuir as novas tags.');
+        }
+
+        // Query Builder evita atualizar updated_at: somente o ID da tag pode mudar.
+        DB::table('crawler')->where('id', $crawler->id)->update(['tags_id' => $tag->id]);
         $crawler->tags_id = $tag->id;
-        $crawler->time_initial = $time;
-        $crawler->type = 'site';
-        $crawler->description = 'Agendamento criado automaticamente pelo importador do IMDb.';
-        $crawler->order = ((int) $crawlers->max('order')) + 1;
-        $crawler->status = 'active';
-        $crawler->save();
+        $this->assignedCrawlerIds[] = $crawler->id;
 
-        return $this->result($crawler, true);
+        return $this->result($crawler, $tag, true);
     }
 
-    /**
-     * Distribui novos registros entre os 48 slots de 30 minutos.
-     */
-    private function leastUsedTime(array $scheduledTimes): string
+    private function isTimeTitle(?string $title): bool
     {
-        $usage = array_fill(0, self::SLOTS_PER_DAY, 0);
-
-        foreach ($scheduledTimes as $scheduledTime) {
-            if (!$scheduledTime) {
-                continue;
-            }
-
-            [$hour, $minute] = array_map('intval', explode(':', $scheduledTime));
-            $slot = (($hour * 60) + $minute) / self::SLOT_INTERVAL_MINUTES;
-
-            if (isset($usage[(int) $slot])) {
-                $usage[(int) $slot]++;
-            }
+        if (!$title || !preg_match('/^(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d$/', $title)) {
+            return false;
         }
 
-        $slot = array_search(min($usage), $usage, true);
-        $minutes = $slot * self::SLOT_INTERVAL_MINUTES;
-
-        return sprintf('%02d:%02d:00', intdiv($minutes, 60), $minutes % 60);
+        return true;
     }
 
-    private function result(Crawler $crawler, bool $created): array
+    private function result(Crawler $crawler, Tags $tag, bool $updated): array
     {
         return [
             'crawler_id' => $crawler->id,
             'tag_id' => $crawler->tags_id,
-            'tag' => $crawler->title,
+            'tag' => $tag->title,
+            'titulo_crawler_preservado' => $crawler->title,
             'horario' => $crawler->time_initial,
             'tipo' => $crawler->type,
             'status' => $crawler->status,
-            'criado' => $created,
+            'tags_id_atualizado' => $updated,
         ];
     }
 }

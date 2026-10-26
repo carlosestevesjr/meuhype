@@ -13,6 +13,44 @@ use Illuminate\Http\Request;
 class NewsController extends Controller
 {
     /**
+     * Resume os filtros de conteúdo configurados pelo usuário autenticado.
+     *
+     * O aplicativo usa estes totais para avisar, de forma discreta, quando a
+     * lista de notícias está personalizada por tags ou canais escolhidos.
+     */
+    private function getAppliedFilters($apiToken)
+    {
+        $summary = [
+            'active' => false,
+            'tags_count' => 0,
+            'channels_count' => 0,
+        ];
+
+        if (!$apiToken) {
+            return $summary;
+        }
+
+        $user = DB::table('users')
+            ->where('api_token', (string) $apiToken)
+            ->first();
+
+        if (!$user) {
+            return $summary;
+        }
+
+        $summary['tags_count'] = DB::table('user_tags')
+            ->where('users_id', $user->id)
+            ->count();
+        $summary['channels_count'] = DB::table('user_channels')
+            ->where('users_id', $user->id)
+            ->count();
+        $summary['active'] =
+            $summary['tags_count'] > 0 || $summary['channels_count'] > 0;
+
+        return $summary;
+    }
+
+    /**
      * Retorna os IDs das notícias curtidas pelo usuário autenticado.
      */
     public function listaNewsLikes(Request $request)
@@ -430,6 +468,7 @@ class NewsController extends Controller
             [
                 "current_page" => $page,
                 'dados' => $result, 
+                'filters_applied' => $this->getAppliedFilters($request->input('apiToken')),
                 "first_page_url" => url( $base_route."?page=1&qtd=".$qtd),
                 "from" => ($inicio > 1) ? $inicio : $inicio + 1,
                 "last_page" => $numPaginas,
@@ -624,6 +663,7 @@ class NewsController extends Controller
             [
                 "current_page" => $page,
                 'dados' => $result, 
+                'filters_applied' => $this->getAppliedFilters($request->input('apiToken')),
                 "first_page_url" => url( $base_route."?page=1&qtd=".$qtd."&search=".$v_search),
                 "from" => ($inicio > 1) ? $inicio : $inicio + 1,
                 "last_page" => $numPaginas,
@@ -830,6 +870,7 @@ class NewsController extends Controller
             [
                 "current_page" => $page,
                 'dados' => $result, 
+                'filters_applied' => $this->getAppliedFilters($request->input('apiToken')),
                 "first_page_url" => url( $base_route."?page=1&qtd=".$qtd),
                 "from" => ($inicio > 1) ? $inicio : $inicio + 1,
                 "last_page" => $numPaginas,
@@ -1039,6 +1080,7 @@ class NewsController extends Controller
                
                 "current_page" => $page,
                 'dados' => $result, 
+                'filters_applied' => $this->getAppliedFilters($request->input('apiToken')),
                 "first_page_url" => url( $base_route."?page=1&qtd=".$qtd),
                 "from" => ($inicio > 1) ? $inicio : $inicio + 1,
                 "last_page" => $numPaginas,

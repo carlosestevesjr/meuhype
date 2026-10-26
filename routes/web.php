@@ -60,6 +60,7 @@ Route::group(['prefix'=>'admin','middleware'=>'admin_auth'], function(){
         Route::get('notifications-notificar', 'NotificationsController@notificar');
 
         //News
+        Route::get('news-import-logs', 'NewsImportLogController@index')->name('news-import-logs.index');
         Route::resource('news', 'NewsController');
         Route::post('news-ajax-create', 'NewsController@storeAjax');
 

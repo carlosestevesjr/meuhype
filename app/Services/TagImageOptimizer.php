@@ -12,6 +12,8 @@ class TagImageOptimizer
 
     public const TARGET_BYTES = 409600;
 
+    public const MAX_SOURCE_PIXELS = 12000000;
+
     /**
      * Otimiza uma imagem para exibicao web, sem cortar ou ampliar.
      */
@@ -29,6 +31,12 @@ class TagImageOptimizer
         }
 
         [$width, $height] = $dimensions;
+        if (($width * $height) > self::MAX_SOURCE_PIXELS) {
+            throw new RuntimeException(
+                'Imagem com resolucao muito alta para processamento seguro: ' . $width . 'x' . $height . '.'
+            );
+        }
+
         if ($width <= self::MAX_WIDTH && $height <= self::MAX_HEIGHT && $beforeBytes <= self::TARGET_BYTES) {
             return $this->result($path, $width, $height, $beforeBytes, $beforeBytes, false);
         }

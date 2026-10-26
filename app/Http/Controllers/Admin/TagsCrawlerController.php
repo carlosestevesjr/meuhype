@@ -100,23 +100,28 @@ class TagsCrawlerController extends Controller
         $inicioFormatado = date('Y-m-d H:i:s');
         $validator = Validator::make($request->all(), [
             'limit' => 'nullable|integer|min:1|max:1000',
+            'after_id' => 'nullable|integer|min:0',
         ]);
 
         if ($validator->fails()) {
             return $this->retornoOtimizacaoImagens([], $validator->errors()->all(), $inicio, $inicioFormatado, 422);
         }
 
-        set_time_limit(0);
+        set_time_limit(60);
         $limit = (int) $request->input('limit', 1000);
+        $afterId = (int) $request->input('after_id', 0);
+        $batchSize = min(3, $limit);
         $items = [];
         $errors = [];
+        $processedIds = [];
 
         Tags::whereNotNull('image')
             ->where('image', '!=', '')
+            ->where('id', '>', $afterId)
             ->orderBy('id')
-            ->limit($limit)
+            ->limit($batchSize)
             ->get()
-            ->each(function (Tags $tag) use ($optimizer, &$items, &$errors) {
+            ->each(function (Tags $tag) use ($optimizer, &$items, &$errors, &$processedIds) {
                 try {
                     $metadata = $optimizer->optimize(public_path($tag->image));
                     $tag->image = str_replace(public_path(), '', $metadata['path']);
@@ -138,10 +143,30 @@ class TagsCrawlerController extends Controller
                     ];
                 } catch (\Throwable $exception) {
                     $errors[] = $tag->title . ': ' . $exception->getMessage();
+                } finally {
+                    $processedIds[] = $tag->id;
                 }
             });
 
-        return $this->retornoOtimizacaoImagens($items, $errors, $inicio, $inicioFormatado);
+        $lastId = $processedIds ? max($processedIds) : null;
+
+        $nextUrl = null;
+        if ($lastId && Tags::whereNotNull('image')->where('image', '!=', '')->where('id', '>', $lastId)->exists()) {
+            $nextUrl = route('tags.optimize-images', [
+                'after_id' => $lastId,
+                'limit' => $limit,
+            ]);
+        }
+
+        return $this->retornoOtimizacaoImagens(
+            $items,
+            $errors,
+            $inicio,
+            $inicioFormatado,
+            200,
+            $afterId,
+            $nextUrl
+        );
     }
 
     private function retornoOtimizacaoImagens(
@@ -149,7 +174,9 @@ class TagsCrawlerController extends Controller
         array $errors,
         float $inicio,
         string $inicioFormatado,
-        int $status = 200
+        int $status = 200,
+        int $afterId = 0,
+        ?string $nextUrl = null
     ) {
         $fim = microtime(true);
         $retorno = [
@@ -160,6 +187,9 @@ class TagsCrawlerController extends Controller
                 'total_alteradas' => count(array_filter($items, fn ($item) => $item['alterada'])),
                 'economia_total_kb' => round(array_sum(array_column($items, 'economia_kb')), 1),
                 'erros' => $errors,
+                'lote_apos_id' => $afterId,
+                'proximo_lote' => $nextUrl,
+                'continuacao_automatica' => $nextUrl !== null,
                 'tempos' => [
                     'inicio' => $inicioFormatado,
                     'fim' => date('Y-m-d H:i:s'),
@@ -171,8 +201,20 @@ class TagsCrawlerController extends Controller
             ],
         ];
 
+        $refresh = $nextUrl
+            ? '<meta http-equiv="refresh" content="1;url=' . htmlspecialchars($nextUrl, ENT_QUOTES, 'UTF-8') . '">'
+            : '';
+        $message = $nextUrl
+            ? '<p>Este lote terminou. O próximo será iniciado automaticamente...</p>'
+            : '<p>Otimização concluída.</p>';
+
         return response(
-            '<pre>' . htmlspecialchars(print_r($retorno, true), ENT_QUOTES, 'UTF-8') . '</pre>',
+            '<!doctype html><html><head><meta charset="UTF-8"><title>Otimização de imagens</title>'
+            . $refresh
+            . '</head><body>'
+            . $message
+            . '<pre>' . htmlspecialchars(print_r($retorno, true), ENT_QUOTES, 'UTF-8') . '</pre>'
+            . '</body></html>',
             $status,
             ['Content-Type' => 'text/html; charset=UTF-8']
         );

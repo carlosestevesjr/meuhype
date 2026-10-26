@@ -26,15 +26,19 @@ use App\Channels;
 use App\Podcasts;
 use App\Tags;
 use App\Services\TagImageOptimizer;
+use App\Services\NewsImportLogger;
 use DB;
 
 class CronJobController extends Controller
 {
   private TagImageOptimizer $imageOptimizer;
 
-  public function __construct(TagImageOptimizer $imageOptimizer)
+  private NewsImportLogger $importLogger;
+
+  public function __construct(TagImageOptimizer $imageOptimizer, NewsImportLogger $importLogger)
   {
     $this->imageOptimizer = $imageOptimizer;
+    $this->importLogger = $importLogger;
   }
 
   /**
@@ -52,6 +56,7 @@ class CronJobController extends Controller
     // $this->buscaTeste();
 
     $hora_inicial = date("H:i:s");
+    $this->importLogger->start('cronjob');
 
     $arrayResults = [
       'Omelete_Site' => ($this->crawler_canais_ativos('omeletesite')) ? $this->buscaNewsOmeleteSite() : "desligado",
@@ -107,10 +112,12 @@ class CronJobController extends Controller
 
     try {
       $dados = ['data' => $arrayResults, 'hora_inicial' => $hora_inicial, 'hora_final' => $hora_final];
+      $this->importLogger->finish('completed');
       echo '<pre>';
       print_r($arrayResults);
       echo '</pre>';
-    } catch (Exception $e) {
+    } catch (\Throwable $e) {
+      $this->importLogger->finish('failed', $e->getMessage());
       echo $e->getMessage();
       $dados = ['data' => $e->getMessage()];
 

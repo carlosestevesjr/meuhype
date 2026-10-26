@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Pagination\Paginator;
 
 use App\Config;
+use App\News;
+use App\Services\NewsImportLogger;
 use Throwable;
 
 class AppServiceProvider extends ServiceProvider
@@ -20,7 +22,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->singleton(NewsImportLogger::class);
     }
 
     /**
@@ -61,5 +63,9 @@ class AppServiceProvider extends ServiceProvider
         View::share('config_color', $color );
         View::share('site_name', $title );
         View::share('config_site', $configSite );
+
+        News::created(function (News $news) {
+            app(NewsImportLogger::class)->record($news);
+        });
     }
 }

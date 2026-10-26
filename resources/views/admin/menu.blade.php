@@ -40,6 +40,7 @@
             <li>
                 <ul id="ui" class="sidebar-dropdown list-unstyled collapse " data-parent="#sidebar">
                     <li class="sidebar-item"><a class="sidebar-link" href="{{ url($prefix_admin.'/news') }}">News</a></li>
+                    <li class="sidebar-item"><a class="sidebar-link" href="{{ route('news-import-logs.index') }}">Histórico de importações</a></li>
                     <li class="sidebar-item"><a class="sidebar-link" href="{{ url($prefix_admin.'/podcasts') }}">Podcasts</a></li>
                     <li class="sidebar-item"><a class="sidebar-link" href="{{ url($prefix_admin.'/tags') }}">Tags</a></li>
                     <li class="sidebar-item"><a class="sidebar-link" href="{{ url($prefix_admin.'/channels') }}">Canais</a></li>

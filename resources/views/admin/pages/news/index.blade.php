@@ -62,6 +62,9 @@
                 <a href="{{ route('images.optimize', ['type' => 'news']) }}" target="_blank" rel="noopener" class="btn btn-info ml-2">
                     <i class="fas fa-compress-arrows-alt"></i> Otimizar imagens
                 </a>
+                <a href="{{ route('news-import-logs.index') }}" class="btn btn-secondary ml-2">
+                    <i class="fas fa-history"></i> Histórico de importações
+                </a>
             </div>
             <p>
                 <a class="btn btn-danger" data-toggle="collapse" href="#tags-crawleando" role="button" aria-expanded="false" aria-controls="tags-crawleando">

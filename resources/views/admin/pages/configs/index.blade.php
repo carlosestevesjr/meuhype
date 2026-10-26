@@ -10,6 +10,7 @@
 
     
     <a href="{{ url($prefix_admin.'/'.$page_dados['route_controler'].'/create') }}" class="btn btn-primary"><em class="fa fa-file-text-o"></em> novo registro</a>
+    <a href="{{ route('images.optimize', ['type' => 'configs']) }}" target="_blank" rel="noopener" class="btn btn-info ml-2"><i class="fas fa-compress-arrows-alt"></i> Otimizar imagens</a>
 
     <div class="message_alert"></div>
 

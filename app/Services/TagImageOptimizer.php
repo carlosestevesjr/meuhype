@@ -17,7 +17,7 @@ class TagImageOptimizer
     /**
      * Otimiza uma imagem para exibicao web, sem cortar ou ampliar.
      */
-    public function optimize(string $path): array
+    public function optimize(string $path, ?string $preferredExtension = null): array
     {
         if (!is_file($path) || !is_readable($path)) {
             throw new RuntimeException('Arquivo de imagem nao encontrado ou sem permissao de leitura.');
@@ -31,13 +31,22 @@ class TagImageOptimizer
         }
 
         [$width, $height] = $dimensions;
+        $preferredExtension = in_array($preferredExtension, ['jpg', 'webp'], true)
+            ? $preferredExtension
+            : null;
+        $currentExtension = ($dimensions['mime'] ?? '') === 'image/jpeg' ? 'jpg' : (($dimensions['mime'] ?? '') === 'image/webp' ? 'webp' : null);
         if (($width * $height) > self::MAX_SOURCE_PIXELS) {
             throw new RuntimeException(
                 'Imagem com resolucao muito alta para processamento seguro: ' . $width . 'x' . $height . '.'
             );
         }
 
-        if ($width <= self::MAX_WIDTH && $height <= self::MAX_HEIGHT && $beforeBytes <= self::TARGET_BYTES) {
+        if (
+            $width <= self::MAX_WIDTH
+            && $height <= self::MAX_HEIGHT
+            && $beforeBytes <= self::TARGET_BYTES
+            && (!$preferredExtension || $preferredExtension === $currentExtension)
+        ) {
             return $this->result($path, $width, $height, $beforeBytes, $beforeBytes, false);
         }
 
@@ -48,7 +57,7 @@ class TagImageOptimizer
         }
 
         [$targetWidth, $targetHeight] = $this->fitDimensions($width, $height);
-        $extension = function_exists('imagewebp') ? 'webp' : 'jpg';
+        $extension = $preferredExtension ?: (function_exists('imagewebp') ? 'webp' : 'jpg');
         $temporaryPath = dirname($path) . '/.' . pathinfo($path, PATHINFO_FILENAME) . '-' . uniqid('', true) . '.' . $extension;
 
         try {

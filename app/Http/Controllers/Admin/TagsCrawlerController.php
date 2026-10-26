@@ -98,6 +98,7 @@ class TagsCrawlerController extends Controller
         $fim = microtime(true);
         $adicionados = $result['adicionados'] ?? [];
         $existentes = $result['existentes'] ?? [];
+        $agendamentos = $result['agendamentos'] ?? [];
         $erros = $result['erros'] ?? [];
         $total = $fim - $inicio;
 
@@ -107,6 +108,7 @@ class TagsCrawlerController extends Controller
                 'limite_solicitado' => $limit,
                 'adicionados' => $adicionados,
                 'existentes' => $existentes,
+                'agendamentos_criados' => $agendamentos,
                 'erros' => $erros,
                 'tempos' => [
                     'inicio' => $inicioFormatado,

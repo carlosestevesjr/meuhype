@@ -49,6 +49,9 @@
                         <i class="fas fa-cloud-download-alt"></i> Importar do IMDb
                     </button>
                 </form>
+                <a href="{{ route('tags.optimize-images') }}" target="_blank" rel="noopener" class="btn btn-info ml-2" title="Verificar e otimizar as imagens das tags já cadastradas">
+                    <i class="fas fa-compress-arrows-alt"></i> Otimizar imagens
+                </a>
             </div>
             <div class="card">
                 <form action="{{ URL::asset($prefix_admin.'/'.$page_dados['route_controler']) }}"  class="form-inline d-none d-sm-inline-block">
@@ -78,6 +81,7 @@
                             <th>Id</th>
                             <th>Title</th>
                             <th>Imagem</th>
+                            <th>Arquivo</th>
                             <th>IMDb</th>
                             <th>Avaliação</th>
                             <th>Popularidade</th>
@@ -90,6 +94,7 @@
                             <th>Id</th>
                             <th>Title</th>
                             <th>Imagem</th>
+                            <th>Arquivo</th>
                             <th>IMDb</th>
                             <th>Avaliação</th>
                             <th>Popularidade</th>
@@ -109,6 +114,14 @@
                                     </a>
                                 @else
                                     <span aria-label="Sem imagem">-</span>
+                                @endif
+                            </td>
+                            <td class="text-center">
+                                @if($item->image_size_bytes)
+                                    <strong>{{ number_format($item->image_size_bytes / 1024, 1, ',', '.') }} KB</strong><br>
+                                    <small>{{ $item->image_width }}x{{ $item->image_height }} px</small>
+                                @else
+                                    <span title="Execute a otimização para calcular">Não verificado</span>
                                 @endif
                             </td>
                             <td class="text-center">

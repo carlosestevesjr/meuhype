@@ -14,6 +14,7 @@ use Session;
 
 use App\Tags;
 use App\Services\ImdbTagCrawler;
+use App\Services\TagImageOptimizer;
 
 
 class TagsCrawlerController extends Controller
@@ -90,6 +91,90 @@ class TagsCrawlerController extends Controller
             $inicio,
             $inicioFormatado,
             (int) $request->input('limit', 30)
+        );
+    }
+
+    public function optimizeImages(Request $request, TagImageOptimizer $optimizer)
+    {
+        $inicio = microtime(true);
+        $inicioFormatado = date('Y-m-d H:i:s');
+        $validator = Validator::make($request->all(), [
+            'limit' => 'nullable|integer|min:1|max:1000',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->retornoOtimizacaoImagens([], $validator->errors()->all(), $inicio, $inicioFormatado, 422);
+        }
+
+        set_time_limit(0);
+        $limit = (int) $request->input('limit', 1000);
+        $items = [];
+        $errors = [];
+
+        Tags::whereNotNull('image')
+            ->where('image', '!=', '')
+            ->orderBy('id')
+            ->limit($limit)
+            ->get()
+            ->each(function (Tags $tag) use ($optimizer, &$items, &$errors) {
+                try {
+                    $metadata = $optimizer->optimize(public_path($tag->image));
+                    $tag->image = str_replace(public_path(), '', $metadata['path']);
+                    $tag->image_width = $metadata['width'];
+                    $tag->image_height = $metadata['height'];
+                    $tag->image_size_bytes = $metadata['after_bytes'];
+                    $tag->image_optimized_at = now();
+                    $tag->save();
+
+                    $items[] = [
+                        'tag_id' => $tag->id,
+                        'tag' => $tag->title,
+                        'arquivo' => $tag->image,
+                        'dimensoes' => $metadata['width'] . 'x' . $metadata['height'],
+                        'antes_kb' => round($metadata['before_bytes'] / 1024, 1),
+                        'depois_kb' => round($metadata['after_bytes'] / 1024, 1),
+                        'economia_kb' => round($metadata['saved_bytes'] / 1024, 1),
+                        'alterada' => $metadata['changed'],
+                    ];
+                } catch (\Throwable $exception) {
+                    $errors[] = $tag->title . ': ' . $exception->getMessage();
+                }
+            });
+
+        return $this->retornoOtimizacaoImagens($items, $errors, $inicio, $inicioFormatado);
+    }
+
+    private function retornoOtimizacaoImagens(
+        array $items,
+        array $errors,
+        float $inicio,
+        string $inicioFormatado,
+        int $status = 200
+    ) {
+        $fim = microtime(true);
+        $retorno = [
+            'Otimizacao_Imagens_Tags' => [
+                'code' => '006',
+                'processadas' => $items,
+                'total_processadas' => count($items),
+                'total_alteradas' => count(array_filter($items, fn ($item) => $item['alterada'])),
+                'economia_total_kb' => round(array_sum(array_column($items, 'economia_kb')), 1),
+                'erros' => $errors,
+                'tempos' => [
+                    'inicio' => $inicioFormatado,
+                    'fim' => date('Y-m-d H:i:s'),
+                    'total_segundos' => round($fim - $inicio, 4),
+                    'total_milissegundos' => (int) round(($fim - $inicio) * 1000),
+                ],
+                'date' => date('Y-m-d'),
+                'hour' => date('H:i:s'),
+            ],
+        ];
+
+        return response(
+            '<pre>' . htmlspecialchars(print_r($retorno, true), ENT_QUOTES, 'UTF-8') . '</pre>',
+            $status,
+            ['Content-Type' => 'text/html; charset=UTF-8']
         );
     }
 

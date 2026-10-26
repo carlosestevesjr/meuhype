@@ -15,9 +15,12 @@ class ImdbTagCrawler
 
     private CrawlerTagScheduler $scheduler;
 
-    public function __construct(CrawlerTagScheduler $scheduler)
+    private TagImageOptimizer $imageOptimizer;
+
+    public function __construct(CrawlerTagScheduler $scheduler, TagImageOptimizer $imageOptimizer)
     {
         $this->scheduler = $scheduler;
+        $this->imageOptimizer = $imageOptimizer;
         $this->client = new Client([
             'connect_timeout' => 10,
             'timeout' => 35,
@@ -178,7 +181,7 @@ GRAPHQL;
         }
 
         $basename = 'tag-' . Str::slug($item['title']) . '-' . $item['imdb_id'];
-        [$filename, $imagePath] = $this->downloadImage($item['image_url'], $directory, $basename);
+        [$filename, $imagePath, $imageMetadata] = $this->downloadImage($item['image_url'], $directory, $basename);
 
         $short = $item['plot'] ?: $item['title'] . ' (' . $item['year'] . ') em evidencia no IMDb.';
         $description = '<p>' . e($short) . '</p>';
@@ -207,6 +210,10 @@ GRAPHQL;
         $tag->order = ((int) Tags::max('order')) + 1;
         $tag->status = 'active';
         $tag->image = '/uploads/fotos/' . $filename;
+        $tag->image_width = $imageMetadata['width'];
+        $tag->image_height = $imageMetadata['height'];
+        $tag->image_size_bytes = $imageMetadata['after_bytes'];
+        $tag->image_optimized_at = now();
 
         try {
             $tag->save();
@@ -248,6 +255,14 @@ GRAPHQL;
             throw new RuntimeException('Nao foi possivel finalizar o arquivo do cartaz.');
         }
 
-        return [$filename, $finalPath];
+        try {
+            $metadata = $this->imageOptimizer->optimize($finalPath);
+            $finalPath = $metadata['path'];
+        } catch (Throwable $exception) {
+            @unlink($finalPath);
+            throw $exception;
+        }
+
+        return [basename($finalPath), $finalPath, $metadata];
     }
 }

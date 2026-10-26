@@ -75,7 +75,7 @@
                                 <div class="box">
                                     <input type="file" name="image" id="image" class="inputfile inputfile-1" data-multiple-caption="{count} arquivos selecionados"/>
                                     <label for="image"><i class="fas fa-upload"></i> <span>arquivo&hellip;</span></label>
-                                    <p>Tamanho da imagem: 560x300px 2M</p>
+                                    <p>Para web: até 1000x1500 px e aproximadamente 400 KB.</p>
                                 </div>
                             </div>
                         </div>

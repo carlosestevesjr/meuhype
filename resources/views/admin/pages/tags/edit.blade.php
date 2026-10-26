@@ -87,7 +87,12 @@
                                     @endif
                                     <input type="file" name="image" id="image" class="inputfile inputfile-1" data-multiple-caption="{count} arquivos selecionados"/>
                                     <label for="image"> <i class="fas fa-upload"></i> <span>arquivo&hellip;</span></label>
-                                    <p>Tamanho da imagem: 560x300px 2M</p>
+                                    @if($item->image_size_bytes)
+                                        <p class="mb-0"><strong>{{ number_format($item->image_size_bytes / 1024, 1, ',', '.') }} KB</strong> | {{ $item->image_width }}x{{ $item->image_height }} px</p>
+                                        <small>Otimizada em {{ $item->image_optimized_at ? date('d/m/Y H:i', strtotime($item->image_optimized_at)) : '-' }}</small>
+                                    @else
+                                        <p>Imagem ainda não verificada.</p>
+                                    @endif
                                 </div>
                             </div>
                             <div class="form-group col-12 col-lg-2">

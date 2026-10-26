@@ -5,6 +5,7 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Pagination\Paginator;
 
 use App\Config;
@@ -29,6 +30,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        if ($this->app->environment('production')) {
+            URL::forceRootUrl(config('app.url'));
+            URL::forceScheme('https');
+        }
+
         Paginator::useBootstrap();
 
         View::share('prefix_admin', 'admin');

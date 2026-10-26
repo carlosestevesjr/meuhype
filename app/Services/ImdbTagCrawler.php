@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Tags;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use RuntimeException;
 use Throwable;
@@ -12,8 +13,11 @@ class ImdbTagCrawler
 {
     private Client $client;
 
-    public function __construct()
+    private CrawlerTagScheduler $scheduler;
+
+    public function __construct(CrawlerTagScheduler $scheduler)
     {
+        $this->scheduler = $scheduler;
         $this->client = new Client([
             'connect_timeout' => 10,
             'timeout' => 35,
@@ -36,7 +40,12 @@ class ImdbTagCrawler
         $movies = $this->chart('MOST_POPULAR_MOVIES', $perChart, 'Filme');
         $series = $this->chart('MOST_POPULAR_TV_SHOWS', $perChart, 'Serie');
         $candidates = $this->interleave($movies, $series);
-        $result = ['adicionados' => [], 'existentes' => [], 'erros' => []];
+        $result = [
+            'adicionados' => [],
+            'existentes' => [],
+            'agendamentos' => [],
+            'erros' => [],
+        ];
 
         foreach ($candidates as $candidate) {
             if (count($result['adicionados']) >= $limit) {
@@ -53,9 +62,20 @@ class ImdbTagCrawler
                     continue;
                 }
 
-                $result['adicionados'][] = $this->createTag($candidate);
+                $tag = null;
+                $schedule = DB::transaction(function () use ($candidate, &$tag) {
+                    $tag = $this->createTag($candidate);
+
+                    return $this->scheduler->schedule($tag);
+                });
+
+                $result['adicionados'][] = $tag->title;
+                $result['agendamentos'][] = $schedule;
                 usleep(150000);
             } catch (Throwable $exception) {
+                if (isset($tag) && $tag->image) {
+                    @unlink(public_path($tag->image));
+                }
                 $result['erros'][] = $candidate['title'] . ': ' . $exception->getMessage();
             }
         }
@@ -149,7 +169,7 @@ GRAPHQL;
         return $items;
     }
 
-    private function createTag(array $item): string
+    private function createTag(array $item): Tags
     {
         $directory = public_path('uploads/fotos');
 
@@ -195,7 +215,7 @@ GRAPHQL;
             throw $exception;
         }
 
-        return $tag->title;
+        return $tag;
     }
 
     private function downloadImage(string $url, string $directory, string $basename): array

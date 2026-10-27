@@ -1,6 +1,7 @@
 <?php
 
 use App\Tags;
+use App\Services\TagImageOptimizer;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Support\Str;
 
@@ -8,6 +9,9 @@ require dirname(__DIR__) . '/vendor/autoload.php';
 
 $app = require dirname(__DIR__) . '/bootstrap/app.php';
 $app->make(Kernel::class)->bootstrap();
+$imageOptimizer = $app->make(TagImageOptimizer::class);
+
+const MAX_REMOTE_IMAGE_BYTES = 8388608;
 
 // Titulos selecionados nos rankings de popularidade e calendario do IMDb.
 $titles = [
@@ -53,6 +57,14 @@ function imdbGet(string $url): array
         CURLOPT_TIMEOUT => 35,
         CURLOPT_USERAGENT => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/141 Safari/537.36',
         CURLOPT_ENCODING => '',
+        CURLOPT_NOPROGRESS => false,
+        CURLOPT_XFERINFOFUNCTION => function (
+            $curl,
+            $downloadTotal,
+            $downloadedBytes
+        ): int {
+            return $downloadedBytes > MAX_REMOTE_IMAGE_BYTES ? 1 : 0;
+        },
     ]);
 
     $body = curl_exec($curl);
@@ -143,9 +155,14 @@ foreach ($titles as [$searchTitle, $localizedTitle, $year, $expectedType, $categ
         $cast = trim((string) ($result['s'] ?? ''));
         $filename = 'tag-' . $localizedSlug . '-' . $imdbId . '.' . $extension;
 
-        if (file_put_contents($destination . '/' . $filename, $image) === false) {
+        $filePath = $destination . '/' . $filename;
+        if (file_put_contents($filePath, $image) === false) {
             throw new RuntimeException('nao foi possivel salvar o cartaz');
         }
+
+        $metadata = $imageOptimizer->optimize($filePath);
+        $filePath = $metadata['path'];
+        $filename = basename($filePath);
 
         $kind = $category === 'Filme' ? 'filme' : 'serie';
         $short = $title . ' e uma ' . ($kind === 'filme' ? 'producao cinematografica' : 'producao para televisao')
@@ -168,14 +185,20 @@ foreach ($titles as [$searchTitle, $localizedTitle, $year, $expectedType, $categ
         $tag->order = $existing ? $existing->order : ++$nextOrder;
         $tag->status = 'active';
         $tag->image = '/uploads/fotos/' . $filename;
+        $tag->image_width = $metadata['width'];
+        $tag->image_height = $metadata['height'];
+        $tag->image_size_bytes = $metadata['after_bytes'];
+        $tag->image_optimized_at = now();
         $tag->save();
 
         $existingSlugs[] = $tag->slug;
         if ($existing) {
-            echo '[ATUALIZADO] #' . $tag->id . ' ' . $originalTitle . ' -> ' . $title . PHP_EOL;
+            echo '[ATUALIZADO] #' . $tag->id . ' ' . $originalTitle . ' -> ' . $title
+                . ' (' . round($metadata['after_bytes'] / 1024, 1) . ' KB)' . PHP_EOL;
         } else {
             $created++;
-            echo '[OK] #' . $tag->id . ' ' . $title . ' (' . $imdbId . ', ' . $category . ')' . PHP_EOL;
+            echo '[OK] #' . $tag->id . ' ' . $title . ' (' . $imdbId . ', ' . $category
+                . ', ' . round($metadata['after_bytes'] / 1024, 1) . ' KB)' . PHP_EOL;
         }
     } catch (Throwable $exception) {
         $errors[] = $searchTitle . ': ' . $exception->getMessage();

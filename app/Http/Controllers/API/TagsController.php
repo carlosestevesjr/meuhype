@@ -85,6 +85,7 @@ class TagsController extends Controller
             LIMIT $inicio , $qtd
         ");  
       
+        $selected_total = 0;
         if($request->input('apiToken') && $request->input('apiToken') != ""){
             // $sql_channels_users = "AND CH.id IN ($array_channels_user)"; 
             $user = DB::select("
@@ -95,13 +96,19 @@ class TagsController extends Controller
             ");  
            
             if($user){
-                $user_tags = DB::table('user_tags')->where('users_id', '=', $user[0]->id)->get();
+                $user_tags = DB::table('user_tags')
+                    ->join('tags', 'tags.id', '=', 'user_tags.tags_id')
+                    ->where('user_tags.users_id', '=', $user[0]->id)
+                    ->where('tags.status', '=', 'active')
+                    ->select('user_tags.tags_id')
+                    ->get();
                 $array_user_tags = [];
                 // print_r($user_tags);
                 // dd();
                 foreach($user_tags as $key => $item){
                     $array_user_tags[$key] = $item->tags_id;
                 }
+                $selected_total = count($array_user_tags);
                
                 foreach($busca_tags as $key => $item) {
                     $select = in_array($item->tag_id, $array_user_tags);
@@ -120,6 +127,7 @@ class TagsController extends Controller
         return $this->ResponseAPI( 
             [
                 "current_page" => $page,
+                "selected_total" => $selected_total,
                 'dados' => $result, 
                 "first_page_url" => url( $base_route."?page=1&qtd=".$qtd),
                 "from" => ($inicio > 1) ? $inicio : $inicio + 1,

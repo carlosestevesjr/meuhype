@@ -56,10 +56,13 @@ class NewsController extends Controller
                     DB::raw('channels.type as tipo_canal')
                     // DB::raw('count(channels.id) as user_count')
                 )
-                ->where( 'title',  'LIKE',  $string )
-                ->orWhere( 'channels.type',  'LIKE',  $string )
-                ->orWhere( 'channels.name',  'LIKE',  $string )
-                ->orderBy('data', 'desc')
+                ->where(function ($query) use ($string) {
+                    $query->where('news.title', 'LIKE', $string)
+                        ->orWhere('channels.type', 'LIKE', $string)
+                        ->orWhere('channels.name', 'LIKE', $string);
+                })
+                ->orderBy('news.data', 'desc')
+                ->orderBy('news.id', 'desc')
                 ->paginate($qtd);
                 // dd($lista);
 

@@ -193,6 +193,7 @@ class ChannelController extends Controller
             LIMIT $inicio , $qtd
         ");  
        
+        $selected_total = 0;
         if($request->input('apiToken') && $request->input('apiToken') != ""){
             $user = DB::select("
                 SELECT 
@@ -202,11 +203,17 @@ class ChannelController extends Controller
             ");  
            
             if($user){
-                $user_channels = DB::table('user_channels')->where('users_id', '=', $user[0]->id)->get();
+                $user_channels = DB::table('user_channels')
+                    ->join('channels', 'channels.id', '=', 'user_channels.channels_id')
+                    ->where('user_channels.users_id', '=', $user[0]->id)
+                    ->where('channels.status', '=', 'active')
+                    ->select('user_channels.channels_id')
+                    ->get();
                 $array_user_channels = [];
                 foreach($user_channels as $key => $item){
                     $array_user_channels[$key] = $item->channels_id;
                 }
+                $selected_total = count($array_user_channels);
                
                 foreach($busca_canais as $key => $item) {
                     $select = in_array($item->channels_id, $array_user_channels);
@@ -224,6 +231,7 @@ class ChannelController extends Controller
         return $this->ResponseAPI( 
             [
                 "current_page" => $page,
+                "selected_total" => $selected_total,
                 'dados' => $result, 
                 "first_page_url" => url( $base_route."?page=1&qtd=".$qtd),
                 "from" => ($inicio > 1) ? $inicio : $inicio + 1,

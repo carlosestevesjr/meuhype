@@ -163,7 +163,22 @@
                         </tr>
                     </tfoot>
                     <tbody>
+                        @php($dataNoticiaAtual = null)
                         @foreach($lista as $item)
+                        @php
+                            $dataNoticia = $item->data
+                                ? date('Y-m-d', strtotime($item->data))
+                                : 'sem-data';
+                        @endphp
+                        @if($dataNoticiaAtual !== $dataNoticia)
+                            @php($dataNoticiaAtual = $dataNoticia)
+                            <tr class="bg-secondary text-white">
+                                <td colspan="8" class="text-center font-weight-bold py-2">
+                                    <i class="far fa-calendar-alt mr-2"></i>
+                                    {{ $item->data ? date('d/m/Y', strtotime($item->data)) : 'Sem data da notícia' }}
+                                </td>
+                            </tr>
+                        @endif
                         <tr class="even pointer" <?php if($item->status == 'hidden'){ echo 'style="background:#F25959; color:#fff;" '; } ?>>
                             <td>{{ $item->id }}</td>
                             <td width="25%"><strong>{{ $item->title }}</strong></td>

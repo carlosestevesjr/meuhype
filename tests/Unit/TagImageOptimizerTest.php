@@ -36,8 +36,8 @@ class TagImageOptimizerTest extends TestCase
         $this->files[] = $result['path'];
 
         $this->assertTrue($result['changed']);
-        $this->assertSame(1000, $result['width']);
-        $this->assertSame(1500, $result['height']);
+        $this->assertSame(720, $result['width']);
+        $this->assertSame(1080, $result['height']);
         $expectedExtension = function_exists('imagewebp') ? 'webp' : 'jpg';
         $this->assertSame($expectedExtension, pathinfo($result['path'], PATHINFO_EXTENSION));
         $this->assertFileDoesNotExist($path);

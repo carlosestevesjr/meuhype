@@ -1,6 +1,7 @@
 <?php
 
 use App\Tags;
+use App\Services\TagImageOptimizer;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Support\Str;
 
@@ -8,6 +9,9 @@ require dirname(__DIR__) . '/vendor/autoload.php';
 
 $app = require dirname(__DIR__) . '/bootstrap/app.php';
 $app->make(Kernel::class)->bootstrap();
+$imageOptimizer = $app->make(TagImageOptimizer::class);
+
+const MAX_REMOTE_IMAGE_BYTES = 8388608;
 
 $titles = [
     4 => ['The Bad Batch', 'tt12708542'],
@@ -41,6 +45,14 @@ function imdbRequest(string $url): array
         CURLOPT_TIMEOUT => 30,
         CURLOPT_USERAGENT => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/141 Safari/537.36',
         CURLOPT_ENCODING => '',
+        CURLOPT_NOPROGRESS => false,
+        CURLOPT_XFERINFOFUNCTION => function (
+            $curl,
+            $downloadTotal,
+            $downloadedBytes
+        ): int {
+            return $downloadedBytes > MAX_REMOTE_IMAGE_BYTES ? 1 : 0;
+        },
     ]);
 
     $body = curl_exec($curl);
@@ -112,12 +124,21 @@ foreach ($titles as $tagId => [$searchTitle, $imdbId]) {
             throw new RuntimeException('nao foi possivel salvar o cartaz');
         }
 
+        $metadata = $imageOptimizer->optimize($filePath);
+        $filePath = $metadata['path'];
+        $filename = basename($filePath);
+
         $tag->image = '/uploads/fotos/' . $filename;
+        $tag->image_width = $metadata['width'];
+        $tag->image_height = $metadata['height'];
+        $tag->image_size_bytes = $metadata['after_bytes'];
+        $tag->image_optimized_at = now();
         $tag->save();
         $imported++;
 
         echo '[OK] #' . $tag->id . ' ' . $tag->title . ' -> ' . $imdbTitle
-            . ' (' . $imdbId . ', ' . $width . 'x' . $height . ')' . PHP_EOL;
+            . ' (' . $imdbId . ', ' . $metadata['width'] . 'x' . $metadata['height']
+            . ', ' . round($metadata['after_bytes'] / 1024, 1) . ' KB)' . PHP_EOL;
     } catch (Throwable $exception) {
         $message = '#' . $tagId . ' ' . $searchTitle . ': ' . $exception->getMessage();
         $failures[] = $message;

@@ -6,13 +6,23 @@ use RuntimeException;
 
 class TagImageOptimizer
 {
-    public const MAX_WIDTH = 1000;
+    public const MAX_WIDTH = 720;
 
-    public const MAX_HEIGHT = 1500;
+    public const MAX_HEIGHT = 1080;
 
-    public const TARGET_BYTES = 409600;
+    public const TARGET_BYTES = 184320;
 
     public const MAX_SOURCE_PIXELS = 12000000;
+
+    private const INITIAL_QUALITY = 76;
+
+    private const MIN_QUALITY = 50;
+
+    private const QUALITY_STEP = 4;
+
+    private const RESIZE_FACTOR = 0.85;
+
+    private const MAX_RESIZE_ATTEMPTS = 5;
 
     /**
      * Otimiza uma imagem para exibicao web, sem cortar ou ampliar.
@@ -61,18 +71,22 @@ class TagImageOptimizer
         $temporaryPath = dirname($path) . '/.' . pathinfo($path, PATHINFO_FILENAME) . '-' . uniqid('', true) . '.' . $extension;
 
         try {
-            $quality = 82;
+            $quality = self::INITIAL_QUALITY;
             $this->writeImage($source, $temporaryPath, $targetWidth, $targetHeight, $quality, $extension);
 
-            while ($this->fileSize($temporaryPath) > self::TARGET_BYTES && $quality > 66) {
-                $quality -= 4;
+            while ($this->fileSize($temporaryPath) > self::TARGET_BYTES && $quality > self::MIN_QUALITY) {
+                $quality = max(self::MIN_QUALITY, $quality - self::QUALITY_STEP);
                 $this->writeImage($source, $temporaryPath, $targetWidth, $targetHeight, $quality, $extension);
             }
 
             // Cartazes muito detalhados podem continuar pesados mesmo apos reduzir a qualidade.
-            for ($attempt = 0; $this->fileSize($temporaryPath) > self::TARGET_BYTES && $attempt < 3; $attempt++) {
-                $targetWidth = max(1, (int) floor($targetWidth * 0.85));
-                $targetHeight = max(1, (int) floor($targetHeight * 0.85));
+            for (
+                $attempt = 0;
+                $this->fileSize($temporaryPath) > self::TARGET_BYTES && $attempt < self::MAX_RESIZE_ATTEMPTS;
+                $attempt++
+            ) {
+                $targetWidth = max(1, (int) floor($targetWidth * self::RESIZE_FACTOR));
+                $targetHeight = max(1, (int) floor($targetHeight * self::RESIZE_FACTOR));
                 $this->writeImage($source, $temporaryPath, $targetWidth, $targetHeight, $quality, $extension);
             }
 
@@ -144,6 +158,10 @@ class TagImageOptimizer
             imagesx($source),
             imagesy($source)
         );
+
+        if ($extension === 'jpg') {
+            imageinterlace($canvas, true);
+        }
 
         $saved = $extension === 'webp'
             ? imagewebp($canvas, $path, $quality)

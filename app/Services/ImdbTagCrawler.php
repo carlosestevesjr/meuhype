@@ -11,6 +11,8 @@ use Throwable;
 
 class ImdbTagCrawler
 {
+    private const MAX_IMAGE_DOWNLOAD_BYTES = 8388608;
+
     private Client $client;
 
     private CrawlerTagScheduler $scheduler;
@@ -231,8 +233,30 @@ GRAPHQL;
 
         try {
             $this->client->get($url, [
-                'headers' => ['Accept' => 'image/*'],
+                'headers' => [
+                    'Accept' => 'image/avif,image/webp,image/*,*/*;q=0.8',
+                ],
                 'sink' => $temporaryPath,
+                'allow_redirects' => [
+                    'max' => 5,
+                    'strict' => true,
+                    'referer' => true,
+                ],
+                'on_headers' => function ($response): void {
+                    $contentLength = (int) $response->getHeaderLine('Content-Length');
+
+                    if ($contentLength > self::MAX_IMAGE_DOWNLOAD_BYTES) {
+                        throw new RuntimeException('A imagem do IMDb excede o limite de 8 MB.');
+                    }
+                },
+                'progress' => function (
+                    $downloadTotal,
+                    $downloadedBytes
+                ): void {
+                    if ($downloadedBytes > self::MAX_IMAGE_DOWNLOAD_BYTES) {
+                        throw new RuntimeException('A imagem do IMDb excede o limite de 8 MB.');
+                    }
+                },
             ]);
         } catch (Throwable $exception) {
             @unlink($temporaryPath);
@@ -240,9 +264,15 @@ GRAPHQL;
         }
 
         $mime = (new \finfo(FILEINFO_MIME_TYPE))->file($temporaryPath);
-        $extensions = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
+        $extensions = [
+            'image/jpeg' => 'jpg',
+            'image/png' => 'png',
+            'image/webp' => 'webp',
+            'image/gif' => 'gif',
+            'image/avif' => 'avif',
+        ];
 
-        if (!isset($extensions[$mime])) {
+        if (!isset($extensions[$mime]) || !@getimagesize($temporaryPath)) {
             @unlink($temporaryPath);
             throw new RuntimeException('O arquivo retornado pelo IMDb nao e uma imagem valida.');
         }

@@ -31,6 +31,8 @@ use DB;
 
 class CronJobController extends Controller
 {
+  private const MAX_IMAGE_DOWNLOAD_BYTES = 8388608;
+
   private TagImageOptimizer $imageOptimizer;
 
   private NewsImportLogger $importLogger;
@@ -464,7 +466,12 @@ class CronJobController extends Controller
       $destinationPath = public_path() . '/uploads/news/';
 
       // Baixa a imagem original e mede o tempo do download.
-      $this->downloadFileOriginalCronometrado($filename, $img, $destinationPath, $tempos);
+      $upload = $this->downloadFileOriginalCronometrado($filename, $img, $destinationPath, $tempos);
+
+      if ($upload === false) {
+        $array_erros[] = 'Imagem inválida, muito grande ou indisponível: ' . $titulo;
+        continue;
+      }
 
       // Cria o model de noticia que sera salvo no banco.
       $insert = new News;
@@ -824,6 +831,11 @@ class CronJobController extends Controller
 
               $upload = $this->downloadFileOriginalCronometrado($filename, $file, $destinationPath, $tempos);
 
+              if ($upload === false) {
+                $array_erros[] = 'Imagem inválida, muito grande ou indisponível: ' . $item['noticia'];
+                continue;
+              }
+
               $insert = new News;
               $insert->title = $this->removeEmoji($item['noticia']);
               $insert->channels_id = $channel->id;
@@ -1004,6 +1016,11 @@ class CronJobController extends Controller
               $filename = date('Ymdhis') . '_' . Str::slug($this->removeEmoji($item['noticia'])) . '-omeletesite' . '.jpg';
               $destinationPath = public_path() . '/uploads/news/';
               $upload = $this->downloadFileOriginalCronometrado($filename, $file, $destinationPath, $tempos);
+
+              if ($upload === false) {
+                $array_erros[] = 'Imagem inválida, muito grande ou indisponível: ' . $item['noticia'];
+                continue;
+              }
 
               $insert = new News;
               $insert->title = $this->removeEmoji($item['noticia']);
@@ -1369,6 +1386,11 @@ class CronJobController extends Controller
               $destinationPath = public_path() . '/uploads/news/';
               $upload = $this->downloadFileOriginalCronometrado($filename, $file, $destinationPath, $tempos);
 
+              if ($upload === false) {
+                $array_erros[] = 'Imagem inválida, muito grande ou indisponível: ' . $item['noticia'];
+                continue;
+              }
+
               $insert = new News;
               $insert->title = $this->removeEmoji($item['noticia']);
               $insert->channels_id = $channel->id;
@@ -1544,6 +1566,11 @@ class CronJobController extends Controller
               $filename = date('Ymdhis') . '_' . Str::slug($this->removeEmoji($item['noticia'])) . '-poltronanerdsite' . '.jpg';
               $destinationPath = public_path() . '/uploads/news/';
               $upload = $this->downloadFileOriginalCronometrado($filename, $file, $destinationPath, $tempos);
+
+              if ($upload === false) {
+                $array_erros[] = 'Imagem inválida, muito grande ou indisponível: ' . $item['noticia'];
+                continue;
+              }
 
               $insert = new News;
               $insert->title = $this->removeEmoji($item['noticia']);
@@ -2619,16 +2646,82 @@ class CronJobController extends Controller
       mkdir($path, 0775, true);
     }
 
-    $data = $this->file_get_contents_curl($url);
+    $filePath = $path . $imgName;
+    $temporaryPath = $filePath . '.download-' . uniqid('', true);
+    $handle = @fopen($temporaryPath, 'wb');
 
-    if ($data === false || $data == "") {
+    if ($handle === false) {
       return false;
     }
 
-    $filePath = $path . $imgName;
-    $saved = file_put_contents($filePath, $data);
+    $downloadedBytes = 0;
+    $exceededLimit = false;
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_HEADER, false);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_MAXREDIRS, 5);
+    curl_setopt($ch, CURLOPT_USERAGENT, $this->getRandAgent());
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 15);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 35);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+    curl_setopt($ch, CURLOPT_FAILONERROR, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+      'Accept: image/avif,image/webp,image/*,*/*;q=0.8',
+    ]);
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_WRITEFUNCTION, function ($curl, string $chunk) use (
+      $handle,
+      &$downloadedBytes,
+      &$exceededLimit
+    ) {
+      $chunkLength = strlen($chunk);
 
-    if ($saved === false) {
+      if (($downloadedBytes + $chunkLength) > self::MAX_IMAGE_DOWNLOAD_BYTES) {
+        $exceededLimit = true;
+
+        return 0;
+      }
+
+      $written = fwrite($handle, $chunk);
+      if ($written === false) {
+        return 0;
+      }
+
+      $downloadedBytes += $written;
+
+      return $written;
+    });
+
+    $downloaded = curl_exec($ch);
+    $statusCode = (int) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+    curl_close($ch);
+    fclose($handle);
+
+    if (
+      $downloaded === false
+      || $exceededLimit
+      || $statusCode < 200
+      || $statusCode >= 300
+      || $downloadedBytes === 0
+    ) {
+      @unlink($temporaryPath);
+
+      return false;
+    }
+
+    $mime = (new \finfo(FILEINFO_MIME_TYPE))->file($temporaryPath);
+    $allowedMimes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif'];
+
+    if (! in_array($mime, $allowedMimes, true) || ! @getimagesize($temporaryPath)) {
+      @unlink($temporaryPath);
+
+      return false;
+    }
+
+    if (! @rename($temporaryPath, $filePath)) {
+      @unlink($temporaryPath);
+
       return false;
     }
 

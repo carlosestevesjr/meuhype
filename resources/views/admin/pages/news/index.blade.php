@@ -138,16 +138,14 @@
                 <table id="table" class="table table-sm table-striped table-bordered table-hover">
                     <thead>
                         <tr>
-                            <tr>
-                                <th>Id</th>
-                                <th>Titulo</th>
-                                <th>Image</th>
-                                <th>Data Fornecedor</th>
-                                <th>Canal</th>
-                                <th>Tipo Canal</th>
-                                <th>Data de atualização</th>
-                                <th>Ações</th>
-                            </tr>
+                            <th>Id</th>
+                            <th>Titulo</th>
+                            <th>Image</th>
+                            <th>Data Fornecedor</th>
+                            <th>Canal</th>
+                            <th>Tipo Canal</th>
+                            <th>Data de atualização</th>
+                            <th>Ações</th>
                         </tr>
                     </thead>
                     <tfoot>
@@ -163,7 +161,9 @@
                         </tr>
                     </tfoot>
                     <tbody>
-                        @php($dataNoticiaAtual = null)
+                        @php
+                            $dataNoticiaAtual = null;
+                        @endphp
                         @foreach($lista as $item)
                         @php
                             $dataNoticia = $item->data
@@ -171,7 +171,9 @@
                                 : 'sem-data';
                         @endphp
                         @if($dataNoticiaAtual !== $dataNoticia)
-                            @php($dataNoticiaAtual = $dataNoticia)
+                            @php
+                                $dataNoticiaAtual = $dataNoticia;
+                            @endphp
                             <tr class="bg-secondary text-white">
                                 <td colspan="8" class="text-center font-weight-bold py-2">
                                     <i class="far fa-calendar-alt mr-2"></i>
@@ -179,21 +181,17 @@
                                 </td>
                             </tr>
                         @endif
-                        <tr class="even pointer" <?php if($item->status == 'hidden'){ echo 'style="background:#F25959; color:#fff;" '; } ?>>
+                        <tr class="even pointer" @if($item->status === 'hidden') style="background:#F25959; color:#fff;" @endif>
                             <td>{{ $item->id }}</td>
                             <td width="25%"><strong>{{ $item->title }}</strong></td>
                             <td>
-                                <?php
-                                    if($item->image){
-                                ?>
-                                        <a href="{{ url($item->image) }}" class="fancybox">
-                                            <img src="{{ url($item->image) }}" height="60px" class="image">
-                                        </a>
-                                <?php
-                                    }
-                                ?>
+                                @if($item->image)
+                                    <a href="{{ url($item->image) }}" class="fancybox">
+                                        <img src="{{ url($item->image) }}" height="60" class="image" alt="{{ $item->title }}">
+                                    </a>
+                                @endif
                             </td>
-                            <td>{{ date("d/m/Y", strtotime($item->data)) }}</td>
+                            <td>{{ $item->data ? date('d/m/Y', strtotime($item->data)) : '-' }}</td>
                             <td>{{ $item->canal }}</td>
                             <td>{{ $item->tipo_canal }}</td>
                             <td>{{ date("d/m/Y \a\s H:i", strtotime($item->updated_at)) }}</td>

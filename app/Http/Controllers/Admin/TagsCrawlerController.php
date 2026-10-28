@@ -149,7 +149,7 @@ class TagsCrawlerController extends Controller
             });
 
         $lastId = $processedIds ? max($processedIds) : null;
-
+ 
         $nextUrl = null;
         if ($lastId && Tags::whereNotNull('image')->where('image', '!=', '')->where('id', '>', $lastId)->exists()) {
             $nextUrl = route('tags.optimize-images', [
